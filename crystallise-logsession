@@ -1,0 +1,205 @@
+#!/bin/bash
+
+# Do not run this script manually; use crystallise instead.
+
+#Script should run as root.
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+
+#Script should exit if any operation fails.
+set -e
+
+echo "The crystal will have the following address when it is ready: $CrystalID"
+
+echo "Time (log stage 1) locally:"
+
+date +%Y-%m-%d-%H-%M-%S-%N
+xxd -pu <<< "$(date +%z)"
+
+crystalTempdir=$(sed '4q;d' "$HOME"/config.txt)
+export crystalTempdir
+
+echo "Time (log stage 1) from http://timeapi.org/: "
+
+set +e
+wget --delete-after --warc-file="$crystalTempdir/$CrystalID.time-start" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z";
+set -e
+
+echo "Time (log stage 1b) locally:"
+
+date +%Y-%m-%d-%H-%M-%S-%N
+xxd -pu <<< "$(date +%z)"
+
+echo "Working in $crystalTempdir".
+
+echo "Arguments: " "$@"
+
+echo "Configuration: "
+
+cat "$HOME"/config.txt
+
+crystalTitle=$(sed '1q;d' "$HOME"/config.txt)
+export crystalTitle
+crystalCollection=$(sed '2q;d' "$HOME"/config.txt)
+export crystalCollection
+crystallisePassphrase=$(sed '3q;d' "$HOME"/config.txt)
+export crystallisePassphrase
+
+export CrystalID="$1"
+
+echo "Environment: "
+
+uname -ap
+
+echo "Environment variables: "
+
+printenv
+
+echo "Network environment: "
+
+echo "IP address from DNS: "
+
+dig +short myip.opendns.com @resolver1.opendns.com
+
+echo "IP address from http://icanhazip.com/: "
+
+set +e
+wget --delete-after --warc-file="$crystalTempdir/$CrystalID.ip" -e robots=off http://icanhazip.com/;
+set -e
+
+echo "Time (log stage 2) locally:"
+
+date +%Y-%m-%d-%H-%M-%S-%N
+xxd -pu <<< "$(date +%z)"
+
+echo "Time (log stage 2) from http://timeapi.org/: "
+
+set +e
+wget --delete-after --warc-file="$crystalTempdir/$CrystalID.time-env" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z";
+set -e
+
+echo "Time (log stage 2b) locally:"
+
+date +%Y-%m-%d-%H-%M-%S-%N
+xxd -pu <<< "$(date +%z)"
+
+echo "The crystal will have the following address when it is ready: $CrystalID"
+
+printf "%s" "$crystallisePassphrase" > "$crystalTempdir/$CrystalID".tmp
+
+CrystalliseFirstArg="$1"
+shift
+
+#Needed because readlink isn't available in OS X. From http://stackoverflow.com/questions/17577093/how-do-i-get-the-absolute-directory-of-a-file-in-bash
+function myreadlink() {
+  (
+  cd "$(dirname "$1")"         # or  cd ${1%/*}
+  echo "$PWD"/"$(basename "$1")" # or  echo $PWD/${1##*/}
+  )
+}
+
+export -f myreadlink
+
+#Resolve relative paths in the arguments, since GNU tar's -P doesn't
+CrystallisePaths=( "$@" )
+echo "First entry in array: $CrystallisePaths"
+for i in "${!CrystallisePaths[@]}"; do
+    #resolve path
+    echo "Trying to resolve ${CrystallisePaths[$i]}..."
+    abspath="$(myreadlink "${CrystallisePaths[$i]}")"
+    CrystallisePaths[$i]="$abspath"
+done
+
+echo "Building local index..."
+
+hashdeep -c md5,sha1,sha256,tiger,whirlpool -o fbsd "$crystalTempdir/""$CrystalliseFirstArg" "${CrystallisePaths[@]}" "$crystalTempdir/$CrystalID" | tee "$crystalTempdir/$CrystalID.local.idx"
+
+echo "Building deep index..."
+
+hashdeep -c md5,sha1,sha256,tiger,whirlpool -o fbsd -r "$crystalTempdir/""$CrystalliseFirstArg" "${CrystallisePaths[@]}" "$crystalTempdir/$CrystalID" | tee "$crystalTempdir/$CrystalID.deep.idx"
+
+#Ignore exit code 1 from tar on Linux, which indicates files changed while reading; see http://stackoverflow.com/questions/20318852/tar-file-changed-as-we-read-it
+set +e
+tar -cv -P --format pax -f "$crystalTempdir/$CrystalID.pax" "$crystalTempdir/""$CrystalliseFirstArg" "${CrystallisePaths[@]}" "$crystalTempdir/$CrystalID" "$crystalTempdir/$CrystalID.local.idx" "$crystalTempdir/$CrystalID.deep.idx" "$crystalTempdir/$CrystalID.tmp" "$crystalTempdir/$CrystalID.tmp" "$crystalTempdir/$CrystalID.time-start.warc.gz" "$crystalTempdir/$CrystalID.ip.warc.gz" "$crystalTempdir/$CrystalID.time-env.warc.gz"
+exitcode=$?
+
+if [ "$exitcode" != "0" ] && [[ $OSTYPE != *inux* ]]; then
+    exit $exitcode
+fi
+if [ "$exitcode" != "1" ] && [ "$exitcode" != "0" ]; then
+    exit $exitcode
+fi
+set -e
+
+echo "Successfully tared!"
+
+unset opt
+unset optb
+
+set +e
+#If GNU/Linux, set opt to 1 and unset optb; otherwise opposite
+[[ $OSTYPE = *inux* ]] && (( opt++ ))
+[[ $OSTYPE != *inux* ]] && (( optb++ ))
+set -e
+
+#If the opt(b) variable is unset, insert the text after "opt(b)+"
+#opt is for GNU/Linux; optb is for others
+script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallise-internal-xz ${opt+/dev/null}
+
+rm -v "$crystalTempdir/$CrystalID".pax
+
+gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalTempdir/$CrystalID".tmp "$crystalTempdir/$CrystalID".pax.xz
+
+rm -v "$crystalTempdir/$CrystalID".pax.xz
+
+mv "$crystalTempdir/$CrystalID".pax.xz.gpg "$crystalTempdir/$CrystalID".coal5
+
+echo "Computing checksum..."
+
+hashdeep -c md5,sha1,sha256 -o fbcpsde "$crystalTempdir/$CrystalID".coal5 | tee "$crystalTempdir/$CrystalID.checksums"
+
+echo "Sending..."
+
+script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallise-internal-ia ${opt+/dev/null}
+
+echo "Retrieving remote index..."
+
+wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" | tee "$crystalTempdir/$CrystalID.json"
+
+script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallise-internal-xz-b ${opt+/dev/null}
+
+echo "Copying indices..."
+
+rsync -av --progress --checksum "$crystalTempdir/$CrystalID.local.idx" "$crystalTempdir/$CrystalID.deep.idx" "$crystalTempdir/$CrystalID.checksums" "$crystalTempdir/$CrystalID.json.xz" /Ember\ Media\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/
+
+echo "rsynced..."
+
+#Clear the screen
+printf "\033c"
+
+#Delete everything except log
+echo "Cleaning up..."
+yes | rm -rv "${CrystallisePaths[@]}"
+echo "Done cleaning up..."
+
+echo "Time (log stage 3) locally:"
+
+date +%Y-%m-%d-%H-%M-%S-%N
+xxd -pu <<< "$(date +%z)"
+
+echo "Time (log stage 3) from http://timeapi.org/: "
+
+set +e
+wget --delete-after --warc-file="$crystalTempdir/$CrystalID.time-done" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z";
+set -e
+
+echo "Time (log stage 3b) locally:"
+
+date +%Y-%m-%d-%H-%M-%S-%N
+xxd -pu <<< "$(date +%z)"
+
+#Clear the screen
+printf "\033c"
+
+echo "Finishing $CrystalID..."
+
+echo "Please wait..."

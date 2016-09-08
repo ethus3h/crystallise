@@ -1,0 +1,70 @@
+#!/bin/bash
+# Crystallise
+
+#Script must be run as root.
+
+#Usage: crystallise-rescue
+
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+
+#Script should NOT exit if any operation fails.
+set +e
+
+CrystalID=CrystalliseUpdate-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")-$(python -c 'import uuid; print str(uuid.uuid4())')
+export CrystalID
+
+echo "Please wait until the script says \"Done rescuing!\"..."
+
+pip install --upgrade git+https://github.com/ethus3h/internetarchive
+
+ls -las /usr/bin
+touch /usr/bin/crystallise-rescue-tmp
+touch /usr/bin/crystallise-update-tmp
+
+cp -v /usr/bin/crystallise-update /usr/bin/crystallise-update.old.$CrystalID
+crystallise /usr/bin/crystallise /usr/bin/crystallise-logsession /usr/bin/crystallise-internal-xz /usr/bin/crystallise-internal-ia /usr/bin/crystallise-internal-xz-b /usr/bin/decrystallise /usr/bin/decrystallise-logsession /usr/bin/crystallise-rescue-tmp /usr/bin/crystallise-update-tmp /usr/bin/crystallise-update.old.$CrystalID
+echo "Please wait; still rescuing..."
+mkdir -v ~/$CrystalID.tmp
+cd ~/$CrystalID.tmp
+wget --no-cache https://raw.githubusercontent.com/ethus3h/ember/master/ember-satellite-projects/crystallise/crystallise
+wget --no-cache https://raw.githubusercontent.com/ethus3h/ember/master/ember-satellite-projects/crystallise/crystallise-update
+wget --no-cache https://raw.githubusercontent.com/ethus3h/ember/master/ember-satellite-projects/crystallise/crystallise-logsession
+wget --no-cache https://raw.githubusercontent.com/ethus3h/ember/master/ember-satellite-projects/crystallise/crystallise-internal-xz
+wget --no-cache https://raw.githubusercontent.com/ethus3h/ember/master/ember-satellite-projects/crystallise/crystallise-internal-ia
+wget --no-cache https://raw.githubusercontent.com/ethus3h/ember/master/ember-satellite-projects/crystallise/crystallise-internal-xz-b
+wget --no-cache https://raw.githubusercontent.com/ethus3h/ember/master/ember-satellite-projects/crystallise/decrystallise
+wget --no-cache https://raw.githubusercontent.com/ethus3h/ember/master/ember-satellite-projects/crystallise/decrystallise-logsession
+wget --no-cache https://raw.githubusercontent.com/ethus3h/ember/master/ember-satellite-projects/crystallise/quickliquid
+wget --no-cache https://raw.githubusercontent.com/ethus3h/ember/master/ember-satellite-projects/crystallise/dequicklify
+chmod +x ./*
+cp -v ./* /usr/bin/
+cd ~
+crystallise ~/$CrystalID.tmp
+echo "Please wait; still rescuing..."
+mkdir -v ~/$CrystalID.tmp
+cd ~/$CrystalID.tmp
+wget --no-cache https://raw.githubusercontent.com/ethus3h/ember/master/ember-satellite-projects/crystallise/crystallise-rescue
+chmod +x ./*
+
+# Spawn update script — based on http://dirty-motherfucker.org/blog/2012/02/26/self-updating-bash-script-revised/
+cat > /usr/bin/crystallise-rescue-tmp.sh << EOF
+#!/bin/bash
+# Overwrite old file with new
+if cp -v ./* /usr/bin/; then
+    cd ~
+
+    crystallise-update
+
+    #Clear the screen
+    printf "\033c"
+
+    echo "Done rescuing!"
+else
+    echo "Failed! This should generally not happen; please report it as a bug."
+fi
+EOF
+
+chmod +x /usr/bin/crystallise-rescue-tmp.sh
+
+echo -n "Inserting update process..."
+exec /bin/bash /usr/bin/crystallise-rescue-tmp.sh

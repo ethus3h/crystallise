@@ -1,0 +1,83 @@
+#!/bin/bash
+# decrystallise
+
+# See crystallise for requirements.
+
+#Usage: decrystallise <crystal-address> [--no-trim-extensions|--trim-extensions]
+
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+
+#Script should exit if any operation fails.
+set -e
+
+shopt -s extglob
+
+#Remove URL
+CrystalAddress="${1#https://archive.org/@(details|download)/}"
+#Remove trailing path(s) from identifier
+CrystalAddress="${CrystalAddress%%/*}"
+if [ "$2" != "--no-trim-extensions" ]; then
+    #Remove filename extensions
+    CrystalAddress="${CrystalAddress%\.coal5*}"
+fi
+
+if [ "$CrystalAddress" == "" ]; then
+    echo "Please specify a crystal address to unpack."
+    exit 1
+fi
+
+CrystalLogID=$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")-$(python -c 'import uuid; print str(uuid.uuid4())')
+export CrystalLogID
+
+crystalCollection=$(sed '2q;d' "$HOME"/config.txt)
+export crystalCollection
+
+crystalliseVersionA=$(sed '4q;d' /usr/bin/crystallise)
+crystalliseVersionB=${crystalliseVersionA%\'*}
+crystalliseVersion=${crystalliseVersionB##*\'}
+export crystalliseVersion
+
+decrystallise-logsession "$CrystalAddress" 2>&1 | tee -a "./$CrystalLogID"
+
+echo "Working..."
+#Script should not exit if an operation fails.
+set +e
+xz -C sha256 -v -9 -e "./$CrystalLogID.log"
+xz -C sha256 -v -9 -e -k "./$CrystalLogID.time-start.warc.gz"
+xz -C sha256 -v -9 -e -k "./$CrystalLogID.ip.warc.gz"
+xz -C sha256 -v -9 -e -k "./$CrystalLogID.time-env.warc.gz"
+xz -C sha256 -v -9 -e -k "./$CrystalLogID.time-end.warc.gz"
+rsync -av --progress --checksum "./$CrystalLogID".log.xz /Ember\ Media\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/"$CrystalLogID".log.xz
+gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "./$CrystalLogID".tmp "./$CrystalLogID.log.xz"
+gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "./$CrystalLogID".tmp "./$CrystalLogID.time-start.warc.gz.xz"
+gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "./$CrystalLogID".tmp "./$CrystalLogID.ip.warc.gz.xz"
+gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "./$CrystalLogID".tmp "./$CrystalLogID.time-env.warc.gz.xz"
+gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "./$CrystalLogID".tmp "./$CrystalLogID.time-end.warc.gz.xz"
+rm -v "./$CrystalLogID.tmp"
+mv -v "./$CrystalLogID.log.xz.gpg" "./$CrystalLogID.coal5-log"
+mv -v "./$CrystalLogID.time-start.warc.gz.xz.gpg" "./$CrystalLogID.coal5-ts"
+mv -v "./$CrystalLogID.ip.warc.gz.xz.gpg" "./$CrystalLogID.coal5-ip"
+mv -v "./$CrystalLogID.time-env.warc.gz.xz.gpg" "./$CrystalLogID.coal5-tenv"
+mv -v "./$CrystalLogID.time-end.warc.gz.xz.gpg" "./$CrystalLogID.coal5-tend"
+set -e
+ia upload "$CrystalLogID" --verify --retries=10 --metadata="subject:Uploaded using Decrystallise $crystalliseVersion" --metadata="subject:Decrystallise log" --metadata="subject:log" --metadata="subject:logs" --metadata="subject:1EA21BD8-DB7E-11E5-9733-728C37852114" --metadata="subject:$CrystalAddress" --metadata="collection:$crystalCollection" --delete "./$CrystalLogID.coal5-log" "./$CrystalLogID.coal5-ts" "./$CrystalLogID.coal5-ip" "./$CrystalLogID.coal5-tenv"
+ia upload "$CrystalLogID" --verify --retries=10 "./$CrystalLogID.coal5-tend"
+set +e
+mkdir -v "./$CrystalLogID.coal5-meta"
+mv -v "./$CrystalLogID."!(coal5-meta) "./$CrystalLogID.coal5-meta/"
+
+if rm -v "./$CrystalLogID.coal5-meta/$CrystalLogID.coal5-tend"; then
+
+    #Clear the screen
+    printf "\033c"
+
+    echo "Done! The crystal has been extracted to:"
+    echo "$(pwd)/$CrystalLogID"
+else
+
+    #Clear the screen
+    printf "\033c"
+
+    echo "Decrystallisation failed! This is bad!"
+    exit 1
+fi

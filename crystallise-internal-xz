@@ -1,0 +1,2 @@
+#!/bin/bash
+xz -k -C sha256 -T 0 --lzma2=preset=9 -v "$crystalTempdir/$CrystalID".pax

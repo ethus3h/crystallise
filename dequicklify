@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#Usage: dequicklify [--no-trim-extensions|--trim-extensions] <URL>
+
+shopt -s extglob
+
+#Remove URL
+CrystalAddress="${1#https://archive.org/@(details|download)/}"
+#Remove trailing path(s) from identifier
+CrystalAddress="${CrystalAddress%%/*}"
+if [ "$2" != "--no-trim-extensions" ]; then
+    #Remove filename extensions
+    CrystalAddress="${CrystalAddress%\.coal5*}"
+fi
+
+if [ "$CrystalAddress" == "" ]; then
+    echo "Please specify an item to retrieve."
+    exit 1
+fi
+
+dateNowLiquify="$(date +%Y-%m-%d-%H-%M-%S-%N)"
+
+mkdir "$CrystalAddress-dequicklified-$dateNowLiquify"
+cd "$CrystalAddress-dequicklified-$dateNowLiquify"
+wget --mirror --no-parent -e robots=off "https://archive.org/download/$CrystalAddress/";

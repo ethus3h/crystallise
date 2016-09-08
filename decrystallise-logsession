@@ -1,0 +1,134 @@
+#!/bin/bash
+
+# Do not run this script manually; use decrystallise instead.
+
+#Script should run as root.
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+
+#Script should exit if any operation fails.
+set -e
+
+echo "Time (decrystallise log stage 1) locally:"
+
+date +%Y-%m-%d-%H-%M-%S-%N
+xxd -pu <<< "$(date +%z)"
+
+echo "Time (decrystallise log stage 1) from http://timeapi.org/: "
+
+set +e
+wget --delete-after --warc-file="./$CrystalLogID.time-start" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z";
+set -e
+
+echo "Time (decrystallise log stage 1b) locally:"
+
+date +%Y-%m-%d-%H-%M-%S-%N
+xxd -pu <<< "$(date +%z)"
+
+echo "Arguments: " "$@"
+
+crystallisePassphrase=$(sed '3q;d' "$HOME"/config.txt)
+export crystallisePassphrase
+
+export CrystalID="$1"
+
+echo "Environment: "
+
+uname -ap
+
+echo "Environment variables: "
+
+printenv
+
+echo "Network environment: "
+
+echo "IP address from DNS: "
+
+dig +short myip.opendns.com @resolver1.opendns.com
+
+echo "IP address from http://icanhazip.com/: "
+
+set +e
+wget --delete-after --warc-file="./$CrystalLogID.ip" -e robots=off http://icanhazip.com/;
+set -e
+
+echo "Time (decrystallise log stage 2) locally:"
+
+date +%Y-%m-%d-%H-%M-%S-%N
+xxd -pu <<< "$(date +%z)"
+
+echo "Time (decrystallise log stage 2) from http://timeapi.org/: "
+
+set +e
+wget --delete-after --warc-file="./$CrystalLogID.time-env" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z";
+set -e
+
+echo "Time (decrystallise log stage 2b) locally:"
+
+date +%Y-%m-%d-%H-%M-%S-%N
+xxd -pu <<< "$(date +%z)"
+
+echo "Crystal address: $CrystalID"
+
+printf "%s" "$crystallisePassphrase" > "./$CrystalLogID.tmp"
+
+echo "Receiving..."
+
+wget -O "./$CrystalLogID.pax.xz.gpg" "https://archive.org/download/$CrystalID/$CrystalID.coal5"
+
+gpg --yes --batch --passphrase-file "./$CrystalLogID.tmp" "./$CrystalLogID.pax.xz.gpg"
+
+rm -v "./$CrystalLogID.pax.xz.gpg"
+
+unxz "./$CrystalLogID.pax.xz"
+
+mkdir -v "./$CrystalLogID.tmpd"
+
+mkdir -v "./$CrystalLogID.tmpd/$CrystalID"
+
+tar -xvf "./$CrystalLogID.pax" -C "./$CrystalLogID.tmpd/$CrystalID/"
+
+rm -v "./$CrystalLogID.pax"
+
+mv -v "./$CrystalLogID" "./$CrystalLogID.log"
+
+mv -v "./$CrystalLogID.tmpd/" "./$CrystalLogID"
+
+echo "Getting indices..."
+
+wget -O "./$CrystalLogID.local.idx.xz.gpg" "https://archive.org/download/$CrystalID/$CrystalID.coal5-idx-l"
+wget -O "./$CrystalLogID.deep.idx.xz.gpg" "https://archive.org/download/$CrystalID/$CrystalID.coal5-idx-d"
+
+gpg --yes --batch --passphrase-file "./$CrystalLogID.tmp" "./$CrystalLogID.local.idx.xz.gpg"
+gpg --yes --batch --passphrase-file "./$CrystalLogID.tmp" "./$CrystalLogID.deep.idx.xz.gpg"
+
+rm -v "./$CrystalLogID.local.idx.xz.gpg"
+rm -v "./$CrystalLogID.deep.idx.xz.gpg"
+
+unxz "./$CrystalLogID.local.idx.xz"
+unxz "./$CrystalLogID.deep.idx.xz"
+
+mv -v "./$CrystalLogID.local.idx" "./$CrystalLogID/$CrystalID.local.idx"
+mv -v "./$CrystalLogID.deep.idx" "./$CrystalLogID/$CrystalID.deep.idx"
+
+echo "Time (decrystallise log stage 3) locally:"
+
+date +%Y-%m-%d-%H-%M-%S-%N
+xxd -pu <<< "$(date +%z)"
+
+echo "Time (decrystallise log stage 3) from http://timeapi.org/: "
+
+set +e
+wget --delete-after --warc-file="./$CrystalLogID.time-end" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z";
+set -e
+
+echo "Time (decrystallise log stage 1b) locally:"
+
+date +%Y-%m-%d-%H-%M-%S-%N
+xxd -pu <<< "$(date +%z)"
+
+#Clear the screen
+printf "\033c"
+
+echo "Finishing $CrystalLogID..."
+
+echo "Please wait..."

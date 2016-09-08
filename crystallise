@@ -1,0 +1,69 @@
+#!/bin/bash
+# Crystallise
+# Version:
+export crystalliseVersion='2.13.5.25'
+
+# You need a file named config.txt in your home directory with a title, a collection identifier, a passphrase, and your desired directory to contain temporary files, each in its own line.
+
+#Requires ia (https://pypi.python.org/pypi/internetarchive) to be installed and to have been configured since being updated to version 1.0.2. Requires wget 1.14 or later and hashdeep. Currently only tested on OS X. Requires xz.
+
+#Script must be run as root.
+
+#Usage: crystallise <files>
+#The file(s) being crystallised must be within the current directory. The script tests for some simple cases of this, but not all of them.
+
+#TODO: Have decrystallise verify checksums. Verify that the coal5 file can correctly be expanded to the original files before (or while?) uploading, and before deleting input files. Add GNU/Linux support. Add folder support to quickliquid.
+
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+
+#Script should exit if any operation fails.
+set -e
+
+if [ "$1" == "" ] || [ "$1" == "." ] || [ "$1" == ".." ] || [ "$1" == "./" ] || [[ "$1" =~ ^../ ]]; then
+    echo "Please specify file(s) within the current directory to crystallise."
+    exit 1
+fi
+
+crystalTempdir=$(sed '4q;d' "$HOME"/config.txt)
+export crystalTempdir
+
+CrystalID=$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")-$(python -c 'import uuid; print str(uuid.uuid4())')
+export CrystalID
+
+crystallise-logsession "$CrystalID" "$@" 2>&1 | tee -a "$crystalTempdir/$CrystalID"
+
+echo "Working..."
+#Script should not exit if an operation fails.
+set +e
+xz -C sha256 -v -9 -e "$crystalTempdir/$CrystalID"
+xz -C sha256 -v -9 -e -k "$crystalTempdir/$CrystalID.time-done.warc.gz"
+xz -C sha256 -v -9 -e "$crystalTempdir/$CrystalID.local.idx"
+xz -C sha256 -v -9 -e "$crystalTempdir/$CrystalID.deep.idx"
+rsync -av --progress --checksum "$crystalTempdir/$CrystalID".xz /Ember\ Media\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/"$CrystalID".log.xz
+gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalTempdir/$CrystalID".tmp "$crystalTempdir/$CrystalID.xz"
+gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalTempdir/$CrystalID".tmp "$crystalTempdir/$CrystalID.time-done.warc.gz.xz"
+gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalTempdir/$CrystalID".tmp "$crystalTempdir/$CrystalID.local.idx.xz"
+gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalTempdir/$CrystalID".tmp "$crystalTempdir/$CrystalID.deep.idx.xz"
+rm -v "$crystalTempdir/$CrystalID.tmp"
+mv -v "$crystalTempdir/$CrystalID.xz.gpg" "$crystalTempdir/$CrystalID.coal5-log"
+mv -v "$crystalTempdir/$CrystalID.time-done.warc.gz.xz.gpg" "$crystalTempdir/$CrystalID.coal5-timestamp"
+mv -v "$crystalTempdir/$CrystalID.local.idx.xz.gpg" "$crystalTempdir/$CrystalID.coal5-idx-l"
+mv -v "$crystalTempdir/$CrystalID.deep.idx.xz.gpg" "$crystalTempdir/$CrystalID.coal5-idx-d"
+ia upload "$CrystalID" --retries=100 --verify --delete "$crystalTempdir/$CrystalID.coal5-log" "$crystalTempdir/$CrystalID.coal5-idx-l" "$crystalTempdir/$CrystalID.coal5-idx-d"
+ia upload "$CrystalID" --retries=100 --verify "$crystalTempdir/$CrystalID.coal5-timestamp"
+
+if rm -v "$crystalTempdir/$CrystalID.coal5-timestamp"; then
+
+    #Clear the screen
+    printf "\033c"
+
+    echo "Done! The new crystal's address is:"
+    echo "$CrystalID"
+else
+
+    #Clear the screen
+    printf "\033c"
+
+    echo "Crystallisation failed! This is bad!"
+    exit 1
+fi

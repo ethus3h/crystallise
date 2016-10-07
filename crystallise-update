@@ -26,16 +26,16 @@ crystallise /usr/bin/crystallise /usr/bin/crystallise-logsession /usr/bin/crysta
 echo "Please wait; still updating..."
 mkdir -v ~/$CrystalID.tmp
 cd ~/$CrystalID.tmp
-wget --no-cache https://raw.githubusercontent.com/ethus3h/ember/master/ember-satellite-projects/crystallise/crystallise
-wget --no-cache https://raw.githubusercontent.com/ethus3h/ember/master/ember-satellite-projects/crystallise/crystallise-rescue
-wget --no-cache https://raw.githubusercontent.com/ethus3h/ember/master/ember-satellite-projects/crystallise/crystallise-logsession
-wget --no-cache https://raw.githubusercontent.com/ethus3h/ember/master/ember-satellite-projects/crystallise/crystallise-internal-xz
-wget --no-cache https://raw.githubusercontent.com/ethus3h/ember/master/ember-satellite-projects/crystallise/crystallise-internal-ia
-wget --no-cache https://raw.githubusercontent.com/ethus3h/ember/master/ember-satellite-projects/crystallise/crystallise-internal-xz-b
-wget --no-cache https://raw.githubusercontent.com/ethus3h/ember/master/ember-satellite-projects/crystallise/decrystallise
-wget --no-cache https://raw.githubusercontent.com/ethus3h/ember/master/ember-satellite-projects/crystallise/decrystallise-logsession
-wget --no-cache https://raw.githubusercontent.com/ethus3h/ember/master/ember-satellite-projects/crystallise/quickliquid
-wget --no-cache https://raw.githubusercontent.com/ethus3h/ember/master/ember-satellite-projects/crystallise/dequicklify
+wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/crystallise
+wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/crystallise-rescue
+wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/crystallise-logsession
+wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/crystallise-internal-xz
+wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/crystallise-internal-ia
+wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/crystallise-internal-xz-b
+wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/decrystallise
+wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/decrystallise-logsession
+wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/quickliquid
+wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/dequicklify
 chmod +x ./*
 cp -v ./* /usr/bin/
 cd ~
@@ -43,7 +43,7 @@ crystallise ~/$CrystalID.tmp
 echo "Please wait; still updating..."
 mkdir -v ~/$CrystalID.tmp
 cd ~/$CrystalID.tmp
-wget --no-cache https://raw.githubusercontent.com/ethus3h/ember/master/ember-satellite-projects/crystallise/crystallise-update
+wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/crystallise-update
 chmod +x ./*
 
 # Spawn update script — based on http://dirty-motherfucker.org/blog/2012/02/26/self-updating-bash-script-revised/

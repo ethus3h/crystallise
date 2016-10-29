@@ -17,12 +17,12 @@ echo "Please wait until the script says \"Done updating!\"..."
 
 pip install --upgrade git+https://github.com/ethus3h/internetarchive
 
-ls -las /usr/bin
-touch /usr/bin/crystallise-rescue-tmp
-touch /usr/bin/crystallise-update-tmp
+ls -las /usr/local/bin
+touch /usr/local/bin/crystallise-rescue-tmp
+touch /usr/local/bin/crystallise-update-tmp
 
-cp -v /usr/bin/crystallise-update /usr/bin/crystallise-update.old.$CrystalID
-crystallise /usr/bin/crystallise /usr/bin/crystallise-logsession /usr/bin/crystallise-internal-xz /usr/bin/crystallise-internal-ia /usr/bin/crystallise-internal-xz-b /usr/bin/decrystallise /usr/bin/decrystallise-logsession /usr/bin/crystallise-rescue-tmp /usr/bin/crystallise-update-tmp /usr/bin/crystallise-update.old.$CrystalID
+cp -v /usr/local/bin/crystallise-update /usr/local/bin/crystallise-update.old.$CrystalID
+crystallise /usr/local/bin/crystallise /usr/local/bin/crystallise-logsession /usr/local/bin/crystallise-internal-xz /usr/local/bin/crystallise-internal-ia /usr/local/bin/crystallise-internal-xz-b /usr/local/bin/decrystallise /usr/local/bin/decrystallise-logsession /usr/local/bin/crystallise-rescue-tmp /usr/local/bin/crystallise-update-tmp /usr/local/bin/crystallise-update.old.$CrystalID
 echo "Please wait; still updating..."
 mkdir -v ~/$CrystalID.tmp
 cd ~/$CrystalID.tmp
@@ -37,7 +37,7 @@ wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/dec
 wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/quickliquid
 wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/dequicklify
 chmod +x ./*
-cp -v ./* /usr/bin/
+cp -v ./* /usr/local/bin/
 cd ~
 crystallise ~/$CrystalID.tmp
 echo "Please wait; still updating..."
@@ -47,10 +47,10 @@ wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/cry
 chmod +x ./*
 
 # Spawn update script — based on http://dirty-motherfucker.org/blog/2012/02/26/self-updating-bash-script-revised/
-cat > /usr/bin/crystallise-update-tmp.sh << EOF
+cat > /usr/local/bin/crystallise-update-tmp.sh << EOF
 #!/bin/bash
 # Overwrite old file with new
-if cp -v ./* /usr/bin/; then
+if cp -v ./* /usr/local/bin/; then
     cd ~
 
     #Clear the screen
@@ -62,7 +62,7 @@ else
 fi
 EOF
 
-chmod +x /usr/bin/crystallise-update-tmp.sh
+chmod +x /usr/local/bin/crystallise-update-tmp.sh
 
 echo -n "Inserting update process..."
-exec /bin/bash /usr/bin/crystallise-update-tmp.sh
+exec /bin/bash /usr/local/bin/crystallise-update-tmp.sh

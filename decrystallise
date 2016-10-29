@@ -32,7 +32,7 @@ export CrystalLogID
 crystalCollection=$(sed '2q;d' "$HOME"/config.txt)
 export crystalCollection
 
-crystalliseVersionA=$(sed '4q;d' /usr/bin/crystallise)
+crystalliseVersionA=$(sed '4q;d' /usr/local/bin/crystallise)
 crystalliseVersionB=${crystalliseVersionA%\'*}
 crystalliseVersion=${crystalliseVersionB##*\'}
 export crystalliseVersion

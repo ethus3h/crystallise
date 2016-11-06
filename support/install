@@ -16,30 +16,40 @@ if ! [ -n "$crystallizePrefix" ]; then
         crystallizePrefix="$crystallizeCapPrefix"
     fi
 fi
+echo "crystallizePrefix: $crystallizePrefix"
 if ! [ -n "$crystallizeExecPrefix" ]; then
     crystallizeExecPrefix="$crystallizePrefix"
 fi
+echo "crystallizeExecPrefix: $crystallizeExecPrefix"
 if ! [ -n "$crystallizeBindir" ]; then
     crystallizeBindir="$crystallizeExecPrefix"/bin
 fi
+echo "crystallizeBindir: $crystallizeBindir"
 if ! [ -n "$crystallizeDatarootdir" ]; then
     crystallizeDatarootdir="$crystallizePrefix"/share
 fi
+echo "crystallizeDatarootdir: $crystallizeDatarootdir"
 if ! [ -n "$crystallizeDatadir" ]; then
     crystallizeDatadir="$crystallizeDatarootdir"
 fi
+echo "crystallizeDatadir: $crystallizeDatadir"
 if ! [ -n "$crystallizeSysconfdir" ]; then
     crystallizeSysconfdir="$crystallizePrefix"/etc
 fi
+echo "crystallizeSysconfdir: $crystallizeSysconfdir"
 if ! [ -n "$crystallizeSharedstatedir" ]; then
     crystallizeSharedstatedir="$crystallizePrefix"/var
 fi
+echo "crystallizeSharedstatedir: $crystallizeSharedstatedir"
 export crystallizeBindir
 export crystallizeSharedstatedir
 export crystallizeSysconfdir
 crystallizeBindirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeBindir}))')"
+echo "crystallizeBindirEsc: $crystallizeBindirEsc"
 crystallizeSharedstatedirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeSharedstatedirEsc}))')"
+echo "crystallizeSharedstatedirEsc: $crystallizeSharedstatedirEsc"
 crystallizeSysconfdirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeSysconfdirEsc}))')"
+echo "crystallizeSysconfdirEsc: $crystallizeSysconfdirEsc"
 perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/decrystallize
 perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/quickliquid
 perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/crystallize-rescue

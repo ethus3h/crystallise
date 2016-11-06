@@ -41,21 +41,12 @@ if ! [ -n "$crystallizeSharedstatedir" ]; then
     crystallizeSharedstatedir="$crystallizePrefix"/var
 fi
 echo "crystallizeSharedstatedir: $crystallizeSharedstatedir"
-export crystallizeBindir
-export crystallizeSharedstatedir
-export crystallizeSysconfdir
-crystallizeBindirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeBindir}))')"
-echo "crystallizeBindirEsc: $crystallizeBindirEsc"
-crystallizeSharedstatedirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeSharedstatedir}))')"
-echo "crystallizeSharedstatedirEsc: $crystallizeSharedstatedirEsc"
-crystallizeSysconfdirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeSysconfdir}))')"
-echo "crystallizeSysconfdirEsc: $crystallizeSysconfdirEsc"
-perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/decrystallize
-perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/quickliquid
-perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/crystallize-rescue
-perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/crystallize-update
-perl -0777 -p -i -e "s/\/usr\/local\/etc/$crystallizeSysconfdirEsc/g" scripts/crystallize-getconf
-perl -0777 -p -i -e "s/\/usr\/local\/var/$crystallizeSharedstatedirEsc/g" support/crystallize.conf
+perl -0777 -p -i -e "s/\/usr\/local\/bin/\$(crystallize-getdir Bin)/g" scripts/decrystallize
+perl -0777 -p -i -e "s/\/usr\/local\/bin/\$(crystallize-getdir Bin)/g" scripts/quickliquid
+perl -0777 -p -i -e "s/\/usr\/local\/bin/\$(crystallize-getdir Bin)/g" scripts/crystallize-rescue
+perl -0777 -p -i -e "s/\/usr\/local\/bin/\$(crystallize-getdir Bin)/g" scripts/crystallize-update
+perl -0777 -p -i -e "s/\/usr\/local\/etc/\$(crystallize-getdir Sysconf)/g" scripts/crystallize-getconf
+perl -0777 -p -i -e "s/\/usr\/local\/var/\$(crystallize-getdir Sharedstate)/g" support/crystallize.conf
 mkdir -p "$crystallizeBindir"
 chmod +x scripts/*
 cp scripts/* "$crystallizeBindir"

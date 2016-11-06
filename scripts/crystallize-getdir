@@ -1,0 +1,27 @@
+#!/bin/bash
+
+bin="$(dirname "$(readlink -f "$0")")"
+prefix="$(dirname "$bin")"
+prefix="$(dirname "$prefix")"
+crystallizeDestdir="$1"
+crystallizePrefix="$2"
+crystallizeCapPrefix="$3"
+crystallizeExecPrefix="$4"
+crystallizeBindir="$5"
+crystallizeDatarootdir="$6"
+crystallizeDatadir="$7"
+crystallizeSysconfdir="$8"
+crystallizeSharedstatedir="$9"
+case $1 in
+    Bin)
+        echo "$bin"
+        ;;
+    Sysconf)
+        echo 
+        ;;
+    Sharedstate)
+        echo 
+        ;;
+    *)
+        exit 1
+esac

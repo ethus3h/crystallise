@@ -22,6 +22,7 @@ fi
 
 crystalWorkdir=$(crystallise-getconf 'WorkDirectory')
 export crystalWorkdir
+mkdir -p "$crystalWorkdir"
 
 CrystalID=$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")-$(python -c 'import uuid; print str(uuid.uuid4())')
 export CrystalID

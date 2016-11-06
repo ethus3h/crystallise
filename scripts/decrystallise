@@ -29,7 +29,7 @@ fi
 CrystalLogID=$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")-$(python -c 'import uuid; print str(uuid.uuid4())')
 export CrystalLogID
 
-crystalCollection=$(sed '2q;d' "$HOME"/config.txt)
+crystalCollection=$(crystallise-getconf 'Collection')
 export crystalCollection
 
 crystalliseVersionA=$(sed '4q;d' /usr/local/bin/crystallise)

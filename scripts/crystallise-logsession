@@ -15,7 +15,7 @@ echo "Time (log stage 1) locally:"
 date +%Y-%m-%d-%H-%M-%S-%N
 xxd -pu <<< "$(date +%z)"
 
-crystalWorkdir=$(sed '4q;d' "$HOME"/config.txt)
+crystalWorkdir=$(crystallise-getconf 'WorkDirectory')
 export crystalWorkdir
 
 echo "Time (log stage 1) from http://timeapi.org/: "
@@ -37,11 +37,11 @@ echo "Configuration: "
 
 cat "$HOME"/config.txt
 
-crystalTitle=$(sed '1q;d' "$HOME"/config.txt)
+crystalTitle=$(crystallise-getconf 'InstallationIdentifier')
 export crystalTitle
-crystalCollection=$(sed '2q;d' "$HOME"/config.txt)
+crystalCollection=$(crystallise-getconf 'Collection')
 export crystalCollection
-crystallisePassphrase=$(sed '3q;d' "$HOME"/config.txt)
+crystallisePassphrase=$(crystallise-getconf 'Passphrase')
 export crystallisePassphrase
 
 export CrystalID="$1"

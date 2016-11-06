@@ -26,7 +26,7 @@ xxd -pu <<< "$(date +%z)"
 
 echo "Arguments: " "$@"
 
-crystallisePassphrase=$(sed '3q;d' "$HOME"/config.txt)
+crystallisePassphrase=$(crystallise-getconf 'Passphrase')
 export crystallisePassphrase
 
 export CrystalID="$1"

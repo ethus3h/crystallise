@@ -8,6 +8,11 @@ export crystalliseVersion='2.14'
 #Script should exit if any operation fails.
 set -e
 
+if [ "$1" == "" ] || [ "$1" == "." ] || [ "$1" == ".." ] || [ "$1" == "./" ] || [[ "$1" =~ ^../ ]]; then
+    echo "Please specify file(s) within the current directory to crystallise when using relative path names."
+    exit 1
+fi
+
 #Remove first argument if it's the end-of-options delimiter
 if [ "$1" == "--" ]; then
     shift

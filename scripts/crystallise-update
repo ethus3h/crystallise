@@ -26,16 +26,16 @@ crystallise /usr/local/bin/crystallise /usr/local/bin/crystallise-logsession /us
 echo "Please wait; still updating..."
 mkdir -v ~/$CrystalID.tmp
 cd ~/$CrystalID.tmp
-wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/crystallise
-wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/crystallise-rescue
-wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/crystallise-logsession
-wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/crystallise-internal-xz
-wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/crystallise-internal-ia
-wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/crystallise-internal-xz-b
-wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/decrystallise
-wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/decrystallise-logsession
-wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/quickliquid
-wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/dequicklify
+wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/scripts/crystallise
+wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/scripts/crystallise-rescue
+wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/scripts/crystallise-logsession
+wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/scripts/crystallise-internal-xz
+wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/scripts/crystallise-internal-ia
+wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/scripts/crystallise-internal-xz-b
+wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/scripts/decrystallise
+wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/scripts/decrystallise-logsession
+wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/scripts/quickliquid
+wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/scripts/dequicklify
 chmod +x ./*
 cp -v ./* /usr/local/bin/
 cd ~
@@ -43,7 +43,7 @@ crystallise ~/$CrystalID.tmp
 echo "Please wait; still updating..."
 mkdir -v ~/$CrystalID.tmp
 cd ~/$CrystalID.tmp
-wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/crystallise-update
+wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallise/master/scripts/crystallise-update
 chmod +x ./*
 
 # Spawn update script — based on http://dirty-motherfucker.org/blog/2012/02/26/self-updating-bash-script-revised/

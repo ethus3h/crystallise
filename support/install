@@ -46,9 +46,9 @@ export crystallizeSharedstatedir
 export crystallizeSysconfdir
 crystallizeBindirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeBindir}))')"
 echo "crystallizeBindirEsc: $crystallizeBindirEsc"
-crystallizeSharedstatedirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeSharedstatedirEsc}))')"
+crystallizeSharedstatedirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeSharedstatedir}))')"
 echo "crystallizeSharedstatedirEsc: $crystallizeSharedstatedirEsc"
-crystallizeSysconfdirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeSysconfdirEsc}))')"
+crystallizeSysconfdirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeSysconfdir}))')"
 echo "crystallizeSysconfdirEsc: $crystallizeSysconfdirEsc"
 perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/decrystallize
 perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/quickliquid

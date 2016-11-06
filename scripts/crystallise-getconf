@@ -1,4 +1,0 @@
-#!/bin/bash
-
-line="$(grep -n ^"$1", /usr/local/etc/crystallise.conf | cut -f1 -d: | tail -1)"
-echo -n "$(sed \""$line"q;d\" /usr/local/etc/crystallise.conf | cut -f1 -d,)"

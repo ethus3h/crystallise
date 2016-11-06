@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Do not run this script manually; use crystallise instead.
+# Do not run this script manually; use crystallize instead.
 
 #Script should run as root.
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
@@ -15,7 +15,7 @@ echo "Time (log stage 1) locally:"
 date +%Y-%m-%d-%H-%M-%S-%N
 xxd -pu <<< "$(date +%z)"
 
-crystalWorkdir=$(crystallise-getconf 'WorkDirectory')
+crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
 export crystalWorkdir
 
 echo "Time (log stage 1) from http://timeapi.org/: "
@@ -37,12 +37,12 @@ echo "Configuration: "
 
 cat "$HOME"/config.txt
 
-crystalTitle=$(crystallise-getconf 'InstallationIdentifier')
+crystalTitle=$(crystallize-getconf 'InstallationIdentifier')
 export crystalTitle
-crystalCollection=$(crystallise-getconf 'Collection')
+crystalCollection=$(crystallize-getconf 'Collection')
 export crystalCollection
-crystallisePassphrase=$(crystallise-getconf 'Passphrase')
-export crystallisePassphrase
+crystallizePassphrase=$(crystallize-getconf 'Passphrase')
+export crystallizePassphrase
 
 export CrystalID="$1"
 
@@ -84,9 +84,9 @@ xxd -pu <<< "$(date +%z)"
 
 echo "The crystal will have the following address when it is ready: $CrystalID"
 
-printf "%s" "$crystallisePassphrase" > "$crystalWorkdir/$CrystalID".tmp
+printf "%s" "$crystallizePassphrase" > "$crystalWorkdir/$CrystalID".tmp
 
-CrystalliseFirstArg="$1"
+CrystallizeFirstArg="$1"
 shift
 
 #Needed because readlink isn't available in OS X. From http://stackoverflow.com/questions/17577093/how-do-i-get-the-absolute-directory-of-a-file-in-bash
@@ -100,26 +100,26 @@ function myreadlink() {
 export -f myreadlink
 
 #Resolve relative paths in the arguments, since GNU tar's -P doesn't
-CrystallisePaths=( "$@" )
-echo "First entry in array: $CrystallisePaths"
-for i in "${!CrystallisePaths[@]}"; do
+CrystallizePaths=( "$@" )
+echo "First entry in array: $CrystallizePaths"
+for i in "${!CrystallizePaths[@]}"; do
     #resolve path
-    echo "Trying to resolve ${CrystallisePaths[$i]}..."
-    abspath="$(myreadlink "${CrystallisePaths[$i]}")"
-    CrystallisePaths[$i]="$abspath"
+    echo "Trying to resolve ${CrystallizePaths[$i]}..."
+    abspath="$(myreadlink "${CrystallizePaths[$i]}")"
+    CrystallizePaths[$i]="$abspath"
 done
 
 echo "Building local index..."
 
-hashdeep -c md5,sha1,sha256,tiger,whirlpool -o fbsd "$crystalWorkdir/""$CrystalliseFirstArg" "${CrystallisePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.local.idx"
+hashdeep -c md5,sha1,sha256,tiger,whirlpool -o fbsd "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.local.idx"
 
 echo "Building deep index..."
 
-hashdeep -c md5,sha1,sha256,tiger,whirlpool -o fbsd -r "$crystalWorkdir/""$CrystalliseFirstArg" "${CrystallisePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.deep.idx"
+hashdeep -c md5,sha1,sha256,tiger,whirlpool -o fbsd -r "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.deep.idx"
 
 #Ignore exit code 1 from tar on Linux, which indicates files changed while reading; see http://stackoverflow.com/questions/20318852/tar-file-changed-as-we-read-it
 set +e
-tar -cv -P --format pax -f "$crystalWorkdir/$CrystalID.pax" "$crystalWorkdir/""$CrystalliseFirstArg" "${CrystallisePaths[@]}" "$crystalWorkdir/$CrystalID" "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.time-env.warc.gz"
+tar -cv -P --format pax -f "$crystalWorkdir/$CrystalID.pax" "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.time-env.warc.gz"
 exitcode=$?
 
 if [ "$exitcode" != "0" ] && [[ $OSTYPE != *inux* ]]; then
@@ -143,7 +143,7 @@ set -e
 
 #If the opt(b) variable is unset, insert the text after "opt(b)+"
 #opt is for GNU/Linux; optb is for others
-script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallise-internal-xz ${opt+/dev/null}
+script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-xz ${opt+/dev/null}
 
 rm -v "$crystalWorkdir/$CrystalID".pax
 
@@ -159,13 +159,13 @@ hashdeep -c md5,sha1,sha256 -o fbcpsde "$crystalWorkdir/$CrystalID".coal5 | tee 
 
 echo "Sending..."
 
-script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallise-internal-ia ${opt+/dev/null}
+script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/null}
 
 echo "Retrieving remote index..."
 
 wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" | tee "$crystalWorkdir/$CrystalID.json"
 
-script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallise-internal-xz-b ${opt+/dev/null}
+script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-xz-b ${opt+/dev/null}
 
 echo "Copying indices..."
 
@@ -178,7 +178,7 @@ printf "\033c"
 
 #Delete everything except log
 echo "Cleaning up..."
-yes | rm -rv "${CrystallisePaths[@]}"
+yes | rm -rv "${CrystallizePaths[@]}"
 echo "Done cleaning up..."
 
 echo "Time (log stage 3) locally:"

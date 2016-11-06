@@ -1,3 +1,0 @@
-#!/bin/bash
-set -e
-ia upload "$CrystalID" --verify --retries=100 --metadata="subject:Uploaded using Crystallise $crystalliseVersion" --metadata="subject:1EA21BD8-DB7E-11E5-9733-728C37852114" --metadata=subject:"$crystalTitle" --metadata=subject:"$CrystalID" --metadata="collection:$crystalCollection" --delete "$crystalWorkdir/$CrystalID".coal5

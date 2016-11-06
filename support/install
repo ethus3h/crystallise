@@ -1,52 +1,52 @@
 #!/bin/bash
-crystalliseDestdir="$1"
-crystallisePrefix="$2"
-crystalliseCapPrefix="$3"
-crystalliseExecPrefix="$4"
-crystalliseBindir="$5"
-crystalliseDatarootdir="$6"
-crystalliseDatadir="$7"
-crystalliseSysconfdir="$8"
-crystalliseSharedstatedir="$9"
-if ! [ -n "$crystallisePrefix" ]; then
-    if ! [ -n "$crystalliseCapPrefix" ]; then
-        crystallisePrefix="$crystalliseDestdir"/usr/local
+crystallizeDestdir="$1"
+crystallizePrefix="$2"
+crystallizeCapPrefix="$3"
+crystallizeExecPrefix="$4"
+crystallizeBindir="$5"
+crystallizeDatarootdir="$6"
+crystallizeDatadir="$7"
+crystallizeSysconfdir="$8"
+crystallizeSharedstatedir="$9"
+if ! [ -n "$crystallizePrefix" ]; then
+    if ! [ -n "$crystallizeCapPrefix" ]; then
+        crystallizePrefix="$crystallizeDestdir"/usr/local
     else
-        crystallisePrefix="$crystalliseCapPrefix"
+        crystallizePrefix="$crystallizeCapPrefix"
     fi
 fi
-if ! [ -n "$crystalliseExecPrefix" ]; then
-    crystalliseExecPrefix="$crystallisePrefix"
+if ! [ -n "$crystallizeExecPrefix" ]; then
+    crystallizeExecPrefix="$crystallizePrefix"
 fi
-if ! [ -n "$crystalliseBindir" ]; then
-    crystalliseBindir="$crystalliseExecPrefix"/bin
+if ! [ -n "$crystallizeBindir" ]; then
+    crystallizeBindir="$crystallizeExecPrefix"/bin
 fi
-if ! [ -n "$crystalliseDatarootdir" ]; then
-    crystalliseDatarootdir="$crystallisePrefix"/share
+if ! [ -n "$crystallizeDatarootdir" ]; then
+    crystallizeDatarootdir="$crystallizePrefix"/share
 fi
-if ! [ -n "$crystalliseDatadir" ]; then
-    crystalliseDatadir="$crystalliseDatarootdir"
+if ! [ -n "$crystallizeDatadir" ]; then
+    crystallizeDatadir="$crystallizeDatarootdir"
 fi
-if ! [ -n "$crystalliseSysconfdir" ]; then
-    crystalliseSysconfdir="$crystallisePrefix"/etc
+if ! [ -n "$crystallizeSysconfdir" ]; then
+    crystallizeSysconfdir="$crystallizePrefix"/etc
 fi
-if ! [ -n "$crystalliseSharedstatedir" ]; then
-    crystalliseSharedstatedir="$crystallisePrefix"/var
+if ! [ -n "$crystallizeSharedstatedir" ]; then
+    crystallizeSharedstatedir="$crystallizePrefix"/var
 fi
-export crystalliseBindir
-export crystalliseSharedstatedir
-export crystalliseSysconfdir
-crystalliseBindirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystalliseBindir}))')"
-crystalliseSharedstatedirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystalliseSharedstatedirEsc}))')"
-crystalliseSysconfdirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystalliseSysconfdirEsc}))')"
-perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystalliseBindirEsc/g" scripts/decrystallise
-perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystalliseBindirEsc/g" scripts/quickliquid
-perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystalliseBindirEsc/g" scripts/crystallise-rescue
-perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystalliseBindirEsc/g" scripts/crystallise-update
-perl -0777 -p -i -e "s/\/usr\/local\/etc/$crystalliseSysconfdirEsc/g" scripts/crystallise-getconf
-perl -0777 -p -i -e "s/\/usr\/local\/var/$crystalliseSharedstatedirEsc/g" support/crystallise.conf
-mkdir -p "$crystalliseBindir"
+export crystallizeBindir
+export crystallizeSharedstatedir
+export crystallizeSysconfdir
+crystallizeBindirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeBindir}))')"
+crystallizeSharedstatedirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeSharedstatedirEsc}))')"
+crystallizeSysconfdirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeSysconfdirEsc}))')"
+perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/decrystallize
+perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/quickliquid
+perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/crystallize-rescue
+perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/crystallize-update
+perl -0777 -p -i -e "s/\/usr\/local\/etc/$crystallizeSysconfdirEsc/g" scripts/crystallize-getconf
+perl -0777 -p -i -e "s/\/usr\/local\/var/$crystallizeSharedstatedirEsc/g" support/crystallize.conf
+mkdir -p "$crystallizeBindir"
 chmod +x scripts/*
-cp scripts/* "$crystalliseBindir"
-cp support/crystallise.conf "$crystalliseSysconfdir"
-mkdir -p "$crystalliseSharedstatedir"/crystallise
+cp scripts/* "$crystallizeBindir"
+cp support/crystallize.conf "$crystallizeSysconfdir"
+mkdir -p "$crystallizeSharedstatedir"/crystallize

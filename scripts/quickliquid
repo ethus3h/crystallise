@@ -4,12 +4,12 @@
 
 IUIDENTIFIER="Liquid-"$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")-$(python -c 'import uuid; print str(uuid.uuid4())')
 
-crystalliseVersionA=$(sed '4q;d' /usr/local/bin/crystallise)
-crystalliseVersionB=${crystalliseVersionA%\'*}
-crystalliseVersion=${crystalliseVersionB##*\'}
+crystallizeVersionA=$(sed '4q;d' /usr/local/bin/crystallize)
+crystallizeVersionB=${crystallizeVersionA%\'*}
+crystallizeVersion=${crystallizeVersionB##*\'}
 
-crystalTitle=$(crystallise-getconf 'InstallationIdentifier')
+crystalTitle=$(crystallize-getconf 'InstallationIdentifier')
 
-ia upload "$IUIDENTIFIER" --verify --metadata="subject:Uploaded using quickliquid for Crystallise $crystalliseVersion" --metadata="subject:9F227910-A541-11E5-8BD3-7B584224FF49" --metadata="subject:$crystalTitle" "$@"
+ia upload "$IUIDENTIFIER" --verify --metadata="subject:Uploaded using quickliquid for Crystallize $crystallizeVersion" --metadata="subject:9F227910-A541-11E5-8BD3-7B584224FF49" --metadata="subject:$crystalTitle" "$@"
 
 echo "https://archive.org/download/$IUIDENTIFIER/"

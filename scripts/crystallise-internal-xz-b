@@ -1,2 +1,2 @@
 #!/bin/bash
-xz -C sha256 -9 -e -v "$crystalTempdir/$CrystalID".json
+xz -C sha256 -9 -e -v "$crystalWorkdir/$CrystalID".json

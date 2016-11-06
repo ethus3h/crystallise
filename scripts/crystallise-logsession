@@ -15,13 +15,13 @@ echo "Time (log stage 1) locally:"
 date +%Y-%m-%d-%H-%M-%S-%N
 xxd -pu <<< "$(date +%z)"
 
-crystalTempdir=$(sed '4q;d' "$HOME"/config.txt)
-export crystalTempdir
+crystalWorkdir=$(sed '4q;d' "$HOME"/config.txt)
+export crystalWorkdir
 
 echo "Time (log stage 1) from http://timeapi.org/: "
 
 set +e
-wget --delete-after --warc-file="$crystalTempdir/$CrystalID.time-start" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z";
+wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-start" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z";
 set -e
 
 echo "Time (log stage 1b) locally:"
@@ -29,7 +29,7 @@ echo "Time (log stage 1b) locally:"
 date +%Y-%m-%d-%H-%M-%S-%N
 xxd -pu <<< "$(date +%z)"
 
-echo "Working in $crystalTempdir".
+echo "Working in $crystalWorkdir".
 
 echo "Arguments: " "$@"
 
@@ -63,7 +63,7 @@ dig +short myip.opendns.com @resolver1.opendns.com
 echo "IP address from http://icanhazip.com/: "
 
 set +e
-wget --delete-after --warc-file="$crystalTempdir/$CrystalID.ip" -e robots=off http://icanhazip.com/;
+wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.ip" -e robots=off http://icanhazip.com/;
 set -e
 
 echo "Time (log stage 2) locally:"
@@ -74,7 +74,7 @@ xxd -pu <<< "$(date +%z)"
 echo "Time (log stage 2) from http://timeapi.org/: "
 
 set +e
-wget --delete-after --warc-file="$crystalTempdir/$CrystalID.time-env" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z";
+wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-env" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z";
 set -e
 
 echo "Time (log stage 2b) locally:"
@@ -84,7 +84,7 @@ xxd -pu <<< "$(date +%z)"
 
 echo "The crystal will have the following address when it is ready: $CrystalID"
 
-printf "%s" "$crystallisePassphrase" > "$crystalTempdir/$CrystalID".tmp
+printf "%s" "$crystallisePassphrase" > "$crystalWorkdir/$CrystalID".tmp
 
 CrystalliseFirstArg="$1"
 shift
@@ -111,15 +111,15 @@ done
 
 echo "Building local index..."
 
-hashdeep -c md5,sha1,sha256,tiger,whirlpool -o fbsd "$crystalTempdir/""$CrystalliseFirstArg" "${CrystallisePaths[@]}" "$crystalTempdir/$CrystalID" | tee "$crystalTempdir/$CrystalID.local.idx"
+hashdeep -c md5,sha1,sha256,tiger,whirlpool -o fbsd "$crystalWorkdir/""$CrystalliseFirstArg" "${CrystallisePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.local.idx"
 
 echo "Building deep index..."
 
-hashdeep -c md5,sha1,sha256,tiger,whirlpool -o fbsd -r "$crystalTempdir/""$CrystalliseFirstArg" "${CrystallisePaths[@]}" "$crystalTempdir/$CrystalID" | tee "$crystalTempdir/$CrystalID.deep.idx"
+hashdeep -c md5,sha1,sha256,tiger,whirlpool -o fbsd -r "$crystalWorkdir/""$CrystalliseFirstArg" "${CrystallisePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.deep.idx"
 
 #Ignore exit code 1 from tar on Linux, which indicates files changed while reading; see http://stackoverflow.com/questions/20318852/tar-file-changed-as-we-read-it
 set +e
-tar -cv -P --format pax -f "$crystalTempdir/$CrystalID.pax" "$crystalTempdir/""$CrystalliseFirstArg" "${CrystallisePaths[@]}" "$crystalTempdir/$CrystalID" "$crystalTempdir/$CrystalID.local.idx" "$crystalTempdir/$CrystalID.deep.idx" "$crystalTempdir/$CrystalID.tmp" "$crystalTempdir/$CrystalID.tmp" "$crystalTempdir/$CrystalID.time-start.warc.gz" "$crystalTempdir/$CrystalID.ip.warc.gz" "$crystalTempdir/$CrystalID.time-env.warc.gz"
+tar -cv -P --format pax -f "$crystalWorkdir/$CrystalID.pax" "$crystalWorkdir/""$CrystalliseFirstArg" "${CrystallisePaths[@]}" "$crystalWorkdir/$CrystalID" "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.time-env.warc.gz"
 exitcode=$?
 
 if [ "$exitcode" != "0" ] && [[ $OSTYPE != *inux* ]]; then
@@ -145,17 +145,17 @@ set -e
 #opt is for GNU/Linux; optb is for others
 script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallise-internal-xz ${opt+/dev/null}
 
-rm -v "$crystalTempdir/$CrystalID".pax
+rm -v "$crystalWorkdir/$CrystalID".pax
 
-gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalTempdir/$CrystalID".tmp "$crystalTempdir/$CrystalID".pax.xz
+gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID".pax.xz
 
-rm -v "$crystalTempdir/$CrystalID".pax.xz
+rm -v "$crystalWorkdir/$CrystalID".pax.xz
 
-mv "$crystalTempdir/$CrystalID".pax.xz.gpg "$crystalTempdir/$CrystalID".coal5
+mv "$crystalWorkdir/$CrystalID".pax.xz.gpg "$crystalWorkdir/$CrystalID".coal5
 
 echo "Computing checksum..."
 
-hashdeep -c md5,sha1,sha256 -o fbcpsde "$crystalTempdir/$CrystalID".coal5 | tee "$crystalTempdir/$CrystalID.checksums"
+hashdeep -c md5,sha1,sha256 -o fbcpsde "$crystalWorkdir/$CrystalID".coal5 | tee "$crystalWorkdir/$CrystalID.checksums"
 
 echo "Sending..."
 
@@ -163,13 +163,13 @@ script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallise-internal-ia ${opt+/dev/
 
 echo "Retrieving remote index..."
 
-wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" | tee "$crystalTempdir/$CrystalID.json"
+wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" | tee "$crystalWorkdir/$CrystalID.json"
 
 script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallise-internal-xz-b ${opt+/dev/null}
 
 echo "Copying indices..."
 
-rsync -av --progress --checksum "$crystalTempdir/$CrystalID.local.idx" "$crystalTempdir/$CrystalID.deep.idx" "$crystalTempdir/$CrystalID.checksums" "$crystalTempdir/$CrystalID.json.xz" /Ember\ Media\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/
+rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.checksums" "$crystalWorkdir/$CrystalID.json.xz" /Ember\ Media\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/
 
 echo "rsynced..."
 
@@ -189,7 +189,7 @@ xxd -pu <<< "$(date +%z)"
 echo "Time (log stage 3) from http://timeapi.org/: "
 
 set +e
-wget --delete-after --warc-file="$crystalTempdir/$CrystalID.time-done" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z";
+wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-done" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z";
 set -e
 
 echo "Time (log stage 3b) locally:"

@@ -3,15 +3,6 @@
 # Version:
 export crystalliseVersion='2.13.7'
 
-# You need a file named config.txt in your home directory with a title, a collection identifier, a passphrase, and your desired directory to contain temporary files, each in its own line.
-
-#Requires ia (https://pypi.python.org/pypi/internetarchive) to be installed and to have been configured since being updated to version 1.0.2. Requires wget 1.14 or later and hashdeep. Currently only tested on OS X. Requires xz.
-
-#Script must be run as root.
-
-#Usage: crystallise <files>
-#The file(s) being crystallised must be within the current directory. The script tests for some simple cases of this, but not all of them.
-
 #TODO: Have decrystallise verify checksums. Verify that the coal5 file can correctly be expanded to the original files before (or while?) uploading, and before deleting input files. Add GNU/Linux support. Add folder support to quickliquid.
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"

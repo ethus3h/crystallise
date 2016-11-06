@@ -163,19 +163,3 @@ index a993087..562ccae 100644
  
      def upload(self, files,
                 metadata=None,
-diff --git a/setup.py b/setup.py
-index de27e2a..e35d163 100644
---- a/setup.py
-+++ b/setup.py
-@@ -19,9 +19,9 @@
- setup(
-     name='internetarchive',
-     version=version,
--    url='https://github.com/jjjake/internetarchive',
-+    url='https://github.com/ethus3h/internetarchive',
-     license='AGPL 3',
--    author='Jacob M. Johnson',
-+    author='Jacob M. Johnson; ethus3h',
-     author_email='jake@archive.org',
-     description='A python interface to archive.org.',
-     long_description=readme,

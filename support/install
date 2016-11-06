@@ -1,0 +1,36 @@
+#!/bin/bash
+crystalliseDestdir="$1"
+crystallisePrefix="$2"
+crystalliseCapPrefix="$3"
+crystalliseExecPrefix="$4"
+crystalliseBindir="$5"
+crystalliseDatarootdir="$6"
+crystalliseDatadir="$7"
+if ! [ -n "$crystallisePrefix" ]; then
+    if ! [ -n "$crystalliseCapPrefix" ]; then
+        crystallisePrefix="$crystalliseDestdir"/usr/local
+    else
+        crystallisePrefix="$crystalliseCapPrefix"
+    fi
+fi
+if ! [ -n "$crystalliseExecPrefix" ]; then
+    crystalliseExecPrefix="$crystallisePrefix"
+fi
+if ! [ -n "$crystalliseBindir" ]; then
+    crystalliseBindir="$crystalliseExecPrefix"/bin
+fi
+if ! [ -n "$crystalliseDatarootdir" ]; then
+    crystalliseDatarootdir="$crystallisePrefix"/share
+fi
+if ! [ -n "$crystalliseDatadir" ]; then
+    crystalliseDatadir="$crystalliseDatarootdir"
+fi
+export crystalliseBindir
+crystalliseBindirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystalliseBindir}))')"
+perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystalliseBindirEsc/g" scripts/decrystallise
+perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystalliseBindirEsc/g" scripts/quickliquid
+perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystalliseBindirEsc/g" scripts/crystallise-rescue
+perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystalliseBindirEsc/g" scripts/crystallise-update
+mkdir -p "$crystalliseBindir"
+chmod +x scripts/*
+cp scripts/* "$crystalliseBindir"

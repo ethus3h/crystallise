@@ -10,7 +10,7 @@ crystallizeDatadir="$7"
 crystallizeSysconfdir="$8"
 crystallizeSharedstatedir="$9"
 export crystallizeDestdir
-perl -0777 -p -i -e "s/=\/crystallizeDestdir/=print(quotemeta($ENV{crystallizeDestdir}))/g" scripts/crystallize-getdir
+perl -0777 -p -i -e "s/=\/crystallizeDestdir/print("=\""+quotemeta($ENV{crystallizeDestdir}))/g" scripts/crystallize-getdir
 if ! [ -n "$crystallizePrefix" ]; then
     if ! [ -n "$crystallizeCapPrefix" ]; then
         crystallizePrefix="$crystallizeDestdir"/usr/local

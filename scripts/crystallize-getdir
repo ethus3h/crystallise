@@ -12,6 +12,8 @@ crystallizeDatarootdir=/crystallizeDatarootdir
 crystallizeDatadir=/crystallizeDatadir
 crystallizeSysconfdir=/crystallizeSysconfdir
 crystallizeSharedstatedir=/crystallizeSharedstatedir
+if ! [[ "$bin" =~ "$prefix" ]]; then
+
 case $1 in
     Bin)
         echo "$bin"

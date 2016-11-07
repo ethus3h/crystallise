@@ -9,8 +9,6 @@ crystallizeDatarootdir="$6"
 crystallizeDatadir="$7"
 crystallizeSysconfdir="$8"
 crystallizeSharedstatedir="$9"
-export crystallizeDestdir
-perl -0777 -p -i -e "s/=\/crystallizeDestdir/print("=\""+quotemeta($ENV{crystallizeDestdir}))/g" scripts/crystallize-getdir
 if ! [ -n "$crystallizePrefix" ]; then
     if ! [ -n "$crystallizeCapPrefix" ]; then
         crystallizePrefix="$crystallizeDestdir"/usr/local
@@ -19,50 +17,46 @@ if ! [ -n "$crystallizePrefix" ]; then
     fi
 fi
 echo "crystallizePrefix: $crystallizePrefix"
-export crystallizePrefix
-perl -0777 -p -i -e "s/=\/crystallizePrefix/=print(quotemeta($ENV{crystallizePrefix}))/g" scripts/crystallize-getdir
 if ! [ -n "$crystallizeExecPrefix" ]; then
     crystallizeExecPrefix="$crystallizePrefix"
 fi
 echo "crystallizeExecPrefix: $crystallizeExecPrefix"
-export crystallizeExecPrefix
-perl -0777 -p -i -e "s/=\/crystallizeExecPrefix/=print(quotemeta($ENV{crystallizeExecPrefix}))/g" scripts/crystallize-getdir
 if ! [ -n "$crystallizeBindir" ]; then
     crystallizeBindir="$crystallizeExecPrefix"/bin
 fi
 echo "crystallizeBindir: $crystallizeBindir"
-export crystallizeBindir
-perl -0777 -p -i -e "s/=\/crystallizeBindir/=print(quotemeta($ENV{crystallizeBindir}))/g" scripts/crystallize-getdir
 if ! [ -n "$crystallizeDatarootdir" ]; then
     crystallizeDatarootdir="$crystallizePrefix"/share
 fi
 echo "crystallizeDatarootdir: $crystallizeDatarootdir"
-export crystallizeDatarootdir
-perl -0777 -p -i -e "s/=\/crystallizeDatarootdir/=print(quotemeta($ENV{crystallizeDatarootdir}))/g" scripts/crystallize-getdir
 if ! [ -n "$crystallizeDatadir" ]; then
     crystallizeDatadir="$crystallizeDatarootdir"
 fi
 echo "crystallizeDatadir: $crystallizeDatadir"
-export crystallizeDatadir
-perl -0777 -p -i -e "s/=\/crystallizeDatadir/=print(quotemeta($ENV{crystallizeDatadir}))/g" scripts/crystallize-getdir
 if ! [ -n "$crystallizeSysconfdir" ]; then
     crystallizeSysconfdir="$crystallizePrefix"/etc
 fi
 echo "crystallizeSysconfdir: $crystallizeSysconfdir"
-export crystallizeSysconfdir
-perl -0777 -p -i -e "s/=\/crystallizeSysconfdir/=print(quotemeta($ENV{crystallizeSysconfdir}))/g" scripts/crystallize-getdir
 if ! [ -n "$crystallizeSharedstatedir" ]; then
     crystallizeSharedstatedir="$crystallizePrefix"/var
 fi
 echo "crystallizeSharedstatedir: $crystallizeSharedstatedir"
-export crystallizeSharedstatedir
-perl -0777 -p -i -e "s/=\/crystallizeSharedstatedir/=print(quotemeta($ENV{crystallizeSharedstatedir}))/g" scripts/crystallize-getdir
-perl -0777 -p -i -e "s/\/usr\/local\/bin/\$(crystallize-getdir Bin)/g" scripts/decrystallize
-perl -0777 -p -i -e "s/\/usr\/local\/bin/\$(crystallize-getdir Bin)/g" scripts/quickliquid
-perl -0777 -p -i -e "s/\/usr\/local\/bin/\$(crystallize-getdir Bin)/g" scripts/crystallize-rescue
-perl -0777 -p -i -e "s/\/usr\/local\/bin/\$(crystallize-getdir Bin)/g" scripts/crystallize-update
-perl -0777 -p -i -e "s/\/usr\/local\/etc/\$(crystallize-getdir Sysconf)/g" scripts/crystallize-getconf
-perl -0777 -p -i -e "s/\/usr\/local\/var/\$(crystallize-getdir Sharedstate)/g" support/crystallize.conf
+crystallizeBindirA=$crystallizeBindir
+export crystallizeBindirA
+export crystallizeSharedstatedirA
+export crystallizeSysconfdirA
+crystallizeBindirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeBindir}))')"
+echo "crystallizeBindirEsc: $crystallizeBindirEsc"
+crystallizeSharedstatedirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeSharedstatedir}))')"
+echo "crystallizeSharedstatedirEsc: $crystallizeSharedstatedirEsc"
+crystallizeSysconfdirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeSysconfdir}))')"
+echo "crystallizeSysconfdirEsc: $crystallizeSysconfdirEsc"
+perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/decrystallize
+perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/quickliquid
+perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/crystallize-rescue
+perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/crystallize-update
+perl -0777 -p -i -e "s/\/usr\/local\/etc/$crystallizeSysconfdirEsc/g" scripts/crystallize-getconf
+perl -0777 -p -i -e "s/\/usr\/local\/var/$crystallizeSharedstatedirEsc/g" support/crystallize.conf
 mkdir -p "$crystallizeBindir"
 chmod +x scripts/*
 cp scripts/* "$crystallizeBindir"

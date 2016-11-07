@@ -1,12 +1,16 @@
 #!/bin/bash
 # Crystallize
 # Version:
-export crystallizeVersion='2.14'
+export crystallizeVersion='2.14.1'
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
 #Script should exit if any operation fails.
 set -e
+
+if [ -d . ]; then
+    echo "Please run crystallize from a directory that exists."
+fi
 
 if [ "$1" == "" ] || [ "$1" == "." ] || [ "$1" == ".." ] || [ "$1" == "./" ] || [[ "$1" =~ ^../ ]]; then
     echo "Please specify file(s) within the current directory to crystallize when using relative path names."

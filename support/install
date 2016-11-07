@@ -41,10 +41,9 @@ if ! [ -n "$crystallizeSharedstatedir" ]; then
     crystallizeSharedstatedir="$crystallizePrefix"/var
 fi
 echo "crystallizeSharedstatedir: $crystallizeSharedstatedir"
-crystallizeBindirA=$crystallizeBindir
-export crystallizeBindirA
-export crystallizeSharedstatedirA
-export crystallizeSysconfdirA
+export crystallizeBindir
+export crystallizeSharedstatedir
+export crystallizeSysconfdir
 crystallizeBindirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeBindir}))')"
 echo "crystallizeBindirEsc: $crystallizeBindirEsc"
 crystallizeSharedstatedirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeSharedstatedir}))')"

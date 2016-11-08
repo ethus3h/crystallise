@@ -1,4 +1,3 @@
 #!/bin/bash
 
-line="$(grep -n ^"$1", /usr/local/etc/crystallize.conf | cut -f1 -d: | tail -1)"
-echo -n "$(sed "$line"q\;d /usr/local/etc/crystallize.conf | cut -f1 -d,)"
+echo "$(grep -n ^"$1", /usr/local/etc/crystallize.conf | cut -f2 -d: | tail -1 | cut -f2 -d,)"

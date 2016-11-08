@@ -58,7 +58,7 @@ perl -0777 -p -i -e "s/\/usr\/local\/etc/$crystallizeSysconfdirEsc/g" scripts/cr
 perl -0777 -p -i -e "s/\/usr\/local\/var/$crystallizeSharedstatedirEsc/g" support/crystallize.conf
 mkdir -p "$crystallizeBindir"
 chmod +x scripts/*
-cp scripts/* "$crystallizeBindir"
+cp scripts/* "$crystallizeBindir/"
 mkdir -p "$crystallizeSysconfdir"
-cp -v support/crystallize.conf "$crystallizeSysconfdir"
+cp -v support/crystallize.conf "$crystallizeSysconfdir/"
 mkdir -p "$crystallizeSharedstatedir"/crystallize

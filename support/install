@@ -59,5 +59,6 @@ perl -0777 -p -i -e "s/\/usr\/local\/var/$crystallizeSharedstatedirEsc/g" suppor
 mkdir -p "$crystallizeBindir"
 chmod +x scripts/*
 cp scripts/* "$crystallizeBindir"
-cp support/crystallize.conf "$crystallizeSysconfdir"
+mkdir -p "$crystallizeSysconfdir"
+cp -v support/crystallize.conf "$crystallizeSysconfdir"
 mkdir -p "$crystallizeSharedstatedir"/crystallize

@@ -35,7 +35,7 @@ echo "Arguments: " "$@"
 
 echo "Configuration: "
 
-cat "$HOME"/config.txt
+cat /usr/local/etc/crystallize.conf
 
 crystalTitle=$(crystallize-getconf 'InstallationIdentifier')
 export crystalTitle

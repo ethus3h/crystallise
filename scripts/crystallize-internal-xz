@@ -1,11 +1,22 @@
 #!/bin/bash
 #get available memory
-if [ -n "$(free | grep buff/cache)" ]; then
-    #free has separate columns for buffers and cache
-    memlimit="$(free | grep Mem: | awk 'FNR == 1 {print ($4+$6+$7)}')"
-else
+if free | grep -q buff/cache; then
     #free has one column for buffers and cache
     memlimit="$(free | grep Mem: | awk 'FNR == 1 {print ($4+$6)}')"
+else
+    #free has separate columns for buffers and cache
+    memlimit="$(free | grep Mem: | awk 'FNR == 1 {print ($4+$6+$7)}')"
 fi
-memlimit="$memlimit" - 10
-xz -k -C sha256 -T 0 --lzma2=preset=9 --memlimit-compress="$memlimit" -v "$crystalWorkdir/$CrystalID".pax
+memlimit="$(("$memlimit" - 1073741824))"
+if [ $memlimit -lt 0 ]; then
+
+    echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
+    echo "There may not be enough free memory; compression may fail!"
+    echo "Continuing in 10 seconds; press Ctrl+C to cancel."
+    echo "### WARNING! ^^^ WARNING! ### WARNING! ### WARNING! ^^^ WARNING! ###"
+    sleep 10
+
+    xz -k -C sha256 -T 0 --lzma2=preset=9 -v "$crystalWorkdir/$CrystalID".pax
+else
+    xz -k -C sha256 -T 0 --lzma2=preset=9 --memlimit-compress="$memlimit" -v "$crystalWorkdir/$CrystalID".pax
+fi

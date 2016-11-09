@@ -18,18 +18,18 @@ elif hash vm_stat 2>/dev/null; then
     #The system doesn't have the free command; try vm_stat
     #use sum of free+inactive from vm_stat
     freel="$(vm_stat | grep "Pages free:" | awk 'FNR == 1 {print ($3)}')"
-    free="${freel::${#freel}-2}"
+    free="${freel::${#freel}-1}"
     inactivel="$(vm_stat | grep "Pages inactive:" | awk 'FNR == 1 {print ($3)}')"
-    inactive="${inactivel::${#inactivel}-2}"
+    inactive="${inactivel::${#inactivel}-1}"
     memlimit="$(($free + $inactive))"
     #Output is in 4096-byte pages
-    memlimit="$(($memlimit * 256))"
+    memlimit="$(($memlimit * 4096))"
 else
     echo "Warning: Could not determine how much memory is available."
     sleep 3
 fi
 memlimit="$(($memlimit - 1073741824))"
-#xz -9 requires 13MB minimum
+#xz -9 requires 13MB minimumx
 if [ $memlimit -lt 13631488 ]; then
 
     echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"

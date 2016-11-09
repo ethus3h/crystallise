@@ -1,5 +1,7 @@
 #!/bin/bash
 set -e
+echo
+echo
 #get available memory
 memlimit=-1
 if hash free 2>/dev/null; then
@@ -10,6 +12,8 @@ if hash free 2>/dev/null; then
         #free has separate columns for buffers and cache
         memlimit="$(free | grep Mem: | awk 'FNR == 1 {print ($4+$6+$7)}')"
     fi
+    #Output is in kilobytes
+    memlimit="$(($memlimit * 1000))"
 elif hash vm_stat 2>/dev/null; then
     #The system doesn't have the free command; try vm_stat
     #use sum of free+inactive from vm_stat
@@ -17,7 +21,9 @@ elif hash vm_stat 2>/dev/null; then
     free="${freel::${#freel}-2}"
     inactivel="$(vm_stat | grep "Pages inactive:" | awk 'FNR == 1 {print ($3)}')"
     inactive="${inactivel::${#inactivel}-2}"
-    memlimit="$(("$free" + "$inactive"))"
+    memlimit="$(($free + $inactive))"
+    #Output is in 4096-byte pages
+    memlimit="$(($memlimit * 256))"
 else
     echo "Warning: Could not determine how much memory is available."
     sleep 3

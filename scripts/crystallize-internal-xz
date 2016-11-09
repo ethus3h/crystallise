@@ -1,11 +1,21 @@
 #!/bin/bash
+set -e
 #get available memory
-if free | grep -q buff/cache; then
-    #free has one column for buffers and cache
-    memlimit="$(free | grep Mem: | awk 'FNR == 1 {print ($4+$6)}')"
+if hash free 2>/dev/null; then
+    if free | grep -q buff/cache; then
+        #free has one column for buffers and cache
+        memlimit="$(free | grep Mem: | awk 'FNR == 1 {print ($4+$6)}')"
+    else
+        #free has separate columns for buffers and cache
+        memlimit="$(free | grep Mem: | awk 'FNR == 1 {print ($4+$6+$7)}')"
+    fi
 else
-    #free has separate columns for buffers and cache
-    memlimit="$(free | grep Mem: | awk 'FNR == 1 {print ($4+$6+$7)}')"
+    #The system doesn't have the free command; use sum of free+inactive
+    freel="$(vm_stat | grep "Pages free:" | awk 'FNR == 1 {print ($3)}')"
+    free="${freel::${#freel}-2}"
+    inactivel="$(vm_stat | grep "Pages inactive:" | awk 'FNR == 1 {print ($3)}')"
+    inactive="${inactivel::${#inactivel}-2}"
+    memlimit="$(("$free" + "$inactive"))"
 fi
 memlimit="$(("$memlimit" - 1073741824))"
 if [ $memlimit -lt 0 ]; then

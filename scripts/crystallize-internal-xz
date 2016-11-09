@@ -1,2 +1,11 @@
 #!/bin/bash
-xz -k -C sha256 -T 0 --lzma2=preset=9 -v "$crystalWorkdir/$CrystalID".pax
+#get available memory
+if [ -n "$(free | grep buff/cache)" ]; then
+    #free has separate columns for buffers and cache
+    memlimit="$(free | grep Mem: | awk 'FNR == 1 {print ($4+$6+$7)}')"
+else
+    #free has one column for buffers and cache
+    memlimit="$(free | grep Mem: | awk 'FNR == 1 {print ($4+$6)}')"
+fi
+memlimit="$memlimit" - 10
+xz -k -C sha256 -T 0 --lzma2=preset=9 --memlimit-compress="$memlimit" -v "$crystalWorkdir/$CrystalID".pax

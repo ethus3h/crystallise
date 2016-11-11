@@ -1,7 +1,7 @@
 #!/bin/bash
 # Crystallize
 # Version:
-export crystallizeVersion='2.14.2.6'
+export crystallizeVersion='2.14.2.7'
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
@@ -24,8 +24,8 @@ if [ "$1" == "--" ]; then
 fi
 
 echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
-echo "Be careful that you don't crystallize your current working directory!"
-echo "Also don't crystallize the crystallize scripts themselves. Either"
+echo "Be careful that you don't crystallize your current working directory,"
+echo "the crystallize temp dir, or the crystallize scripts themselves. Either"
 echo "could cause problems. Continuing in 10 seconds; press Ctrl+C to cancel."
 echo "### WARNING! ^^^ WARNING! ### WARNING! ### WARNING! ^^^ WARNING! ###"
 sleep 10

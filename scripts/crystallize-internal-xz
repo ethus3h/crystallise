@@ -29,8 +29,8 @@ else
     sleep 3
 fi
 memlimit="$(($memlimit - 1073741824))"
-#xz -9 requires 13MB minimumx
-if [ $memlimit -lt 13631488 ]; then
+#xz -9 requires 1250MB minimum
+if [ $memlimit -lt 1310720000 ]; then
 
     echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
     echo "There may not be enough free memory; compression may fail!"

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Crystallize
 # Version:
-export crystallizeVersion='2.14.2.9'
+export crystallizeVersion='2.14.3'
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
@@ -60,6 +60,11 @@ mv -v "$crystalWorkdir/$CrystalID.deep.idx.xz.gpg" "$crystalWorkdir/$CrystalID.c
 set -e
 ia upload "$CrystalID" --retries=100 --verify --delete "$crystalWorkdir/$CrystalID.coal5-log" "$crystalWorkdir/$CrystalID.coal5-idx-l" "$crystalWorkdir/$CrystalID.coal5-idx-d"
 ia upload "$CrystalID" --retries=100 --verify "$crystalWorkdir/$CrystalID.coal5-timestamp"
+
+#Delete everything except log
+echo "Cleaning up..."
+yes | rm -rv "${CrystallizePaths[@]}"
+echo "Done cleaning up..."
 
 if rm -v "$crystalWorkdir/$CrystalID.coal5-timestamp"; then
     #Clear the screen

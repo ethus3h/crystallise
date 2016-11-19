@@ -177,9 +177,9 @@ echo "rsynced..."
 printf "\033c"
 
 #Delete everything except log
-echo "Cleaning up..."
-yes | rm -rv "${CrystallizePaths[@]}"
-echo "Done cleaning up..."
+#echo "Cleaning up..."
+#yes | rm -rv "${CrystallizePaths[@]}"
+#echo "Done cleaning up..."
 
 echo "Time (log stage 3) locally:"
 

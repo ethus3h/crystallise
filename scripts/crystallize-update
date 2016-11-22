@@ -15,17 +15,23 @@ export CrystalID
 
 echo "Please wait until the script says \"Done updating!\"..."
 
-pip install --upgrade git+https://github.com/ethus3h/internetarchive
+mkdir -v ~/"$CrystalID".git-tmp
+cd ~/"$CrystalID".git-tmp
+git clone https://github.com/ethus3h/wreathe
+git clone https://github.com/jjjake/internetarchive
+cd internetarchive
+find ../wreathe/etc/portage/patches/dev-python/internetarchive -name "*.patch" -exec patch -p1 < {} \;
+pip install --upgrade .
 
 ls -las /usr/local/bin
 touch /usr/local/bin/crystallize-rescue-tmp
 touch /usr/local/bin/crystallize-update-tmp
 
-cp -v /usr/local/bin/crystallize-update /usr/local/bin/crystallize-update.old.$CrystalID
-crystallize /usr/local/bin/crystallize /usr/local/bin/crystallize-logsession /usr/local/bin/crystallize-internal-xz /usr/local/bin/crystallize-internal-ia /usr/local/bin/crystallize-internal-xz-b /usr/local/bin/decrystallize /usr/local/bin/decrystallize-logsession /usr/local/bin/crystallize-rescue-tmp /usr/local/bin/crystallize-update-tmp /usr/local/bin/crystallize-update.old.$CrystalID
+cp -v /usr/local/bin/crystallize-update "/usr/local/bin/crystallize-update.old.$CrystalID"
+crystallize /usr/local/bin/crystallize /usr/local/bin/crystallize-logsession /usr/local/bin/crystallize-internal-xz /usr/local/bin/crystallize-internal-ia /usr/local/bin/crystallize-internal-xz-b /usr/local/bin/decrystallize /usr/local/bin/decrystallize-logsession /usr/local/bin/crystallize-rescue-tmp /usr/local/bin/crystallize-update-tmp "/usr/local/bin/crystallize-update.old.$CrystalID"
 echo "Please wait; still updating..."
-mkdir -v ~/$CrystalID.tmp
-cd ~/$CrystalID.tmp
+mkdir -v ~/"$CrystalID".tmp
+cd ~/"$CrystalID".tmp
 wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallize/master/scripts/crystallize
 wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallize/master/scripts/crystallize-rescue
 wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallize/master/scripts/crystallize-logsession
@@ -39,10 +45,10 @@ wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallize/master/scr
 chmod +x ./*
 cp -v ./* /usr/local/bin/
 cd ~
-crystallize ~/$CrystalID.tmp
+crystallize ~/"$CrystalID".tmp
 echo "Please wait; still updating..."
-mkdir -v ~/$CrystalID.tmp
-cd ~/$CrystalID.tmp
+mkdir -v ~/"$CrystalID".tmp
+cd ~/"$CrystalID".tmp
 wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallize/master/scripts/crystallize-update
 chmod +x ./*
 

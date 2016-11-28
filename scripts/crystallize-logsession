@@ -114,7 +114,6 @@ echo "Building local index..."
 hashdeep -c md5,sha1,sha256,tiger,whirlpool -o fbsd "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.local.idx"
 
 echo "Building deep index..."
-
 hashdeep -c md5,sha1,sha256,tiger,whirlpool -o fbsd -r "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.deep.idx"
 
 #Ignore exit code 1 from tar on Linux, which indicates files changed while reading; see http://stackoverflow.com/questions/20318852/tar-file-changed-as-we-read-it
@@ -154,6 +153,8 @@ rm -v "$crystalWorkdir/$CrystalID".pax.xz
 mv "$crystalWorkdir/$CrystalID".pax.xz.gpg "$crystalWorkdir/$CrystalID".coal5
 
 echo "Computing checksum..."
+
+#FIXME: Continues even when hashdeep is missing
 
 hashdeep -c md5,sha1,sha256 -o fbcpsde "$crystalWorkdir/$CrystalID".coal5 | tee "$crystalWorkdir/$CrystalID.checksums"
 

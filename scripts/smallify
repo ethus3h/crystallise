@@ -12,4 +12,4 @@ set -e
 
 shopt -s extglob
 
-crystallize "$@"
+crystallize --leave-pointer "$@"

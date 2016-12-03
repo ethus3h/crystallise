@@ -12,4 +12,4 @@ set -e
 
 shopt -s extglob
 
-decrystallize "$1/identifier"
+decrystallize --easy-use "$1/identifier"

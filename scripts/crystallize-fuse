@@ -1,27 +1,21 @@
 #!/bin/bash
 #It's Bouncy!
-#syntax: rubberfs [create|mount|unmount|reset] [passphrase] [accesskey] [secretkey] [identifier] [prefix] [mountpoint]
-#rubberfs attach [username] [server] [prefix] [mountpoint]
-#rubberfs status [prefix]
-#rubberfs stub
+#syntax: crystallize-fuse [create|mount|unmount|reset] [name]
+#crystallize-fuse attach [username] [server] [prefix] [mountpoint]
+#crystallize-fuse status [prefix]
+#crystallize-fuse stub
 #Stub creates a fake EML instance for apps (e.g. Crystallise) that require it.
 
 action="$1"
-passphrase="$2"
-accessKey="$3"
-secretKey="$4"
-identifier="$5"
-prefix="$6"
-mountpoint="$7"
+name="$2"
 
 case $action in
 create)
-    #TODO: Check for pending jobs all done: curl "http://s3.us.archive.org/?check_limit=1&accesskey=$accessKey&bucket=$identifier"
-    s3backer --accessId="$accessKey" --accessKey="$secretKey" --baseURL=https://s3.us.archive.org/ --blockCacheSize=30000 --blockCacheFile="/Wreathe/.Resources/WreatheCloudService/$prefix/LocalCache" --blockSize=16M --compress=9 --blockCacheMaxDirty=256 --blockCacheWriteDelay=40000 --blockCacheThreads=2 --listBlocks --maxRetryPause=600000 --timeout=600 --encrypt --password="$passphrase" --prefix="$prefix" --size=128T --filename=StorageBlockDevice "$identifier" --defaultContentEncoding="deflate,encrypt-AES-128-CBC" --authVersion=aws2 "/Wreathe/.Resources/WreatheCloudService/$prefix/dev/"
-    sleep 60
-    losetup /dev/loop8 "/Wreathe/.Resources/WreatheCloudService/$prefix/dev/StorageBlockDevice"
-    #TODO make filessytem
-    #zpool create -o relatime /dev/loop8
+    mkdir -p "/Wreathe/.Resources/RubberFS/$name/dev/"
+    truncate -s 128T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1"
+    #truncate -s 128T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2"
+    #truncate -s 128T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
+    zpool create -o relatime /dev/loop8
     ;;
 mount)
     #TODO: Check for pending jobs all done: curl "http://s3.us.archive.org/?check_limit=1&accesskey=$accessKey&bucket=$identifier"

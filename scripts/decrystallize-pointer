@@ -1,0 +1,15 @@
+#!/bin/bash
+# decrystallize-pointer
+
+# See crystallize for requirements.
+
+#Usage: decrystallize-pointer <crystal-directory>
+
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+
+#Script should exit if any operation fails.
+set -e
+
+shopt -s extglob
+
+decrystallize $1/identifier

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Crystallize
 # Version:
-export crystallizeVersion='2.14.3.4'
+export crystallizeVersion='2.14.4'
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
@@ -21,6 +21,18 @@ fi
 #Remove first argument if it's the end-of-options delimiter
 if [ "$1" == "--" ]; then
     shift
+fi
+
+#Check for and handle option to leave behind a pointer
+if [ "$1" == "--leave-pointer" ]; then
+    crystallizeLeavePointer=true
+    shift
+    if [ "$#" > 1 ]; then
+        echo "Please use pointer option with only 1 item at a time."
+        exit 1
+    fi
+    #Only use first 64 characters of file name for directory name; hopefully this will prevent the name being too long for the filesystem
+    crystallizePointerDir="${1:0:64}".crystal
 fi
 
 echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
@@ -46,6 +58,11 @@ xz -C sha256 -v -9 -e "$crystalWorkdir/$CrystalID"
 xz -C sha256 -v -9 -e -k "$crystalWorkdir/$CrystalID.time-done.warc.gz"
 xz -C sha256 -v -9 -e "$crystalWorkdir/$CrystalID.local.idx"
 xz -C sha256 -v -9 -e "$crystalWorkdir/$CrystalID.deep.idx"
+if [[ $crystallizeLeavePointer == true ]]; then
+    mkdir "$crystallizePointerDir"
+    rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystallizePointerDir"/
+    echo "Added crystal metadata"
+fi
 rsync -av --progress --checksum "$crystalWorkdir/$CrystalID".xz /Ember\ Media\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/"$CrystalID".log.xz
 gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.xz"
 gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.time-done.warc.gz.xz"
@@ -84,6 +101,11 @@ done
 echo "Cleaning up..."
 yes | rm -rv "${CrystallizePaths[@]}"
 echo "Done cleaning up..."
+
+if [[ $crystallizeLeavePointer == true ]]; then
+    echo "$CrystalID" > "$crystallizePointerDir"/identifier
+    echo "Added crystal ID"
+fi
 
 if rm -v "$crystalWorkdir/$CrystalID.coal5-timestamp"; then
     #Clear the screen

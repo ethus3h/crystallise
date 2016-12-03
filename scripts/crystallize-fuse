@@ -6,16 +6,19 @@
 #crystallize-fuse stub
 #Stub creates a fake EML instance for apps (e.g. Crystallise) that require it.
 
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+
 action="$1"
 name="$2"
 
 case $action in
 create)
     mkdir -p "/Wreathe/.Resources/RubberFS/$name/dev/"
-    truncate -s 128T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1"
-    #truncate -s 128T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2"
-    #truncate -s 128T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
-    zpool create -o relatime /dev/loop8
+    #4T doesn't work: "truncate: failed to truncate '/Wreathe/.Resources/RubberFS/library/dev/StorageBlockDevice1' at 4398046511104 bytes: File too large" — wtf?! I don't have 3tb available either.
+    truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1"
+    truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2"
+    truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
+    zpool create "$name" -o relatime raidz1 "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1"
     ;;
 mount)
     #TODO: Check for pending jobs all done: curl "http://s3.us.archive.org/?check_limit=1&accesskey=$accessKey&bucket=$identifier"

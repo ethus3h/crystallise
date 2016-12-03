@@ -3,13 +3,4 @@
 
 # See crystallize for requirements.
 
-#Usage: biggify <crystal-directory> [--here]
-
-[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-
-#Script should exit if any operation fails.
-set -e
-
-shopt -s extglob
-
 decrystallize-pointer "$@"

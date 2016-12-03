@@ -1,0 +1,73 @@
+#!/bin/bash
+#It's Bouncy!
+#syntax: rubberfs [create|mount|unmount|reset] [passphrase] [accesskey] [secretkey] [identifier] [prefix] [mountpoint]
+#rubberfs attach [username] [server] [prefix] [mountpoint]
+#rubberfs status [prefix]
+#rubberfs stub
+#Stub creates a fake EML instance for apps (e.g. Crystallise) that require it.
+
+action="$1"
+passphrase="$2"
+accessKey="$3"
+secretKey="$4"
+identifier="$5"
+prefix="$6"
+mountpoint="$7"
+
+case $action in
+create)
+    #TODO: Check for pending jobs all done: curl "http://s3.us.archive.org/?check_limit=1&accesskey=$accessKey&bucket=$identifier"
+    s3backer --accessId="$accessKey" --accessKey="$secretKey" --baseURL=https://s3.us.archive.org/ --blockCacheSize=30000 --blockCacheFile="/Wreathe/.Resources/WreatheCloudService/$prefix/LocalCache" --blockSize=16M --compress=9 --blockCacheMaxDirty=256 --blockCacheWriteDelay=40000 --blockCacheThreads=2 --listBlocks --maxRetryPause=600000 --timeout=600 --encrypt --password="$passphrase" --prefix="$prefix" --size=128T --filename=StorageBlockDevice "$identifier" --defaultContentEncoding="deflate,encrypt-AES-128-CBC" --authVersion=aws2 "/Wreathe/.Resources/WreatheCloudService/$prefix/dev/"
+    sleep 60
+    losetup /dev/loop8 "/Wreathe/.Resources/WreatheCloudService/$prefix/dev/StorageBlockDevice"
+    #TODO make filessytem
+    #zpool create -o relatime /dev/loop8
+    ;;
+mount)
+    #TODO: Check for pending jobs all done: curl "http://s3.us.archive.org/?check_limit=1&accesskey=$accessKey&bucket=$identifier"
+    #s3backer --accessId="$accessKey" --accessKey="$secretKey" --baseURL=https://s3.us.archive.org/ --blockCacheSize=30000 --blockCacheFile="/Wreathe/.Resources/WreatheCloudService/$prefix/LocalCache" --blockSize=16M --compress=9 --blockCacheMaxDirty=256 --blockCacheWriteDelay=40000 --blockCacheThreads=2 --listBlocks --maxRetryPause=600000 --timeout=600 --encrypt --password="$passphrase" --prefix="$prefix" --size=128T --filename=StorageBlockDevice --debug --debug-http "$identifier" --defaultContentEncoding="deflate,encrypt-AES-128-CBC" --authVersion=aws2 -f "/Wreathe/.Resources/WreatheCloudService/$prefix/dev/"
+    #losetup /dev/loop8 "/Wreathe/.Resources/WreatheCloudService/$prefix/dev/StorageBlockDevice"
+    #TODO: ZFS import instead
+    #fsck -V /dev/loop8
+    ﻿#mount -t ext4 /dev/loop8 "/Wreathe/.Resources/WreatheCloudService/$prefix/mount/"
+    #ln -s "/Wreathe/.Resources/WreatheCloudService/$prefix/mount/" "$mountpoint"
+    ;;
+attach)
+    username="$1"
+    server="$2"
+    prefix="$3"
+    mountpoint="$4"
+    sshfs -o allow_other,defer_permissions "$username"@"$server":"/Wreathe/.Resources/WreatheCloudService/$prefix/mount/" "$mountpoint"
+    ;;
+unmount)
+    #TODO
+    #umount "﻿/Wreathe/.Resources/WreatheCloudService/$prefix/dev/"
+    echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
+    echo "This is not yet implemented. Sorry."
+    echo "### WARNING! ^^^ WARNING! ### WARNING! ### WARNING! ^^^ WARNING! ###"
+    sleep 10
+    #umount "https://s3.us.archive.org/$identifier/$prefix"
+    #rm $mountpoint
+    exit 1
+reset)
+    echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
+    echo "If this filesystem is mounted by another system, this could cause"
+    echo "corruption. Continuing in 10 seconds; press Control+C to cancel."
+    echo "### WARNING! ^^^ WARNING! ### WARNING! ### WARNING! ^^^ WARNING! ###"
+    sleep 10
+    s3backer --reset-mounted-flag --accessId="$accessKey" --accessKey="$secretKey" --baseURL=https://s3.us.archive.org/ --prefix="$prefix" --debug --debug-http "$identifier" --authVersion=aws2 -f
+status)
+    prefix="$1"
+    less "/Wreathe/.Resources/WreatheCloudService/$prefix/dev/stats"
+    zpool list zpool
+    zpool status zpool
+    df -i /zpool
+    #zfs list -ro space -t snapshot
+    zfs list -ro space zpool
+stub)
+    mkdir -p /Ember\ Media\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/
+*)
+    echo "Unknown action."
+    exit 1
+    ;;
+esac

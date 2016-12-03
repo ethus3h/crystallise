@@ -3,8 +3,6 @@
 
 # See crystallize for requirements.
 
-#Usage: decrystallize-pointer <crystal-directory> [--here]
-
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
 #Script should exit if any operation fails.

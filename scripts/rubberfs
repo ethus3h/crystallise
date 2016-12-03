@@ -1,6 +1,6 @@
 #!/bin/bash
-# smallify
+# rubberfs
 
 # See crystallize for requirements.
 
-crystallize --leave-pointer "$@"
+crystallize-fuse "$@"

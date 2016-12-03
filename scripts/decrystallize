@@ -3,7 +3,7 @@
 
 # See crystallize for requirements.
 
-#Usage: decrystallize <crystal-address> [--no-trim-extensions|--trim-extensions]
+#Usage: decrystallize <crystal-address> [--no-trim-extensions|--trim-extensions] [--easy-use]
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
@@ -19,6 +19,13 @@ CrystalAddress="${CrystalAddress%%/*}"
 if [ "$2" != "--no-trim-extensions" ]; then
     #Remove filename extensions
     CrystalAddress="${CrystalAddress%\.coal5*}"
+fi
+
+if [ "$2" == "--easy-use" ]; then
+    decrystallizeEasyUse=true
+    export decrystallizeEasyUse
+    mkdir -p ~/Decrystallized
+    cd ~/Decrystallized
 fi
 
 if [ "$CrystalAddress" == "" ]; then

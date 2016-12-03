@@ -27,7 +27,7 @@ fi
 if [ "$1" == "--leave-pointer" ]; then
     crystallizeLeavePointer=true
     shift
-    if [ "$#" > 1 ]; then
+    if [ "$#" -gt 1 ]; then
         echo "Please use pointer option with only 1 item at a time."
         exit 1
     fi

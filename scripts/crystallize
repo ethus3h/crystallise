@@ -1,7 +1,7 @@
 #!/bin/bash
 # Crystallize
 # Version:
-export crystallizeVersion='2.14.4.1'
+export crystallizeVersion='2.14.4.2'
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
@@ -52,8 +52,8 @@ export CrystalID
 crystallize-logsession "$CrystalID" "$@" 2>&1 | tee -a "$crystalWorkdir/$CrystalID"
 
 echo "Working..."
-echo "$0 $@" > "$crystalWorkdir/$CrystalID.cmd"
-echo "$(pwd)" > "$crystalWorkdir/$CrystalID.cwd"
+echo "$0 $*" > "$crystalWorkdir/$CrystalID.cmd"
+pwd > "$crystalWorkdir/$CrystalID.cwd"
 #Script should not exit if an operation fails. FIXME: why?
 set +e
 xz -C sha256 -v -9 -e "$crystalWorkdir/$CrystalID"

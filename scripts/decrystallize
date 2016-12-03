@@ -3,7 +3,7 @@
 
 # See crystallize for requirements.
 
-#Usage: decrystallize <crystal-address> [--no-trim-extensions|--trim-extensions] [--easy-use]
+#Usage: decrystallize <crystal-address> [--no-trim-extensions|--trim-extensions] [--easy-use [--here]]
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
@@ -26,6 +26,11 @@ if [ "$2" == "--easy-use" ]; then
     export decrystallizeEasyUse
     mkdir -p ~/Decrystallized
     cd ~/Decrystallized
+    if [ "$3" == "--here" ]; then
+        decrystallizeHere=true
+        export decrystallizeHere
+        echo "Sorry, this feature is not implemented yet. When done, it will put the data back where they came from."
+    fi
 fi
 
 if [ "$CrystalAddress" == "" ]; then

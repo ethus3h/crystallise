@@ -1,9 +1,9 @@
 #!/bin/bash
-# decrystallize-pointer
+# biggify
 
 # See crystallize for requirements.
 
-#Usage: decrystallize-pointer <crystal-directory>
+#Usage: biggify <crystal-directory>
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
@@ -12,4 +12,4 @@ set -e
 
 shopt -s extglob
 
-decrystallize "$1/identifier"
+decrystallize-pointer "$1"

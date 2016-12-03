@@ -110,6 +110,11 @@ unxz "./$CrystalLogID.deep.idx.xz"
 mv -v "./$CrystalLogID.local.idx" "./$CrystalLogID/$CrystalID.local.idx"
 mv -v "./$CrystalLogID.deep.idx" "./$CrystalLogID/$CrystalID.deep.idx"
 
+if [[ $decrystallizeEasyUse == true ]]; then
+    mv "$CrystalLogID/$CrystalID" ~/Decrystallized/
+    echo "Moved files for easy use"
+fi
+
 echo "Time (decrystallize log stage 3) locally:"
 
 date +%Y-%m-%d-%H-%M-%S-%N

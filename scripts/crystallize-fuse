@@ -1,10 +1,4 @@
 #!/bin/bash
-#It's Bouncy!
-#syntax: crystallize-fuse [create|mount|unmount|reset] [name]
-#crystallize-fuse attach [server username] [server] [name] [local mountpoint]
-#crystallize-fuse status [name]
-#crystallize-fuse stub
-#Stub creates a fake EML instance for apps (e.g. Crystallise) that require it.
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 

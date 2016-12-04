@@ -2,6 +2,8 @@
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
+set -e
+
 action="$1"
 name="$2"
 

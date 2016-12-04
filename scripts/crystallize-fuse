@@ -26,10 +26,8 @@ create)
     (
         cd "/$name"
         touch README.md
-        git init
-        git add -A .
-        git commit -m "RubberFS: Create"
     )
+    rubberfs snapshot "$name"
     zpool scrub "$name"
     zpool export "$name"
     echo "RubberFS named $name has been created. Run rubberfs mount $name to mount it."

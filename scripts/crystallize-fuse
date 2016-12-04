@@ -45,13 +45,12 @@ check)
     ;;
 status)
     if [ -n "$name" ]; then
-        name="-a"
+        echo "Please provide a filesystem name."
+        exit 1
     fi
     zpool list "$name"
     zpool status "$name"
-    if [[ "$name" != "-a" ]]; then
-        df -i /"$name"
-    fi
+    df -i /"$name"
     #zfs list -ro space -t snapshot
     zfs list -ro space "$name"
     ;;

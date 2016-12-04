@@ -28,8 +28,8 @@ create)
         touch README.md
     )
     rubberfs snapshot "$name"
-    zpool scrub "$name"
-    zpool export "$name"
+    rubberfs check "$name"
+    rubberfs unmount "$name"
     echo "RubberFS named $name has been created. Run rubberfs mount $name to mount it."
     ;;
 mount)
@@ -41,7 +41,6 @@ mount)
     ;;
 unmount)
     zpool export "$name"
-    exit 1
     ;;
 attach)
     username="$1"
@@ -65,7 +64,7 @@ snapshot)
         git push -u origin master
         set -e
     )
-    zpool "$name/rs$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    zpool snapshot "$name/rs$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
     ;;
 status)
     zpool list "$name"

@@ -27,6 +27,7 @@ mount)
 unmount)
     zpool export "$name"
     exit 1
+    ;;
 attach)
     username="$1"
     server="$2"
@@ -40,8 +41,10 @@ status)
     df -i /"$name"
     #zfs list -ro space -t snapshot
     zfs list -ro space "$name"
+    ;;
 stub)
     mkdir -p /Ember\ Media\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/
+    ;;
 *)
     echo "Unknown action."
     exit 1

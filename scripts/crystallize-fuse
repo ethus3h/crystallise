@@ -44,7 +44,7 @@ check)
     zpool scrub "$name"
     ;;
 status)
-    if [ -n "$name" ]; then
+    if [ ! -n "$name" ]; then
         echo "Please provide a filesystem name."
         exit 1
     fi

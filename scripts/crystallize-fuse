@@ -1,6 +1,7 @@
 #!/bin/bash
 #It's Bouncy!
 #syntax: crystallize-fuse [create|mount|unmount|reset] [name]
+#crystallize-fuse attach [server username] [server] [name] [local mountpoint]
 #crystallize-fuse status [name]
 #crystallize-fuse stub
 #Stub creates a fake EML instance for apps (e.g. Crystallise) that require it.
@@ -26,11 +27,19 @@ create)
 mount)
     zpool import "$name"
     zpool scrub "$name"
+    ln -s "/$name" "/Wreathe/.Resources/RubberFS/$name/mount"
     echo "RubberFS named $name has been mounted."
     ;;
 unmount)
     zpool export "$name"
     exit 1
+attach)
+    username="$1"
+    server="$2"
+    prefix="$3"
+    mountpoint="$4"
+    sshfs -o allow_other,defer_permissions "$username"@"$server":"/Wreathe/.Resources/RubberFS/$prefix/mount/" "$mountpoint"
+    ;;
 status)
     zpool list "$name"
     zpool status "$name"

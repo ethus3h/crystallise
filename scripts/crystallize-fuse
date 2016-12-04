@@ -7,6 +7,10 @@ set -e
 action="$1"
 name="$2"
 
+if [ ! -n "$name" ]; then
+    name="library"
+fi
+
 /sbin/modprobe zfs
 
 case $action in
@@ -43,11 +47,10 @@ attach)
 check)
     zpool scrub "$name"
     ;;
+snapshot)
+    zpool "$name/rs$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    ;;
 status)
-    if [ ! -n "$name" ]; then
-        echo "Please provide a filesystem name."
-        exit 1
-    fi
     zpool list "$name"
     zpool status "$name"
     df -i /"$name"

@@ -23,6 +23,13 @@ create)
     zpool create "$name" mirror "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
     zfs set compression=gzip-9 "$name"
     zfs set relatime=on "$name"
+    (
+        cd "/$name"
+        touch README.md
+        git init
+        git add -A .
+        git commit -m "RubberFS: Create"
+    )
     zpool scrub "$name"
     zpool export "$name"
     echo "RubberFS named $name has been created. Run rubberfs mount $name to mount it."
@@ -49,6 +56,17 @@ check)
     zpool scrub "$name"
     ;;
 snapshot)
+    (
+        cd "/$name"
+        touch README.md
+        git add -A .
+        git commit -a -m "RubberFS: make snapshot"
+        set +e
+        git pull
+        git submodule update --remote
+        git push -u origin master
+        set -e
+    )
     zpool "$name/rs$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
     ;;
 status)

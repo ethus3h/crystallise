@@ -40,10 +40,18 @@ attach)
     mountpoint="$4"
     sshfs -o allow_other,defer_permissions "$username"@"$server":"/Wreathe/.Resources/RubberFS/$prefix/mount/" "$mountpoint"
     ;;
+check)
+    zpool scrub "$name"
+    ;;
 status)
+    if [ -n "$name" ]; then
+        name="-a"
+    fi
     zpool list "$name"
     zpool status "$name"
-    df -i /"$name"
+    if [[ "$name" != "-a" ]]; then
+        df -i /"$name"
+    fi
     #zfs list -ro space -t snapshot
     zfs list -ro space "$name"
     ;;

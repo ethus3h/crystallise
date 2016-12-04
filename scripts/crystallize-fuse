@@ -16,7 +16,7 @@ create)
     truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1"
     truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2"
     truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
-    zpool create "$name" raidz1 "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1"
+    zpool create "$name" raidz1 "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
     zfs set compression=gzip-9 "$name"
     zfs set relatime=on "$name"
     zpool scrub "$name"

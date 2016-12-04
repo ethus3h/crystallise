@@ -24,7 +24,7 @@ create)
     echo "RubberFS named $name has been created. Run rubberfs mount $name to mount it."
     ;;
 mount)
-    zpool import "$name"
+    zpool import -d "/Wreathe/.Resources/RubberFS/$name/dev/" "$name"
     zpool scrub "$name"
     ln -s "/$name" "/Wreathe/.Resources/RubberFS/$name/mount"
     echo "RubberFS named $name has been mounted."

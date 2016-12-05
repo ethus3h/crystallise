@@ -5,7 +5,7 @@ set -e
 action="$1"
 name="$2"
 
-if [[ "$(whoami)" != "root" ]]
+if [[ "$(whoami)" != "root" ]]; then
     whoami > /tmp/rubberfsUser
 fi
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"

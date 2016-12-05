@@ -74,6 +74,7 @@ snapshot)
     sudo -u "$rubberfsUser" git submodule update --remote
     sudo -u "$rubberfsUser" git push -u origin master
     set -e
+    echo "heywood jablome"
     zfs snapshot "$name@rs$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
     ;;
 status)

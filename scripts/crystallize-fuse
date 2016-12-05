@@ -6,9 +6,7 @@ action="$1"
 name="$2"
 user="$(whoami)"
 
-if [[ "$action" != cd ]]; then
-    [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-fi
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
 set -e
 
@@ -33,7 +31,7 @@ create)
         touch README.md
     )
     (
-        su
+        su "$user"
         git init
         exit
     )
@@ -51,8 +49,7 @@ mount)
     echo "RubberFS named $name has been mounted."
     ;;
 cd)
-    echo "d'oh $name"
-    cd "/Wreathe/.Resources/RubberFS/$name/mount"
+    echo "D'oh! Your bash_setup doesn't seem to have been run or worked."
     ;;
 unmount)
     zpool export "$name"
@@ -72,7 +69,7 @@ snapshot)
         cd "/$name"
         touch README.md
         (
-            su
+            su "$user"
             git add -A .
             git commit -a -m "RubberFS: make snapshot"
             set +e

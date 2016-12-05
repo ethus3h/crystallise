@@ -45,7 +45,7 @@ mount)
     zpool import -d "/Wreathe/.Resources/RubberFS/$name/dev/" "$name"
     zpool scrub "$name"
     ln -s -T -f "/$name" "/Wreathe/.Resources/RubberFS/$name/mount"
-    rubberfs cd "$name"
+    #rubberfs cd "$name"
     echo "RubberFS named $name has been mounted."
     ;;
 cd)

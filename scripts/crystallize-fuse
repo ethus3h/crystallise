@@ -78,7 +78,24 @@ save)
     zfs snapshot "$name@rs$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
     ;;
 freeze)
-    #TODO: Back up the complete current filesystem to IA (as a .crystal but don't keep local copy), put the .crystal in the .rubberfs/history/ folder, and remove old snapshots.
+    #TODO: make sure this works. What it should do: Back up the complete current filesystem to IA (as a .crystal but don't keep local copy), put the .crystal in the .rubberfs/history/ folder, and remove old snapshots.
+    if mount | grep "/$name" > /dev/null; then
+        rubberfs unmount "$name"
+    fi
+    if mount | grep "/$name" > /dev/null; then
+        echo "Unmounting failed!"
+        exit 1
+    fi
+    freezeId="rs$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
+    freezeUuid="$(python -c 'import uuid; print str(uuid.uuid4())')"
+    zfs snapshot -r "$name@$freezeId"
+    zfs send -R "$name@$freezeId" > "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"
+    smallify "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"
+    rubberfs mount "$name"
+    rsync -av --progress --checksum "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl.crystal" "$name/.rubberfs/history/"
+    rubberfs snapshot
+    ;;
 freeze-old)
     #TODO?: Convert old ZFS snapshots to single files that can be crystallized and then pulled back into the ZFS filesystem later. Is this possible?
     ;;

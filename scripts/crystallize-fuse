@@ -4,6 +4,7 @@ set -e
 
 action="$1"
 name="$2"
+user="$(whoami)"
 
 if [[ "$action" != cd ]]; then
     [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
@@ -30,6 +31,11 @@ create)
     (
         cd "/$name"
         touch README.md
+    )
+    (
+        su
+        git init
+        exit
     )
     rubberfs snapshot "$name"
     rubberfs check "$name"
@@ -65,13 +71,17 @@ snapshot)
     (
         cd "/$name"
         touch README.md
-        git add -A .
-        git commit -a -m "RubberFS: make snapshot"
-        set +e
-        git pull
-        git submodule update --remote
-        git push -u origin master
-        set -e
+        (
+            su
+            git add -A .
+            git commit -a -m "RubberFS: make snapshot"
+            set +e
+            git pull
+            git submodule update --remote
+            git push -u origin master
+            set -e
+            exit
+        )
     )
     zpool snapshot "$name/rs$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
     ;;

@@ -1,11 +1,15 @@
 #!/bin/bash
 
-[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-
 set -e
 
 action="$1"
 name="$2"
+
+if [[ "$action" != cd ]]; then
+    [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+fi
+
+set -e
 
 if [ ! -n "$name" ]; then
     name="library"
@@ -41,7 +45,7 @@ mount)
     echo "RubberFS named $name has been mounted."
     ;;
 cd)
-    cd "$name"
+    cd "/Wreathe/.Resources/RubberFS/$name/mount"
     ;;
 unmount)
     zpool export "$name"

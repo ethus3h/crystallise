@@ -4,10 +4,10 @@ set -e
 
 action="$1"
 name="$2"
-rubberfsUser="$(whoami)"
-export rubberfsUser
 
+whoami > /tmp/rubberfsUser
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+rubberfsUser="$(cat /tmp/rubberfsUser)"
 
 set -e
 

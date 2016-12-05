@@ -65,17 +65,15 @@ check)
     zpool scrub "$name"
     ;;
 snapshot)
-    (
-        cd "/$name"
-        touch README.md
-        sudo -u "$rubberfsUser" git add -A .
-        sudo -u "$rubberfsUser" git commit -a -m "RubberFS: make snapshot"
-        set +e
-        sudo -u "$rubberfsUser" git pull
-        sudo -u "$rubberfsUser" git submodule update --remote
-        sudo -u "$rubberfsUser" git push -u origin master
-        set -e
-    )
+    cd "/$name"
+    touch README.md
+    sudo -u "$rubberfsUser" git add -A .
+    sudo -u "$rubberfsUser" git commit -a -m "RubberFS: make snapshot"
+    set +e
+    sudo -u "$rubberfsUser" git pull
+    sudo -u "$rubberfsUser" git submodule update --remote
+    sudo -u "$rubberfsUser" git push -u origin master
+    set -e
     zfs snapshot "$name@rs$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
     ;;
 status)

@@ -4,9 +4,10 @@ set -e
 
 action="$1"
 name="$2"
-user="$(whoami)"
+rubberfsUser="$(whoami)"
+export rubberfsUser
 
-[ "$(whoami)" != "root" ] && su
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
 set -e
 
@@ -30,8 +31,10 @@ create)
         cd "/$name"
         touch README.md
     )
+    chown "$(rubberfsUser):$(rubberfsUser)" "/$name"
+    chown -R "$(rubberfsUser):$(rubberfsUser)" "/$name/.git"
     (
-        su "$user"
+        su "$rubberfsUser"
         git init
         exit
     )
@@ -43,7 +46,6 @@ create)
 mount)
     zpool import -d "/Wreathe/.Resources/RubberFS/$name/dev/" "$name"
     zpool scrub "$name"
-    chown "$(whoami):$(whoami)" "$name"
     ln -s -T -f "/$name" "/Wreathe/.Resources/RubberFS/$name/mount"
     rubberfs cd "$name"
     echo "RubberFS named $name has been mounted."
@@ -69,8 +71,7 @@ snapshot)
         cd "/$name"
         touch README.md
         (
-            echo "$user"
-            su "$user"
+            su "$rubberfsUser"
             git add -A .
             git commit -a -m "RubberFS: make snapshot"
             set +e
@@ -98,5 +99,3 @@ stub)
     exit 1
     ;;
 esac
-exit 0
-exit 0

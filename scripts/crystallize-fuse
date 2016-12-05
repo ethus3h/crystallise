@@ -6,7 +6,7 @@ action="$1"
 name="$2"
 user="$(whoami)"
 
-[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+[ "$(whoami)" != "root" ] && su
 
 set -e
 
@@ -98,3 +98,5 @@ stub)
     exit 1
     ;;
 esac
+exit 0
+exit 0

@@ -76,7 +76,7 @@ snapshot)
         sudo -u "$rubberfsUser" git push -u origin master
         set -e
     )
-    zpool snapshot "$name/rs$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    zfs snapshot "$name/rs$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
     ;;
 status)
     zpool list "$name"

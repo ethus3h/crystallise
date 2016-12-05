@@ -5,7 +5,9 @@ set -e
 action="$1"
 name="$2"
 
-whoami > /tmp/rubberfsUser
+if [[ "$(whoami)" != "root" ]]
+    whoami > /tmp/rubberfsUser
+fi
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 rubberfsUser="$(cat /tmp/rubberfsUser)"
 
@@ -33,11 +35,7 @@ create)
     )
     chown "$(rubberfsUser):$(rubberfsUser)" "/$name"
     chown -R "$(rubberfsUser):$(rubberfsUser)" "/$name/.git"
-    (
-        su "$rubberfsUser"
-        git init
-        exit
-    )
+    sudo -u "$rubberfsUser" git init
     rubberfs snapshot "$name"
     rubberfs check "$name"
     rubberfs unmount "$name"
@@ -70,17 +68,13 @@ snapshot)
     (
         cd "/$name"
         touch README.md
-        (
-            su "$rubberfsUser"
-            git add -A .
-            git commit -a -m "RubberFS: make snapshot"
-            set +e
-            git pull
-            git submodule update --remote
-            git push -u origin master
-            set -e
-            exit
-        )
+        sudo -u "$rubberfsUser" git add -A .
+        sudo -u "$rubberfsUser" git commit -a -m "RubberFS: make snapshot"
+        set +e
+        sudo -u "$rubberfsUser" git pull
+        sudo -u "$rubberfsUser" git submodule update --remote
+        sudo -u "$rubberfsUser" git push -u origin master
+        set -e
     )
     zpool snapshot "$name/rs$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
     ;;

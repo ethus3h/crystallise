@@ -83,6 +83,9 @@ status)
     #zfs list -ro space -t snapshot
     zfs list -ro space "$name"
     ;;
+list)
+    zfs list -t snapshot
+    ;;
 stub)
     mkdir -p /Ember\ Media\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/
     ;;

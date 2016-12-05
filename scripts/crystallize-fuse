@@ -45,6 +45,7 @@ mount)
     echo "RubberFS named $name has been mounted."
     ;;
 cd)
+    echo "d'oh"
     cd "/Wreathe/.Resources/RubberFS/$name/mount"
     ;;
 unmount)

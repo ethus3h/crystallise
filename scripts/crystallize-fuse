@@ -69,6 +69,7 @@ snapshot)
         cd "/$name"
         touch README.md
         (
+            echo "$user"
             su "$user"
             git add -A .
             git commit -a -m "RubberFS: make snapshot"

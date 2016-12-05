@@ -37,7 +37,11 @@ mount)
     zpool scrub "$name"
     chown "$(whoami):$(whoami)" "$name"
     ln -s -T -f "/$name" "/Wreathe/.Resources/RubberFS/$name/mount"
+    rubberfs cd "$name"
     echo "RubberFS named $name has been mounted."
+    ;;
+cd)
+    cd "$name"
     ;;
 unmount)
     zpool export "$name"

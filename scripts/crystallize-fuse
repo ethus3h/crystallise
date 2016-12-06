@@ -43,6 +43,9 @@ create)
     ;;
 mount)
     #TODO: Also mount a FUSE filesystem that replaces .crystals with symlinks to a FUSE filesystem hooked up to IA's S3 API, somehow.
+    mkdir -p ~/.avfs
+    avfsd ~/.avfs
+    
     zpool import -d "/Wreathe/.Resources/RubberFS/$name/dev/" "$name"
     zpool scrub "$name"
     ln -s -T -f "/$name" "/Wreathe/.Resources/RubberFS/$name/mount"
@@ -78,7 +81,9 @@ save)
     #sudo -u "$rubberfsUser" git submodule update --remote
     #sudo -u "$rubberfsUser" git push -u origin master
     #set -e
-    zfs snapshot "$name@rs$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    rubberfsSnapshot="rs$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    zfs snapshot "$name@$rubberfsSnapshot"
+    echo "A snapshot $rubberfsSnapshot in RubberFS named $name has been created."
     ;;
 freeze)
     #TODO: make sure this works. What it should do: Back up the complete current filesystem to IA (as a .crystal but don't keep local copy), put the .crystal in the .rubberfs/history/ folder, and remove old snapshots.
@@ -97,9 +102,13 @@ freeze)
     smallify "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"
     rubberfs mount "$name"
     rsync -av --progress --checksum "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl.crystal" "$name/.rubberfs/history/"
+    freezeCrystal="$(cat "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl.crystal/identifier")"
     echo "$name@$freezeId" > "$name/.rubberfs/lastFullFreeze"
+    echo "$freezeUuid" > "$name/.rubberfs/lastFullFreezeUuid"
+    echo "$freezeCrystal" > "$name/.rubberfs/lastFullFreezeCrystal"
     rubberfs snapshot
     rubberfs unmount
+    echo "A snapshot $freezeCrystal of RubberFS named $name has been created."
     ;;
 freeze-delta)
     #TODO?: Convert old ZFS snapshots to single files that can be crystallized and then pulled back into the ZFS filesystem later. Is this possible?

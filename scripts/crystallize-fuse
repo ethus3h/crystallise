@@ -97,9 +97,11 @@ freeze)
     smallify "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"
     rubberfs mount "$name"
     rsync -av --progress --checksum "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl.crystal" "$name/.rubberfs/history/"
+    echo "$name@$freezeId" > "$name/.rubberfs/lastFullFreeze"
     rubberfs snapshot
+    rubberfs unmount
     ;;
-freeze-old)
+freeze-delta)
     #TODO?: Convert old ZFS snapshots to single files that can be crystallized and then pulled back into the ZFS filesystem later. Is this possible?
     ;;
 status)

@@ -108,6 +108,7 @@ status)
     ;;
 list)
     zfs list -t snapshot
+    rubberfs status "$name"
     ;;
 stub)
     mkdir -p /Ember\ Media\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/

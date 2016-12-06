@@ -111,7 +111,7 @@ list)
     rubberfs status "$name"
     ;;
 stub)
-    mkdir -p /Ember\ Media\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/
+    mkdir -p /Ember\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/
     ;;
 *)
     echo "Unknown action."

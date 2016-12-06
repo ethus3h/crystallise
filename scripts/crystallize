@@ -1,7 +1,7 @@
 #!/bin/bash
 # Crystallize
 # Version:
-export crystallizeVersion='2.15.2.2.4'
+export crystallizeVersion='2.15.2.3'
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
@@ -65,7 +65,7 @@ if [[ $crystallizeLeavePointer == true ]]; then
     rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.cmd" "$crystalWorkdir/$CrystalID.cwd" "$crystallizePointerDir"/
     echo "Added crystal metadata"
 fi
-rsync -av --progress --checksum "$crystalWorkdir/$CrystalID".xz /Ember\ Media\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/"$CrystalID".log.xz
+rsync -av --progress --checksum "$crystalWorkdir/$CrystalID".xz /Ember\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/"$CrystalID".log.xz
 gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.xz"
 gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.time-done.warc.gz.xz"
 gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.local.idx.xz"

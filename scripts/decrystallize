@@ -77,6 +77,9 @@ ia upload "$CrystalLogID" --verify --retries=10 "./$CrystalLogID.coal5-tend"
 set +e
 mkdir -v "./$CrystalLogID.coal5-meta"
 mv -v "./$CrystalLogID."!(coal5-meta) "./$CrystalLogID.coal5-meta/"
+if [[ $decrystallizeEasyUse == true ]]; then
+    mv -v "~/Decrystallized/$CrystalLogID.dec" "~/Decrystallized/$CrystalLogID.coal5-meta/"
+fi
 
 if rm -v "./$CrystalLogID.coal5-meta/$CrystalLogID.coal5-tend"; then
 

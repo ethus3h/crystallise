@@ -1,0 +1,34 @@
+#!/bin/bash
+# decrystallize-pipe
+
+# See crystallize for requirements.
+
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+
+#Script should exit if any operation fails.
+set -e
+
+shopt -s extglob
+
+#Remove URL
+CrystalAddress="${1#https://archive.org/@(details|download)/}"
+#Remove trailing path(s) from identifier
+CrystalAddress="${CrystalAddress%%/*}"
+if [ "$2" != "--no-trim-extensions" ]; then
+    #Remove filename extensions
+    CrystalAddress="${CrystalAddress%\.coal5*}"
+fi
+
+if [ "$CrystalAddress" == "" ]; then
+    echo "Please specify a crystal address to unpack."
+    exit 1
+fi
+
+crystallizePassphrase=$(crystallize-getconf 'Passphrase')
+
+mkdir -p ~/.avfs
+avfsd ~/.avfs
+
+wget "https://archive.org/download/$CrystalID/$CrystalID.coal5"
+
+gpg --yes --batch --passphrase-file "./$CrystalLogID.tmp" "./$CrystalLogID.pax.xz.gpg"

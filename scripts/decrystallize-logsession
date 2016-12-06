@@ -113,7 +113,7 @@ mv -v "./$CrystalLogID.deep.idx" "./$CrystalLogID/$CrystalID.deep.idx"
 if [[ $decrystallizeEasyUse == true ]]; then
     set +e
     echo "Ok if next command fails"
-    mv -v "~/Decrystallized/$CrystalID" "~/Decrystallized/$CrystalLogID.dec"
+    mv -v ~/Decrystallized/"$CrystalID" ~/Decrystallized/"$CrystalLogID.dec"
     set -e
     echo "Not ok if next commands fail"
     mv -v "$CrystalLogID/$CrystalID" ~/Decrystallized/

@@ -55,6 +55,7 @@ cd)
 unmount)
     rubberfs save "$name"
     zpool export "$name"
+    echo "RubberFS named $name has been unmounted."
     ;;
 attach)
     username="$1"
@@ -65,6 +66,7 @@ attach)
     ;;
 check)
     zpool scrub "$name"
+    echo "A check for RubberFS named $name has been begun; use rubberfs status $name to see its progress."
     ;;
 save)
     cd "/$name"

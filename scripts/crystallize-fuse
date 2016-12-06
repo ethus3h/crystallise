@@ -53,6 +53,7 @@ cd)
     echo "D'oh! Your bash_setup doesn't seem to have been run or worked."
     ;;
 unmount)
+    rubberfs save "$name"
     zpool export "$name"
     ;;
 attach)

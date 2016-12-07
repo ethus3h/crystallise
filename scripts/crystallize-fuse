@@ -87,6 +87,7 @@ save)
     ;;
 freeze)
     #TODO: make sure this works. What it should do: Back up the complete current filesystem to IA (as a .crystal but don't keep local copy), put the .crystal in the .rubberfs/history/ folder, and remove old snapshots.
+    cd /
     if mount | grep "/$name" > /dev/null; then
         umount "/$name"
     fi
@@ -95,7 +96,7 @@ freeze)
         exit 1
     fi
     freezeId="rubberfs-freeze-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
-    crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
+    crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
     freezeUuid="$(python -c 'import uuid; print str(uuid.uuid4())')"
     zfs snapshot -r "$name@$freezeId"
     zfs send -R "$name@$freezeId" > "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"
@@ -107,15 +108,39 @@ freeze)
     echo "$freezeUuid" > "$name/.rubberfs/lastFullFreezeUuid"
     echo "$freezeCrystal" > "$name/.rubberfs/lastFullFreezeCrystal"
     rubberfs snapshot
-    zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | sed -n '1!p' | xargs -n 1 zfs destroy -vr
+    zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3 | xargs -n 1 zfs destroy -vr
     rubberfs unmount
     echo "A frozen snapshot $freezeCrystal of RubberFS named $name has been created, and the obsolete local snapshots removed."
     #echo "To restore, first make a new zpool, then run zfs recv (new-zpool-name) -F < /foo/bar.zfsrepl"
     ;;
 freeze-delta)
     #TODO?: Convert old ZFS snapshots to single files that can be crystallized and then pulled back into the ZFS filesystem later. Is this possible?
-    echo "Not implemented!"
     exit 1
+    cd /
+    if mount | grep "/$name" > /dev/null; then
+        umount "/$name"
+    fi
+    if mount | grep "/$name" > /dev/null; then
+        echo "Unmounting failed!"
+        exit 1
+    fi
+    freezeId="rubberfs-freeze-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
+    freezeUuid="$(python -c 'import uuid; print str(uuid.uuid4())')"
+    zfs snapshot -r "$name@$freezeId"
+    oldSnap="$(cat "$name/.rubberfs/lastFullFreeze")"
+    zfs send -I "$oldSnap" "$name@$freezeId" "$name@$freezeId" > "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl"
+    smallify "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl"
+    rubberfs mount "$name"
+    rsync -av --progress --checksum "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl.crystal" "$crystalWorkdir/.$name@$freezeId.$freezeUuid.incremental.zfsrepl.crystal-data" "$name/.rubberfs/history/"
+    freezeCrystal="$(cat "$crystalWorkdir/.$name@$freezeId.$freezeUuid.zfsrepl.crystal-data/identifier")"
+    echo "$name@$freezeId" > "$name/.rubberfs/lastFullFreeze"
+    echo "$freezeUuid" > "$name/.rubberfs/lastFullFreezeUuid"
+    echo "$freezeCrystal" > "$name/.rubberfs/lastFullFreezeCrystal"
+    rubberfs snapshot
+    zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3 | xargs -n 1 zfs destroy -vr
+    rubberfs unmount
+    echo "A frozen incremental snapshot $freezeCrystal of RubberFS named $name has been created, and the obsolete local snapshots removed."
     ;;
 status)
     zpool list "$name"

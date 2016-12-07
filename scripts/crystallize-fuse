@@ -127,7 +127,7 @@ list)
     rubberfs status "$name"
     ;;
 whereami)
-    rubberDir="$(find_up.sh . -type d -name ".rubberfs" -execdir pwd \; -quit)"
+    rubberDir="$(find_up.sh "$(readlink "$(pwd)")" -type d -name ".rubberfs" -execdir pwd \; -quit)"
     if [ ! -d "$rubberDir" ]; then
         echo "You do not appear to be in a rubberfs directory."
         exit 1

@@ -36,11 +36,11 @@ create)
         touch README.md
     )
     #sudo -u "$rubberfsUser" git init
-    chown "$(rubberfsUser):$(rubberfsUser)" "/$name"
-    chown -R "$(rubberfsUser):$(rubberfsUser)" "/$name/.git"
+    chown "$rubberfsUser:$rubberfsUser" "/$name"
+    #chown -R "$rubberfsUser:$rubberfsUser" "/$name/.git"
     mkdir "/$name/.rubberfs"
     echo "$name" > "/$name/.rubberfs/name"
-    chown -R "$(rubberfsUser):$(rubberfsUser)" "/$name/.rubberfs"
+    chown -R "$rubberfsUser:$rubberfsUser" "/$name/.rubberfs"
     rubberfs snapshot "$name"
     rubberfs check "$name"
     rubberfs unmount "$name"

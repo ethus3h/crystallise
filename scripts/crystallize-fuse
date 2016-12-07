@@ -58,14 +58,18 @@ mount)
     ;;
 cd)
     echo "D'oh! Your bash_setup doesn't seem to have been run or worked."
+    exit 1
     ;;
 unmount)
     if [ ! -d "/$name/.rubberfs" ]; then
         echo "ERROR! RubberFS named $name does not appear to be mounted."
+    else
+        rubberfs save "$name"
+    fi
+    zpool export "$name"
+    if [ ! -d "/$name/.rubberfs" ]; then
         exit 1
     fi
-    rubberfs save "$name"
-    zpool export "$name"
     echo "RubberFS named $name has been unmounted."
     ;;
 attach)

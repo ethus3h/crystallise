@@ -13,62 +13,20 @@ set -e
 CrystalID=CrystallizeUpdate-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")-$(python -c 'import uuid; print str(uuid.uuid4())')
 export CrystalID
 
-echo "Please wait until the script says \"Done updating!\"..."
-
 mkdir -v ~/"$CrystalID".git-tmp
 cd ~/"$CrystalID".git-tmp
+git clone https://github.com/ethus3h/crystallize
 git clone https://github.com/ethus3h/wreathe
 git clone https://github.com/jjjake/internetarchive
 cd internetarchive
 find ../wreathe/etc/portage/patches/dev-python/internetarchive -name "*.patch" -exec patch -p1 < {} \;
 pip install --upgrade .
 
-ls -las /usr/local/bin
-touch /usr/local/bin/crystallize-rescue-tmp
-touch /usr/local/bin/crystallize-update-tmp
-
 cp -v /usr/local/bin/crystallize-update "/usr/local/bin/crystallize-update.old.$CrystalID"
 crystallize /usr/local/bin/crystallize /usr/local/bin/crystallize-logsession /usr/local/bin/crystallize-internal-xz /usr/local/bin/crystallize-internal-ia /usr/local/bin/crystallize-internal-xz-b /usr/local/bin/decrystallize /usr/local/bin/decrystallize-logsession /usr/local/bin/crystallize-rescue-tmp /usr/local/bin/crystallize-update-tmp "/usr/local/bin/crystallize-update.old.$CrystalID"
 echo "Please wait; still updating..."
-mkdir -v ~/"$CrystalID".tmp
-cd ~/"$CrystalID".tmp
-wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallize/master/scripts/crystallize
-wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallize/master/scripts/crystallize-rescue
-wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallize/master/scripts/crystallize-logsession
-wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallize/master/scripts/crystallize-internal-xz
-wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallize/master/scripts/crystallize-internal-ia
-wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallize/master/scripts/crystallize-internal-xz-b
-wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallize/master/scripts/decrystallize
-wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallize/master/scripts/decrystallize-logsession
-wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallize/master/scripts/quickliquid
-wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallize/master/scripts/dequicklify
-chmod +x ./*
-cp -v ./* /usr/local/bin/
-cd ~
-crystallize ~/"$CrystalID".tmp
-echo "Please wait; still updating..."
-mkdir -v ~/"$CrystalID".tmp
-cd ~/"$CrystalID".tmp
-wget --no-cache https://raw.githubusercontent.com/ethus3h/crystallize/master/scripts/crystallize-update
-chmod +x ./*
 
-# Spawn update script — based on http://dirty-motherfucker.org/blog/2012/02/26/self-updating-bash-script-revised/
-cat > /usr/local/bin/crystallize-update-tmp.sh << EOF
-#!/bin/bash
-# Overwrite old file with new
-if cp -v ./* /usr/local/bin/; then
-    cd ~
+cd ../crystallize
+make
 
-    #Clear the screen
-    printf "\033c"
-
-    echo "Done updating!"
-else
-    echo "Failed! This should generally not happen; please report it as a bug."
-fi
-EOF
-
-chmod +x /usr/local/bin/crystallize-update-tmp.sh
-
-echo -n "Inserting update process..."
-exec /bin/bash /usr/local/bin/crystallize-update-tmp.sh
+exec /bin/bash -c 'sudo make install'

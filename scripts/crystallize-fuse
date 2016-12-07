@@ -41,7 +41,7 @@ create)
     mkdir "/$name/.rubberfs"
     echo "$name" > "/$name/.rubberfs/name"
     chown -R "$rubberfsUser:$rubberfsUser" "/$name/.rubberfs"
-    rubberfs snapshot "$name"
+    rubberfs save "$name"
     rubberfs check "$name"
     rubberfs unmount "$name"
     echo "RubberFS named $name has been created. Run rubberfs mount $name to mount it."

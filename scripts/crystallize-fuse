@@ -150,6 +150,9 @@ freeze)
     ;;
 freeze-delta)
     cd /
+    if [ ! -f "$name/.rubberfs/lastFreeze" ]; then
+        echo "ERROR! There does not appear to be an existing freeze state. Please use rubberfs freeze instead."
+    fi
     freezeId="rubberfs-freeze-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
     crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
     freezeUuid="$(python -c 'import uuid; print str(uuid.uuid4())')"

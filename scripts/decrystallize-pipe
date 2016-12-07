@@ -12,28 +12,16 @@ shopt -s extglob
 
 crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
 
-while [ -f "$crystalWorkdir/decrystallize-pipe-in-use"]; do
-    echo "Another pipe request is open; waiting..."
-    sleep 1
-done
-
-#Remove URL
-CrystalAddress="${1#https://archive.org/@(details|download)/}"
-#Remove trailing path(s) from identifier
-CrystalAddress="${CrystalAddress%%/*}"
-if [ "$2" != "--no-trim-extensions" ]; then
-    #Remove filename extensions
-    CrystalAddress="${CrystalAddress%\.coal5*}"
-fi
-
-if [ "$CrystalAddress" == "" ]; then
-    echo "Please specify a crystal address to unpack."
-    exit 1
-fi
+CrystalAddress="$(cat $1)"
 
 CrystalLogID=$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")-$(python -c 'import uuid; print str(uuid.uuid4())')
 
 crystallizePassphrase=$(crystallize-getconf 'Passphrase')
 printf "%s" "$crystallizePassphrase" > "$crystalWorkdir/$CrystalLogID.tmp"
+
+mkfifo "$crystalWorkdir/$CrystalLogID.tar"
+mkdir -p "$crystalWorkdir/$CrystalLogID.avfs"
+avfsd "$crystalWorkdir/$CrystalLogID.avfs"
+cp "$(which decrystallize-unpipe)" "$1-unmount"
 
 wget -O - -o /dev/null "https://archive.org/download/$CrystalID/$CrystalID.coal5" | gpg --yes --batch --passphrase-file "$crystalWorkdir/$CrystalLogID.tmp" - | unxz > "$crystalWorkdir/$CrystalLogID.tar"

@@ -1,0 +1,13 @@
+#!/bin/bash
+# decrystallize-pipe
+
+# See crystallize for requirements.
+
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+
+#Script should exit if any operation fails.
+set -e
+
+shopt -s extglob
+
+thisCrystal="$0"

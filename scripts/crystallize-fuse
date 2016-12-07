@@ -98,7 +98,7 @@ freeze)
     zfs send -R "$name@$freezeId" > "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"
     smallify "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"
     rubberfs mount "$name"
-    rsync -av --progress --checksum "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl.crystal" "$name/.rubberfs/history/"
+    rsync -av --progress --checksum "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl.crystal-mount" "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl.crystal" "$name/.rubberfs/history/"
     freezeCrystal="$(cat "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl.crystal/identifier")"
     echo "$name@$freezeId" > "$name/.rubberfs/lastFullFreeze"
     echo "$freezeUuid" > "$name/.rubberfs/lastFullFreezeUuid"

@@ -136,7 +136,7 @@ whereami)
     ;;
 stash)
     shift
-    if [ -n "$1" ]; then
+    if [[ -z "$1" ]]; then
         echo "Please specify something to stash."
         exit 1
     fi
@@ -148,7 +148,7 @@ stash)
     ;;
 pull)
     shift
-    if [ -n "$1" ]; then
+    if [[ -z "$1" ]]; then
         echo "Please specify something to pull."
         exit 1
     fi

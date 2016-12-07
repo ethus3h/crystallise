@@ -81,9 +81,9 @@ save)
     #sudo -u "$rubberfsUser" git submodule update --remote
     #sudo -u "$rubberfsUser" git push -u origin master
     #set -e
-    rubberfsSnapshot="rs$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    rubberfsSnapshot="rubberfs-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
     zfs snapshot "$name@$rubberfsSnapshot"
-    echo "A snapshot $rubberfsSnapshot in RubberFS named $name has been created."
+    echo "A saved snapshot $rubberfsSnapshot in RubberFS named $name has been created."
     ;;
 freeze)
     #TODO: make sure this works. What it should do: Back up the complete current filesystem to IA (as a .crystal but don't keep local copy), put the .crystal in the .rubberfs/history/ folder, and remove old snapshots.
@@ -94,7 +94,7 @@ freeze)
         echo "Unmounting failed!"
         exit 1
     fi
-    freezeId="rs$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    freezeId="rubberfs-freeze-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
     crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
     freezeUuid="$(python -c 'import uuid; print str(uuid.uuid4())')"
     zfs snapshot -r "$name@$freezeId"
@@ -107,8 +107,9 @@ freeze)
     echo "$freezeUuid" > "$name/.rubberfs/lastFullFreezeUuid"
     echo "$freezeCrystal" > "$name/.rubberfs/lastFullFreezeCrystal"
     rubberfs snapshot
+    zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | sed -n '1!p' | xargs -n 1 zfs destroy -vr
     rubberfs unmount
-    echo "A snapshot $freezeCrystal of RubberFS named $name has been created."
+    echo "A frozen snapshot $freezeCrystal of RubberFS named $name has been created, and the obsolete local snapshots removed."
     #echo "To restore, first make a new zpool, then run zfs recv (new-zpool-name) -F < /foo/bar.zfsrepl"
     ;;
 freeze-delta)

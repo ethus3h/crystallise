@@ -1,12 +1,17 @@
 #!/bin/bash
 # Crystallize
 # Version:
-export crystallizeVersion='2.15.2.3.5'
+export crystallizeVersion='2.15.2.3.6'
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
 #Script should exit if any operation fails.
 set -e
+
+if [ ! -e /Ember\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/ ]; then
+    echo "ERROR: Could not find a usable Ember Library directory tree. Nothing done."
+    exit 1
+fi
 
 if ! [ -d . ]; then
     echo "Please run crystallize from a directory that exists."

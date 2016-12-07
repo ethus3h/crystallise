@@ -30,10 +30,7 @@ create)
     truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1"
     truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2"
     truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
-    zpool create "$name" mirror "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
-    zfs set compression=gzip-9 "$name"
-    zfs set relatime=on "$name"
-    zfs set checksum=sha256 library
+    zpool create "$name" -O compression=gzip-9 -O relatime=on -O checksum=sha256 mirror "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
     (
         cd "/$name"
         touch README.md
@@ -60,6 +57,20 @@ mount)
 remount)
     rubberfs unmount "$name"
     rubberfs mount "$name"
+    ;;
+rename)
+    newname="$3"
+    if [ -e "/$newname" ]; then
+        echo "ERROR: The requested name \"$newname\" is already in use."
+        exit 1
+    fi
+    rubberfs unmount "$name"
+    set +e
+    mv "/$name" "/$newname"
+    mv "/Wreathe/.Resources/RubberFS/$name" "/Wreathe/.Resources/RubberFS/$newname"
+    zpool import -d "/Wreathe/.Resources/RubberFS/$newname/dev/" "$name" "$newname"
+    rubberfs unmount "$newname"
+    rubberfs mount "$newname"
     ;;
 cd)
     echo "D'oh! Your bash_setup doesn't seem to have been run or worked."

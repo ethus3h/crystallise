@@ -71,6 +71,7 @@ rename)
     zpool import -d "/Wreathe/.Resources/RubberFS/$newname/dev/" "$name" "$newname"
     rubberfs unmount "$newname"
     rubberfs mount "$newname"
+    echo "RubberFS named $name has been renamed to $newname."
     ;;
 cd)
     echo "D'oh! Your bash_setup doesn't seem to have been run or worked."

@@ -59,7 +59,7 @@ xz -C sha256 -v -9 -e -k "./$CrystalLogID.time-start.warc.gz"
 xz -C sha256 -v -9 -e -k "./$CrystalLogID.ip.warc.gz"
 xz -C sha256 -v -9 -e -k "./$CrystalLogID.time-env.warc.gz"
 xz -C sha256 -v -9 -e -k "./$CrystalLogID.time-end.warc.gz"
-rsync -av --progress --checksum "./$CrystalLogID".log.xz /Ember\ Media\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/"$CrystalLogID".log.xz
+rsync -av --progress --checksum "./$CrystalLogID".log.xz /Ember\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/"$CrystalLogID".log.xz
 gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "./$CrystalLogID".tmp "./$CrystalLogID.log.xz"
 gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "./$CrystalLogID".tmp "./$CrystalLogID.time-start.warc.gz.xz"
 gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "./$CrystalLogID".tmp "./$CrystalLogID.ip.warc.gz.xz"

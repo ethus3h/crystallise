@@ -1,7 +1,7 @@
 #!/bin/bash
 # Crystallize
 # Version:
-export crystallizeVersion='2.15.4.8'
+export crystallizeVersion='2.15.4.9'
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
@@ -28,6 +28,10 @@ if [ "$1" == "--" ]; then
     shift
 fi
 
+crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
+export crystalWorkdir
+mkdir -p "$crystalWorkdir"
+
 #Check for and handle option to leave behind a pointer
 if [ "$1" == "--leave-pointer" ]; then
     echo "Pointer is enabled."
@@ -39,8 +43,8 @@ if [ "$1" == "--leave-pointer" ]; then
     fi
     #Only use first 128 characters of file name for directory name; hopefully this will prevent the name being too long for the filesystem
     crystallizeBaseName="$(basename "$1")"
-    crystallizePointerDir=."${crystallizeBaseName:0:128}".crystal-data
-    crystallizePointerName="${crystallizeBaseName:0:128}".crystal
+    crystallizePointerDir="$crystalWorkdir"/."${crystallizeBaseName:0:128}".crystal-data
+    crystallizePointerName="$crystalWorkdir"/"${crystallizeBaseName:0:128}".crystal
 fi
 
 echo "Pointer directory: $crystallizePointerDir"
@@ -52,10 +56,6 @@ echo "the crystallize temp dir, or the crystallize scripts themselves. Either"
 echo "could cause problems. Continuing in 10 seconds; press Ctrl+C to cancel."
 echo "### WARNING! ^^^ WARNING! ### WARNING! ### WARNING! ^^^ WARNING! ###"
 sleep 10
-
-crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
-export crystalWorkdir
-mkdir -p "$crystalWorkdir"
 
 CrystalID=$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")-$(python -c 'import uuid; print str(uuid.uuid4())')
 export CrystalID

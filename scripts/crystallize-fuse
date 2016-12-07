@@ -33,6 +33,7 @@ create)
     zpool create "$name" mirror "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
     zfs set compression=gzip-9 "$name"
     zfs set relatime=on "$name"
+    zfs set checksum=sha256 library
     (
         cd "/$name"
         touch README.md

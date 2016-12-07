@@ -129,6 +129,7 @@ list)
     rubberfs status "$name"
     ;;
 usage)
+    rubberfs save "$name"
     ncdu
     ;;
 whereami)

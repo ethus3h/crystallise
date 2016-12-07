@@ -154,6 +154,18 @@ pull)
     fi
     biggify "$@"
     ;;
+rm)
+    shift
+    if [[ -z "$1" ]]; then
+        echo "Please specify something to remove."
+        exit 1
+    fi
+    thisRubber="$(rubberfs whereami)"
+    rubberfs save "$thisRubber"
+    crystallize "$@"
+    rubberfs save "$thisRubber"
+    echo "Done stashing."
+    ;;
 stub)
     if [ ! -e /Ember\ Library ]; then
         mkdir -p /Ember\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/

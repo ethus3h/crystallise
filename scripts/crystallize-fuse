@@ -128,6 +128,9 @@ list)
     zfs list -t snapshot
     rubberfs status "$name"
     ;;
+usage)
+    ncdu
+    ;;
 whereami)
     rubberDir="$(find_up.sh "$(readlink -f -- "$(pwd)")" -type d -name ".rubberfs" -execdir pwd \; -quit)"
     if [ ! -d "$rubberDir" ]; then

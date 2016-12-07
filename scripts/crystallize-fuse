@@ -60,6 +60,10 @@ cd)
     echo "D'oh! Your bash_setup doesn't seem to have been run or worked."
     ;;
 unmount)
+    if [ ! -d "/$name/.rubberfs" ]; then
+        echo "ERROR! RubberFS named $name does not appear to be mounted."
+        exit 1
+    fi
     rubberfs save "$name"
     zpool export "$name"
     echo "RubberFS named $name has been unmounted."
@@ -77,6 +81,10 @@ check)
     ;;
 save)
     cd "/$name"
+    if [ ! -d .rubberfs ]; then
+        echo "ERROR! RubberFS named $name does not appear to be mounted."
+        exit 1
+    fi
     touch README.md
     #sudo -u "$rubberfsUser" git add -A .
     #set +e

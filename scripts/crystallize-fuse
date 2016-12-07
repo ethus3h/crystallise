@@ -165,7 +165,7 @@ freeze-delta)
     kill "$rubberfsWatchPid"
     smallify "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl"
     rsync -av --progress --checksum "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl.crystal" "$crystalWorkdir/.$name@$freezeId.$freezeUuid.incremental.zfsrepl.crystal-data" "$name/.rubberfs/history/"
-    freezeCrystal="$(cat "$crystalWorkdir/.$name@$freezeId.$freezeUuid.zfsrepl.crystal-data/identifier")"
+    freezeCrystal="$(cat "$crystalWorkdir/.$name@$freezeId.$freezeUuid.incremental.zfsrepl.crystal-data/identifier")"
     echo "$name@$freezeId" > "$name/.rubberfs/lastFreeze"
     echo "$freezeUuid" > "$name/.rubberfs/lastFreezeUuid"
     echo "$freezeCrystal" > "$name/.rubberfs/lastFreezeCrystal"

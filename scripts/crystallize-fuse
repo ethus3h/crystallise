@@ -106,7 +106,7 @@ freeze)
     #TODO: make sure this works. What it should do: Back up the complete current filesystem to IA (as a .crystal but don't keep local copy), put the .crystal in the .rubberfs/history/ folder, and remove old snapshots.
     cd /
     if mount | grep "/$name" > /dev/null; then
-        umount "/$name"
+        rubberfs unmount "/$name"
     fi
     if mount | grep "/$name" > /dev/null; then
         echo "Unmounting failed!"

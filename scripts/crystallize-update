@@ -31,4 +31,12 @@ echo "Please wait; still updating..."
 cd ../crystallize
 make
 
+set +e
+mv /usr/local/etc/crystallize.conf /usr/local/etc/crystallize.conf.bak
+set -e
+
 exec /bin/bash -c 'sudo make install'
+
+set +e
+rm /usr/local/etc/crystallize.conf
+mv /usr/local/etc/crystallize.conf.bak /usr/local/etc/crystallize.conf

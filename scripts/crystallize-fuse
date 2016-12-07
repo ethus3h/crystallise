@@ -68,9 +68,6 @@ unmount)
         rubberfs save "$name"
     fi
     zpool export "$name"
-    if [ ! -d "/$name/.rubberfs" ]; then
-        exit 1
-    fi
     echo "RubberFS named $name has been unmounted."
     ;;
 attach)

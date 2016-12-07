@@ -109,6 +109,7 @@ freeze)
     rubberfs snapshot
     rubberfs unmount
     echo "A snapshot $freezeCrystal of RubberFS named $name has been created."
+    #echo "To restore, first make a new zpool, then run zfs recv (new-zpool-name) -F < /foo/bar.zfsrepl"
     ;;
 freeze-delta)
     #TODO?: Convert old ZFS snapshots to single files that can be crystallized and then pulled back into the ZFS filesystem later. Is this possible?

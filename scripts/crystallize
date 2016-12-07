@@ -1,7 +1,7 @@
 #!/bin/bash
 # Crystallize
 # Version:
-export crystallizeVersion='2.15.4.10'
+export crystallizeVersion='2.15.4.11'
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
@@ -41,10 +41,10 @@ if [ "$1" == "--leave-pointer" ]; then
         echo "Please use pointer option with only 1 item at a time."
         exit 1
     fi
-    #Only use first 128 characters of file name for directory name; hopefully this will prevent the name being too long for the filesystem
+    #Only use first 136 characters of file name for directory name; hopefully this will prevent the name being too long for the filesystem
     crystallizeBaseName="$(basename "$1")"
-    crystallizePointerDir="$crystalWorkdir"/."${crystallizeBaseName:0:128}".crystal-data
-    crystallizePointerName="$crystalWorkdir"/"${crystallizeBaseName:0:128}".crystal
+    crystallizePointerDir="$crystalWorkdir"/."${crystallizeBaseName:0:136}".crystal-data
+    crystallizePointerName="$crystalWorkdir"/"${crystallizeBaseName:0:136}".crystal
 fi
 
 echo "Pointer directory: $crystallizePointerDir"

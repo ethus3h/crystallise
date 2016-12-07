@@ -1,7 +1,7 @@
 #!/bin/bash
 # Crystallize
 # Version:
-export crystallizeVersion='2.15.4.6'
+export crystallizeVersion='2.15.4.7'
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
@@ -62,16 +62,16 @@ echo "Working..."
 echo "$0 $*" > "$crystalWorkdir/$CrystalID.cmd"
 pwd > "$crystalWorkdir/$CrystalID.cwd"
 #Script should not exit if an operation fails. FIXME: why?
-set +e
-xz -C sha256 -v -9 -e "$crystalWorkdir/$CrystalID"
-xz -C sha256 -v -9 -e -k "$crystalWorkdir/$CrystalID.time-done.warc.gz"
-xz -C sha256 -v -9 -e "$crystalWorkdir/$CrystalID.local.idx"
-xz -C sha256 -v -9 -e "$crystalWorkdir/$CrystalID.deep.idx"
 if [[ $crystallizeLeavePointer == true ]]; then
     mkdir "$crystallizePointerDir"
     rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.cmd" "$crystalWorkdir/$CrystalID.cwd" "$crystallizePointerDir"/
     echo "Added crystal metadata"
 fi
+set +e
+xz -C sha256 -v -9 -e "$crystalWorkdir/$CrystalID"
+xz -C sha256 -v -9 -e -k "$crystalWorkdir/$CrystalID.time-done.warc.gz"
+xz -C sha256 -v -9 -e "$crystalWorkdir/$CrystalID.local.idx"
+xz -C sha256 -v -9 -e "$crystalWorkdir/$CrystalID.deep.idx"
 rsync -av --progress --checksum "$crystalWorkdir/$CrystalID".xz /Ember\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/"$CrystalID".log.xz
 gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.xz"
 gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.time-done.warc.gz.xz"

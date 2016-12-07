@@ -1,7 +1,7 @@
 #!/bin/bash
 # Crystallize
 # Version:
-export crystallizeVersion='2.15.4.7'
+export crystallizeVersion='2.15.4.8'
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
@@ -30,6 +30,7 @@ fi
 
 #Check for and handle option to leave behind a pointer
 if [ "$1" == "--leave-pointer" ]; then
+    echo "Pointer is enabled."
     crystallizeLeavePointer=true
     shift
     if [ "$#" -gt 1 ]; then
@@ -41,6 +42,9 @@ if [ "$1" == "--leave-pointer" ]; then
     crystallizePointerDir=."${crystallizeBaseName:0:128}".crystal-data
     crystallizePointerName="${crystallizeBaseName:0:128}".crystal
 fi
+
+echo "Pointer directory: $crystallizePointerDir"
+echo "Pointer name: $crystallizePointerName"
 
 echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
 echo "Be careful that you don't crystallize your current working directory,"
@@ -119,6 +123,8 @@ if [[ $crystallizeLeavePointer == true ]]; then
     echo "$CrystalID" > "$crystallizePointerDir"/identifier
     echo "$CrystalID" > "$crystallizePointerName"
     echo "Added crystal ID"
+    echo "Pointer directory: $crystallizePointerDir"
+    echo "Pointer name: $crystallizePointerName"
 fi
 
 if rm -v "$crystalWorkdir/$CrystalID.coal5-timestamp"; then

@@ -33,9 +33,12 @@ create)
         cd "/$name"
         touch README.md
     )
+    #sudo -u "$rubberfsUser" git init
     chown "$(rubberfsUser):$(rubberfsUser)" "/$name"
     chown -R "$(rubberfsUser):$(rubberfsUser)" "/$name/.git"
-    #sudo -u "$rubberfsUser" git init
+    mkdir "/$name/.rubberfs"
+    echo "$name" > "/$name/.rubberfs/name"
+    chown -R "$(rubberfsUser):$(rubberfsUser)" "/$name/.rubberfs"
     rubberfs snapshot "$name"
     rubberfs check "$name"
     rubberfs unmount "$name"
@@ -122,10 +125,22 @@ list)
     rubberfs status "$name"
     ;;
 stash)
+    shift
+    if [ -n "$1" ]; then
+        echo "Please specify something to stash."
+        exit 1
+    fi
+    rubberfs save
     smallify "$@"
+    rubberfs save
     echo "Done stashing."
     ;;
 pull)
+    shift
+    if [ -n "$1" ]; then
+        echo "Please specify something to pull."
+        exit 1
+    fi
     biggify "$@"
     ;;
 stub)

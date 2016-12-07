@@ -136,7 +136,7 @@ freeze)
     echo "$freezeUuid" > "$name/.rubberfs/lastFullFreezeUuid"
     echo "$freezeCrystal" > "$name/.rubberfs/lastFreezeCrystal"
     echo "$freezeCrystal" > "$name/.rubberfs/lastFullFreezeCrystal"
-    rubberfs snapshot
+    rubberfs save
     echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
     echo "The following snapshots will be DELETED. Continuing in 1 minute;"
     echo "press Ctrl+C to cancel."
@@ -169,7 +169,7 @@ freeze-delta)
     echo "$name@$freezeId" > "$name/.rubberfs/lastFreeze"
     echo "$freezeUuid" > "$name/.rubberfs/lastFreezeUuid"
     echo "$freezeCrystal" > "$name/.rubberfs/lastFreezeCrystal"
-    rubberfs snapshot
+    rubberfs save
     printf "\033c"
     echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
     echo "The following snapshots will be DELETED. Continuing in 1 minute;"

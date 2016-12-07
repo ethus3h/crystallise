@@ -121,6 +121,13 @@ list)
     zfs list -t snapshot
     rubberfs status "$name"
     ;;
+stash)
+    smallify "$@"
+    echo "Done stashing."
+    ;;
+pull)
+    biggify "$@"
+    ;;
 stub)
     if [ ! -e /Ember\ Library ]; then
         mkdir -p /Ember\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/

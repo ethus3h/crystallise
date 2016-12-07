@@ -112,6 +112,8 @@ freeze)
     ;;
 freeze-delta)
     #TODO?: Convert old ZFS snapshots to single files that can be crystallized and then pulled back into the ZFS filesystem later. Is this possible?
+    echo "Not implemented!"
+    exit 1
     ;;
 status)
     zpool list "$name"
@@ -124,15 +126,20 @@ list)
     zfs list -t snapshot
     rubberfs status "$name"
     ;;
+whereami)
+    rubberDir="$(find_up.sh . -type d -name ".rubberfs" -execdir pwd \; -quit)"
+    cat "$rubberDir/name"
+    ;;
 stash)
     shift
     if [ -n "$1" ]; then
         echo "Please specify something to stash."
         exit 1
     fi
-    rubberfs save
+    thisRubber="$(rubberfs whereami)"
+    rubberfs save "$thisRubber"
     smallify "$@"
-    rubberfs save
+    rubberfs save "$thisRubber"
     echo "Done stashing."
     ;;
 pull)

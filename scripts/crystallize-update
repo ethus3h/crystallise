@@ -25,7 +25,7 @@ find ../wreathe/etc/portage/patches/dev-python/internetarchive -name "*.patch" -
 pip install --upgrade .
 
 cp -v /usr/local/bin/crystallize-update "/usr/local/bin/crystallize-update.old.$CrystalID"
-crystallize /usr/local/bin/crystallize /usr/local/bin/decrystallize /usr/local/bin/decrystallize-logsession /usr/local/bin/crystallize-* "/usr/local/bin/crystallize-update.old.$CrystalID"
+crystallize /usr/local/bin/crystallize /usr/local/bin/decrystallize /usr/local/bin/decrystallize-logsession /usr/local/bin/crystallize-*
 echo "Please wait; still updating..."
 
 cd ../crystallize

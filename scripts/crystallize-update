@@ -21,7 +21,7 @@ git clone https://github.com/ethus3h/crystallize
 git clone https://github.com/ethus3h/wreathe
 git clone https://github.com/jjjake/internetarchive
 cd internetarchive
-find ../wreathe/etc/portage/patches/dev-python/internetarchive -name "*.patch" -exec patch -p1 < {} \;
+find ../wreathe/etc/portage/patches/dev-python/internetarchive -name "*.patch" -exec patch -p1 -i {} \;
 pip install --upgrade .
 
 cp -v /usr/local/bin/crystallize-update "/usr/local/bin/crystallize-update.old.$CrystalID"

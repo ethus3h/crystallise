@@ -38,7 +38,7 @@ if [ $memlimit -lt 1310720000 ]; then
     echo "### WARNING! ^^^ WARNING! ### WARNING! ### WARNING! ^^^ WARNING! ###"
     sleep 10
 
-    xz -k -C sha256 -T 0 --lzma2=preset=9 -v "$crystalWorkdir/$CrystalID".pax
+    xz -k -C sha256 -T 0 --lzma2=preset=1 -v "$crystalWorkdir/$CrystalID".pax
 else
-    xz -k -C sha256 -T 0 --lzma2=preset=9 --memlimit-compress="$memlimit" -v "$crystalWorkdir/$CrystalID".pax
+    xz -k -C sha256 -T 0 --lzma2=preset=1 --memlimit-compress="$memlimit" -v "$crystalWorkdir/$CrystalID".pax
 fi

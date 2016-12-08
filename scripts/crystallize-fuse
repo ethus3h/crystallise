@@ -259,7 +259,23 @@ rm)
     rubberfs save "$thisRubber"
     crystallize "$@"
     rubberfs save "$thisRubber"
-    echo "Done stashing."
+    echo "Done removing."
+    ;;
+unpack)
+    shift
+    origin="$1"
+    target="$2"
+    if [[ -z "$1" ]]; then
+        echo "Please specify a directory to unpack."
+        exit 1
+    fi
+    if [[ -z "$2" ]]; then
+        echo "Please specify a directory to unpack to."
+        exit 1
+    fi
+    rsync -av --checksum --progress "$1" "$2"
+    find "$2" -name "*.crystal" -exec rubberfs pull {} \;
+    echo "Done unpacking."
     ;;
 stub)
     if [ ! -e /Ember\ Library ]; then

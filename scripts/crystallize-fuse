@@ -148,12 +148,12 @@ freeze)
     echo "A frozen snapshot $freezeCrystal of RubberFS named $name has been created, and the obsolete local snapshots removed."
     #echo "To restore, first make a new zpool, then run zfs recv (new-zpool-name) -F < /foo/bar.zfsrepl"
     ;;
-freeze-delta)
+delta)
     cd /
     if [ ! -f "$name/.rubberfs/lastFreeze" ]; then
         echo "ERROR! There does not appear to be an existing freeze state. Please use rubberfs freeze instead."
     fi
-    freezeId="rubberfs-freeze-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    freezeId="rubberfs-delta-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
     crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
     freezeUuid="$(python -c 'import uuid; print str(uuid.uuid4())')"
     zfs snapshot -r "$name@$freezeId"
@@ -175,9 +175,9 @@ freeze-delta)
     echo "The following snapshots will be DELETED. Continuing in 1 minute;"
     echo "press Ctrl+C to cancel."
     echo "### WARNING! ^^^ WARNING! ### WARNING! ### WARNING! ^^^ WARNING! ###"
-    zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3 | head -n -1
+    zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3
     sleep 60
-    zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3 | head -n -1 | xargs -n 1 zfs destroy -vr
+    zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3 | xargs -n 1 zfs destroy -vr
     rubberfs remount
     echo "A frozen incremental snapshot $freezeCrystal of RubberFS named $name has been created, and the obsolete local snapshots removed."
     ;;

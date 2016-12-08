@@ -216,7 +216,7 @@ destroy)
     fi
     rubberfs delta "$name"
     rubberfs save "$name"
-    find "/$name" -maxdepth 1 ! -name '.rubberfs' -exec rm -rfv {} +
+    find "/$name" -maxdepth 1 ! -name '.rubberfs' ! -wholename "/$name" -exec rm -rfv {} +
     rubberfs save "$name"
     rubberfs freeze "$name"
     rubberfsDestroyId="rubberfs-destroy-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)").$(python -c 'import uuid; print str(uuid.uuid4())').tmp"

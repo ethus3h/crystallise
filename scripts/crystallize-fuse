@@ -44,6 +44,8 @@ create)
     rubberfs save "$name"
     rubberfs check "$name"
     rubberfs unmount "$name"
+    # Handy way to copy files (add --max-size=3m to not send big files; remove --dry-run to actually do things):
+    # rsync -av --checksum --progress --no-i-r --dry-run source-dir /parent-of-target-dir/
     echo "RubberFS named $name has been created. Run rubberfs mount $name to mount it."
     ;;
 mount)

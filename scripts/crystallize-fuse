@@ -205,6 +205,11 @@ whereami)
     cat "$rubberDir/.rubberfs/name"
     ;;
 destroy)
+    echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
+    echo "The RubberFS \"$name\" will be DELETED. Continuing in 1 minute;"
+    echo "press Ctrl+C to cancel."
+    echo "### WARNING! ^^^ WARNING! ### WARNING! ### WARNING! ^^^ WARNING! ###"
+    sleep 60
     cd /
     if [ ! -f "$name/.rubberfs/lastFreeze" ]; then
         rubberfs freeze "$name"

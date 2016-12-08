@@ -158,7 +158,7 @@ freeze-delta)
     freezeUuid="$(python -c 'import uuid; print str(uuid.uuid4())')"
     zfs snapshot -r "$name@$freezeId"
     oldSnap="$(cat "$name/.rubberfs/lastFreeze")"
-    echo "Begun working on saving snapshot."
+    echo "Begun working on saving incremental snapshot."
     watch -n 0.1 "du -h /usr/local/var/crystallize/*.zfsrepl" &
     rubberfsWatchPid="$!"
     zfs send -I "$oldSnap" "$name@$freezeId" > "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl"

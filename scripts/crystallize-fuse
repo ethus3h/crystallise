@@ -204,6 +204,24 @@ whereami)
     fi
     cat "$rubberDir/.rubberfs/name"
     ;;
+destroy)
+    cd /
+    if [ ! -f "$name/.rubberfs/lastFreeze" ]; then
+        rubberfs freeze "$name"
+    fi
+    rubberfs delta "$name"
+    rubberfs save "$name"
+    find "/$name" -maxdepth 1 ! -name '.rubberfs' -exec rm -rfv {} +
+    rubberfs save "$name"
+    rubberfs freeze "$name"
+    rubberfsDestroyId="rubberfs-destroy-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)").$(python -c 'import uuid; print str(uuid.uuid4())').tmp"
+    mkdir "/$rubberfsDestroyId"
+    rsync -av --checksum --progress --no-i-r "/$name" "/$rubberfsDestroyId"
+    zpool export "$name"
+    rm -v "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
+    crystallize "/$rubberfsDestroyId" "/Wreathe/.Resources/RubberFS/$name"
+    echo "Done removing RubberFS named $name."
+    ;;
 stash)
     shift
     if [[ -z "$1" ]]; then

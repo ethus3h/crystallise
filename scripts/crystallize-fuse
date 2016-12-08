@@ -138,7 +138,7 @@ freeze)
     echo "$freezeUuid" > "$name/.rubberfs/lastFullFreezeUuid"
     echo "$freezeCrystal" > "$name/.rubberfs/lastFreezeCrystal"
     echo "$freezeCrystal" > "$name/.rubberfs/lastFullFreezeCrystal"
-    rubberfs save
+    rubberfs save "$name"
     echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
     echo "The following snapshots will be DELETED. Continuing in 1 minute;"
     echo "press Ctrl+C to cancel."
@@ -146,7 +146,7 @@ freeze)
     zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3
     sleep 60
     zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3 | xargs -n 1 zfs destroy -vr
-    rubberfs remount
+    rubberfs remount "$name"
     echo "A frozen snapshot $freezeCrystal of RubberFS named $name has been created, and the obsolete local snapshots removed."
     #echo "To restore, first make a new zpool, then run zfs recv (new-zpool-name) -F < /foo/bar.zfsrepl"
     ;;
@@ -171,7 +171,7 @@ delta)
     echo "$name@$freezeId" > "$name/.rubberfs/lastFreeze"
     echo "$freezeUuid" > "$name/.rubberfs/lastFreezeUuid"
     echo "$freezeCrystal" > "$name/.rubberfs/lastFreezeCrystal"
-    rubberfs save
+    rubberfs save "$name"
     printf "\033c"
     echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
     echo "The following snapshots will be DELETED. Continuing in 1 minute;"
@@ -180,7 +180,7 @@ delta)
     zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3
     sleep 60
     zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3 | xargs -n 1 zfs destroy -vr
-    rubberfs remount
+    rubberfs remount "$name"
     echo "A frozen incremental snapshot $freezeCrystal of RubberFS named $name has been created, and the obsolete local snapshots removed."
     ;;
 status)

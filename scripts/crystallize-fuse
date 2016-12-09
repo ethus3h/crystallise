@@ -237,7 +237,7 @@ stash)
         echo "Please specify something to stash."
         exit 1
     fi
-    if [[ -z "$2" ]]; then
+    if [[ ! -z "$2" ]]; then
         echo "Please only specify one thing to stash at once."
         exit 1
     fi

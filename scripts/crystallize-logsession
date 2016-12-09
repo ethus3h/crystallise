@@ -140,7 +140,7 @@ sleep 1
 mkfifo "$crystalWorkdir/$CrystalID".coal5
 mkfifo "$crystalWorkdir/$CrystalID".coal5-md5deep
 
-gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - < "$crystalWorkdir/$CrystalID".pax.xz | tee -a "$crystalWorkdir/$CrystalID".coal5 "$crystalWorkdir/$CrystalID".coal5-md5deep &
+gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - < "$crystalWorkdir/$CrystalID".pax.xz | tee -a "$crystalWorkdir/$CrystalID".coal5 "$crystalWorkdir/$CrystalID".coal5-md5deep > /dev/null &
 sleep 1
 
 echo "Computing checksum..."

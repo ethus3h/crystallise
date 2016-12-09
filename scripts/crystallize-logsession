@@ -118,7 +118,7 @@ hashdeep -c md5,sha1,sha256,tiger,whirlpool -o fbsd -r "$crystalWorkdir/""$Cryst
 
 mkfifo "$crystalWorkdir/$CrystalID.pax"
 
-tar -cv -P -S --format pax -f "$crystalWorkdir/$CrystalID.pax" "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.time-env.warc.gz" &
+tar -cv -P -S --format pax "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.time-env.warc.gz" > "$crystalWorkdir/$CrystalID.pax" &
 tarpid="$!"
 sleep 1
 
@@ -138,7 +138,7 @@ sleep 1
 
 mkfifo "$crystalWorkdir/$CrystalID".pax.xz.gpg
 
-gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID".pax.xz &
+gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - < "$crystalWorkdir/$CrystalID".pax.xz | tee -a "$crystalWorkdir/$CrystalID".coal5 "$crystalWorkdir/$CrystalID".coal5-md5deep &
 sleep 1
 
 echo "Computing checksum..."
@@ -147,10 +147,7 @@ mkfifo "$crystalWorkdir/$CrystalID".coal5
 mkfifo "$crystalWorkdir/$CrystalID".coal5-md5deep
 
 #FIXME: Continues even when hashdeep is missing
-tee -a "$crystalWorkdir/$CrystalID".coal5 "$crystalWorkdir/$CrystalID".coal5-md5deep < "$crystalWorkdir/$CrystalID".pax.xz.gpg &
-sleep 1
-
-hashdeep -c md5,sha1,sha256 -o fbcpsde "$crystalWorkdir/$CrystalID".coal5-md5deep | tee "$crystalWorkdir/$CrystalID.checksums" &
+hashdeep -c md5,sha1,sha256 -o fbcpsde - < "$crystalWorkdir/$CrystalID".coal5-md5deep | tee "$crystalWorkdir/$CrystalID.checksums" &
 sleep 1
 
 echo "Sending..."

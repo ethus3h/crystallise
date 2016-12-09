@@ -235,35 +235,42 @@ destroy)
     echo "Done removing RubberFS named $name."
     ;;
 stash)
-    shift
-    if [[ -z "$1" ]]; then
+    if [[ -z "$2" ]]; then
         echo "Please specify something to stash."
         exit 1
     fi
-    if [[ ! -z "$2" ]]; then
-        echo "Please only specify one thing to stash at once."
-        exit 1
-    fi
-    crystallizeBaseName="$(basename "$1")"
-    crystallizeDirName="$(dirname "$1")"
-    crystallizePointerFile="${crystallizeBaseName:0:136}".crystal
-    thisRubber="$(rubberfs whereami)"
-    rubberfs save "$thisRubber"
-    smallify "$@"
-    rubberfs save "$thisRubber"
-    rubberfsCrystalId="$(cat "$crystallizeDirName"/"$crystallizePointerFile")"
-    rubberfsStashedFileName="$(readlink -f -- "$1")"
-    echo "$rubberfsStashedFileName"
-    echo "$rubberfsStashedFileName" > "/$thisRubber/.rubberfs/stashed/$rubberfsCrystalId"
-    echo "Done stashing."
+    while [[ ! -z $1 ]]; do
+        fileToStash="$1"
+        echo "Begun stashing $fileToStash."
+        crystallizeBaseName="$(basename "$fileToStash")"
+        crystallizeDirName="$(dirname "$fileToStash")"
+        crystallizePointerFile="${crystallizeBaseName:0:136}".crystal
+        thisRubber="$(rubberfs whereami)"
+        rubberfs save "$thisRubber"
+        smallify "$@"
+        rubberfs save "$thisRubber"
+        rubberfsCrystalId="$(cat "$crystallizeDirName"/"$crystallizePointerFile")"
+        rubberfsStashedFileName="$(readlink -f -- "$fileToStash")"
+        echo "$rubberfsStashedFileName"
+        echo "$rubberfsStashedFileName" > "/$thisRubber/.rubberfs/stashed/$rubberfsCrystalId"
+        echo "Done stashing $fileToStash."
+        shift
+    done
+    echo "Nothing left to stash."
     ;;
 pull)
-    shift
-    if [[ -z "$1" ]]; then
+    if [[ -z "$2" ]]; then
         echo "Please specify something to pull."
         exit 1
     fi
-    biggify "$@"
+    while [[ ! -z $1 ]]; do
+        fileToPull="$1"
+        echo "Begun stashing $fileToPull."
+        biggify "$fileToPull"
+        echo "Done stashing $fileToPull."
+        shift
+    done
+    echo "Nothing left to pull."
     ;;
 rm)
     shift
@@ -281,16 +288,16 @@ unpack)
     shift
     origin="$1"
     target="$2"
-    if [[ -z "$1" ]]; then
+    if [[ -z "$origin" ]]; then
         echo "Please specify a directory to unpack."
         exit 1
     fi
-    if [[ -z "$2" ]]; then
+    if [[ -z "$target" ]]; then
         echo "Please specify a directory to unpack to."
         exit 1
     fi
-    rsync -av --checksum --progress "$1" "$2"
-    find "$2" -name "*.crystal" -exec rubberfs pull {} \;
+    rsync -av --checksum --progress "$origin" "$target"
+    find "$target" -name "*.crystal" -exec rubberfs pull {} \;
     echo "Done unpacking."
     ;;
 stub)

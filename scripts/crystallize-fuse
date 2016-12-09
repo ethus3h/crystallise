@@ -239,6 +239,7 @@ stash)
         echo "Please specify something to stash."
         exit 1
     fi
+    shift
     while [[ ! -z $1 ]]; do
         fileToStash="$1"
         echo "Begun stashing $fileToStash."

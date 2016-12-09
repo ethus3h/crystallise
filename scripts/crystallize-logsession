@@ -101,6 +101,7 @@ export -f myreadlink
 
 #Resolve relative paths in the arguments, since GNU tar's -P doesn't
 CrystallizePaths=( "$@" )
+# shellcheck disable=SC2128
 echo "First entry in array: $CrystallizePaths"
 for i in "${!CrystallizePaths[@]}"; do
     #resolve path

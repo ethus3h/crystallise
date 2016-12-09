@@ -116,6 +116,8 @@ hashdeep -c md5,sha1,sha256,tiger,whirlpool -o fbsd "$crystalWorkdir/""$Crystall
 echo "Building deep index..."
 hashdeep -c md5,sha1,sha256,tiger,whirlpool -o fbsd -r "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.deep.idx"
 
+mkfifo "$crystalWorkdir/$CrystalID.pax"
+
 #Ignore exit code 1 from tar on Linux, which indicates files changed while reading; see http://stackoverflow.com/questions/20318852/tar-file-changed-as-we-read-it
 set +e
 tar -cv -P -S --format pax -f "$crystalWorkdir/$CrystalID.pax" "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.time-env.warc.gz"
@@ -145,6 +147,8 @@ set -e
 script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-xz ${opt+/dev/null}
 
 rm -v "$crystalWorkdir/$CrystalID".pax
+
+mkfifo "$crystalWorkdir/$CrystalID".pax.xz.gpg
 
 gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID".pax.xz
 

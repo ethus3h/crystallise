@@ -1,7 +1,7 @@
 #!/bin/bash
 # Crystallize
 # Version:
-export crystallizeVersion='2.15.5.8'
+export crystallizeVersion='2.15.5.8.1'
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
@@ -45,10 +45,9 @@ if [ "$1" == "--leave-pointer" ]; then
     crystallizeBaseName="$(basename "$1")"
     crystallizePointerDir="$crystalWorkdir"/."${crystallizeBaseName:0:136}".crystal-data
     crystallizePointerName="$crystalWorkdir"/"${crystallizeBaseName:0:136}".crystal
+    echo "Pointer directory: $crystallizePointerDir"
+    echo "Pointer name: $crystallizePointerName"
 fi
-
-echo "Pointer directory: $crystallizePointerDir"
-echo "Pointer name: $crystallizePointerName"
 
 echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
 echo "Be careful that you don't crystallize your current working directory,"

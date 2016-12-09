@@ -248,7 +248,7 @@ stash)
         crystallizePointerFile="${crystallizeBaseName:0:136}".crystal
         thisRubber="$(rubberfs whereami)"
         rubberfs save "$thisRubber"
-        smallify "$@"
+        smallify "$fileToStash"
         rubberfs save "$thisRubber"
         rubberfsCrystalId="$(cat "$crystallizeDirName"/"$crystallizePointerFile")"
         rubberfsStashedFileName="$(readlink -f -- "$fileToStash")"

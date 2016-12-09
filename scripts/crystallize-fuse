@@ -129,6 +129,7 @@ freeze)
     echo "Begun working on saving snapshot."
     watch -n 0.1 "du -h $crystalWorkdir/*.zfsrepl" &
     rubberfsWatchPid="$!"
+    mkfifo "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"
     zfs send -R "$name@$freezeId" > "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"
     kill "$rubberfsWatchPid"
     smallify "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"

@@ -264,26 +264,36 @@ pull)
         echo "Please specify something to pull."
         exit 1
     fi
+    shift
+    thisRubber="$(rubberfs whereami)"
     while [[ ! -z $1 ]]; do
         fileToPull="$1"
-        echo "Begun stashing $fileToPull."
+        echo "Begun pulling $fileToPull."
+        rubberfs save "$thisRubber"
         biggify "$fileToPull"
-        echo "Done stashing $fileToPull."
+        rubberfs save "$thisRubber"
+        echo "Done pulling $fileToPull."
         shift
     done
     echo "Nothing left to pull."
     ;;
 rm)
-    shift
-    if [[ -z "$1" ]]; then
+    if [[ -z "$2" ]]; then
         echo "Please specify something to remove."
         exit 1
     fi
+    shift
     thisRubber="$(rubberfs whereami)"
-    rubberfs save "$thisRubber"
-    crystallize "$@"
-    rubberfs save "$thisRubber"
-    echo "Done removing."
+    while [[ ! -z $1 ]]; do
+        fileToRemove="$1"
+        echo "Begun stashing $fileToRemove."
+        rubberfs save "$thisRubber"
+        crystallize "$fileToRemove"
+        rubberfs save "$thisRubber"
+        echo "Done stashing $fileToRemove."
+        shift
+    done
+    echo "Nothing left to remove."
     ;;
 unpack)
     shift

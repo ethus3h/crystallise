@@ -125,7 +125,7 @@ freeze)
     freezeUuid="$(python -c 'import uuid; print str(uuid.uuid4())')"
     zfs snapshot -r "$name@$freezeId"
     echo "Begun working on saving snapshot."
-    watch -n 0.1 "du -h /usr/local/var/crystallize/*.zfsrepl" &
+    watch -n 0.1 "du -h $crystalWorkdir/*.zfsrepl" &
     rubberfsWatchPid="$!"
     zfs send -R "$name@$freezeId" > "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"
     kill "$rubberfsWatchPid"

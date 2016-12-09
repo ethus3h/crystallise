@@ -1,7 +1,7 @@
 #!/bin/bash
 # Crystallize
 # Version:
-export crystallizeVersion='2.15.5.10.3'
+export crystallizeVersion='2.15.5.10.4'
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
@@ -129,6 +129,12 @@ if [[ $crystallizeLeavePointer == true ]]; then
     echo "$CrystalID" > "$crystallizePointerDir"/identifier
     echo "$CrystalID" > "$crystallizePointerName"
     echo "Added crystal ID"
+    if [ -e "$(basename "$crystallizePointerDir")" ]; then
+        crystallize "$(basename "$crystallizePointerDir")"
+    fi
+    if [ -e "$(basename "$crystallizePointerName")" ]; then
+        crystallize "$(basename "$crystallizePointerName")"
+    fi
     rsync -av --progress --checksum "$crystalWorkdir"/pointers/"$(basename "$crystallizePointerName")" "$crystalWorkdir"/pointers/"$(basename "$crystallizePointerDir")" .
     echo "Pointer directory: $crystallizePointerDir"
     echo "Pointer name: $crystallizePointerName"

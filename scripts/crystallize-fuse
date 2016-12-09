@@ -249,7 +249,7 @@ stash)
     smallify "$@"
     rubberfs save "$thisRubber"
     rubberfsCrystalId="$(cat "$crystallizeDirName"/"$crystallizePointerFile")"
-    echo -n "$1" > "/$name/.rubberfs/stashed/$rubberfsCrystalId"
+    echo -n "$(readlink -f -- "$1")" > "/$name/.rubberfs/stashed/$rubberfsCrystalId"
     echo "Done stashing."
     ;;
 pull)

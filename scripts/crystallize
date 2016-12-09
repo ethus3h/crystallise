@@ -1,7 +1,7 @@
 #!/bin/bash
 # Crystallize
 # Version:
-export crystallizeVersion='2.15.5.9.1'
+export crystallizeVersion='2.15.5.9.3'
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
@@ -43,8 +43,9 @@ if [ "$1" == "--leave-pointer" ]; then
     fi
     #Only use first 136 characters of file name for directory name; hopefully this will prevent the name being too long for the filesystem
     crystallizeBaseName="$(basename "$1")"
-    crystallizePointerDir="$crystalWorkdir"/."${crystallizeBaseName:0:136}".crystal-data
-    crystallizePointerName="$crystalWorkdir"/"${crystallizeBaseName:0:136}".crystal
+    crystallizePointerDir="$crystalWorkdir/pointers"/."${crystallizeBaseName:0:136}".crystal-data
+    crystallizePointerName="$crystalWorkdir/pointers"/"${crystallizeBaseName:0:136}".crystal
+    mkdir -p "$crystallizePointerDir"
     echo "Pointer directory: $crystallizePointerDir"
     echo "Pointer name: $crystallizePointerName"
 fi
@@ -122,6 +123,7 @@ if [[ $crystallizeLeavePointer == true ]]; then
     echo "$CrystalID" > "$crystallizePointerDir"/identifier
     echo "$CrystalID" > "$crystallizePointerName"
     echo "Added crystal ID"
+    rsync -av --progress --checksum "$crystalWorkdir"/pointers/"$(basename "$crystallizePointerName")" "$crystalWorkdir"/pointers/"$(basename "$crystallizePointerDir")" .
     echo "Pointer directory: $crystallizePointerDir"
     echo "Pointer name: $crystallizePointerName"
 fi

@@ -39,6 +39,8 @@ create)
     chown "$rubberfsUser:$rubberfsUser" "/$name"
     #chown -R "$rubberfsUser:$rubberfsUser" "/$name/.git"
     mkdir "/$name/.rubberfs"
+    mkdir "/$name/.rubberfs/history"
+    mkdir "/$name/.rubberfs/stashed"
     echo "$name" > "/$name/.rubberfs/name"
     chown -R "$rubberfsUser:$rubberfsUser" "/$name/.rubberfs"
     rubberfs save "$name"
@@ -235,10 +237,19 @@ stash)
         echo "Please specify something to stash."
         exit 1
     fi
+    if [[ -z "$2" ]]; then
+        echo "Please only specify one thing to stash at once."
+        exit 1
+    fi
+    crystallizeBaseName="$(basename "$1")"
+    crystallizeDirName="$(dirname "$1")"
+    crystallizePointerFile="${crystallizeBaseName:0:136}".crystal
     thisRubber="$(rubberfs whereami)"
     rubberfs save "$thisRubber"
     smallify "$@"
     rubberfs save "$thisRubber"
+    rubberfsCrystalId="$(cat "$crystallizeDirName"/"$crystallizePointerFile")"
+    echo -n "$1" > "/$name/.rubberfs/stashed/$rubberfsCrystalId"
     echo "Done stashing."
     ;;
 pull)

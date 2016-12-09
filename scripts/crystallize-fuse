@@ -201,6 +201,8 @@ usage)
     ;;
 usage-write)
     rubberfs save "$name"
+    thisRubber="$(rubberfs whereami)"
+    rubberfs save "$thisRubber"
     ncdu
     ;;
 whereami)
@@ -240,13 +242,13 @@ stash)
         exit 1
     fi
     shift
+    thisRubber="$(rubberfs whereami)"
     while [[ ! -z $1 ]]; do
         fileToStash="$1"
         echo "Begun stashing $fileToStash."
         crystallizeBaseName="$(basename "$fileToStash")"
         crystallizeDirName="$(dirname "$fileToStash")"
         crystallizePointerFile="${crystallizeBaseName:0:136}".crystal
-        thisRubber="$(rubberfs whereami)"
         rubberfs save "$thisRubber"
         smallify "$fileToStash"
         rubberfs save "$thisRubber"

@@ -185,6 +185,18 @@ echo "Retrieving remote index..."
 
 wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" | tee "$crystalWorkdir/$CrystalID.json"
 
+
+unset opt
+unset optb
+
+set +e
+#If GNU/Linux, set opt to 1 and unset optb; otherwise opposite
+[[ $OSTYPE = *inux* ]] && (( opt++ ))
+[[ $OSTYPE != *inux* ]] && (( optb++ ))
+set -e
+
+#If the opt(b) variable is unset, insert the text after "opt(b)+"
+#opt is for GNU/Linux; optb is for others
 script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-xz-b ${opt+/dev/null}
 
 echo "Copying indices..."

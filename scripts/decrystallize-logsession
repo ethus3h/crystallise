@@ -78,6 +78,7 @@ mkdir -v "./$CrystalLogID.tmpd/$CrystalID"
 echo "Getting crystal size..."
 
 crystalXzFileSize="$(curl -sIL "https://archive.org/download/$CrystalID/$CrystalID.coal5" | grep Content-Length | awk '{print $2}')"
+crystalXzFileSize="${crystalXzFileSize::-2}"
 
 echo "Receiving..."
 

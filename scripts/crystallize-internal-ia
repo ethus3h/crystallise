@@ -1,7 +1,5 @@
 #!/bin/bash
 set -e
-set +e
-#tee -a ~/"$CrystalID".coal5 < "$crystalWorkdir/$CrystalID".coal5 |
 echo "cd \""$(pwd)"\""
 echo "CrystalID=\"$CrystalID\""
 echo "crystalWorkdir=\"$crystalWorkdir\""

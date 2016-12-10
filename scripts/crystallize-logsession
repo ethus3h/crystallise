@@ -151,7 +151,9 @@ sleep 1
 
 echo "Sending..."
 
+set +e
 script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/null}
+set -e
 sleep 1
 
 for i in {1..50}; do echo $i; done

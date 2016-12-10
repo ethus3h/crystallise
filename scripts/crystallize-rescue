@@ -1,6 +1,0 @@
-#!/bin/bash
-# Crystallize
-
-#Usage: crystallize-rescue
-
-exec /bin/bash crystallize-update

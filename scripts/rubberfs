@@ -1,6 +1,327 @@
 #!/bin/bash
-# rubberfs
 
-# See crystallize for requirements.
+set -e
 
-crystallize-fuse "$@"
+action="$1"
+name="$2"
+
+if [[ "$(whoami)" != "root" ]]; then
+    whoami > /tmp/rubberfsUser
+fi
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+rubberfsUser="$(cat /tmp/rubberfsUser)"
+
+set -e
+
+if [ ! -n "$name" ]; then
+    name="library"
+fi
+
+/sbin/modprobe zfs
+
+case $action in
+create)
+    if [ -e "/$name" ]; then
+        echo "ERROR: The requested name \"$name\" is already in use."
+        exit 1
+    fi
+    mkdir -p "/Wreathe/.Resources/RubberFS/$name/dev/"
+    #4T doesn't work: "truncate: failed to truncate '/Wreathe/.Resources/RubberFS/library/dev/StorageBlockDevice1' at 4398046511104 bytes: File too large" — wtf?! I don't have 3tb available either.
+    truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1"
+    truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2"
+    truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
+    zpool create "$name" -O compression=gzip-9 -O relatime=on -O checksum=sha256 mirror "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
+    (
+        cd "/$name"
+        touch README.md
+    )
+    #sudo -u "$rubberfsUser" git init
+    chown "$rubberfsUser:$rubberfsUser" "/$name"
+    #chown -R "$rubberfsUser:$rubberfsUser" "/$name/.git"
+    mkdir "/$name/.rubberfs"
+    mkdir "/$name/.rubberfs/history"
+    mkdir "/$name/.rubberfs/stashed"
+    echo "$name" > "/$name/.rubberfs/name"
+    chown -R "$rubberfsUser:$rubberfsUser" "/$name/.rubberfs"
+    rubberfs save "$name"
+    rubberfs check "$name"
+    rubberfs unmount "$name"
+    # Handy way to copy files (add --max-size=3m to not send big files; remove --dry-run to actually do things):
+    # rsync -av --checksum --progress --no-i-r --dry-run source-dir /parent-of-target-dir/
+    echo "RubberFS named $name has been created. Run rubberfs mount $name to mount it."
+    ;;
+mount)
+    #TODO: Also mount a FUSE filesystem that replaces .crystals with symlinks to a FUSE filesystem hooked up to IA's S3 API, somehow.
+    zpool import -d "/Wreathe/.Resources/RubberFS/$name/dev/" "$name"
+    zpool scrub "$name"
+    ln -s -T -f "/$name" "/Wreathe/.Resources/RubberFS/$name/mount"
+    #rubberfs cd "$name"
+    echo "RubberFS named $name has been mounted."
+    ;;
+remount)
+    rubberfs unmount "$name"
+    rubberfs mount "$name"
+    ;;
+rename)
+    newname="$3"
+    if [ -e "/$newname" ]; then
+        echo "ERROR: The requested name \"$newname\" is already in use."
+        exit 1
+    fi
+    rubberfs unmount "$name"
+    set +e
+    mv "/$name" "/$newname"
+    mv "/Wreathe/.Resources/RubberFS/$name" "/Wreathe/.Resources/RubberFS/$newname"
+    zpool import -d "/Wreathe/.Resources/RubberFS/$newname/dev/" "$name" "$newname"
+    rubberfs unmount "$newname"
+    rubberfs mount "$newname"
+    echo "RubberFS named $name has been renamed to $newname."
+    ;;
+cd)
+    echo "D'oh! Your bash_setup doesn't seem to have been run or worked."
+    exit 1
+    ;;
+unmount)
+    if [ ! -d "/$name/.rubberfs" ]; then
+        echo "ERROR! RubberFS named $name does not appear to be mounted."
+    else
+        rubberfs save "$name"
+    fi
+    zpool export "$name"
+    echo "RubberFS named $name has been unmounted."
+    ;;
+attach)
+    username="$1"
+    server="$2"
+    prefix="$3"
+    mountpoint="$4"
+    sshfs -o allow_other,defer_permissions "$username"@"$server":"/Wreathe/.Resources/RubberFS/$prefix/mount/" "$mountpoint"
+    ;;
+check)
+    zpool scrub "$name"
+    echo "A check for RubberFS named $name has been begun; use rubberfs status $name to see its progress."
+    ;;
+save)
+    cd "/$name"
+    if [ ! -d .rubberfs ]; then
+        echo "ERROR! RubberFS named $name does not appear to be mounted."
+        exit 1
+    fi
+    touch README.md
+    #sudo -u "$rubberfsUser" git add -A .
+    #set +e
+    #sudo -u "$rubberfsUser" git commit -a -m "RubberFS: make snapshot"
+    #sudo -u "$rubberfsUser" git pull
+    #sudo -u "$rubberfsUser" git submodule update --remote
+    #sudo -u "$rubberfsUser" git push -u origin master
+    #set -e
+    rubberfsSnapshot="rubberfs-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    zfs snapshot "$name@$rubberfsSnapshot"
+    echo "A saved snapshot $rubberfsSnapshot in RubberFS named $name has been created."
+    ;;
+freeze)
+    #TODO: make sure this works. What it should do: Back up the complete current filesystem to IA (as a .crystal but don't keep local copy), put the .crystal in the .rubberfs/history/ folder, and remove old snapshots.
+    cd /
+    freezeId="rubberfs-freeze-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
+    freezeUuid="$(python -c 'import uuid; print str(uuid.uuid4())')"
+    zfs snapshot -r "$name@$freezeId"
+    echo "Begun working on saving snapshot."
+    mkfifo "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"
+    zfs send -R "$name@$freezeId" > "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl" &
+    sleep 1
+    smallify "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"
+    rsync -av --progress --checksum "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl.crystal" "$crystalWorkdir/.$name@$freezeId.$freezeUuid.zfsrepl.crystal-data" "$name/.rubberfs/history/"
+    freezeCrystal="$(cat "$crystalWorkdir/.$name@$freezeId.$freezeUuid.zfsrepl.crystal-data/identifier")"
+    echo "$name@$freezeId" > "$name/.rubberfs/lastFreeze"
+    echo "$name@$freezeId" > "$name/.rubberfs/lastFullFreeze"
+    echo "$freezeUuid" > "$name/.rubberfs/lastFreezeUuid"
+    echo "$freezeUuid" > "$name/.rubberfs/lastFullFreezeUuid"
+    echo "$freezeCrystal" > "$name/.rubberfs/lastFreezeCrystal"
+    echo "$freezeCrystal" > "$name/.rubberfs/lastFullFreezeCrystal"
+    rubberfs save "$name"
+    echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
+    echo "The following snapshots will be DELETED. Continuing in 1 minute;"
+    echo "press Ctrl+C to cancel."
+    echo "### WARNING! ^^^ WARNING! ### WARNING! ### WARNING! ^^^ WARNING! ###"
+    zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3
+    sleep 60
+    zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3 | xargs -n 1 zfs destroy -vr
+    rubberfs remount "$name"
+    echo "A frozen snapshot $freezeCrystal of RubberFS named $name has been created, and the obsolete local snapshots removed."
+    #echo "To restore, first make a new zpool, then run zfs recv (new-zpool-name) -F < /foo/bar.zfsrepl"
+    ;;
+delta)
+    cd /
+    if [ ! -f "$name/.rubberfs/lastFreeze" ]; then
+        echo "ERROR! There does not appear to be an existing freeze state. Please use rubberfs freeze instead."
+    fi
+    freezeId="rubberfs-delta-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
+    freezeUuid="$(python -c 'import uuid; print str(uuid.uuid4())')"
+    zfs snapshot -r "$name@$freezeId"
+    oldSnap="$(cat "$name/.rubberfs/lastFreeze")"
+    echo "Begun working on saving incremental snapshot."
+    watch -n 0.1 "du -h /usr/local/var/crystallize/*.zfsrepl" &
+    rubberfsWatchPid="$!"
+    zfs send -I "$oldSnap" "$name@$freezeId" > "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl"
+    kill "$rubberfsWatchPid"
+    smallify "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl"
+    rsync -av --progress --checksum "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl.crystal" "$crystalWorkdir/.$name@$freezeId.$freezeUuid.incremental.zfsrepl.crystal-data" "$name/.rubberfs/history/"
+    freezeCrystal="$(cat "$crystalWorkdir/.$name@$freezeId.$freezeUuid.incremental.zfsrepl.crystal-data/identifier")"
+    echo "$name@$freezeId" > "$name/.rubberfs/lastFreeze"
+    echo "$freezeUuid" > "$name/.rubberfs/lastFreezeUuid"
+    echo "$freezeCrystal" > "$name/.rubberfs/lastFreezeCrystal"
+    rubberfs save "$name"
+    printf "\033c"
+    echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
+    echo "The following snapshots will be DELETED. Continuing in 1 minute;"
+    echo "press Ctrl+C to cancel."
+    echo "### WARNING! ^^^ WARNING! ### WARNING! ### WARNING! ^^^ WARNING! ###"
+    zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3
+    sleep 60
+    zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3 | xargs -n 1 zfs destroy -vr
+    rubberfs remount "$name"
+    echo "A frozen incremental snapshot $freezeCrystal of RubberFS named $name has been created, and the obsolete local snapshots removed."
+    ;;
+status)
+    zpool list "$name"
+    zpool status "$name"
+    df -i /"$name"
+    #zfs list -ro space -t snapshot
+    zfs list -ro space "$name"
+    ;;
+list)
+    zfs list -t snapshot
+    rubberfs status "$name"
+    ;;
+usage)
+    ncdu -r
+    ;;
+usage-write)
+    rubberfs save "$name"
+    thisRubber="$(rubberfs whereami)"
+    rubberfs save "$thisRubber"
+    ncdu
+    ;;
+whereami)
+    rubberDir="$(find_up.sh "$(readlink -f -- "$(pwd)")" -type d -name ".rubberfs" -execdir pwd \; -quit)"
+    if [ ! -d "$rubberDir" ]; then
+        echo "You do not appear to be in a rubberfs directory."
+        exit 1
+    fi
+    cat "$rubberDir/.rubberfs/name"
+    ;;
+destroy)
+    echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
+    echo "The RubberFS \"$name\" will be DELETED. Continuing in 1 minute;"
+    echo "press Ctrl+C to cancel."
+    echo "### WARNING! ^^^ WARNING! ### WARNING! ### WARNING! ^^^ WARNING! ###"
+    sleep 60
+    cd /
+    if [ ! -f "$name/.rubberfs/lastFreeze" ]; then
+        rubberfs freeze "$name"
+    fi
+    rubberfs delta "$name"
+    rubberfs save "$name"
+    find "/$name" -maxdepth 1 ! -name '.rubberfs' ! -wholename "/$name" -exec rm -rfv {} +
+    rubberfs save "$name"
+    rubberfs freeze "$name"
+    rubberfsDestroyId="rubberfs-destroy-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)").$(python -c 'import uuid; print str(uuid.uuid4())').tmp"
+    mkdir "/$rubberfsDestroyId"
+    rsync -av --checksum --progress --no-i-r "/$name" "/$rubberfsDestroyId"
+    zpool export "$name"
+    rm -v "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
+    crystallize "/$rubberfsDestroyId" "/Wreathe/.Resources/RubberFS/$name"
+    echo "Done removing RubberFS named $name."
+    ;;
+stash)
+    if [[ -z "$2" ]]; then
+        echo "Please specify something to stash."
+        exit 1
+    fi
+    shift
+    thisRubber="$(rubberfs whereami)"
+    while [[ ! -z $1 ]]; do
+        fileToStash="$1"
+        echo "Begun stashing $fileToStash."
+        crystallizeBaseName="$(basename "$fileToStash")"
+        crystallizeDirName="$(dirname "$fileToStash")"
+        crystallizePointerFile="${crystallizeBaseName:0:136}".crystal
+        rubberfs save "$thisRubber"
+        smallify "$fileToStash"
+        rubberfs save "$thisRubber"
+        rubberfsCrystalId="$(cat "$crystallizeDirName"/"$crystallizePointerFile")"
+        rubberfsStashedFileName="$(readlink -f -- "$fileToStash")"
+        echo "$rubberfsStashedFileName"
+        echo "$rubberfsStashedFileName" > "/$thisRubber/.rubberfs/stashed/$rubberfsCrystalId"
+        echo "Done stashing $fileToStash."
+        shift
+    done
+    echo "Nothing left to stash."
+    ;;
+pull)
+    if [[ -z "$2" ]]; then
+        echo "Please specify something to pull."
+        exit 1
+    fi
+    shift
+    thisRubber="$(rubberfs whereami)"
+    while [[ ! -z $1 ]]; do
+        fileToPull="$1"
+        echo "Begun pulling $fileToPull."
+        rubberfs save "$thisRubber"
+        biggify "$fileToPull"
+        rubberfs save "$thisRubber"
+        echo "Done pulling $fileToPull."
+        shift
+    done
+    echo "Nothing left to pull."
+    ;;
+rm)
+    if [[ -z "$2" ]]; then
+        echo "Please specify something to remove."
+        exit 1
+    fi
+    shift
+    thisRubber="$(rubberfs whereami)"
+    while [[ ! -z $1 ]]; do
+        fileToRemove="$1"
+        echo "Begun stashing $fileToRemove."
+        rubberfs save "$thisRubber"
+        crystallize "$fileToRemove"
+        rubberfs save "$thisRubber"
+        echo "Done stashing $fileToRemove."
+        shift
+    done
+    echo "Nothing left to remove."
+    ;;
+unpack)
+    shift
+    origin="$1"
+    target="$2"
+    if [[ -z "$origin" ]]; then
+        echo "Please specify a directory to unpack."
+        exit 1
+    fi
+    if [[ -z "$target" ]]; then
+        echo "Please specify a directory to unpack to."
+        exit 1
+    fi
+    rsync -av --checksum --progress "$origin" "$target"
+    find "$target" -name "*.crystal" -exec rubberfs pull {} \;
+    echo "Done unpacking."
+    ;;
+stub)
+    if [ ! -e /Ember\ Library ]; then
+        mkdir -p /Ember\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/
+    else
+        echo "There appears to already be an Ember Library instance available; no action taken."
+        exit 1
+    fi
+    ;;
+*)
+    echo "Unknown action."
+    exit 1
+    ;;
+esac

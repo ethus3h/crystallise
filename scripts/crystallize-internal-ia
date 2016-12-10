@@ -7,5 +7,3 @@ echo "crystalTitle=\"$crystalTitle\""
 echo "crystallizeVersion=\"$crystallizeVersion\""
 echo "crystalCollection=\"$crystalCollection\""
 ia upload "$CrystalID" - --remote-name="$(basename "$crystalWorkdir/$CrystalID".coal5)" --verify --retries=100 --metadata="subject:Uploaded using Crystallize $crystallizeVersion" --metadata="subject:1EA21BD8-DB7E-11E5-9733-728C37852114" --metadata=subject:"$crystalTitle" --metadata=subject:"$CrystalID" --metadata="collection:$crystalCollection" < "$crystalWorkdir/$CrystalID".coal5
-echo $?
-echo "oechucoehucheoucehuocueoh"

@@ -153,6 +153,8 @@ echo "Sending..."
 
 set +e
 script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/null}
+echo $?
+echo "cheuchecuhehu"
 set -e
 sleep 1
 

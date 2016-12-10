@@ -82,7 +82,7 @@ crystalXzFileSize="${crystalXzFileSize::-2}"
 
 echo "Receiving..."
 
-wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5" | pv -tprbei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "./$CrystalLogID.tmp" - | unxz --stdout - | tar -xvf - -C "./$CrystalLogID.tmpd/$CrystalID/"
+wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "./$CrystalLogID.tmp" - | unxz --stdout - | tar -xvf - -C "./$CrystalLogID.tmpd/$CrystalID/"
 
 mv -v "./$CrystalLogID" "./$CrystalLogID.log"
 

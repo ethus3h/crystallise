@@ -165,6 +165,16 @@ echo "crystalCollection=\"$crystalCollection\""
 echo "Sending..."
 tar -cv -P -S --format pax "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.time-env.warc.gz" | xz -k -C sha256 -T 0 --lzma2=preset=1 --memlimit-compress="$memlimit" --stdout - | gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - | tee -a "$crystalWorkdir/$CrystalID".coal5-md5deep | ia upload "$CrystalID" - --remote-name="$(basename "$crystalWorkdir/$CrystalID".coal5)" --verify --retries=100 --metadata="subject:Uploaded using Crystallize $crystallizeVersion" --metadata="subject:1EA21BD8-DB7E-11E5-9733-728C37852114" --metadata=subject:"$crystalTitle" --metadata=subject:"$CrystalID" --metadata="collection:$crystalCollection"
 
+exitcode="${PIPESTATUS[0]}"
+
+#Ignore exit code 1 from tar on Linux, which indicates files changed while reading; see http://stackoverflow.com/questions/20318852/tar-file-changed-as-we-read-it
+if [ "$exitcode" != "0" ] && [[ $OSTYPE != *inux* ]]; then
+    exit $exitcode
+fi
+if [ "$exitcode" != "1" ] && [ "$exitcode" != "0" ]; then
+    exit $exitcode
+fi
+
 echo "Waiting for hashdeep to finish if not done yet..."
 wait
 echo "Done waiting."

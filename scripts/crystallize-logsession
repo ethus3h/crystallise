@@ -7,6 +7,7 @@
 
 #Script should exit if any operation fails.
 set -e
+set -x
 
 echo "The crystal will have the following address when it is ready: $CrystalID"
 

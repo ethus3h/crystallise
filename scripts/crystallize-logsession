@@ -121,7 +121,7 @@ hashdeep -c md5,sha1,sha256,tiger,whirlpool -e -o fbsd -r "$crystalWorkdir/""$Cr
 echo "Counting size..."
 
 crystalFilesSize="$(du -c "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tail -1 | cut -f 1)"
-crystalFilesSize=$((crystalFilesSize / 1000))
+crystalFilesSize=$((crystalFilesSize * 1000))
 
 #get available memory
 memlimit=-1

@@ -2,7 +2,7 @@
 set -e
 set -x
 
-echo "cd \""$(pwd)"\""
+echo "cd \"$(pwd)\""
 echo "CrystalID=\"$CrystalID\""
 echo "crystalWorkdir=\"$crystalWorkdir\""
 echo "crystalTitle=\"$crystalTitle\""

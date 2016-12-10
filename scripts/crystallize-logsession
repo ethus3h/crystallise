@@ -134,11 +134,7 @@ set -e
 
 #If the opt(b) variable is unset, insert the text after "opt(b)+"
 #opt is for GNU/Linux; optb is for others
-set +e
 script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-xz ${opt+/dev/null} &
-echo $?
-echo "Blahblahblah"
-set -e
 sleep 1
 
 mkfifo "$crystalWorkdir/$CrystalID".coal5
@@ -155,7 +151,11 @@ sleep 1
 
 echo "Sending..."
 
+set +e
 script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/null}
+echo $?
+echo "Blahblahblah"
+set -e
 sleep 1
 
 wait "$tarpid"

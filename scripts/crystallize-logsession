@@ -163,8 +163,8 @@ exitcode="$?"
 
 echo "Waiting..."
 wait
-
 echo "Done waiting."
+
 rm -v "$crystalWorkdir/$CrystalID".pax
 rm -v "$crystalWorkdir/$CrystalID".pax.xz
 rm -v "$crystalWorkdir/$CrystalID".coal5

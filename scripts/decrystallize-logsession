@@ -75,15 +75,13 @@ mkdir -v "./$CrystalLogID.tmpd"
 
 mkdir -v "./$CrystalLogID.tmpd/$CrystalID"
 
+echo "Getting crystal size..."
+
 crystalXzFileSize="$(curl -sI "https://archive.org/download/$CrystalID/$CrystalID.coal5" | grep Content-Length | awk '{print $2}')"
 
 echo "Receiving..."
 
 wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5" | pv -tprbei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "./$CrystalLogID.tmp" - | unxz --stdout - | tar -xvf - -C "./$CrystalLogID.tmpd/$CrystalID/"
-
-rm -v "./$CrystalLogID.pax"
-rm -v "./$CrystalLogID.pax.xz"
-rm -v "./$CrystalLogID.pax.xz.gpg"
 
 mv -v "./$CrystalLogID" "./$CrystalLogID.log"
 

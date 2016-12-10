@@ -174,10 +174,10 @@ exitcode="${PIPESTATUS[0]}"
 
 #Ignore exit code 1 from tar on Linux, which indicates files changed while reading; see http://stackoverflow.com/questions/20318852/tar-file-changed-as-we-read-it
 if [ "$exitcode" != "0" ] && [[ $OSTYPE != *inux* ]]; then
-    exit $exitcode
+    exit "$exitcode"
 fi
 if [ "$exitcode" != "1" ] && [ "$exitcode" != "0" ]; then
-    exit $exitcode
+    exit "$exitcode"
 fi
 
 #echo "Waiting for hashdeep to finish if not done yet..."

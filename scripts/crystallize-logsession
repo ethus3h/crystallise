@@ -156,8 +156,6 @@ script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/
 set -e
 sleep 1
 
-for i in {1..50}; do echo $i; done
-
 wait "$tarpid"
 exitcode="$?"
 

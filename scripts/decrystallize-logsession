@@ -71,33 +71,13 @@ echo "Crystal address: $CrystalID"
 
 printf "%s" "$crystallizePassphrase" > "./$CrystalLogID.tmp"
 
-echo "Receiving..."
-
-mkfifo "./$CrystalLogID.pax.xz.gpg"
-
-wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5" > "./$CrystalLogID.pax.xz.gpg" &
-sleep 1
-
-mkfifo "./$CrystalLogID.pax.xz"
-
-gpg --yes --batch --passphrase-file "./$CrystalLogID.tmp" - < "./$CrystalLogID.pax.xz.gpg" &
-sleep 1
-
-mkfifo "./$CrystalLogID.pax.xz"
-
-unxz --stdout - < "./$CrystalLogID.pax.xz" > "./$CrystalLogID.pax" &
-sleep 1
-
 mkdir -v "./$CrystalLogID.tmpd"
 
 mkdir -v "./$CrystalLogID.tmpd/$CrystalID"
 
-tar -xvf - -C "./$CrystalLogID.tmpd/$CrystalID/" < "./$CrystalLogID.pax" &
-sleep 1
+echo "Receiving..."
 
-echo "Waiting..."
-wait
-echo "Done waiting."
+wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5" | gpg --yes --batch --passphrase-file "./$CrystalLogID.tmp" - | unxz --stdout - | tar -xvf - -C "./$CrystalLogID.tmpd/$CrystalID/"
 
 rm -v "./$CrystalLogID.pax"
 rm -v "./$CrystalLogID.pax.xz"

@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -e
+set -e
 echo "cd \""$(pwd)"\""
 echo "CrystalID=\"$CrystalID\""
 echo "crystalWorkdir=\"$crystalWorkdir\""

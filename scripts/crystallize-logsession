@@ -151,11 +151,7 @@ sleep 1
 
 echo "Sending..."
 
-set +e
 script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/null}
-echo $?
-echo "cheuchecuhehu"
-set -e
 sleep 1
 
 wait "$tarpid"
@@ -167,7 +163,7 @@ wait
 echo "Done waiting."
 rm -v "$crystalWorkdir/$CrystalID".pax
 rm -v "$crystalWorkdir/$CrystalID".pax.xz
-rm -v "$crystalWorkdir/$CrystalID".coal
+rm -v "$crystalWorkdir/$CrystalID".coal5
 rm -v "$crystalWorkdir/$CrystalID".coal5-md5deep
 
 #Ignore exit code 1 from tar on Linux, which indicates files changed while reading; see http://stackoverflow.com/questions/20318852/tar-file-changed-as-we-read-it

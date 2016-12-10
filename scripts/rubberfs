@@ -22,7 +22,7 @@ fi
 case $action in
 create)
     if [ -e "/$name" ]; then
-        echo "ERROR: The requested name \"$name\" is already in use."
+        echo "ERROR: The requested name \"$name\" is already in use." >&2
         exit 1
     fi
     mkdir -p "/Wreathe/.Resources/RubberFS/$name/dev/"
@@ -65,7 +65,7 @@ remount)
 rename)
     newname="$3"
     if [ -e "/$newname" ]; then
-        echo "ERROR: The requested name \"$newname\" is already in use."
+        echo "ERROR: The requested name \"$newname\" is already in use." >&2
         exit 1
     fi
     rubberfs unmount "$name"
@@ -83,7 +83,7 @@ cd)
     ;;
 unmount)
     if [ ! -d "/$name/.rubberfs" ]; then
-        echo "ERROR! RubberFS named $name does not appear to be mounted."
+        echo "ERROR! RubberFS named $name does not appear to be mounted." >&2
     else
         rubberfs save "$name"
     fi
@@ -104,7 +104,7 @@ check)
 save)
     cd "/$name"
     if [ ! -d .rubberfs ]; then
-        echo "ERROR! RubberFS named $name does not appear to be mounted."
+        echo "ERROR! RubberFS named $name does not appear to be mounted." >&2
         exit 1
     fi
     touch README.md
@@ -154,7 +154,7 @@ freeze)
 delta)
     cd /
     if [ ! -f "$name/.rubberfs/lastFreeze" ]; then
-        echo "ERROR! There does not appear to be an existing freeze state. Please use rubberfs freeze instead."
+        echo "ERROR! There does not appear to be an existing freeze state. Please use rubberfs freeze instead." >&2
     fi
     freezeId="rubberfs-delta-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
     crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"

@@ -113,10 +113,10 @@ done
 
 echo "Building local index..."
 
-hashdeep -c md5,sha1,sha256,tiger,whirlpool -o fbsd "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.local.idx"
+hashdeep -c md5,sha1,sha256,tiger,whirlpool -e -o fbsd "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.local.idx"
 
 echo "Building deep index..."
-hashdeep -c md5,sha1,sha256,tiger,whirlpool -o fbsd -r "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.deep.idx"
+hashdeep -c md5,sha1,sha256,tiger,whirlpool -e -o fbsd -r "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.deep.idx"
 
 echo "Counting size..."
 
@@ -151,15 +151,6 @@ fi
 
 memlimit="$(($memlimit - 1073741824))"
 
-#mkfifo "$crystalWorkdir/$CrystalID".coal5-md5deep
-
-echo "Computing checksum..."
-#FIXME: Continues even when hashdeep is missing
-#hashdeep -c md5,sha1,sha256 -o fbcpsde - < "$crystalWorkdir/$CrystalID".coal5-md5deep | tee "$crystalWorkdir/$CrystalID.checksums" &
-#sleep 1
-
-touch "$crystalWorkdir/$CrystalID.checksums"
-
 echo "cd \"$(pwd)\""
 echo "CrystalID=\"$CrystalID\""
 echo "crystalWorkdir=\"$crystalWorkdir\""
@@ -168,7 +159,8 @@ echo "crystallizeVersion=\"$crystallizeVersion\""
 echo "crystalCollection=\"$crystalCollection\""
 
 echo "Sending..."
-tar -cv -P -S --format pax "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.time-env.warc.gz" | pv -tparbIfei 0.1 -s "$crystalFilesSize" | xz -k -C sha256 -T 0 --lzma2=preset=1 --memlimit-compress="$memlimit" --stdout - | gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - | ia upload "$CrystalID" - --remote-name="$(basename "$crystalWorkdir/$CrystalID".coal5)" --verify --retries=100 --metadata="subject:Uploaded using Crystallize $crystallizeVersion" --metadata="subject:1EA21BD8-DB7E-11E5-9733-728C37852114" --metadata=subject:"$crystalTitle" --metadata=subject:"$CrystalID" --metadata="collection:$crystalCollection"
+#FIXME: May continue even when hashdeep is missing
+tar -cv -P -S --format pax "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.time-env.warc.gz" | pv -tparbIfei 0.1 -s "$crystalFilesSize" | xz -k -C sha256 -T 0 --lzma2=preset=1 --memlimit-compress="$memlimit" --stdout - | gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - | tee >(hashdeep -c md5,sha1,sha256 -o fbcpsde - > "$crystalWorkdir/$CrystalID.checksums") | ia upload "$CrystalID" - --remote-name="$(basename "$crystalWorkdir/$CrystalID".coal5)" --verify --retries=100 --metadata="subject:Uploaded using Crystallize $crystallizeVersion" --metadata="subject:1EA21BD8-DB7E-11E5-9733-728C37852114" --metadata=subject:"$crystalTitle" --metadata=subject:"$CrystalID" --metadata="collection:$crystalCollection"
 
 exitcode="${PIPESTATUS[0]}"
 
@@ -179,12 +171,6 @@ fi
 if [ "$exitcode" != "1" ] && [ "$exitcode" != "0" ]; then
     exit "$exitcode"
 fi
-
-#echo "Waiting for hashdeep to finish if not done yet..."
-#wait
-#echo "Done waiting."
-
-#rm -v "$crystalWorkdir/$CrystalID".coal5-md5deep
 
 echo "Retrieving remote index..."
 

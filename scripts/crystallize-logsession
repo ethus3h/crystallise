@@ -152,16 +152,16 @@ sleep 1
 
 echo "Sending..."
 
-#set +e
 script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/null}
-echo "ECah: $?"
-#echo $?
-#echo "Blahblahblah"
-#set -e
 sleep 1
 
+echo "Waiting for tar..."
+set +e
 wait "$tarpid"
+set -e
 exitcode="$?"
+echo "Done waiting for tar. Exited with $?"
+
 
 echo "Waiting..."
 wait

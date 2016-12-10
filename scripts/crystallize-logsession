@@ -154,6 +154,8 @@ echo "Sending..."
 script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/null}
 sleep 1
 
+for i in {1..50}; do echo $i; done
+
 wait "$tarpid"
 exitcode="$?"
 

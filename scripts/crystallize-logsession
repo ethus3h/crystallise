@@ -151,11 +151,11 @@ sleep 1
 
 echo "Sending..."
 
-set +e
+#set +e
 script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/null}
-echo $?
-echo "Blahblahblah"
-set -e
+#echo $?
+#echo "Blahblahblah"
+#set -e
 sleep 1
 
 wait "$tarpid"

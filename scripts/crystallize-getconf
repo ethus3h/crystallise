@@ -2,8 +2,8 @@
 
 configFileLocation="/usr/local/etc/crystallize.conf"
 
-if [[ $1=="ConfigLocation" ]]; then
+if [[ "$1" == "ConfigLocation" ]]; then
     echo "$configFileLocation"
 fi
 
-echo "$(grep -n ^"$1", "$configFileLocation" | cut -f2 -d: | tail -1 | cut -f2 -d,)"
+grep -n ^"$1", "$configFileLocation" | cut -f2 -d: | tail -1 | cut -f2 -d,

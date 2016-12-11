@@ -15,8 +15,10 @@ echo "Please wait until it says 'Done installing or updating crystallize'."
 CrystalID=CrystallizeUpdate-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")-$(python -c 'import uuid; print str(uuid.uuid4())')
 export CrystalID
 
-mkdir -v ./"$CrystalID".git-tmp
-cd ./"$CrystalID".git-tmp
+directoryToWorkIn="$(crystallize-getconf WorkDirectory)"
+
+mkdir -v "$directoryToWorkIn"/"$CrystalID".git-tmp
+cd "$directoryToWorkIn"/"$CrystalID".git-tmp
 git clone https://github.com/ethus3h/crystallize
 git clone https://github.com/ethus3h/wreathe
 git clone https://github.com/jjjake/internetarchive

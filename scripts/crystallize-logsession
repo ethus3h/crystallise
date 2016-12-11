@@ -164,6 +164,8 @@ crystallizeSecretKey="$(grep secret ~/.config/ia.ini | head -n 1 | awk '{ print 
 
 CrystalFileName="$(basename "$crystalWorkdir/$CrystalID".coal5)"
 
+echo "Filesize estimate: $crystalFilesSize"
+
 echo "Sending..."
 #FIXME: May continue even when hashdeep is missing
 #pack files into stream | measure rate of stream's flow | compress the stream | encrypt the stream | send the input to a checksummer and to the output | send the stream to ia

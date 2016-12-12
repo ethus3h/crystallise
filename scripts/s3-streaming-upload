@@ -25,6 +25,7 @@ WorkDirectory="$(crystallize-getconf WorkDirectory)"
 
 chunkLocationName="$WorkDirectory/$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")-$(python -c 'import uuid; print str(uuid.uuid4())').streamingUploadChunk"
 
+read
 Slurp up to first 5mb into file. 
 
 thisChunkSize="$(du "$chunkLocationName")"

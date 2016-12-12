@@ -25,16 +25,16 @@ WorkDirectory="$(crystallize-getconf WorkDirectory)"
 
 chunkLocationName="$WorkDirectory/$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")-$(python -c 'import uuid; print str(uuid.uuid4())').streamingUploadChunk"
 
-read
-Slurp up to first 5mb into file. 
+dd bs=5242880 count=1 of="$chunkLocationName"
 
-thisChunkSize="$(du "$chunkLocationName")"
+thisChunkSize="$(disk-size-in-bytes "$chunkLocationName")"
 if [ "$thisChunkSize" -lt 5242880 ]; then
     #Input is less than 5mb; upload normally
     curl --location --raw -X PUT --data-binary @"$chunkLocationName" --header "x-amz-auto-make-bucket:1" --header "x-archive-queue-derive:0" --header "x-archive-size-hint:$fileSizeEstimate" --header "authorization: LOW $crystallizeAccessKey:$crystallizeSecretKey" --header "x-archive-meta-collection:$collection" --header "x-archive-meta-title:$title" --header "x-archive-meta-description:$description" --header "x-archive-meta-subject:$keywords" "http://$hostName/$identifier/$remoteFileName"
 else
-    #Cannot have more than 10,000 chunks.
-    chunkSize=$((fileSizeEstimate / 10000))
+    #Choose a chunk size to use
+    #Cannot have more than 10,000 chunks, but fileSizeEstimate may be slightly smaller than the actual size.
+    chunkSize=$((fileSizeEstimate / 9000))
     #Cannot have chunk size less than 5MB.
     if [ $chunkSize -lt 5242880 ]; then
         chunkSize=5242880
@@ -48,13 +48,12 @@ else
 
     partNumber=1
     printf "{\n  \"Parts\": [" > "$chunkLocationName.json"
-    #TODO
-    until all stdin is used up; do
-        #TODO slurp up to chunkSize into $chunkLocationName
-        thisChunkSize="$(du "$chunkLocationName")"
+    while dd bs=5242880 count=1 of="$chunkLocationName"; test -s "$chunkLocationName"; do
+        thisChunkSize="$(disk-size-in-bytes "$chunkLocationName")"
         uploadEtag="$(aws --endpoint-url "$hostName" --output text --query "ETag" s3api upload-part --bucket "$identifier" --key "$remoteFileName" --part-number "$partNumber" --upload-id "$uploadId" --body "$chunkLocationName")"
-        partNumber=$((partNumber + 1))
         printf "    {\n      \"ETag\": \"%s\",\n      \"PartNumber\": %s\n    },\n" "$uploadEtag" "$partNumber" >> "$chunkLocationName.json"
+        partNumber=$((partNumber + 1))
+        rm "$chunkLocationName"
     done
     #Remove last comma and newline, and finish the file
     truncate -s-2 "$chunkLocationName.json"

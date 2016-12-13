@@ -127,11 +127,10 @@ freeze)
     freezeUuid="$(python -c 'import uuid; print str(uuid.uuid4())')"
     zfs snapshot -r "$name@$freezeId"
     echo "Begun working on saving snapshot."
-    mkfifo "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"
-    zfs send -R "$name@$freezeId" > "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl" &
-    sleep 1
+    #TODO: Can this be parallelized, to avoid the huge tempfile?
+    zfs send -R "$name@$freezeId" > "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"
     smallify "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"
-    rsync -av --progress --checksum "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl.crystal" "$crystalWorkdir/.$name@$freezeId.$freezeUuid.zfsrepl.crystal-data" "$name/.rubberfs/history/"
+    rsync -av --progress --checksum "$crystalWorkdir/pointers/$name@$freezeId.$freezeUuid.zfsrepl.crystal" "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.zfsrepl.crystal-data" "$name/.rubberfs/history/"
     freezeCrystal="$(cat "$crystalWorkdir/.$name@$freezeId.$freezeUuid.zfsrepl.crystal-data/identifier")"
     echo "$name@$freezeId" > "$name/.rubberfs/lastFreeze"
     echo "$name@$freezeId" > "$name/.rubberfs/lastFullFreeze"

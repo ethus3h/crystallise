@@ -196,7 +196,7 @@ list)
     rubberfs status "$name"
     ;;
 usage)
-    ncdu -r
+    ncdu -x -r
     ;;
 usage-write)
     rubberfs save "$name"

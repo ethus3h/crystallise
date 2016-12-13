@@ -243,6 +243,8 @@ stash)
     shift
     thisRubber="$(rubberfs whereami)"
     while [[ ! -z $1 ]]; do
+        echo "Items remaining to stash: "
+        echo "$@"
         fileToStash="$1"
         echo "Begun stashing $fileToStash."
         crystallizeBaseName="$(basename "$fileToStash")"
@@ -268,6 +270,8 @@ pull)
     shift
     thisRubber="$(rubberfs whereami)"
     while [[ ! -z $1 ]]; do
+        echo "Items remaining to pull: "
+        echo "$@"
         fileToPull="$1"
         echo "Begun pulling $fileToPull."
         rubberfs save "$thisRubber"

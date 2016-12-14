@@ -113,10 +113,14 @@ done
 
 echo "Building local index..."
 
-hashdeep -c md5,sha1,sha256,tiger,whirlpool -e -o fbsd "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.local.idx"
+hashdeep -c md5,sha1,sha256,tiger,whirlpool -e -o fbsd "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.local.idx" &
+localIndexPid="$!"
 
 echo "Building deep index..."
 hashdeep -c md5,sha1,sha256,tiger,whirlpool -e -o fbsd -r "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.deep.idx"
+
+echo "Waiting for local index..."
+wait "$localIndexPid"
 
 echo "Counting size..."
 

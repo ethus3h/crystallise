@@ -185,6 +185,7 @@ done
 
 getChecksumRetries=0
 retryDelayTime=5
+sleep 2
 until [ $getChecksumRetries -ge 1000 ]; do
     wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep "<file name=\"$CrystalFileName\" source=\"original\">" && break
     getChecksumRetries=$((getChecksumRetries+1))

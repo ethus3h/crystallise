@@ -186,6 +186,12 @@ delta)
     rubberfs remount "$name"
     echo "A frozen incremental snapshot $freezeCrystal of RubberFS named $name has been created, and the obsolete local snapshots removed."
     ;;
+load)
+    #opposite of freeze
+    ;;
+patch)
+    #opposite of delta
+    ;;
 status)
     zpool list "$name"
     zpool status "$name"

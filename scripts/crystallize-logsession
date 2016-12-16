@@ -176,6 +176,16 @@ crystallizeSecretKey="$(grep secret ~/.config/ia.ini | head -n 1 | awk '{ print 
 #For the streaming upload (broken atm), (also remove the TmpUploadFile and pipe directly) do: s3-streaming-upload s3.us.archive.org "$crystalCollection" "$CrystalID" "$CrystalFileName" "$crystalFilesSize" "$crystalTitle" "Crystal $CrystalID" "Uploaded using Crystallize $crystallizeVersion; 1EA21BD8-DB7E-11E5-9733-728C37852114; $crystalTitle; $CrystalID"
 CrystalTmpUploadFile="$crystalWorkdir/$CrystalID.coal5-tempfile-curl"
 tar -cv -P -S --format pax "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.time-env.warc.gz" | pv -tparbIfei 0.1 -s "$crystalFilesSize" | xz -k -C sha256 -T 0 --lzma2=preset=1 --memlimit-compress="$memlimit" --stdout - | gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - | tee >(hashdeep -c md5,sha1,sha256 -o fbcpsde > "$crystalWorkdir/$CrystalID.checksums") > "$CrystalTmpUploadFile"
+
+unset opt
+unset optb
+
+set +e
+#If GNU/Linux, set opt to 1 and unset optb; otherwise opposite
+[[ $OSTYPE = *inux* ]] && (( opt++ ))
+[[ $OSTYPE != *inux* ]] && (( optb++ ))
+set -e
+
 sendRetries=0
 until [ $sendRetries -ge 100 ]; do
     #curl --location --raw -X PUT --data-binary @"$CrystalTmpUploadFile" --header "x-amz-auto-make-bucket:1" --header "x-archive-queue-derive:0" --header "x-archive-size-hint:$crystalFilesSize" --header "authorization: LOW $crystallizeAccessKey:$crystallizeSecretKey" --header "x-archive-meta-collection:$crystalCollection" --header "x-archive-meta-title:$CrystalID" --header "x-archive-meta-description:Crystal $CrystalID" --header "x-archive-meta-subject:Uploaded using Crystallize $crystallizeVersion; 1EA21BD8-DB7E-11E5-9733-728C37852114; $crystalTitle; $CrystalID" "http://s3.us.archive.org/$CrystalID/$CrystalFileName" && break
@@ -218,16 +228,6 @@ fi
 echo "Retrieving remote index..."
 
 wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" | tee "$crystalWorkdir/$CrystalID.json"
-
-
-unset opt
-unset optb
-
-set +e
-#If GNU/Linux, set opt to 1 and unset optb; otherwise opposite
-[[ $OSTYPE = *inux* ]] && (( opt++ ))
-[[ $OSTYPE != *inux* ]] && (( optb++ ))
-set -e
 
 #If the opt(b) variable is unset, insert the text after "opt(b)+"
 #opt is for GNU/Linux; optb is for others

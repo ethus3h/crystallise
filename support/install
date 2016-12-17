@@ -52,7 +52,6 @@ crystallizeSysconfdirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeSysco
 echo "crystallizeSysconfdirEsc: $crystallizeSysconfdirEsc"
 perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/decrystallize
 perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/quickliquid
-perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/crystallize-rescue
 perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/crystallize-update
 perl -0777 -p -i -e "s/\/usr\/local\/etc/$crystallizeSysconfdirEsc/g" scripts/crystallize-getconf
 perl -0777 -p -i -e "s/\/usr\/local\/etc/$crystallizeSysconfdirEsc/g" scripts/crystallize-logsession

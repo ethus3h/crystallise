@@ -168,7 +168,10 @@ freeze)
     #TODO: Can this be parallelized, to avoid the huge tempfile?
     zfs send -R "$name@$freezeId" > "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"
     kill "$rubberfsWatchPid"
-    smallify "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"
+    (
+        cd "$crystalWorkdir"
+        smallify "$name@$freezeId.$freezeUuid.zfsrepl"
+    )
     rsync -av --progress --checksum "$crystalWorkdir/pointers/$name@$freezeId.$freezeUuid.zfsrepl.crystal" "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.zfsrepl.crystal-data" "$name/.rubberfs/history/"
     freezeCrystal="$(cat "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.zfsrepl.crystal-data/identifier")"
     echo "$name@$freezeId" > "$name/.rubberfs/lastFreeze"
@@ -205,7 +208,10 @@ delta)
     rubberfsWatchPid="$!"
     zfs send -I "$oldSnap" "$name@$freezeId" > "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl"
     kill "$rubberfsWatchPid"
-    smallify "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl"
+    (
+        cd "$crystalWorkdir"
+        smallify "$name@$freezeId.$freezeUuid.incremental.zfsrepl"
+    )
     rsync -av --progress --checksum "$crystalWorkdir/pointers/$name@$freezeId.$freezeUuid.incremental.zfsrepl.crystal" "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.incremental.zfsrepl.crystal-data" "$name/.rubberfs/history/"
     freezeCrystal="$(cat "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.incremental.zfsrepl.crystal-data/identifier")"
     echo "$name@$freezeId" > "$name/.rubberfs/lastFreeze"

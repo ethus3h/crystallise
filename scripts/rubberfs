@@ -244,8 +244,7 @@ thaw)
     truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
     zpool create "$name" -O compression=gzip-9 -O relatime=on -O checksum=sha256 mirror "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
     crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
-    cd "$rubberfsThawId"
-    rubberfsLoadId="rubberfs-thaw-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)").$(python -c 'import uuid; print str(uuid.uuid4())').tmp"
+    rubberfsThawId="rubberfs-thaw-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)").$(python -c 'import uuid; print str(uuid.uuid4())').tmp"
     mkdir "$rubberfsThawId"
     cd "$rubberfsThawId"
     decrystallize "$freezeId" --here

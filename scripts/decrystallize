@@ -99,7 +99,7 @@ if [[ $decrystallizeHere == true ]]; then
     echo "Moving primary files into place..."
     (
         shopt -s dotglob
-        mv "$decrystallizedFolderName/$(cat "$CrystalLogID".tmp-cwd)/"* .
+        mv "$decrystallizedFolderName/$(cat "$CrystalID".tmp-cwd)/"* .
     )
 fi
 set +e

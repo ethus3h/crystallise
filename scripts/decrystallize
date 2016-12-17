@@ -29,8 +29,10 @@ if [ "$2" == "--easy-use" ]; then
     if [ "$3" == "--here" ]; then
         decrystallizeHere=true
         export decrystallizeHere
-        echo "Sorry, this feature is not implemented yet. When done, it will put the data back where they came from."
     fi
+elif [ "$2" == "--here" ]; then
+    decrystallizeHere=true
+    export decrystallizeHere
 fi
 
 if [ "$CrystalAddress" == "" ]; then
@@ -79,6 +81,19 @@ mkdir -v "./$CrystalLogID.coal5-meta"
 mv -v "./$CrystalLogID."!(coal5-meta) "./$CrystalLogID.coal5-meta/"
 if [[ $decrystallizeEasyUse == true ]]; then
     mv -v ~/Decrystallized/"$CrystalLogID.dec" ~/Decrystallized/"$CrystalLogID.coal5-meta/"
+    decrystallizedFolderName="$CrystalAddress"
+else
+    decrystallizedFolderName="$CrystalLogID/$CrystalAddress"
+fi
+
+if [[ $decrystallizeHere == true ]]; then
+    echo "Getting relative location..."
+    wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "./$CrystalLogID.tmp" - > "$CrystalLogID.tmp-cwd"
+    echo "Moving primary files into place..."
+    (
+        shopt -s dotglob
+        mv "$decrystallizedFolderName/$(cat "$CrystalLogID".tmp-cwd)/"* .
+    )
 fi
 
 if rm -v "./$CrystalLogID.coal5-meta/$CrystalLogID.coal5-tend"; then

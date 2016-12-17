@@ -224,10 +224,10 @@ delta)
     printf "\033c"
     echo "A frozen incremental snapshot $freezeCrystal of RubberFS named $name has been created, and the obsolete local snapshots removed."
     ;;
-load)
+thaw)
     #opposite of freeze
-    freezeId="$2"
-    #Use: rubberfs load poolname freezeId
+    freezeId="$3"
+    #Use: rubberfs thaw poolname freezeId
     #echo "To restore, first make a new zpool, then run zfs recv (new-zpool-name) -F < /foo/bar.zfsrepl"
     if [ -e "/$name" ]; then
         echo "ERROR: The requested name \"$name\" is already in use." >&2
@@ -244,10 +244,10 @@ load)
     truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
     zpool create "$name" -O compression=gzip-9 -O relatime=on -O checksum=sha256 mirror "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
     crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
-    cd "$crystalWorkdir"
-    rubberfsLoadId="rubberfs-load-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)").$(python -c 'import uuid; print str(uuid.uuid4())').tmp"
-    mkdir "$rubberfsLoadId"
-    cd "$rubberfsLoadId"
+    cd "$rubberfsThawId"
+    rubberfsLoadId="rubberfs-thaw-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)").$(python -c 'import uuid; print str(uuid.uuid4())').tmp"
+    mkdir "$rubberfsThawId"
+    cd "$rubberfsThawId"
     decrystallize "$freezeId" --here
     zfs recv "$name" -F < *.zfsrepl
     zpool scrub "$name"

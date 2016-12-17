@@ -227,6 +227,10 @@ delta)
 thaw)
     #opposite of freeze
     freezeId="$3"
+    if [[ -z "$freezeId" ]]; then
+        echo "Please specify a freeze ID to thaw."
+        exit 1
+    fi
     #Use: rubberfs thaw poolname freezeId
     #echo "To restore, first make a new zpool, then run zfs recv (new-zpool-name) -F < /foo/bar.zfsrepl"
     if [ -e "/$name" ]; then
@@ -250,23 +254,38 @@ thaw)
     decrystallize "$freezeId" --here
     zfs recv "$name" -F < *.zfsrepl
     zpool scrub "$name"
+    if [[ ! -z "$4" ]]; then
+        echo "Passing off remaining work to rubberfs patch..."
+        rubberfs patch "${@:4}"
+    fi
     printf "\033c"
     echo "The requested filesystem has been retrieved."
     ;;
 patch)
     #opposite of delta
     #usage: rubberfs patch poolname deltaId
-    freezeId="$2"
     crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
     cd "$crystalWorkdir"
-    rubberfsPatchId="rubberfs-patch-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)").$(python -c 'import uuid; print str(uuid.uuid4())').tmp"
-    mkdir "$rubberfsPatchId"
-    cd "$rubberfsPatchId"
-    decrystallize "$freezeId" --here
-    zfs recv "$name" -F < *.zfsrepl
+    shift
+    freezeId="$2"
+    if [[ -z "$freezeId" ]]; then
+        echo "Please specify an incremental freeze ID to patch."
+        exit 1
+    fi
+    while [[ ! -z $2 ]]; do
+        freezeId="$2"
+        echo "Begun working on patch $freezeId"
+        rubberfsPatchId="rubberfs-patch-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)").$(python -c 'import uuid; print str(uuid.uuid4())').tmp"
+        mkdir "$rubberfsPatchId"
+        cd "$rubberfsPatchId"
+        decrystallize "$freezeId" --here
+        zfs recv "$name" -F < *.zfsrepl
+        echo "Done working on patch $freezeId"
+        shift
+    done
     zpool scrub "$name"
     printf "\033c"
-    echo "The requested filesystem update has been applied."
+    echo "The requested filesystem update(s) has/have been applied."
     ;;
 status)
     zpool list "$name"

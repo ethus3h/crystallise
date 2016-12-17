@@ -100,6 +100,12 @@ fi
 
 if rm -v "./$CrystalLogID.coal5-meta/$CrystalLogID.coal5-tend"; then
 
+    if [[ $decrystallizeEasyUse == true ]]; then
+        crystallize "./$CrystalLogID.coal5-meta" "$CrystalLogID" "$CrystalAddress"
+    else
+        crystallize "./$CrystalLogID.coal5-meta" "$CrystalLogID" "$CrystalAddress"
+    fi
+
     #Clear the screen
     printf "\033c"
 

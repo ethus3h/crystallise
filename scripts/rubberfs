@@ -157,8 +157,12 @@ save)
     ;;
 freeze)
     echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
-    echo "Note freeze may be big; delta does incremental. Continuing in 1 minute;"
-    echo "press Ctrl+C to cancel."
+    echo "Note freeze may be big; delta does incremental. Also note that"
+    echo "FREEZE DOES NOT UPLOAD ALL REVISIONS. It *will* have the current revision,"
+    echo "but not all past revisions (since they aren't held locally)."
+    echo "Freeze and then use historybak to get an ID that can be put into"
+    echo "historypull (once it's implemented) to get all revisions."
+    echo "Continuing in 1 minute; press Ctrl+C to cancel."
     echo "### WARNING! ^^^ WARNING! ### WARNING! ### WARNING! ^^^ WARNING! ###"
     #TODO: make sure this works. What it should do: Back up the complete current filesystem to IA (as a .crystal but don't keep local copy), put the .crystal in the .rubberfs/history/ folder, and remove old snapshots.
     cd /

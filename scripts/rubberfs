@@ -25,6 +25,10 @@ create)
         echo "ERROR: The requested name \"$name\" is already in use." >&2
         exit 1
     fi
+    if [ -e "/Wreathe/.Resources/RubberFS/$name" ]; then
+        echo "ERROR: The requested name \"$name\" is already in use by a RubberFS." >&2
+        exit 1
+    fi
     mkdir -p "/Wreathe/.Resources/RubberFS/$name/dev/"
     #4T doesn't work: "truncate: failed to truncate '/Wreathe/.Resources/RubberFS/library/dev/StorageBlockDevice1' at 4398046511104 bytes: File too large" — wtf?! I don't have 3tb available either.
     truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1"
@@ -188,9 +192,42 @@ delta)
     ;;
 load)
     #opposite of freeze
+    freezeId="$2"
+    #Use: rubberfs load poolname freezeId
+    #echo "To restore, first make a new zpool, then run zfs recv (new-zpool-name) -F < /foo/bar.zfsrepl"
+    if [ -e "/$name" ]; then
+        echo "ERROR: The requested name \"$name\" is already in use." >&2
+        exit 1
+    fi
+    if [ -e "/Wreathe/.Resources/RubberFS/$name" ]; then
+        echo "ERROR: The requested name \"$name\" is already in use by a RubberFS." >&2
+        exit 1
+    fi
+    mkdir -p "/Wreathe/.Resources/RubberFS/$name/dev/"
+    #4T doesn't work: "truncate: failed to truncate '/Wreathe/.Resources/RubberFS/library/dev/StorageBlockDevice1' at 4398046511104 bytes: File too large" — wtf?! I don't have 3tb available either.
+    truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1"
+    truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2"
+    truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
+    zpool create "$name" -O compression=gzip-9 -O relatime=on -O checksum=sha256 mirror "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
+    crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
+    cd "$crystalWorkdir"
+    rubberfsLoadId="rubberfs-load-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)").$(python -c 'import uuid; print str(uuid.uuid4())').tmp"
+    mkdir "$rubberfsLoadId"
+    cd "$rubberfsLoadId"
+    decrystallize "$freezeId" --here
+    zfs recv "$name" -F < *.zfsrepl
     ;;
 patch)
     #opposite of delta
+    #usage: rubberfs patch poolname deltaId
+    freezeId="$2"
+    crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
+    cd "$crystalWorkdir"
+    rubberfsPatchId="rubberfs-patch-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)").$(python -c 'import uuid; print str(uuid.uuid4())').tmp"
+    mkdir "$rubberfsPatchId"
+    cd "$rubberfsPatchId"
+    decrystallize "$freezeId" --here
+    zfs recv "$name" -F < *.zfsrepl
     ;;
 status)
     zpool list "$name"

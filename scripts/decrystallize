@@ -89,7 +89,7 @@ fi
 if [[ $decrystallizeHere == true ]]; then
     echo "Getting relative location..."
     crystallize-getconf 'Passphrase' > "./$CrystalLogID.tmp"
-    wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5" | gpg --yes --batch --passphrase-file "./$CrystalLogID.tmp" - > "$CrystalLogID.tmp-cwd"
+    wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5-cwd" | gpg --yes --batch --passphrase-file "./$CrystalLogID.tmp" - > "$CrystalLogID.tmp-cwd"
     rm "./$CrystalLogID.tmp"
     echo "Moving primary files into place..."
     (

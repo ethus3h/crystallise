@@ -67,6 +67,7 @@ gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "./$CrystalLogID"
 gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "./$CrystalLogID".tmp "./$CrystalLogID.ip.warc.gz.xz"
 gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "./$CrystalLogID".tmp "./$CrystalLogID.time-env.warc.gz.xz"
 gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "./$CrystalLogID".tmp "./$CrystalLogID.time-end.warc.gz.xz"
+rm -v "./$CrystalLogID.tmp"
 mv -v "./$CrystalLogID.log.xz.gpg" "./$CrystalLogID.coal5-log"
 mv -v "./$CrystalLogID.time-start.warc.gz.xz.gpg" "./$CrystalLogID.coal5-ts"
 mv -v "./$CrystalLogID.ip.warc.gz.xz.gpg" "./$CrystalLogID.coal5-ip"
@@ -87,15 +88,15 @@ fi
 
 if [[ $decrystallizeHere == true ]]; then
     echo "Getting relative location..."
-    wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "./$CrystalLogID.tmp" - > "$CrystalLogID.tmp-cwd"
+    crystallize-getconf 'Passphrase' > "./$CrystalLogID.tmp"
+    wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5" | gpg --yes --batch --passphrase-file "./$CrystalLogID.tmp" - > "$CrystalLogID.tmp-cwd"
+    rm "./$CrystalLogID.tmp"
     echo "Moving primary files into place..."
     (
         shopt -s dotglob
         mv "$decrystallizedFolderName/$(cat "$CrystalLogID".tmp-cwd)/"* .
     )
 fi
-
-rm -v "./$CrystalLogID.tmp"
 
 if rm -v "./$CrystalLogID.coal5-meta/$CrystalLogID.coal5-tend"; then
 

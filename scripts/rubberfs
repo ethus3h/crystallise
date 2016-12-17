@@ -60,6 +60,7 @@ mount)
     zpool scrub "$name"
     ln -s -T -f "/$name" "/Wreathe/.Resources/RubberFS/$name/mount"
     #rubberfs cd "$name"
+    printf "\033c"
     echo "RubberFS named $name has been mounted."
     ;;
 soft-mount)
@@ -70,6 +71,7 @@ soft-mount)
     zpool scrub "$name"
     ln -s -T -f "/$name" "/Wreathe/.Resources/RubberFS/$name/mount"
     #rubberfs cd "$name"
+    printf "\033c"
     echo "RubberFS named $name has been mounted."
     ;;
 remount)
@@ -93,6 +95,7 @@ rename)
     zpool import -d "/Wreathe/.Resources/RubberFS/$newname/dev/" "$name" "$newname"
     rubberfs unmount "$newname"
     rubberfs mount "$newname"
+    printf "\033c"
     echo "RubberFS named $name has been renamed to $newname."
     ;;
 cd)
@@ -106,6 +109,7 @@ unmount)
         rubberfs save "$name"
     fi
     zpool export "$name"
+    printf "\033c"
     echo "RubberFS named $name has been unmounted."
     ;;
 soft-unmount)
@@ -117,6 +121,7 @@ soft-unmount)
     set +e
     zpool export "$name"
     set -e
+    printf "\033c"
     echo "RubberFS named $name has been unmounted."
     ;;
 attach)
@@ -128,6 +133,7 @@ attach)
     ;;
 check)
     zpool scrub "$name"
+    printf "\033c"
     echo "A check for RubberFS named $name has been begun; use rubberfs status $name to see its progress."
     ;;
 save)
@@ -146,6 +152,7 @@ save)
     #set -e
     rubberfsSnapshot="rubberfs-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
     zfs snapshot "$name@$rubberfsSnapshot"
+    printf "\033c"
     echo "A saved snapshot $rubberfsSnapshot in RubberFS named $name has been created."
     ;;
 freeze)
@@ -179,6 +186,7 @@ freeze)
     sleep 60
     zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3 | xargs -n 1 zfs destroy -vr
     rubberfs soft-remount "$name"
+    printf "\033c"
     echo "A frozen snapshot $freezeCrystal of RubberFS named $name has been created, and the obsolete local snapshots removed."
     #echo "To restore, first make a new zpool, then run zfs recv (new-zpool-name) -F < /foo/bar.zfsrepl"
     ;;
@@ -213,6 +221,7 @@ delta)
     sleep 60
     zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3 | xargs -n 1 zfs destroy -vr
     rubberfs soft-remount "$name"
+    printf "\033c"
     echo "A frozen incremental snapshot $freezeCrystal of RubberFS named $name has been created, and the obsolete local snapshots removed."
     ;;
 load)
@@ -241,6 +250,9 @@ load)
     cd "$rubberfsLoadId"
     decrystallize "$freezeId" --here
     zfs recv "$name" -F < *.zfsrepl
+    zpool scrub "$name"
+    printf "\033c"
+    echo "The requested filesystem has been retrieved."
     ;;
 patch)
     #opposite of delta
@@ -253,6 +265,9 @@ patch)
     cd "$rubberfsPatchId"
     decrystallize "$freezeId" --here
     zfs recv "$name" -F < *.zfsrepl
+    zpool scrub "$name"
+    printf "\033c"
+    echo "The requested filesystem update has been applied."
     ;;
 status)
     zpool list "$name"
@@ -303,6 +318,7 @@ destroy)
     zpool export "$name"
     rm -v "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
     crystallize "/$rubberfsDestroyId" "/Wreathe/.Resources/RubberFS/$name"
+    printf "\033c"
     echo "Done removing RubberFS named $name."
     ;;
 stash)
@@ -330,6 +346,7 @@ stash)
         echo "Done stashing $fileToStash."
         shift
     done
+    printf "\033c"
     echo "Nothing left to stash."
     ;;
 pull)
@@ -350,6 +367,7 @@ pull)
         echo "Done pulling $fileToPull."
         shift
     done
+    printf "\033c"
     echo "Nothing left to pull."
     ;;
 rm)
@@ -368,6 +386,7 @@ rm)
         echo "Done stashing $fileToRemove."
         shift
     done
+    printf "\033c"
     echo "Nothing left to remove."
     ;;
 unpack)
@@ -384,6 +403,7 @@ unpack)
     fi
     rsync -av --checksum --progress "$origin" "$target"
     find "$target" -name "*.crystal" -exec rubberfs pull {} \;
+    printf "\033c"
     echo "Done unpacking."
     ;;
 stub)

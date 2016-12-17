@@ -96,11 +96,13 @@ if [[ $decrystallizeHere == true ]]; then
     mv "$CrystalID.coal5-cwd" "$CrystalID.tmp-cwd.gpg"
     gpg --yes --batch --passphrase-file "./$CrystalLogID.tmp" "$CrystalID.tmp-cwd.gpg"
     rm "./$CrystalLogID.tmp"
-    echo "Moving primary files into place..."
+    echo "Moving primary files into place (relative to $crystalPath)..."
+    crystalPath="$(cat "$CrystalID".tmp-cwd)"
     (
         shopt -s dotglob
-        mv "$decrystallizedFolderName/$(cat "$CrystalID".tmp-cwd)/"* .
+        mv -v "$decrystallizedFolderName/$crystalPath/"* .
     )
+    echo "Done moving primary files into place (relative to $crystalPath)."
 fi
 set +e
 
@@ -115,11 +117,15 @@ if rm -v "./$CrystalLogID.coal5-meta/$CrystalLogID.coal5-tend"; then
     #Clear the screen
     printf "\033c"
 
-    echo "Done! The crystal has been extracted to:"
-    if [[ $decrystallizeEasyUse == true ]]; then
-        echo "$(pwd)/$CrystalAddress"
+    if [[ $decrystallizeHere == true ]]; then
+        echo "Done! The crystal has been extracted to the current directory."
     else
-        echo "$(pwd)/$CrystalLogID"
+        echo "Done! The crystal has been extracted to:"
+        if [[ $decrystallizeEasyUse == true ]]; then
+            echo "$(pwd)/$CrystalAddress"
+        else
+            echo "$(pwd)/$CrystalLogID"
+        fi
     fi
 else
 

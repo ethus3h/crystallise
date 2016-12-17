@@ -204,7 +204,7 @@ delta)
     zfs snapshot -r "$name@$freezeId"
     oldSnap="$(cat "$name/.rubberfs/lastFreeze")"
     echo "Begun working on saving incremental snapshot."
-    watch -n 0.1 "du -h /usr/local/var/crystallize/*.zfsrepl" &
+    watch -n 0.1 "du -h \"$crystalWorkdir\"/*.zfsrepl" &
     rubberfsWatchPid="$!"
     zfs send -I "$oldSnap" "$name@$freezeId" > "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl"
     kill "$rubberfsWatchPid"

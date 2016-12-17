@@ -118,7 +118,7 @@ if rm -v "./$CrystalLogID.coal5-meta/$CrystalLogID.coal5-tend"; then
     printf "\033c"
 
     if [[ $decrystallizeHere == true ]]; then
-        echo "Done! The crystal has been extracted to the current directory."
+        echo "Done! The crystal has been extracted to the current directory, $(pwd)."
     else
         echo "Done! The crystal has been extracted to:"
         if [[ $decrystallizeEasyUse == true ]]; then

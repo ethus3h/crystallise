@@ -51,6 +51,8 @@ crystallizeVersionB=${crystallizeVersionA%\'*}
 crystallizeVersion=${crystallizeVersionB##*\'}
 export crystallizeVersion
 
+CrystalID="$CrystalAddress"
+
 decrystallize-logsession "$CrystalAddress" 2>&1 | tee -a "./$CrystalLogID"
 
 echo "Working..."

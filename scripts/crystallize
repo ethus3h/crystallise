@@ -1,7 +1,7 @@
 #!/bin/bash
 # Crystallize
 # Version:
-export crystallizeVersion='2.16.6.4.9.10'
+export crystallizeVersion='2.16.6.4.9.11'
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
@@ -70,6 +70,7 @@ crystallize-logsession "$CrystalID" "$@" 2>&1 | tee -a "$crystalWorkdir/$Crystal
 
 echo "Working..."
 echo "$0 $*" > "$crystalWorkdir/$CrystalID.cmd"
+echo "Crystal cwd is: $(pwd)"
 pwd > "$crystalWorkdir/$CrystalID.cwd"
 #Script should not exit if an operation fails. FIXME: why?
 if [[ $crystallizeLeavePointer == true ]]; then

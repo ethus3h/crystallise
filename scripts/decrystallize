@@ -86,10 +86,13 @@ else
     decrystallizedFolderName="$CrystalLogID/$CrystalAddress"
 fi
 
+set -e
 if [[ $decrystallizeHere == true ]]; then
     echo "Getting relative location..."
     crystallize-getconf 'Passphrase' > "./$CrystalLogID.tmp"
-    wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5-cwd" | gpg --yes --batch --passphrase-file "./$CrystalLogID.tmp" - > "$CrystalLogID.tmp-cwd"
+    wget "https://archive.org/download/$CrystalID/$CrystalID.coal5-cwd"
+    mv "$CrystalID.coal5-cwd" "$CrystalID.tmp-cwd.gpg"
+    gpg --yes --batch --passphrase-file "./$CrystalLogID.tmp" "$CrystalID.tmp-cwd.gpg"
     rm "./$CrystalLogID.tmp"
     echo "Moving primary files into place..."
     (
@@ -97,13 +100,14 @@ if [[ $decrystallizeHere == true ]]; then
         mv "$decrystallizedFolderName/$(cat "$CrystalLogID".tmp-cwd)/"* .
     )
 fi
+set +e
 
 if rm -v "./$CrystalLogID.coal5-meta/$CrystalLogID.coal5-tend"; then
 
     if [[ $decrystallizeEasyUse == true ]]; then
-        crystallize "./$CrystalLogID.coal5-meta" "$CrystalLogID" "$CrystalAddress"
+        crystallize "./$CrystalLogID.coal5-meta" "$CrystalLogID" "$CrystalID.tmp-cwd.gpg" "$CrystalAddress"
     else
-        crystallize "./$CrystalLogID.coal5-meta" "$CrystalLogID"
+        crystallize "./$CrystalLogID.coal5-meta" "$CrystalLogID" "$CrystalID.tmp-cwd.gpg"
     fi
 
     #Clear the screen

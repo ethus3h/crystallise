@@ -66,6 +66,10 @@ remount)
     rubberfs unmount "$name"
     rubberfs mount "$name"
     ;;
+soft-remount)
+    rubberfs soft-unmount "$name"
+    rubberfs mount "$name"
+    ;;
 rename)
     newname="$3"
     if [ -e "/$newname" ]; then
@@ -92,6 +96,17 @@ unmount)
         rubberfs save "$name"
     fi
     zpool export "$name"
+    echo "RubberFS named $name has been unmounted."
+    ;;
+soft-unmount)
+    if [ ! -d "/$name/.rubberfs" ]; then
+        echo "ERROR! RubberFS named $name does not appear to be mounted." >&2
+    else
+        rubberfs save "$name"
+    fi
+    set +e
+    zpool export "$name"
+    set -e
     echo "RubberFS named $name has been unmounted."
     ;;
 attach)
@@ -153,7 +168,7 @@ freeze)
     zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3
     sleep 60
     zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3 | xargs -n 1 zfs destroy -vr
-    rubberfs remount "$name"
+    rubberfs soft-remount "$name"
     echo "A frozen snapshot $freezeCrystal of RubberFS named $name has been created, and the obsolete local snapshots removed."
     #echo "To restore, first make a new zpool, then run zfs recv (new-zpool-name) -F < /foo/bar.zfsrepl"
     ;;
@@ -187,7 +202,7 @@ delta)
     zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3
     sleep 60
     zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3 | xargs -n 1 zfs destroy -vr
-    rubberfs remount "$name"
+    rubberfs soft-remount "$name"
     echo "A frozen incremental snapshot $freezeCrystal of RubberFS named $name has been created, and the obsolete local snapshots removed."
     ;;
 load)

@@ -265,7 +265,7 @@ thaw)
         rubberfs patch "${@:4}"
     fi
     printf "\033c"
-    echo "The requested filesystem has been retrieved."
+    echo "The requested filesystem $name has been retrieved."
     ;;
 patch)
     #opposite of delta
@@ -291,7 +291,7 @@ patch)
     done
     zpool scrub "$name"
     printf "\033c"
-    echo "The requested filesystem update(s) has/have been applied."
+    echo "The requested filesystem update(s) has/have been applied to $name."
     ;;
 status)
     zpool list "$name"
@@ -301,7 +301,7 @@ status)
     zfs list -ro space "$name"
     ;;
 list)
-    zfs list -t snapshot
+    zfs list -t snapshot | grep "$name"
     rubberfs status "$name"
     ;;
 usage)

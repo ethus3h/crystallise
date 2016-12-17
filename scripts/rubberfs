@@ -156,6 +156,10 @@ save)
     echo "A saved snapshot $rubberfsSnapshot in RubberFS named $name has been created."
     ;;
 freeze)
+    echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
+    echo "Note freeze may be big; delta does incremental. Continuing in 1 minute;"
+    echo "press Ctrl+C to cancel."
+    echo "### WARNING! ^^^ WARNING! ### WARNING! ### WARNING! ^^^ WARNING! ###"
     #TODO: make sure this works. What it should do: Back up the complete current filesystem to IA (as a .crystal but don't keep local copy), put the .crystal in the .rubberfs/history/ folder, and remove old snapshots.
     cd /
     freezeId="rubberfs-freeze-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"

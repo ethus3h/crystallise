@@ -285,6 +285,7 @@ patch)
         mkdir "$rubberfsPatchId"
         cd "$rubberfsPatchId"
         decrystallize "$freezeId" --here
+        #FIXME: Detect if the freeze is a full freeze instead of incremental, and apply patch accordingly (avoid clobbering the previously applied patches)
         zfs recv "$name" -F < *.zfsrepl
         echo "Done working on patch $freezeId"
         shift
@@ -393,6 +394,17 @@ pull)
     done
     printf "\033c"
     echo "Nothing left to pull."
+    ;;
+historybak)
+    #provides a history id
+    rsync -av --checksum --progress "$name/.rubberfs" "$name/.rubberfs/.rubberfs"
+    crystallize "$name/.rubberfs/.rubberfs"
+    ;;
+historypull)
+    #rubberfs historypull poolname historyId
+    #Goes through the freezes and deltas listed in the historybak and rebuilds them into a new pool
+    echo "ERROR: Not implemented yet!" #FIXME
+    exit 1
     ;;
 rm)
     if [[ -z "$2" ]]; then

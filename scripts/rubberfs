@@ -310,6 +310,7 @@ status)
     zfs list -ro space "$name"
     ;;
 list)
+    ls -1 /Wreathe/.Resources/RubberFS/
     zfs list -t snapshot | grep "$name"
     rubberfs status "$name"
     ;;

@@ -21,6 +21,8 @@ if [ "$2" != "--no-trim-extensions" ]; then
     CrystalAddress="${CrystalAddress%\.coal5*}"
 fi
 
+decrystallizeEasyUse=false
+decrystallizeHere=false
 if [ "$2" == "--easy-use" ]; then
     decrystallizeEasyUse=true
     export decrystallizeEasyUse
@@ -82,9 +84,11 @@ set +e
 mkdir -v "./$CrystalLogID.coal5-meta"
 mv -v "./$CrystalLogID."!(coal5-meta) "./$CrystalLogID.coal5-meta/"
 if [[ $decrystallizeEasyUse == true ]]; then
+    echo "Setting up for easy-use"
     mv -v ~/Decrystallized/"$CrystalLogID.dec" ~/Decrystallized/"$CrystalLogID.coal5-meta/"
     decrystallizedFolderName="$CrystalAddress"
 else
+    echo "Using default mode"
     decrystallizedFolderName="$CrystalLogID/$CrystalAddress"
 fi
 
@@ -107,11 +111,24 @@ fi
 set +e
 
 if rm -v "./$CrystalLogID.coal5-meta/$CrystalLogID.coal5-tend"; then
-
     if [[ $decrystallizeEasyUse == true ]]; then
-        crystallize "./$CrystalLogID.coal5-meta" "$CrystalLogID" "$CrystalID.tmp-cwd.gpg" "$CrystalAddress"
+        echo "Cleaning up with easy-use"
+        if [[ $decrystallizeHere == true ]]; then
+            echo "Here enabled"
+            crystallize "./$CrystalLogID.coal5-meta" "$CrystalLogID" "$CrystalID.tmp-cwd" "$CrystalAddress"
+        else
+            echo "Here not enabled"
+            crystallize "./$CrystalLogID.coal5-meta" "$CrystalLogID" "$CrystalAddress"
+        fi
     else
-        crystallize "./$CrystalLogID.coal5-meta" "$CrystalLogID" "$CrystalID.tmp-cwd.gpg"
+        echo "Cleaning up with default mode"
+        if [[ $decrystallizeHere == true ]]; then
+            echo "Here enabled"
+            crystallize "./$CrystalLogID.coal5-meta" "$CrystalLogID" "$CrystalID.tmp-cwd"
+        else
+            echo "Here not enabled"
+            crystallize "./$CrystalLogID.coal5-meta" "$CrystalLogID"
+        fi
     fi
 
     #Clear the screen

@@ -127,7 +127,7 @@ if rm -v "./$CrystalLogID.coal5-meta/$CrystalLogID.coal5-tend"; then
             crystallize "./$CrystalLogID.coal5-meta" "$CrystalLogID" "$CrystalID.tmp-cwd"
         else
             echo "Here not enabled"
-            crystallize "./$CrystalLogID.coal5-meta" "$CrystalLogID"
+            crystallize "./$CrystalLogID.coal5-meta"
         fi
     fi
 

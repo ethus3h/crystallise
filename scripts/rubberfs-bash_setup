@@ -7,7 +7,7 @@ rubberfs() {
         fi
         cd "/Wreathe/.Resources/RubberFS/$name/mount"
     else
-        rubberfs "$@"
+        "$(which rubberfs)" "$@"
     fi
 }
 export -f rubberfs

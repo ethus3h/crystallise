@@ -175,8 +175,10 @@ freeze)
     rubberfsWatchPid="$!"
     #TODO: Can this be parallelized, to avoid the huge tempfile?
     zfs send -R "$name@$freezeId" > "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"
-    #TODO: Verify that the replication stream is useable / not corrupt!
     kill "$rubberfsWatchPid"
+    echo "Verifying replication stream..."
+    zstreamdump -v "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl" || exit 1
+    echo "Done verifying replication stream."
     (
         cd "$crystalWorkdir"
         smallify "$name@$freezeId.$freezeUuid.zfsrepl"
@@ -218,7 +220,7 @@ delta)
     zfs send -I "$oldSnap" "$name@$freezeId" > "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl"
     kill "$rubberfsWatchPid"
     echo "Verifying replication stream..."
-    
+    zstreamdump -v "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl" || exit 1
     echo "Done verifying replication stream."
     (
         cd "$crystalWorkdir"

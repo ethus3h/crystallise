@@ -171,20 +171,20 @@ freeze)
     freezeUuid="$(python -c 'import uuid; print str(uuid.uuid4())')"
     zfs snapshot -r "$name@$freezeId"
     echo "Begun working on saving snapshot."
-    watch -n 0.1 "du -h $crystalWorkdir/*.zfsrepl" &
+    watch -n 0.1 "du -h $crystalWorkdir/*.zfsrepl.xz" &
     rubberfsWatchPid="$!"
     #TODO: Can this be parallelized, to avoid the huge tempfile?
-    zfs send -R "$name@$freezeId" | xz -9e > "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"
+    zfs send -R "$name@$freezeId" | xz -9e > "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl.xz"
     kill "$rubberfsWatchPid"
     echo "Verifying replication stream..."
-    unxz -v "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl" | zstreamdump -v || exit 1
+    unxz -v "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl.xz" | zstreamdump -v || exit 1
     echo "Done verifying replication stream."
     (
         cd "$crystalWorkdir"
         smallify "$name@$freezeId.$freezeUuid.zfsrepl"
     )
-    rsync -av --progress --checksum "$crystalWorkdir/pointers/$name@$freezeId.$freezeUuid.zfsrepl.crystal" "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.zfsrepl.crystal-data" "$name/.rubberfs/history/"
-    freezeCrystal="$(cat "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.zfsrepl.crystal-data/identifier")"
+    rsync -av --progress --checksum "$crystalWorkdir/pointers/$name@$freezeId.$freezeUuid.zfsrepl.xz.crystal" "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.zfsrepl.xz.crystal-data" "$name/.rubberfs/history/"
+    freezeCrystal="$(cat "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.zfsrepl.xz.crystal-data/identifier")"
     echo "$name@$freezeId" > "$name/.rubberfs/lastFreeze"
     echo "$name@$freezeId" > "$name/.rubberfs/lastFullFreeze"
     echo "$freezeUuid" > "$name/.rubberfs/lastFreezeUuid"
@@ -215,19 +215,19 @@ delta)
     zfs snapshot -r "$name@$freezeId"
     oldSnap="$(cat "$name/.rubberfs/lastFreeze")"
     echo "Begun working on saving incremental snapshot."
-    watch -n 0.1 "du -h \"$crystalWorkdir\"/*.zfsrepl" &
+    watch -n 0.1 "du -h \"$crystalWorkdir\"/*.zfsrepl.xz" &
     rubberfsWatchPid="$!"
-    zfs send -I "$oldSnap" "$name@$freezeId" | xz -9e > "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl"
+    zfs send -I "$oldSnap" "$name@$freezeId" | xz -9e > "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl.xz"
     kill "$rubberfsWatchPid"
     echo "Verifying replication stream..."
-    unxz -v "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl" | zstreamdump -v || exit 1
+    unxz -v "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl.xz" | zstreamdump -v || exit 1
     echo "Done verifying replication stream."
     (
         cd "$crystalWorkdir"
-        smallify "$name@$freezeId.$freezeUuid.incremental.zfsrepl"
+        smallify "$name@$freezeId.$freezeUuid.incremental.zfsrepl.xz"
     )
-    rsync -av --progress --checksum "$crystalWorkdir/pointers/$name@$freezeId.$freezeUuid.incremental.zfsrepl.crystal" "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.incremental.zfsrepl.crystal-data" "$name/.rubberfs/history/"
-    freezeCrystal="$(cat "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.incremental.zfsrepl.crystal-data/identifier")"
+    rsync -av --progress --checksum "$crystalWorkdir/pointers/$name@$freezeId.$freezeUuid.incremental.zfsrepl.xz.crystal" "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.incremental.zfsrepl.xz.crystal-data" "$name/.rubberfs/history/"
+    freezeCrystal="$(cat "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.incremental.zfsrepl.xz.crystal-data/identifier")"
     echo "$name@$freezeId" > "$name/.rubberfs/lastFreeze"
     echo "$freezeUuid" > "$name/.rubberfs/lastFreezeUuid"
     echo "$freezeCrystal" > "$name/.rubberfs/lastFreezeCrystal"
@@ -272,7 +272,7 @@ thaw)
     mkdir "$rubberfsThawId"
     cd "$rubberfsThawId"
     decrystallize "$freezeId" --here
-    zfs recv "$name" -F < *.zfsrepl
+    zfs recv "$name" -F < *.zfsrepl || unxz *.zfsrepl.xz | zfs recv "$name" -F
     zpool scrub "$name"
     if [[ ! -z "$4" ]]; then
         echo "Passing off remaining work to rubberfs patch..."

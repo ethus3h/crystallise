@@ -52,13 +52,13 @@ perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/crysta
 export crystallizeSharedstatedir
 crystallizeSharedstatedirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeSharedstatedir}))')"
 echo "crystallizeSharedstatedirEsc: $crystallizeSharedstatedirEsc"
-perl -0777 -p -i -e "s/\/usr\/local\/etc/$crystallizeSysconfdirEsc/g" scripts/crystallize-getconf
-perl -0777 -p -i -e "s/\/usr\/local\/etc/$crystallizeSysconfdirEsc/g" scripts/crystallize-logsession
+perl -0777 -p -i -e "s/\/usr\/local\/var/$crystallizeSharedstatedirEsc/g" support/crystallize.conf
 
 export crystallizeSysconfdir
 crystallizeSysconfdirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeSysconfdir}))')"
 echo "crystallizeSysconfdirEsc: $crystallizeSysconfdirEsc"
-perl -0777 -p -i -e "s/\/usr\/local\/var/$crystallizeSharedstatedirEsc/g" support/crystallize.conf
+perl -0777 -p -i -e "s/\/usr\/local\/etc/$crystallizeSysconfdirEsc/g" scripts/crystallize-getconf
+perl -0777 -p -i -e "s/\/usr\/local\/etc/$crystallizeSysconfdirEsc/g" scripts/crystallize-logsession
 
 mkdir -p "$crystallizeBindir"
 chmod +x scripts/*

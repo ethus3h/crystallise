@@ -171,11 +171,8 @@ freeze)
     freezeUuid="$(python -c 'import uuid; print str(uuid.uuid4())')"
     zfs snapshot -r "$name@$freezeId"
     echo "Begun working on saving snapshot."
-    watch -n 0.1 "du -h $crystalWorkdir/*.zfsrepl.xz" &
-    rubberfsWatchPid="$!"
     #TODO: Can this be parallelized, to avoid the huge tempfile?
-    zfs send -R "$name@$freezeId" | xz -9e > "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl.xz"
-    kill "$rubberfsWatchPid"
+    zfs send -R "$name@$freezeId" | pv -tparbIfei 0.1 | xz -9e > "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl.xz"
     echo "Verifying replication stream..."
     unxz -v "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl.xz" | zstreamdump -v || exit 1
     echo "Done verifying replication stream."
@@ -215,10 +212,7 @@ delta)
     zfs snapshot -r "$name@$freezeId"
     oldSnap="$(cat "$name/.rubberfs/lastFreeze")"
     echo "Begun working on saving incremental snapshot."
-    watch -n 0.1 "du -h \"$crystalWorkdir\"/*.zfsrepl.xz" &
-    rubberfsWatchPid="$!"
-    zfs send -I "$oldSnap" "$name@$freezeId" | xz -9e > "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl.xz"
-    kill "$rubberfsWatchPid"
+    zfs send -I "$oldSnap" "$name@$freezeId" | pv -tparbIfei 0.1 | xz -9e > "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl.xz"
     echo "Verifying replication stream..."
     unxz -v "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl.xz" | zstreamdump -v || exit 1
     echo "Done verifying replication stream."

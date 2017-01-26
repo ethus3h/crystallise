@@ -174,10 +174,10 @@ freeze)
     watch -n 0.1 "du -h $crystalWorkdir/*.zfsrepl" &
     rubberfsWatchPid="$!"
     #TODO: Can this be parallelized, to avoid the huge tempfile?
-    zfs send -R "$name@$freezeId" > "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"
+    zfs send -R "$name@$freezeId" | xz -9e > "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"
     kill "$rubberfsWatchPid"
     echo "Verifying replication stream..."
-    zstreamdump -v "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl" || exit 1
+    unxz -v "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl" | zstreamdump -v || exit 1
     echo "Done verifying replication stream."
     (
         cd "$crystalWorkdir"
@@ -217,10 +217,10 @@ delta)
     echo "Begun working on saving incremental snapshot."
     watch -n 0.1 "du -h \"$crystalWorkdir\"/*.zfsrepl" &
     rubberfsWatchPid="$!"
-    zfs send -I "$oldSnap" "$name@$freezeId" > "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl"
+    zfs send -I "$oldSnap" "$name@$freezeId" | xz -9e > "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl"
     kill "$rubberfsWatchPid"
     echo "Verifying replication stream..."
-    zstreamdump -v "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl" || exit 1
+    unxz -v "$crystalWorkdir/$name@$freezeId.$freezeUuid.incremental.zfsrepl" | zstreamdump -v || exit 1
     echo "Done verifying replication stream."
     (
         cd "$crystalWorkdir"

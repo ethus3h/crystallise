@@ -238,6 +238,18 @@ delta)
     printf "\033c"
     echo "A frozen incremental snapshot $freezeCrystal of RubberFS named $name has been created, and the obsolete local snapshots removed."
     ;;
+gc)
+    echo "Unimplemented!"
+    exit 1
+    set -e
+    rubberfs delta "$name"
+    rubberfs unmount "$name"
+    rubberfs create "$name.new"
+    rubberfs freeze "$name.new"
+    
+    rubberfs delete "$name"
+    rubberfs rename "$name.new" "$name"
+    rubberfs delta "$name"
 thaw)
     #opposite of freeze
     freezeId="$3"
@@ -294,6 +306,7 @@ patch)
         cd "$rubberfsPatchId"
         decrystallize "$freezeId" --here
         #FIXME: Detect if the freeze is a full freeze instead of incremental, and apply patch accordingly (avoid clobbering the previously applied patches)
+        #FIXME: Apply earlier patches if we don't have them, like git commits
         zfs recv "$name" -F < *.zfsrepl
         echo "Done working on patch $freezeId"
         shift

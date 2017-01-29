@@ -1,4 +1,5 @@
 #!/bin/bash
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
 streamId="smallify-stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 sponge "$crystalWorkdir/$streamId.tmp"

@@ -4,7 +4,7 @@ crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
 (
     cd "$crystalWorkdir"
     sponge "$streamId.xz"
-    unxz --stdout "$streamId.xz" | tar -xvf -
-    biggify --here "$streamId.crystal"
+    unxz --stdout "$streamId.xz" | tar -xf -
+    biggify --here "$streamId.crystal" &> /dev/null
     tail -c +37 "$streamId.tmp"
 )

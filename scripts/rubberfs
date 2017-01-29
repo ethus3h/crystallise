@@ -250,6 +250,7 @@ gc)
     rubberfs delete "$name"
     rubberfs rename "$name.new" "$name"
     rubberfs delta "$name"
+    ;;
 thaw)
     #opposite of freeze
     freezeId="$3"

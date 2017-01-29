@@ -1,0 +1,9 @@
+#!/bin/bash
+crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
+(
+    cd "$crystalWorkdir"
+    sponge "$streamId.xz"
+    unxz --stdout "$streamId.xz" | tar -xvf -
+    biggify --here "$streamId.crystal"
+    cat "$streamId.tmp"
+)

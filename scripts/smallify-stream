@@ -1,0 +1,6 @@
+#!/bin/bash
+crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
+streamId="smallify-stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+sponge "$crystalWorkdir/$streamId.tmp"
+smallify "$crystalWorkdir/$streamId.tmp" > "$crystalWorkdir/$streamId.tmp.sstream-stdout" 2> "$crystalWorkdir/$streamId.tmp.sstream-stderr"
+tar -cv -P -S --format pax "$crystalWorkdir/$streamId.tmp.crystal" "$crystalWorkdir/.$streamId.tmp.crystal-data" "$crystalWorkdir/.$streamId.tmp.sstream-stdout" "$crystalWorkdir/.$streamId.tmp.sstream-stderr" | xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout -

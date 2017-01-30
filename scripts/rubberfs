@@ -405,6 +405,9 @@ destroy-no-upload)
     echo "Done removing RubberFS named $name."
     ;;
 stash)
+    echo "Not implemented"
+    ;;
+stash-now)
     if [[ -z "$2" ]]; then
         echo "Please specify something to stash."
         exit 1

@@ -9,6 +9,6 @@ streamId="biggify-stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z
         cd "$streamId"
         sponge "$streamId.xz"
         tail -c +38 "$streamId.xz" | unxz --stdout - | tar -xf -
-        biggify --here *.crystal &> /dev/null
+        biggify *.crystal --here &> /dev/null
     )
 )

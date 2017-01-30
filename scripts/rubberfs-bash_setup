@@ -11,3 +11,10 @@ rubberfs() {
     fi
 }
 export -f rubberfs
+
+git-absolute-path () {
+    fullpath="$(readlink -f "$1")"
+    gitroot="$(git rev-parse --show-toplevel)" || return 1
+    [[ "$fullpath" =~ "$gitroot" ]] && echo "${fullpath/$gitroot\//}"
+}
+export -f git-absolute-path

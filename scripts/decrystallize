@@ -100,8 +100,8 @@ if [[ $decrystallizeHere == true ]]; then
     mv "$CrystalID.coal5-cwd" "$CrystalID.tmp-cwd.gpg"
     gpg --yes --batch --passphrase-file "./$CrystalLogID.tmp" "$CrystalID.tmp-cwd.gpg"
     rm "./$CrystalLogID.tmp"
-    echo "Moving primary files into place (relative to $crystalPath)..."
     crystalPath="$(cat "$CrystalID".tmp-cwd)"
+    echo "Moving primary files into place (relative to $crystalPath)..."
     (
         shopt -s dotglob
         mv -v "$decrystallizedFolderName/$crystalPath/"* .

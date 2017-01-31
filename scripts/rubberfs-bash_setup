@@ -18,14 +18,10 @@ git-absolute-path () {
     [[ "$fullpath" =~ "$gitroot" ]] && echo "${fullpath/$gitroot\//}"
 }
 export -f git-absolute-path
-
-git-escape-path () {
-    NL='
-'
-    case $1 in
-        *"$NL"*) echo more than one line ;;
-        *) echo one line ;;
-    esac
-    sed 's/./&\\/g' <<< " $1" # The space before the $1 is not an error.
+    if [[ $1 == *\n ]]; then
+        sed 's/./&\\/g' <<< "\\$1"
+    else
+        exit 1
+    fi
 }
 export -f git-escape-path

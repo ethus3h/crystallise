@@ -406,7 +406,7 @@ destroy-no-upload)
     ;;
 stash)
     #smallify-stream < $1 | sponge $1
-    echo "$(git-absolute-path "$1") filter=xz" >> "$(git rev-parse --show-toplevel)"/.gitattributes
+    echo "$(git-escape-path "$(git-absolute-path "$1")") filter=xz" >> "$(git rev-parse --show-toplevel)"/.gitattributes
     ;;
 stash-now)
     if [[ -z "$2" ]]; then

@@ -15,10 +15,13 @@ export -f rubberfs
 git-absolute-path () {
     fullpath="$(readlink -f "$1")"
     gitroot="$(git rev-parse --show-toplevel)" || return 1
-    [[ "$fullpath" =~ "$gitroot" ]] && echo "${fullpath/$gitroot\//}"
+    [[ $fullpath == *$(printf %q "$gitroot")* ]] && echo "${fullpath/$gitroot\//}"
 }
 export -f git-absolute-path
-    if [[ $1 == *\n ]]; then
+
+git-escape-path () {
+    # Bash is left-associative, so the bracket-groups around the && are a single unit
+    if [[ ${1: -1} = $'\n' ]] && [[ "$(wc -l "$1")" == "1" ]] || [[ "$(wc -l "$1")" == "0" ]]; then
         sed 's/./&\\/g' <<< "\\$1"
     else
         exit 1

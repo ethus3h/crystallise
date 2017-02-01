@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# FIXME: The next line shouldn't be necessary
+source "$(which bash_setup)"
+
 set -e
 
 action="$1"
@@ -405,8 +408,8 @@ destroy-no-upload)
     echo "Done removing RubberFS named $name."
     ;;
 stash)
-    #smallify-stream < $1 | sponge $1
-    echo "$(git-escape-path "$(git-absolute-path "$1")") filter=xz" >> "$(git rev-parse --show-toplevel)"/.gitattributes
+    #smallify-stream < $2 | sponge $2
+    echo "$(git-escape-path "$(git-absolute-path "$2")") filter=xz" >> "$(git rev-parse --show-toplevel)"/.gitattributes
     ;;
 stash-now)
     if [[ -z "$2" ]]; then

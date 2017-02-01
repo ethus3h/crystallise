@@ -5,7 +5,7 @@ rubberfs() {
         if [ ! -n "$name" ]; then
             name="library"
         fi
-        cd "/Wreathe/.Resources/RubberFS/$name/mount"
+        cd "/Wreathe/.Resources/RubberFS/$name/mount" || exit 1
     else
         "$(which rubberfs)" "$@"
     fi
@@ -21,7 +21,7 @@ export -f git-absolute-path
 
 git-escape-path () {
     # Bash is left-associative, so the bracket-groups around the && are a single unit
-    if [[ ${1: -1} = $'\n' ]] && [[ "$(wc -l "$1")" == "1" ]] || [[ "$(wc -l "$1")" == "0" ]]; then
+    if [[ ${1: -1} = $'\n' ]] && [[ "$(wc -l < "$1")" == "1" ]] || [[ "$(wc -l < "$1")" == "0" ]]; then
         sed 's/./&\\/g' <<< "\\$1"
     else
         exit 1

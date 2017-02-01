@@ -21,10 +21,17 @@ export -f git-absolute-path
 
 git-escape-path () {
     # Bash is left-associative, so the bracket-groups around the && are a single unit
-    if [[ ${1: -1} = $'\n' ]] && [[ "$(wc -l < "$1")" == "1" ]] || [[ "$(wc -l < "$1")" == "0" ]]; then
-        sed 's/./&\\/g' <<< "\\$1"
+    if [[ ${1: -1} = $'\n' ]] && [[ "$(wc -l <<< "$1")" == "1" ]] || [[ "$(wc -l <<< "$1")" == "0" ]]; then
+        sed 's/./&\\/g' <<< "$1" | sed 's/.$//'
     else
         exit 1
     fi
 }
 export -f git-escape-path
+
+qlstash () {
+    elenv
+    rubberfs stash "$1"
+    egup-exit
+}
+export -f qlstash

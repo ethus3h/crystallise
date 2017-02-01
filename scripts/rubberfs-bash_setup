@@ -30,8 +30,10 @@ git-escape-path () {
 export -f git-escape-path
 
 qlstash () {
-    elenv
-    rubberfs stash "$1"
-    egup-exit
+    (
+        elenv
+        rubberfs stash "$1"
+        egup-exit
+    )
 }
 export -f qlstash

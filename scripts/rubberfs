@@ -412,7 +412,7 @@ destroy-no-upload)
 stash)
     gapath="$(git rev-parse --show-toplevel)"/.gitattributes
     echo "$(git-escape-path "$(git-absolute-path "$2")") filter=xz" >> "$gapath"
-    sponge < "$gapath" | sort | uniq > "$gapath"
+    sort < "$gapath" | uniq | sponge > "$gapath"
     ;;
 stash-now)
     if [[ -z "$2" ]]; then

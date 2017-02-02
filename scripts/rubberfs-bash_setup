@@ -32,6 +32,7 @@ export -f git-escape-path
 qlstash () {
     (
         elenv
+        cd "$(dirname $(readlink -f $1))"
         rubberfs stash "$1"
         egup-exit
     )

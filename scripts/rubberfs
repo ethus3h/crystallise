@@ -410,7 +410,7 @@ destroy-no-upload)
     echo "Done removing RubberFS named $name."
     ;;
 stash)
-    gapath="$(git rev-parse --show-toplevel)"/Ember/ember-library/ember-library-2/.egup.gitattributes
+    gapath="$(git rev-parse --show-toplevel)"/.gitattributes
     echo "$(git-escape-path "$(git-absolute-path "$2")") filter=xz" >> "$gapath"
     sponge < "$gapath" | sort | uniq > "$gapath"
     ;;

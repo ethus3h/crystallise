@@ -1,11 +1,24 @@
 #!/bin/bash
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
+crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
+dbDir=Ember\ Library/Futuramerlin\ Projects/Stream\ Registry
 (
     cd "$crystalWorkdir"
     streamId="smallify-stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
     sponge "$streamId.tmp"
-    smallify "$streamId.tmp" > "$streamId.tmp.sstream-stdout" 2> "$streamId.tmp.sstream-stderr"
-    echo "a5e2f296-3085-49c0-8f48-24ea436b7a8b"
-    tar -c -P -S --format pax "$streamId.tmp.crystal" ".$streamId.tmp.crystal-data" "$streamId.tmp.sstream-stdout" "$streamId.tmp.sstream-stderr" | xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout -
+    # Calculate hash
+    hashFull="$(sha512sum "$streamId.tmp" | awk '{print $1;}')"
+    hashA="${hashFull:0:1}"
+    hashB="${hashFull:1:1}"
+    hashC="${hashFull:2:1}"
+    hashDir="$dbDir/$hashA/$hashB/$hashC"
+    mkdir -p "$hashDir"
+    dbFilePath="$hashDir/$hashFull"
+    # Item not available in cache, so add it
+    if ! [ -f "$dbFilePath" ]; then
+        smallify "$streamId.tmp" > "$streamId.tmp.sstream-stdout" 2> "$streamId.tmp.sstream-stderr"
+        echo "a5e2f296-3085-49c0-8f48-24ea436b7a8b"
+        tar -c -P -S --format pax "$streamId.tmp.crystal" ".$streamId.tmp.crystal-data" "$streamId.tmp.sstream-stdout" "$streamId.tmp.sstream-stderr" | xz -k -C sha256 -T 0 --lzma2=preset=1 - "$dbFilePath"
+    fi
+    cat "$dbFilePath"
 )

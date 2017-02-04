@@ -22,7 +22,7 @@ export -f git-absolute-path
 git-escape-path () {
     # (doesn't handle the case of the bash variable containing exactly one newline and that newline not being at the end)
     if [[ "$(wc -l <<< "$1")" == "1" ]] || [[ "$(wc -l <<< "$1")" == "0" ]]; then
-        sed 's/./&\\/g' <<< "\\$1" | sed 's/.$//'
+        sed 's/./&\\/g' <<< "$1" | awk '{print "\\"$1}' | sed 's/.$//'
     else
         exit 1
     fi

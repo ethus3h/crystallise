@@ -410,9 +410,20 @@ destroy-no-upload)
     echo "Done removing RubberFS named $name."
     ;;
 stash)
-    gapath="$(git rev-parse --show-toplevel)"/.gitattributes
-    echo "$(git-escape-path "$(git-absolute-path "$2")") filter=smallify" >> "$gapath"
-    sort < "$gapath" | uniq | sponge "$gapath"
+    while [[ ! -z $2 ]]; do
+        echo "Items remaining to stash: "
+        echo "$@"
+        fileToStash="$2"
+        echo "Begun stashing $fileToStash."
+        smallify-stream --verbose < "$fileToStash"
+        gapath="$(git rev-parse --show-toplevel)"/.gitattributes
+        echo "$(git-escape-path "$(git-absolute-path "$fileToStash")") filter=smallify" >> "$gapath"
+        sort < "$gapath" | uniq | sponge "$gapath"
+        echo "Done stashing $fileToStash."
+        shift
+    done
+    printf "\033c"
+    echo "Done stashing all items."
     ;;
 stash-now)
     if [[ -z "$2" ]]; then
@@ -440,7 +451,7 @@ stash-now)
         shift
     done
     printf "\033c"
-    echo "Nothing left to stash."
+    echo "Done stashing all items."
     ;;
 pull)
     if [[ -z "$2" ]]; then

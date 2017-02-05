@@ -30,12 +30,22 @@ git-escape-path () {
 export -f git-escape-path
 
 qlstash () {
-    (
-        targetFile="$(readlink -f "$1")"
-        elen
-        cd "$(dirname "$targetFile")" || exit 1
-        rubberfs stash "$1"
-        egup-exit
-    )
+    while [[ ! -z $1 ]]; do
+        echo "Items remaining to qlstash: "
+        echo "$@"
+        fileToStash="$1"
+        echo "Begun qlstashing $fileToStash."
+        (
+            targetFile="$(readlink -f "$1")"
+            elen
+            cd "$(dirname "$targetFile")" || exit 1
+            rubberfs stash "$1"
+            egup-exit
+        )
+        echo "Done qlstashing $fileToStash."
+        shift
+    done
+    printf "\033c"
+    echo "Done qlstashing all items."
 }
 export -f qlstash

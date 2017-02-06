@@ -20,9 +20,12 @@ dbDir=Ember\ Library/Futuramerlin\ Projects/Stream\ Registry
             smallify "$streamId.tmp"
         else
             smallify "$streamId.tmp" > "$streamId.tmp.sstream-stdout" 2> "$streamId.tmp.sstream-stderr"
+            logFiles=("$streamId.tmp.sstream-stdout" "$streamId.tmp.sstream-stderr")
         fi
         echo "a5e2f296-3085-49c0-8f48-24ea436b7a8b"
-        tar -c -P -S --format pax "$streamId.tmp.crystal" ".$streamId.tmp.crystal-data" "$streamId.tmp.sstream-stdout" "$streamId.tmp.sstream-stderr" | xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - > "$dbFilePath"
+        tar -c -P -S --format pax "$streamId.tmp.crystal" ".$streamId.tmp.crystal-data" "${logFiles[@]}" | xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - > "$dbFilePath"
     fi
-    cat "$dbFilePath"
+    if [[ "$1" != "--verbose" ]]; then
+        cat "$dbFilePath"
+    fi
 )

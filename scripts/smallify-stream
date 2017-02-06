@@ -3,7 +3,7 @@
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
 dbDir=Ember\ Library/Futuramerlin\ Projects/Stream\ Registry
 (
-    cd "$crystalWorkdir"
+    cd "$crystalWorkdir" || exit 1
     streamId="smallify-stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
     sponge "$streamId.tmp"
     # Calculate hash
@@ -16,7 +16,7 @@ dbDir=Ember\ Library/Futuramerlin\ Projects/Stream\ Registry
     dbFilePath="$hashDir/$hashFull"
     # Item not available in cache, so add it
     if ! [ -f "$dbFilePath" ]; then
-        if "$2" == "--verbose"; then
+        if [[ "$2" == "--verbose" ]]; then
             smallify "$streamId.tmp"
         else
             smallify "$streamId.tmp" > "$streamId.tmp.sstream-stdout" 2> "$streamId.tmp.sstream-stderr"

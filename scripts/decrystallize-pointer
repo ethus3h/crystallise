@@ -3,6 +3,8 @@
 
 # See crystallize for requirements.
 
+# FIXME: I don't think this supports single-file smallify pointers.
+
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
 #Script should exit if any operation fails.

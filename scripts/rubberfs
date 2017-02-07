@@ -183,7 +183,7 @@ freeze)
     echo "Done verifying replication stream."
     (
         cd "$crystalWorkdir"
-        smallify "$name@$freezeId.$freezeUuid.zfsrepl"
+        smallify-internal "$name@$freezeId.$freezeUuid.zfsrepl"
     )
     rsync -av --progress --checksum "$crystalWorkdir/pointers/$name@$freezeId.$freezeUuid.zfsrepl.xz.crystal" "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.zfsrepl.xz.crystal-data" "$name/.rubberfs/history/"
     freezeCrystal="$(cat "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.zfsrepl.xz.crystal-data/identifier")"
@@ -223,7 +223,7 @@ delta)
     echo "Done verifying replication stream."
     (
         cd "$crystalWorkdir"
-        smallify "$name@$freezeId.$freezeUuid.incremental.zfsrepl.xz"
+        smallify-internal "$name@$freezeId.$freezeUuid.incremental.zfsrepl.xz"
     )
     rsync -av --progress --checksum "$crystalWorkdir/pointers/$name@$freezeId.$freezeUuid.incremental.zfsrepl.xz.crystal" "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.incremental.zfsrepl.xz.crystal-data" "$name/.rubberfs/history/"
     freezeCrystal="$(cat "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.incremental.zfsrepl.xz.crystal-data/identifier")"
@@ -441,7 +441,7 @@ stash-now)
         crystallizeDirName="$(dirname "$fileToStash")"
         crystallizePointerFile="${crystallizeBaseName:0:136}".crystal
         rubberfs save "$thisRubber"
-        smallify "$fileToStash"
+        smallify-internal "$fileToStash"
         rubberfs save "$thisRubber"
         rubberfsCrystalId="$(cat "$crystallizeDirName"/"$crystallizePointerFile")"
         rubberfsStashedFileName="$(readlink -f -- "$fileToStash")"

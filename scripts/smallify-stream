@@ -1,7 +1,7 @@
 #!/bin/bash
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
-dbDir=Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
+dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
 (
     cd "$crystalWorkdir" || exit 1
     streamId="smallify-stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"

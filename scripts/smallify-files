@@ -1,0 +1,23 @@
+#!/bin/bash
+# smallify
+# Internal use only (used by smallify)
+
+thisRubber="$(rubberfs whereami)"
+rubberfs save "$thisRubber"
+while [[ ! -z $1 ]]; do
+    fileToProcess="$1"
+    echo "Begun working on $fileToProcess."
+    if [ ! -f "$fileToProcess" ]; then
+        echo "Please specify a file on which to operate."
+        exit 1
+    fi
+    tmpId=".smag-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)").tmp"
+    smallify-stream --verbose < "$fileToProcess" > "$tmpId"
+    crystallize "$fileToProcess"
+    mv "$tmpId" "$fileToProcess"
+    echo "Done working on $fileToProcess."
+    shift
+done
+rubberfs save "$thisRubber"
+printf "\033c"
+echo "Nothing left to do."

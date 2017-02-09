@@ -19,4 +19,3 @@ while [[ ! -z $1 ]]; do
 done
 printf "\033c"
 echo "Done precaching all directories."
-;;

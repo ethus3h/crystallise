@@ -7,7 +7,7 @@ while [[ ! -z $1 ]]; do
     echo "$@"
     fileToStash="$1"
     echo "Begun precaching $fileToStash."
-    if [ -f $fileToStash ]; then
+    if [ -f "$fileToStash" ]; then
         smallify-stream < "$fileToStash"
     else
         sstream-dircache < "$fileToStash"
@@ -17,4 +17,3 @@ while [[ ! -z $1 ]]; do
 done
 printf "\033c"
 echo "Done precaching all items."
-;;

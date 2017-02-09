@@ -12,7 +12,7 @@ while [[ ! -z $1 ]]; do
         exit 1
     fi
     tmpId=".smag-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)").tmp"
-    smallify-stream --verbose < "$fileToProcess" > "$tmpId"
+    smallify-stream < "$fileToProcess" > "$tmpId"
     crystallize "$fileToProcess"
     mv "$tmpId" "$fileToProcess"
     echo "Done working on $fileToProcess."

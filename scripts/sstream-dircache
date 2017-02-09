@@ -1,0 +1,22 @@
+#!/bin/bash
+# Internal use only (used by sstream-precache)
+# Goes through a directory tree and runs sstream-precache on the files within it
+set -e
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+while [[ ! -z $1 ]]; do
+    echo "Directories remaining to precache: "
+    echo "$@"
+    dirToStash="$1"
+    echo "Begun precaching directory $dirToStash."
+    if [ -d "$dirToStash" ]; then
+        find "$dirToStash" -type f -exec sstream-precache {} \;
+    else
+        echo "Sorry, only directories are supported by this utility."
+        exit 1
+    fi
+    echo "Done precaching directory $dirToStash."
+    shift
+done
+printf "\033c"
+echo "Done precaching all directories."
+;;

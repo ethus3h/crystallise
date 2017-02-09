@@ -8,10 +8,12 @@ while [[ ! -z $1 ]]; do
     fileToStash="$1"
     echo "Begun smallifying $fileToStash."
     if [ -f "$fileToStash" ]; then
+        sstream-precache "$fileToStash"
         smallify-files "$fileToStash"
     else
         if [ -d "$fileToStash" ]; then
             find "$fileToStash" -type f -exec sstream-precache {} \;
+            find "$fileToStash" -type f -exec smallify-files {} \;
         else
             echo "Warning: Skipping item $fileToStash (not a regular file or directory)"
         fi

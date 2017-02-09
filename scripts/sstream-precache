@@ -10,7 +10,7 @@ while [[ ! -z $1 ]]; do
     if [ -f "$fileToStash" ]; then
         smallify-stream --verbose < "$fileToStash"
     else
-        sstream-dircache < "$fileToStash"
+        sstream-dircache "$fileToStash"
     fi
     echo "Done precaching $fileToStash."
     shift

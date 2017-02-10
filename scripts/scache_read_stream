@@ -9,9 +9,7 @@ mkdir "$streamId"
     cd "$streamId"
     sponge "$streamId.xz"
     tail -c +38 "$streamId.xz" | unxz --stdout - | tar -xf -
-    mkfifo "$streamId".pipe
-    decrystallize-pointer *.crystal &> "$streamId".pipe
-    rm "$streamId".pipe
+    decrystallize-pointer *.crystal &> /dev/null
     cat scache-*.tmp
 )
 rm -r "$streamId"

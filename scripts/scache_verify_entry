@@ -3,9 +3,7 @@
 set -e
 crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
 knownHash="$(basename "$1")"
-recoveredHash="$(scache_read_stream < "$1" | sha512sum | awk '{print $1;}')" &
-find "$crystalWorkdir" -name "biggify-stream-*" -name "*.pipe" -exec cat {} \; -quit
-wait
+recoveredHash="$(scache_read_stream < "$1" | sha512sum | awk '{print $1;}')"
 if [[ "$knownHash" == "$recoveredHash" ]]; then
     echo "Verified stream cache database entry $1."
     exit 0

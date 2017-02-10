@@ -1,7 +1,6 @@
 #!/bin/bash
 # Version:
-export crystallizeVersion='3_pre4.1.5.4'
-# Missed version 3_pre4.1.2 by accident
+export crystallizeVersion='3_pre5'
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
@@ -56,14 +55,12 @@ if [ "$1" == "--leave-pointer" ]; then
     echo "Pointer name: $crystallizePointerName"
 fi
 
-echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
-echo "Be careful that you don't crystallize your current working directory,"
-echo "the crystallize temp dir, or the crystallize scripts themselves. Either"
-echo "could cause problems. Continuing in 10 seconds; press Ctrl+C to cancel."
-echo "### WARNING! ^^^ WARNING! ### WARNING! ### WARNING! ^^^ WARNING! ###"
-sleep 10
+if [ -t 1 ]; then
+    warn-timeout "Be careful that you don't crystallize your current working directory, the crystallize temp dir, or the crystallize scripts themselves. Either could cause problems."
+fi
 
 CrystalID="$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")-$(python -c 'import uuid; print str(uuid.uuid4())')"
+CrystalID="C3-${CrystalID//-/}"
 export CrystalID
 
 crystallize-logsession "$CrystalID" "$@" 2>&1 | tee -a "$crystalWorkdir/$CrystalID"

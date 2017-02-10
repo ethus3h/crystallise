@@ -2,7 +2,7 @@
 # Accepts a pointer as an argument, and returns a success status if the data corresponding to the pointer can be read.
 set -e
 knownHash="$(basename "$1")"
-recoveredHash="$(scache_read_stream < "$1" | sha512sum | awk '{print $1;}')"
+recoveredHash="$(scache_read_stream < "$1" | pv -tparbIfei 0.1 | sha512sum | awk '{print $1;}')"
 if [[ "$knownHash" == "$recoveredHash" ]]; then
     echo "Verified stream cache database entry $1."
     exit 0

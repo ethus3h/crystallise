@@ -64,7 +64,7 @@ dig +short myip.opendns.com @resolver1.opendns.com
 echo "IP address from http://icanhazip.com/: "
 
 set +e
-wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.ip" -e robots=off http://icanhazip.com/;
+wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.ip" -e robots=off http://icanhazip.com/ &
 set -e
 
 echo "Time (log stage 2) locally:"
@@ -75,7 +75,7 @@ xxd -pu <<< "$(date +%z)"
 echo "Time (log stage 2) from http://timeapi.org/: "
 
 set +e
-wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-env" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z";
+wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-env" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z" &
 set -e
 
 echo "Time (log stage 2b) locally:"
@@ -149,8 +149,7 @@ elif hash vm_stat 2>/dev/null; then
     #Output is in 4096-byte pages
     memlimit="$((memlimit * 4096))"
 else
-    echo "Warning: Could not determine how much memory is available."
-    sleep 3
+    warn "Could not determine how much memory is available."
 fi
 
 memlimit="$((memlimit - 1073741824))"
@@ -257,7 +256,7 @@ xxd -pu <<< "$(date +%z)"
 echo "Time (log stage 3) from http://timeapi.org/: "
 
 set +e
-wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-done" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z";
+wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-done" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z"
 set -e
 
 echo "Time (log stage 3b) locally:"

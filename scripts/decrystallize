@@ -21,10 +21,9 @@ CrystalID="$CrystalAddress"
 
 echo "Crystal address: $CrystalID"
 
-if [ -e "$CrystalID" ] || [ -e "$CrystalID.tmp" ] || [ -e "$CrystalID.cwd" ]; then
-    error-die "It looks like this crystal has already been unpacked! Move it aside and retry to continue."
-fi
-mkdir "$CrystalID"
+tempId="decrystallize-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+
+mkdir "$tempId"
 
 crystalXzFileSize=1
 if [ -t 1 ]; then
@@ -32,23 +31,23 @@ if [ -t 1 ]; then
     crystalXzFileSize="${crystalXzFileSize::-2}"
 fi
 
-crystallize-getconf 'Passphrase' > "$CrystalID.tmp"
+crystallize-getconf 'Passphrase' > "$tempId.tmp"
 crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
 
-wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$CrystalID.tmp" - | unxz --stdout - | tar -xvf - -C "$CrystalID/" &
+wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - | tar -xvf - -C "$tempId/" &
 
-wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5-cwd" | gpg --yes --batch --passphrase-file "$CrystalID.tmp" - > $CrystalID.cwd
-crystalPath="$(< "$CrystalID.cwd")"
+wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5-cwd" | gpg --yes --batch --passphrase-file "$CrystalID.tmp" - > $tempId.cwd
+crystalPath="$(< "$tempId.cwd")"
 
 wait
 
-mv "$CrystalID" "$CrystalID.tmp"
 echo "Moving primary files into place (relative to $crystalPath)..."
 (
     shopt -s dotglob
-    mv -v "$CrystalID.tmp/$crystalPath/"* .
+    mv -v "$tempId/$crystalPath/"* .
 )
 echo "Done moving primary files into place (relative to $crystalPath)."
+rm -r "$tempId"
 
 printf "\033c"
 echo "Done! The crystal has been extracted to the current directory, $(pwd)."

@@ -2,14 +2,4 @@
 # Verify the stream database
 set -e
 dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
-find "$dbDir" -type f -exec bash -c '
-        set -e
-        checkFile() {
-            knownHash="$1"
-            recoveredHash="$(biggify-stream < "$1" | sha512sum)"
-            if ! [[ "$knownHash" == "$recoveredHash" ]]; then
-                exit 1
-            fi
-        }
-        checkFile "$1"
-    ' -- '{}' \;
+find "$dbDir" -type f -exec sstream-singlefsck {} \;

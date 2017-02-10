@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+knownHash="$(basename "$1")"
+echo "Checking $knownHash..."
+recoveredHash="$(biggify-stream < "$1" | sha512sum)"
+if ! [[ "$knownHash" == "$recoveredHash" ]]; then
+    exit 1
+fi
+echo "Done checking $knownHash."

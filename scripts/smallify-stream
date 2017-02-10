@@ -25,14 +25,7 @@ dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
         fi
         echo "a5e2f296-3085-49c0-8f48-24ea436b7a8b"
         tar -c -P -S --format pax "$streamId.tmp.crystal" ".$streamId.tmp.crystal-data" "${logFiles[@]}" | xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - > "$dbFilePath"
-        checkFile() {
-            knownHash="$1"
-            recoveredHash="$(biggify-stream < "$1" | sha512sum)"
-            if ! [[ "$knownHash" == "$recoveredHash" ]]; then
-                exit 1
-            fi
-        }
-        checkFile "$dbFilePath"
+        sstream-singlefsck "$dbFilePath" &> /dev/null
     fi
     if [[ "$1" != "--verbose" ]]; then
         cat "$dbFilePath"

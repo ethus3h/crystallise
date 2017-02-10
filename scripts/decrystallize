@@ -22,7 +22,7 @@ CrystalID="$CrystalAddress"
 echo "Crystal address: $CrystalID"
 
 if [ -e "$CrystalID" ] || [ -e "$CrystalID.tmp" ] || [ -e "$CrystalID.cwd" ]; then
-    exit 1
+    error-die "It looks like this crystal has already been unpacked! Move it aside and retry to continue."
 fi
 mkdir "$CrystalID"
 
@@ -37,7 +37,7 @@ crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
 
 wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$CrystalID.tmp" - | unxz --stdout - | tar -xvf - -C "$CrystalID/" &
 
-wget "https://archive.org/download/$CrystalID/$CrystalID.coal5-cwd" | gpg --yes --batch --passphrase-file "$CrystalID.tmp" - > $CrystalID.cwd
+wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5-cwd" | gpg --yes --batch --passphrase-file "$CrystalID.tmp" - > $CrystalID.cwd
 crystalPath="$(< "$CrystalID.cwd")"
 
 wait

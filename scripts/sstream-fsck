@@ -1,5 +1,0 @@
-#!/bin/bash
-# Verify the stream database
-set -e
-dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
-find "$dbDir" -type f -exec sstream-singlefsck {} \;

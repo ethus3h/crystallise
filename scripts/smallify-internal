@@ -1,4 +1,0 @@
-#!/bin/bash
-# smallify-internal
-set -e
-crystallize --leave-pointer "$@"

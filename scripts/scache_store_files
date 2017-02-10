@@ -1,0 +1,32 @@
+#!/bin/bash
+# Enroll the specified file(s) in the stream cache database
+set -e
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+if [[ "$1" == "--replace" ]]; then
+    warn-timeout "Specified files and directories will be overwritten."
+    scacheReplace="true"
+    shift
+fi
+while [[ ! -z "$1" ]]; do
+    echo "Items remaining to store: "
+    echo "$@"
+    fileToStash="$1"
+    echo "Begun storing $fileToStash."
+    if [ -f "$fileToStash" ]; then
+        if [[ scacheReplace == "true" ]]; then
+            scache_store_stream < "$fileToStash" | sponge "$fileToStash"
+        else
+            scache_store_stream --verbose < "$fileToStash"
+        fi
+    else
+        if [ -d $fileToStash ]; then
+            find "$fileToStash" -type f -exec scache_store_files {} \;
+        else
+            warn "Skipping item $fileToStash: not a regular file or directory."
+        fi
+    fi
+    echo "Done storing $fileToStash." || warn "Failed storing $fileToStash!"
+    shift
+done
+printf "\033c"
+echo "Done storing all items."

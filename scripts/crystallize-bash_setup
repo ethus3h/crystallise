@@ -1,4 +1,7 @@
 #!/bin/bash
+
+error-die() { source error-notify "$@" }
+
 rubberfs() {
     if [[ "$1" == "cd" ]]; then
         name="$2"

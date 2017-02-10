@@ -1,11 +1,12 @@
 #!/bin/bash
+# Stores data provided on stdin into the stream cache, and sends a pointer to it to stdout.
 set -e
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
 dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
 (
     cd "$crystalWorkdir" || exit 1
-    streamId="smallify-stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    streamId="scache-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
     sponge "$streamId.tmp"
     # Calculate hash
     hashFull="$(sha512sum "$streamId.tmp" | awk '{print $1;}')"
@@ -18,14 +19,14 @@ dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
     # Item not available in cache, so add it
     if ! [ -f "$dbFilePath" ]; then
         if [[ "$1" == "--verbose" ]]; then
-            smallify-internal "$streamId.tmp"
+            crystallize --leave-pointer "$streamId.tmp"
         else
-            smallify-internal "$streamId.tmp" > "$streamId.tmp.sstream-stdout" 2> "$streamId.tmp.sstream-stderr"
+            crystallize --leave-pointer "$streamId.tmp" > "$streamId.tmp.sstream-stdout" 2> "$streamId.tmp.sstream-stderr"
             logFiles=("$streamId.tmp.sstream-stdout" "$streamId.tmp.sstream-stderr")
         fi
         echo "a5e2f296-3085-49c0-8f48-24ea436b7a8b" > "$dbFilePath"
         tar -c -P -S --format pax "$streamId.tmp.crystal" ".$streamId.tmp.crystal-data" "${logFiles[@]}" | xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - >> "$dbFilePath"
-        sstream-singlefsck "$dbFilePath" &> /dev/null
+        scache_verify_entry "$dbFilePath" &> /dev/null
     fi
     if [[ "$1" != "--verbose" ]]; then
         cat "$dbFilePath"

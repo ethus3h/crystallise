@@ -1,6 +1,0 @@
-#!/bin/bash
-# biggify
-
-# See crystallize for requirements.
-
-decrystallize-pointer "$@"

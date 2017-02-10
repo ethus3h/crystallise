@@ -183,7 +183,7 @@ freeze)
     echo "Done verifying replication stream."
     (
         cd "$crystalWorkdir"
-        smallify-internal "$name@$freezeId.$freezeUuid.zfsrepl"
+        crystallize --leave-pointer "$name@$freezeId.$freezeUuid.zfsrepl"
     )
     rsync -av --progress --checksum "$crystalWorkdir/pointers/$name@$freezeId.$freezeUuid.zfsrepl.xz.crystal" "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.zfsrepl.xz.crystal-data" "$name/.rubberfs/history/"
     freezeCrystal="$(cat "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.zfsrepl.xz.crystal-data/identifier")"
@@ -223,7 +223,7 @@ delta)
     echo "Done verifying replication stream."
     (
         cd "$crystalWorkdir"
-        smallify-internal "$name@$freezeId.$freezeUuid.incremental.zfsrepl.xz"
+        crystallize --leave-pointer "$name@$freezeId.$freezeUuid.incremental.zfsrepl.xz"
     )
     rsync -av --progress --checksum "$crystalWorkdir/pointers/$name@$freezeId.$freezeUuid.incremental.zfsrepl.xz.crystal" "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.incremental.zfsrepl.xz.crystal-data" "$name/.rubberfs/history/"
     freezeCrystal="$(cat "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.incremental.zfsrepl.xz.crystal-data/identifier")"
@@ -415,64 +415,15 @@ stash)
         echo "$@"
         fileToStash="$2"
         echo "Begun stashing $fileToStash."
-        smallify-stream --verbose < "$fileToStash"
+        scache_store_stream --verbose < "$fileToStash"
         gapath="$(git rev-parse --show-toplevel)"/.gitattributes
-        echo "$(git-escape-path "$(git-absolute-path "$fileToStash")") filter=smallify" >> "$gapath"
+        echo "$(git-escape-path "$(git-absolute-path "$fileToStash")") filter=scache" >> "$gapath"
         sort < "$gapath" | uniq | sponge "$gapath"
         echo "Done stashing $fileToStash."
         shift
     done
     printf "\033c"
     echo "Done stashing all items."
-    ;;
-stash-now)
-    if [[ -z "$2" ]]; then
-        echo "Please specify something to stash."
-        exit 1
-    fi
-    shift
-    thisRubber="$(rubberfs whereami)"
-    while [[ ! -z $1 ]]; do
-        echo "Items remaining to stash: "
-        echo "$@"
-        fileToStash="$1"
-        echo "Begun stashing $fileToStash."
-        crystallizeBaseName="$(basename "$fileToStash")"
-        crystallizeDirName="$(dirname "$fileToStash")"
-        crystallizePointerFile="${crystallizeBaseName:0:136}".crystal
-        rubberfs save "$thisRubber"
-        smallify-internal "$fileToStash"
-        rubberfs save "$thisRubber"
-        rubberfsCrystalId="$(cat "$crystallizeDirName"/"$crystallizePointerFile")"
-        rubberfsStashedFileName="$(readlink -f -- "$fileToStash")"
-        echo "$rubberfsStashedFileName"
-        echo "$rubberfsStashedFileName" > "/$thisRubber/.rubberfs/stashed/$rubberfsCrystalId"
-        echo "Done stashing $fileToStash."
-        shift
-    done
-    printf "\033c"
-    echo "Done stashing all items."
-    ;;
-pull)
-    if [[ -z "$2" ]]; then
-        echo "Please specify something to pull."
-        exit 1
-    fi
-    shift
-    thisRubber="$(rubberfs whereami)"
-    while [[ ! -z $1 ]]; do
-        echo "Items remaining to pull: "
-        echo "$@"
-        fileToPull="$1"
-        echo "Begun pulling $fileToPull."
-        rubberfs save "$thisRubber"
-        biggify "$fileToPull"
-        rubberfs save "$thisRubber"
-        echo "Done pulling $fileToPull."
-        shift
-    done
-    printf "\033c"
-    echo "Nothing left to pull."
     ;;
 historybak)
     #provides a history id
@@ -484,42 +435,6 @@ historypull)
     #Goes through the freezes and deltas listed in the historybak and rebuilds them into a new pool
     echo "ERROR: Not implemented yet!" #FIXME
     exit 1
-    ;;
-rm)
-    if [[ -z "$2" ]]; then
-        echo "Please specify something to remove."
-        exit 1
-    fi
-    shift
-    thisRubber="$(rubberfs whereami)"
-    while [[ ! -z $1 ]]; do
-        fileToRemove="$1"
-        echo "Begun stashing $fileToRemove."
-        rubberfs save "$thisRubber"
-        crystallize "$fileToRemove"
-        rubberfs save "$thisRubber"
-        echo "Done stashing $fileToRemove."
-        shift
-    done
-    printf "\033c"
-    echo "Nothing left to remove."
-    ;;
-unpack)
-    shift
-    origin="$1"
-    target="$2"
-    if [[ -z "$origin" ]]; then
-        echo "Please specify a directory to unpack."
-        exit 1
-    fi
-    if [[ -z "$target" ]]; then
-        echo "Please specify a directory to unpack to."
-        exit 1
-    fi
-    rsync -av --checksum --progress "$origin" "$target"
-    find "$target" -name "*.crystal" -exec rubberfs pull {} \;
-    printf "\033c"
-    echo "Done unpacking."
     ;;
 stub)
     if [ ! -e /Ember\ Library ]; then

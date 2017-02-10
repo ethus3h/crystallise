@@ -1,0 +1,5 @@
+#!/bin/bash
+# Verify that all entries in the stream database can be read correctly
+set -e
+dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
+find "$dbDir" -type f -exec scache_verify_entry {} \;

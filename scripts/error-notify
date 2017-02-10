@@ -1,0 +1,20 @@
+#!/bin/bash
+# If first argument is an integer, print the remaining arguments and exit with the first argument as the exit status. Otherwise, print all the arguments and exit with exit status 1. If there are no arguments to print, don't print anything.
+if [ $# -eq 0 ]; then
+    # There are no arguments; just exit
+    exit 1
+fi
+if [[ $1 =~ ^-?[0-9]+$ ]]; then
+    # The first argument is an integer.
+    ec="$1"
+    if [ $# -eq 1 ]; then
+        # Only an exit code was given, so exit immediately.
+        exit "$ec"
+    fi
+    shift
+else
+    # The first argument is not an integer, so default to 1
+    ec="1"
+fi
+printf %b '\033[1;31m' "$(ps -o args= $PPID)" '\nfailed with the error:\n' "${@+$@$'\n'}" '\033[0m' >&2
+exit "$ec"

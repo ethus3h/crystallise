@@ -1,0 +1,12 @@
+#!/bin/bash
+# Accepts a pointer on stdin, and outputs the corresponding data from the stream cache.
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
+streamId="biggify-stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+cd "$crystalWorkdir"
+mkdir "$streamId"
+cd "$streamId"
+sponge "$streamId.xz"
+tail -c +38 "$streamId.xz" | unxz --stdout - | tar -xf -
+decrystallize *.crystal &> /dev/null
+cat scache-*.tmp

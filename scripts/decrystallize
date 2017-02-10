@@ -26,19 +26,20 @@ if [ -e "$CrystalID" ] || [ -e "$CrystalID.tmp" ]; then
 fi
 mkdir "$CrystalID"
 
-crystalXzFileSize="$(curl -sIL "https://archive.org/download/$CrystalID/$CrystalID.coal5" | grep Content-Length | awk '{print $2}')"
-crystalXzFileSize="${crystalXzFileSize::-2}"
+crystalXzFileSize=1
+if [ -t 1 ]; then
+    crystalXzFileSize="$(curl -sIL "https://archive.org/download/$CrystalID/$CrystalID.coal5" | grep Content-Length | awk '{print $2}')"
+    crystalXzFileSize="${crystalXzFileSize::-2}"
+fi
 
 crystallize-getconf 'Passphrase' > "$CrystalID.tmp"
 
-wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$CrystalID.tmp" - | unxz --stdout - | tar -xvf - -C "$CrystalID/"
+wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$CrystalID.tmp" - | unxz --stdout - | tar -xvf - -C "$CrystalID/" &
 
-echo "Getting relative location..."
-wget "https://archive.org/download/$CrystalID/$CrystalID.coal5-cwd"
-mv "$CrystalID.coal5-cwd" "$CrystalID.tmp-cwd.gpg"
-gpg --yes --batch --passphrase-file "$CrystalID.tmp" "$CrystalID.tmp-cwd.gpg"
-crystalPath="$(cat "$CrystalID".tmp-cwd)"
-rm "$CrystalID.tmp" "$CrystalID.tmp-cwd"
+crystalPath="$(wget "https://archive.org/download/$CrystalID/$CrystalID.coal5-cwd" | gpg --yes --batch --passphrase-file "$CrystalID.tmp" -)"
+
+wait
+
 mv "$CrystalID" "$CrystalID.tmp"
 echo "Moving primary files into place (relative to $crystalPath)..."
 (

@@ -28,5 +28,5 @@ while [[ ! -z "$1" ]]; do
     echo "Done storing $fileToStash." || warn "Failed storing $fileToStash!"
     shift
 done
-printf "\033c"
+#printf "\033c"
 echo "Done storing all items."

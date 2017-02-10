@@ -21,7 +21,7 @@ CrystalID="$CrystalAddress"
 
 echo "Crystal address: $CrystalID"
 
-if [ -e "$CrystalID" -o -e "$CrystalID.tmp" ]; then
+if [ -e "$CrystalID" ] || [ -e "$CrystalID.tmp" ]; then
     exit 1
 fi
 mkdir "$CrystalID"
@@ -39,10 +39,11 @@ mv "$CrystalID.coal5-cwd" "$CrystalID.tmp-cwd.gpg"
 gpg --yes --batch --passphrase-file "$CrystalID.tmp" "$CrystalID.tmp-cwd.gpg"
 crystalPath="$(cat "$CrystalID".tmp-cwd)"
 rm "$CrystalID.tmp" "$CrystalID.tmp-cwd"
+mv "$CrystalID" "$CrystalID.tmp"
 echo "Moving primary files into place (relative to $crystalPath)..."
 (
     shopt -s dotglob
-    mv -v "$decrystallizedFolderName/$crystalPath/"* .
+    mv -v "$CrystalID.tmp/$crystalPath/"* .
 )
 echo "Done moving primary files into place (relative to $crystalPath)."
 

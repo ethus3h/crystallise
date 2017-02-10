@@ -1,0 +1,154 @@
+#!/bin/bash
+# decrystallize
+
+# See crystallize for requirements.
+
+#Usage: decrystallize <crystal-address> [--no-trim-extensions|--trim-extensions] [--easy-use [--here]]
+
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+
+#Script should exit if any operation fails.
+set -e
+
+shopt -s extglob
+
+#Remove URL
+CrystalAddress="${1#https://archive.org/@(details|download)/}"
+#Remove trailing path(s) from identifier
+CrystalAddress="${CrystalAddress%%/*}"
+if [ "$2" != "--no-trim-extensions" ]; then
+    #Remove filename extensions
+    CrystalAddress="${CrystalAddress%\.coal5*}"
+fi
+
+decrystallizeEasyUse=false
+decrystallizeHere=false
+if [ "$2" == "--easy-use" ]; then
+    decrystallizeEasyUse=true
+    export decrystallizeEasyUse
+    mkdir -p ~/Decrystallized
+    cd ~/Decrystallized
+    if [ "$3" == "--here" ]; then
+        decrystallizeHere=true
+        export decrystallizeHere
+    fi
+elif [ "$2" == "--here" ]; then
+    decrystallizeHere=true
+    export decrystallizeHere
+fi
+
+if [ "$CrystalAddress" == "" ]; then
+    echo "Please specify a crystal address to unpack."
+    exit 1
+fi
+
+CrystalLogID=$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")-$(python -c 'import uuid; print str(uuid.uuid4())')
+export CrystalLogID
+
+crystalCollection=$(crystallize-getconf 'Collection')
+export crystalCollection
+
+crystallizeVersionA=$(sed '4q;d' /usr/local/bin/crystallize)
+crystallizeVersionB=${crystallizeVersionA%\'*}
+crystallizeVersion=${crystallizeVersionB##*\'}
+export crystallizeVersion
+
+CrystalID="$CrystalAddress"
+
+decrystallize-logsession "$CrystalAddress" 2>&1 | tee -a "./$CrystalLogID"
+
+echo "Working..."
+#Script should not exit if an operation fails.
+set +e
+xz -C sha256 -v -9 -e "./$CrystalLogID.log"
+xz -C sha256 -v -9 -e -k "./$CrystalLogID.time-start.warc.gz"
+xz -C sha256 -v -9 -e -k "./$CrystalLogID.ip.warc.gz"
+xz -C sha256 -v -9 -e -k "./$CrystalLogID.time-env.warc.gz"
+xz -C sha256 -v -9 -e -k "./$CrystalLogID.time-end.warc.gz"
+rsync -av --progress --checksum "./$CrystalLogID".log.xz /Ember\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/"$CrystalLogID".log.xz
+gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "./$CrystalLogID".tmp "./$CrystalLogID.log.xz"
+gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "./$CrystalLogID".tmp "./$CrystalLogID.time-start.warc.gz.xz"
+gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "./$CrystalLogID".tmp "./$CrystalLogID.ip.warc.gz.xz"
+gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "./$CrystalLogID".tmp "./$CrystalLogID.time-env.warc.gz.xz"
+gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "./$CrystalLogID".tmp "./$CrystalLogID.time-end.warc.gz.xz"
+rm -v "./$CrystalLogID.tmp"
+mv -v "./$CrystalLogID.log.xz.gpg" "./$CrystalLogID.coal5-log"
+mv -v "./$CrystalLogID.time-start.warc.gz.xz.gpg" "./$CrystalLogID.coal5-ts"
+mv -v "./$CrystalLogID.ip.warc.gz.xz.gpg" "./$CrystalLogID.coal5-ip"
+mv -v "./$CrystalLogID.time-env.warc.gz.xz.gpg" "./$CrystalLogID.coal5-tenv"
+mv -v "./$CrystalLogID.time-end.warc.gz.xz.gpg" "./$CrystalLogID.coal5-tend"
+set -e
+ia upload "$CrystalLogID" --verify --retries=10 --metadata="subject:Uploaded using Decrystallize $crystallizeVersion" --metadata="subject:Decrystallize log" --metadata="subject:log" --metadata="subject:logs" --metadata="subject:1EA21BD8-DB7E-11E5-9733-728C37852114" --metadata="subject:$CrystalAddress" --metadata="collection:$crystalCollection" --delete "./$CrystalLogID.coal5-log" "./$CrystalLogID.coal5-ts" "./$CrystalLogID.coal5-ip" "./$CrystalLogID.coal5-tenv"
+ia upload "$CrystalLogID" --verify --retries=10 "./$CrystalLogID.coal5-tend"
+set +e
+mkdir -v "./$CrystalLogID.coal5-meta"
+mv -v "./$CrystalLogID."!(coal5-meta) "./$CrystalLogID.coal5-meta/"
+if [[ $decrystallizeEasyUse == true ]]; then
+    echo "Setting up for easy-use"
+    mv -v ~/Decrystallized/"$CrystalLogID.dec" ~/Decrystallized/"$CrystalLogID.coal5-meta/"
+    decrystallizedFolderName="$CrystalAddress"
+else
+    echo "Using default mode"
+    decrystallizedFolderName="$CrystalLogID/$CrystalAddress"
+fi
+
+set -e
+if [[ $decrystallizeHere == true ]]; then
+    echo "Getting relative location..."
+    crystallize-getconf 'Passphrase' > "./$CrystalLogID.tmp"
+    wget "https://archive.org/download/$CrystalID/$CrystalID.coal5-cwd"
+    mv "$CrystalID.coal5-cwd" "$CrystalID.tmp-cwd.gpg"
+    gpg --yes --batch --passphrase-file "./$CrystalLogID.tmp" "$CrystalID.tmp-cwd.gpg"
+    rm "./$CrystalLogID.tmp"
+    crystalPath="$(cat "$CrystalID".tmp-cwd)"
+    echo "Moving primary files into place (relative to $crystalPath)..."
+    (
+        shopt -s dotglob
+        mv -v "$decrystallizedFolderName/$crystalPath/"* .
+    )
+    echo "Done moving primary files into place (relative to $crystalPath)."
+fi
+set +e
+
+if rm -v "./$CrystalLogID.coal5-meta/$CrystalLogID.coal5-tend"; then
+    if [[ $decrystallizeEasyUse == true ]]; then
+        echo "Cleaning up with easy-use"
+        if [[ $decrystallizeHere == true ]]; then
+            echo "Here enabled"
+            crystallize "./$CrystalLogID.coal5-meta" "$CrystalLogID" "$CrystalID.tmp-cwd" "$CrystalAddress"
+        else
+            echo "Here not enabled"
+            crystallize "./$CrystalLogID.coal5-meta" "$CrystalLogID" "$CrystalAddress"
+        fi
+    else
+        echo "Cleaning up with default mode"
+        if [[ $decrystallizeHere == true ]]; then
+            echo "Here enabled"
+            crystallize "./$CrystalLogID.coal5-meta" "$CrystalLogID" "$CrystalID.tmp-cwd"
+        else
+            echo "Here not enabled"
+            crystallize "./$CrystalLogID.coal5-meta"
+        fi
+    fi
+
+    #Clear the screen
+    printf "\033c"
+
+    if [[ $decrystallizeHere == true ]]; then
+        echo "Done! The crystal has been extracted to the current directory, $(pwd)."
+    else
+        echo "Done! The crystal has been extracted to:"
+        if [[ $decrystallizeEasyUse == true ]]; then
+            echo "$(pwd)/$CrystalAddress"
+        else
+            echo "$(pwd)/$CrystalLogID"
+        fi
+    fi
+else
+
+    #Clear the screen
+    printf "\033c"
+
+    echo "Decrystallisation failed! This is bad!"
+    exit 1
+fi

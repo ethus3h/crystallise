@@ -3,13 +3,32 @@
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
 streamId="biggify-stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
-cd "$crystalWorkdir"
+cd "$crystalWorkdir" || exit 1
 mkdir "$streamId"
 (
-    cd "$streamId"
+    cd "$streamId" || exit 1
     sponge "$streamId.xz"
-    tail -c +38 "$streamId.xz" | unxz --stdout - | tar -xf -
-    decrystallize-pointer *.crystal &> /dev/null
-    cat scache-*.tmp
+    # Figure out what type of pointer it is
+    pointerTypeSignature="$(head -c 36 "$1")"
+    if [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then
+        # Standard remote pointer
+        tail -c +38 "$streamId.xz" | unxz --stdout - | tar -xf -
+        decrystallize-pointer ./*.crystal &> /dev/null
+        cat scache-*.tmp
+    elif [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
+        # LocalStore pointer
+        cat /Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry/LocalStore/"$(tail -c +38 "$streamId.xz")"
+    elif [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]]; then
+        # Remote pack pointer
+        tail -c +38 "$streamId.xz" | unxz --stdout - | tar -xf -
+        decrystallize-pointer ./*.crystal &> /dev/null
+        hashFull="$(tail -c +38 "$streamId.xz" | head -c 256)"
+        hashA="${hashFull:0:1}"
+        hashB="${hashFull:1:1}"
+        hashC="${hashFull:2:1}"
+        cat "$streamId.LocalStore/$hashA/$hashB/$hashC/$hashFull"
+    else
+        error-die "Unknown pointer type signature! Either the file is corrupted, or this is a pointer version this version of scache_read_stream is familiar with, or this is not a pointer. Aborting."
+    fi
 )
 rm -r "$streamId"

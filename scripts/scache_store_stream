@@ -16,16 +16,52 @@ dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
     hashDir="$dbDir/$hashA/$hashB/$hashC"
     mkdir -p "$hashDir"
     dbFilePath="$hashDir/$hashFull"
-    # Item not available in cache, so add it
+    streamSize="$(du -sb "$streamId.tmp" | awk '{print $1;}')"
+    if [ "$streamSize" -gt 100000000 ]; then
+        useLocalStore="false"
+    else
+        useLocalStore="true"
+        localStoreDir="$dbDir/LocalStore/$hashA/$hashB/$hashC"
+        mkdir -p "$localStoreDir"
+        localStoreFilePath="$localStoreDir/$hashFull"
+    fi
     if ! [ -f "$dbFilePath" ]; then
-        if [[ "$1" == "--verbose" ]]; then
-            crystallize --leave-pointer "$streamId.tmp" | cat
-        else
-            crystallize --leave-pointer "$streamId.tmp" > "$streamId.tmp.sstream-stdout" 2> "$streamId.tmp.sstream-stderr"
-            logFiles=("$streamId.tmp.sstream-stdout" "$streamId.tmp.sstream-stderr")
+        # Item not available in cache, so add it (c39... is the LocalStore pointer type signature; a5e... is the remote type signature)
+        pointerTypeSignature="c39f8657-384b-438b-a5a2-eece17147589"
+        if [[ "$useLocalStore" != "true" ]]; then
+            if [[ "$1" == "--verbose" ]]; then
+                crystallize --leave-pointer "$streamId.tmp" | cat
+            else
+                crystallize --leave-pointer "$streamId.tmp" > "$streamId.tmp.sstream-stdout" 2> "$streamId.tmp.sstream-stderr"
+                logFiles=("$streamId.tmp.sstream-stdout" "$streamId.tmp.sstream-stderr")
+            fi
+            pointerTypeSignature="a5e2f296-3085-49c0-8f48-24ea436b7a8b"
         fi
-        echo "a5e2f296-3085-49c0-8f48-24ea436b7a8b" > "$dbFilePath"
-        tar -c -P -S --format pax "$streamId.tmp.crystal" ".$streamId.tmp.crystal-data" "${logFiles[@]}" | xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - >> "$dbFilePath"
+        echo "$pointerTypeSignature" > "$dbFilePath"
+        if [[ "$useLocalStore" != "true" ]]; then
+            tar -c -P -S --format pax "$streamId.tmp.crystal" ".$streamId.tmp.crystal-data" "${logFiles[@]}" | xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - >> "$dbFilePath"
+        else
+            echo "$hashFull" >> "$dbFilePath"
+            xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout "$streamId.tmp" >> "$localStoreFilePath"
+        fi
+        # Upload a pack of the LocalStore items if there are enough, and update the pointers accordingly.
+        localStoreSize="$(du -sb "$dbDir"/LocalStore | awk '{print $1;}')"
+        if [ "$localStoreSize" -gt 100000000 ]; then
+            mv "$dbDir"/LocalStore "$streamId.LocalStore"
+            rsync -aq --checksum --no-i-r "$streamId.LocalStore" "$streamId.LocalStore.tmp"
+            if [[ "$1" == "--verbose" ]]; then
+                crystallize --leave-pointer "$streamId.LocalStore" | cat
+            else
+                crystallize --leave-pointer "$streamId.LocalStore" > "$streamId.LocalStore.sstream-stdout" 2> "$streamId.LocalStore.sstream-stderr"
+                storeLogFiles=("$streamId.LocalStore.sstream-stdout" "$streamId.LocalStore.sstream-stderr")
+            fi
+            # 209... is the remote bundle pointer type signature
+            echo "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" > "$streamId.bundle.pointer"
+            echo "$hashFull" >> "$streamId.bundle.pointer"
+            tar -c -P -S --format pax "$streamId.LocalStore" ".$streamId.LocalStore.crystal-data" "${storeLogFiles[@]}" | xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - >> "$streamId.bundle.pointer"
+            find "$streamId.LocalStore" -type f -exec scachei_bundle_pointer "$(readlink -f "$streamId.bundle.pointer")" {} \;
+        fi
+        # Check that the data can be restored
         scache_verify_entry "$dbFilePath" &> /dev/null
     fi
     if [[ "$1" != "--verbose" ]]; then

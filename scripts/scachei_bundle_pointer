@@ -1,0 +1,16 @@
+#!/bin/bash
+# Given a LocalStore pointer, replace it with a remote pointer
+# First argument is the filename where the remote pointer data is stored; second is the pointer
+set -e
+pointerData="$1"
+dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
+hashFull="$(basename "$2")"
+hashA="${hashFull:0:1}"
+hashB="${hashFull:1:1}"
+hashC="${hashFull:2:1}"
+hashDir="$dbDir/$hashA/$hashB/$hashC"
+dbFilePath="$hashDir/$hashFull"
+if [[ "$(head -c 36 "$dbFilePath")" != "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
+    error-die "The item $1 does not appear to be a LocalStore pointer! This is most likely a bug in scache. Aborting to avoid messing things up."
+fi
+cp "$1" "$dbFilePath"

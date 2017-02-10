@@ -11,5 +11,5 @@ if [[ "$knownHash" != "$recoveredHash" ]]; then
 else
     echo -n "(Backup for $1 already completed, occupying "
 fi
-echo -n "$(du -bsh "$1" | awk '{print $1;})"
+echo -n "$(du -bsh "$1" | awk '{print $1;}')"
 echo ")"

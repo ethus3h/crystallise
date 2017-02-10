@@ -1,0 +1,6 @@
+#!/bin/bash
+# Decrystallizes a .crystal pointer directory. (Does not handle single-file pointers; use scache_read_stream instead.)
+set -e
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+
+decrystallize "$(cat ."$1"-data/identifier)"

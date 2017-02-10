@@ -1,0 +1,6 @@
+#!/bin/bash
+# Verify that all entries in the stream database can be read correctly
+set -e
+dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
+backupDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Backups
+rsync -av --checksum --progress --no-i-r "$dbDir"/ "$backupDir"

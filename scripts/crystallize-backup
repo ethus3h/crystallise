@@ -1,0 +1,42 @@
+#!/bin/bash
+# Usage: crystallize-backup <crystal-address>
+
+set -e
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+
+shopt -s extglob
+
+#Remove URL
+CrystalAddress="${1#https://archive.org/@(details|download)/}"
+#Remove trailing path(s) from identifier
+CrystalAddress="${CrystalAddress%%/*}"
+CrystalAddress="${CrystalAddress%\.coal5*}"
+
+if [ "$CrystalAddress" == "" ]; then
+    echo "Please specify a crystal address to back up."
+    exit 1
+fi
+
+CrystalID="$CrystalAddress"
+
+echo "Crystal address: $CrystalID"
+
+if [ -e "$CrystalID" ]; then
+    exit 1
+fi
+mkdir "$CrystalID"
+cd "$CrystalID"
+(
+    crystallize-getconf 'Passphrase' > "$CrystalID.passphrase"
+    wget "https://archive.org/download/$CrystalID/$CrystalID.coal5"
+    wget "https://archive.org/download/$CrystalID/$CrystalID.coal5-cmd"
+    wget "https://archive.org/download/$CrystalID/$CrystalID.coal5-cwd"
+    wget "https://archive.org/download/$CrystalID/$CrystalID.coal5-idx-d"
+    wget "https://archive.org/download/$CrystalID/$CrystalID.coal5-idx-l"
+    wget "https://archive.org/download/$CrystalID/$CrystalID.coal5-log"
+    wget "https://archive.org/download/$CrystalID/$CrystalID.coal5-timestamp"
+    wget "https://archive.org/download/$CrystalID/$CrystalID_files.xml"
+    wget "https://archive.org/download/$CrystalID/$CrystalID_meta.sqlite"
+    wget "https://archive.org/download/$CrystalID/$CrystalID_meta.xml"
+)
+echo "Done! The crystal has been backed up to $CrystalID."

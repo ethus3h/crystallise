@@ -42,13 +42,6 @@ if ! [ -n "$crystallizeSharedstatedir" ]; then
 fi
 echo "crystallizeSharedstatedir: $crystallizeSharedstatedir"
 
-export crystallizeBindir
-crystallizeBindirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeBindir}))')"
-echo "crystallizeBindirEsc: $crystallizeBindirEsc"
-perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/decrystallize
-perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/quickliquid
-perl -0777 -p -i -e "s/\/usr\/local\/bin/$crystallizeBindirEsc/g" scripts/crystallize-update
-
 export crystallizeSharedstatedir
 crystallizeSharedstatedirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeSharedstatedir}))')"
 echo "crystallizeSharedstatedirEsc: $crystallizeSharedstatedirEsc"

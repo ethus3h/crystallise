@@ -9,7 +9,7 @@ if [[ "$knownHash" != "$recoveredHash" ]]; then
     scache_read_stream < "$1" | sponge "$1"
     echo -n "Finished backup operation for $1 (backup occupies "
 else
-    echo "(Backup for $1 already completed, occupying "
+    echo -n "(Backup for $1 already completed, occupying "
 fi
-echo -n "$(du -bsh "$1")"
+echo -n "$(du -bsh "$1" | awk '{print $1;})"
 echo ")"

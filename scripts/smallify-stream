@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
 dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry

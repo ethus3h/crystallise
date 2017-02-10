@@ -19,7 +19,7 @@ dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
     # Item not available in cache, so add it
     if ! [ -f "$dbFilePath" ]; then
         if [[ "$1" == "--verbose" ]]; then
-            crystallize --leave-pointer "$streamId.tmp"
+            crystallize --leave-pointer "$streamId.tmp" | cat
         else
             crystallize --leave-pointer "$streamId.tmp" > "$streamId.tmp.sstream-stdout" 2> "$streamId.tmp.sstream-stderr"
             logFiles=("$streamId.tmp.sstream-stdout" "$streamId.tmp.sstream-stderr")

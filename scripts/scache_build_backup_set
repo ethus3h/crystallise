@@ -3,4 +3,8 @@
 set -e
 dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
 backupDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Backups
+# first skipp existing
 rsync -av --checksum --progress --no-i-r "$dbDir"/ "$backupDir"
+# next, look through all to see if they match the chceksums. Remove ones that don't
+# Then, sync again also skiping existing
+# Then loop through and read the streams into the files.

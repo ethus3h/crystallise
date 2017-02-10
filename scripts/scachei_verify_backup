@@ -1,0 +1,10 @@
+#!/bin/bash
+# Accepts a pointer as an argument, and crystallizes the file if it does not match its hash.
+# Internal use only.
+set -e
+knownHash="$(basename "$1")"
+recoveredHash="sha512sum "$1" | awk '{print $1;}'"
+if [[ "$knownHash" != "$recoveredHash" ]]; then
+    warn "File failed backup verification!: $1"
+    crystallize "$1"
+fi

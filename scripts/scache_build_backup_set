@@ -1,10 +1,9 @@
 #!/bin/bash
-# Verify that all entries in the stream database can be read correctly
+# Make a clone of the stream database where the bodies of the streams are stored instead of the pointers.
 set -e
 dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
 backupDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Backups
-# first skipp existing
-rsync -av --checksum --progress --no-i-r "$dbDir"/ "$backupDir"
-# next, look through all to see if they match the chceksums. Remove ones that don't
-# Then, sync again also skiping existing
-# Then loop through and read the streams into the files.
+rsync -av --checksum --progress --no-i-r --ignore-existing "$dbDir"/ "$backupDir"
+find "$backupDir" -type f -exec scachei_verify_backup {} \;
+rsync -av --checksum --progress --no-i-r --ignore-existing "$dbDir"/ "$backupDir"
+find "$backupDir" -type f -exec scachei_file_backup {} \;

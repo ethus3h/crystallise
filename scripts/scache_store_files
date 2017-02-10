@@ -19,7 +19,7 @@ while [[ ! -z "$1" ]]; do
             scache_store_stream --verbose < "$fileToStash"
         fi
     else
-        if [ -d $fileToStash ]; then
+        if [ -d "$fileToStash" ]; then
             find "$fileToStash" -type f -exec scache_store_files {} \;
         else
             warn "Skipping item $fileToStash: not a regular file or directory."

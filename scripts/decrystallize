@@ -36,7 +36,7 @@ crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
 
 wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - | tar -xvf - -C "$tempId/" &
 
-wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5-cwd" | gpg --yes --batch --passphrase-file "$CrystalID.tmp" - > $tempId.cwd
+wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5-cwd" | gpg --yes --batch --passphrase-file "$tempId.tmp" - > $tempId.cwd
 crystalPath="$(< "$tempId.cwd")"
 
 wait

@@ -1,11 +1,12 @@
 #!/bin/bash
-# Accepts a pointer as an argument, and returns a success status if the data corresponding to the pointer can be read.
+# Accepts a pointer as an argument, and returns a success status if the data corresponding to the pointer can be read. If it fails, it moves the pointer that failed validation aside.
 set -e
 crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
 knownHash="$(basename "$1")"
 recoveredHash="$(scache_read_stream < "$1" | sha512sum | awk '{print $1;}')"
 if [[ "$knownHash" == "$recoveredHash" ]]; then
-    echo "Verified stream cache database entry $1."
+    echo "Verified stream cache database entry $knownHash."
     exit 0
 fi
-error-die "Error verifying stream cache database entry $1."
+mv "$1" dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
+error-die "Error verifying stream cache database entry $knownHash!"

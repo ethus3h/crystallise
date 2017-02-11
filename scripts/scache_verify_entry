@@ -8,5 +8,7 @@ if [[ "$knownHash" == "$recoveredHash" ]]; then
     echo "Verified stream cache database entry $knownHash."
     exit 0
 fi
-mv "$1" dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
+dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
+mkdir -p "$dbDir"
+mv "$1" "$dbDir"
 error-die "Error verifying stream cache database entry $knownHash!"

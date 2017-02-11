@@ -1,5 +1,7 @@
 #!/bin/bash
 # Accepts a pointer on stdin, and outputs the corresponding data from the stream cache.
+# TODO: Make a separate script that takes a hash to stdin and returns the data, so that only hashes need to be stored in git, and so that the output can be validated before being returned (it could be validated now, but not really without downloading twice I don't think)
+set -e
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
 streamId="biggify-stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
@@ -14,10 +16,10 @@ mkdir "$streamId"
         # Standard remote pointer
         tail -c +38 "$streamId.xz" | unxz --stdout - | tar -xf -
         decrystallize-pointer ./*.crystal &> /dev/null
-        cat scache-*.tmp
+        cp scache-*.tmp "$streamId.out"
     elif [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
         # LocalStore pointer
-        cat /Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry/LocalStore/"$(tail -c +38 "$streamId.xz")"
+        cp /Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry/LocalStore/"$(tail -c +38 "$streamId.xz")" "$streamId.out"
     elif [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]]; then
         # Remote pack pointer
         tail -c +38 "$streamId.xz" | unxz --stdout - | tar -xf -
@@ -26,9 +28,12 @@ mkdir "$streamId"
         hashA="${hashFull:0:1}"
         hashB="${hashFull:1:1}"
         hashC="${hashFull:2:1}"
-        cat "$streamId.LocalStore/$hashA/$hashB/$hashC/$hashFull"
+        cp "$streamId.LocalStore/$hashA/$hashB/$hashC/$hashFull" "$streamId.out"
     else
         error-die "Unknown pointer type signature! Either the file is corrupted, or this is a pointer version this version of scache_read_stream is familiar with, or this is not a pointer. Aborting."
     fi
+    #retrievedHash="$(sha512sum "$streamId.out" | awk '{print $1;}')"
+    #if [[ $retrievedHash == ]]
+    cat "$streamId.out"
 )
-rm -r "$streamId"
+#rm -r "$streamId"

@@ -1,0 +1,78 @@
+#!/bin/bash
+# Get an item through the cache
+# Usage: fcache_request <cache directory> <URL>
+
+set -e
+# FIXME: The next line should not be necessary
+source crystallize-bash_setup
+
+dbDir="$1"
+requestUrl="$2"
+hashFull="$("$requestUrl" | sha512sum | awk '{print $1;}')"
+hashA="${hashFull:0:1}"
+hashB="${hashFull:1:1}"
+hashC="${hashFull:2:1}"
+hashSubdir="$hashA/$hashB/$hashC"
+hashDir="$dbDir/$hashSubdir"
+mkdir -p "$hashDir"
+dbLinkPath="$hashDir/$hashFull"
+checksumName="$dbLinkPath.checksum"
+if ! [ -h "$dbLinkPath" ]; then
+    # Item is not in the cache, so add it
+    if ! [ -f "$dbLinkPath" ]; then
+        # Never seen this item before, so set the requestCount
+        requestCount=1
+    else
+        requestCount="$(<"$dbLinkPath")"
+    fi
+    dbFileDir="$dbDir/ByCount/$requestCount/$hashSubdir"
+    dbFilePath="$dbFileDir/$hashFull"
+    mkdir -p "$dbFileDir"
+    wget -qO - "$requestUrl" > "$dbFilePath"
+    if ! [ -f "$checksumName" ]; then
+        sha512sum "$dbFilePath" > "$checksumName"
+    fi
+    rm "$dbLinkPath"
+    ln -s "$dbFilePath" "$dbLinkPath"
+else
+    # Item is in the cache.
+    dbFilePath="$(readlink -e "$dbLinkPath")"
+    dbFileOldPath="$dbFilePath"
+    dbFileDir="$(dirname "$dbFilePath")"
+    # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
+    requestCount="$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")"
+    # Increment the item's requestCount.
+    # First, get the names of where the file should go.
+    dbFileDir="$dbDir/ByCount/$requestCount/$hashSubdir"
+    dbFilePath="$dbFileDir/$hashFull"
+    mkdir -p "$dbFileDir"
+    mv "$dbFileOldPath" "$dbFilePath"
+    rm "$dbLinkPath"
+    ln -s "$dbFilePath" "$dbLinkPath"
+fi
+# Check that the data were retrieved successfully
+knownChecksum="$(<"$checksumName")"
+itemChecksum="$(sha512sum "$dbLinkPath")"
+if [[ "$itemChecksum" != "$knownChecksum" ]]; then
+    error-die "File does not match what its checksum should be!"
+fi
+# Return the data to the caller
+cat "$dbLinkPath"
+# Remove the least-used items from the cache until it fits within the alloted disk space
+diskUsageLimit="$(<"$dbDir"/.fcache.limit)"
+while [ "$(du -sb "$dbDir" | awk '{print $1;}')" -lt "$diskUsageLimit" ]; do
+    # Remove the least-used item from the cache
+    leastUsedItemDirectory="$(find "$dbDir/ByCount" -maxdepth 1 -type d | sort -n | head -n 2 | tail -n 1)"
+    largestLeastUsedItem="$(find "$leastUsedItemDirectory" -maxdepth 1 -type f -printf "%s\t%p\n" | sort -n | tail -1 | awk '{print $2;}')"
+    leastUsedItemCount="$(basename "$leastUsedItemDirectory")"
+    hashFull="$(basename "$largestLeastUsedItem")"
+    rm "$largestLeastUsedItem"
+    hashA="${hashFull:0:1}"
+    hashB="${hashFull:1:1}"
+    hashC="${hashFull:2:1}"
+    hashSubdir="$hashA/$hashB/$hashC"
+    hashDir="$dbDir/$hashSubdir"
+    dbLinkPath="$hashDir/$hashFull"
+    rm "$dbLinkPath"
+    echo "$leastUsedItemCount" > "$dbLinkPath"
+done

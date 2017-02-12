@@ -1,0 +1,8 @@
+#!/bin/bash
+# Create a cache directory. This is a naive caching layer for non-changing URLs.
+# Usage: fcache_init <directory-name> <cache size limit in bytes>
+set -e
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+mkdir -p "$1"
+echo "$2" > "$1"/.fcache.limit
+echo "Done creating cache directory."

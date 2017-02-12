@@ -2,6 +2,7 @@
 # Accepts a pointer on stdin, and outputs the corresponding data from the stream cache.
 # TODO: Make a separate script that takes a hash to stdin and returns the data, so that only hashes need to be stored in git, and so that the output can be validated before being returned (it could be validated now, but not really without downloading twice I don't think)
 set -e
+# Does this really need root privileges?
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 if [[ "--disallow-hash-pointer" == "$1" ]]; then
     disallowHashPointer="true"

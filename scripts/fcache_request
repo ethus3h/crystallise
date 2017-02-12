@@ -32,7 +32,7 @@ if ! [ -h "$dbLinkPath" ]; then
     mkdir -p "$dbFileDir"
     wget -qO - "$requestUrl" > "$dbFilePath"
     if ! [ -f "$checksumName" ]; then
-        sha512sum "$dbFilePath" > "$checksumName"
+        sha512sum "$dbFilePath" | awk '{print $1;}' > "$checksumName"
     fi
     ln -s "$dbFilePath" "$dbLinkPath"
 else
@@ -53,7 +53,7 @@ else
 fi
 # Check that the data were retrieved successfully
 knownChecksum="$(<"$checksumName")"
-itemChecksum="$(sha512sum "$dbLinkPath")"
+itemChecksum="$(sha512sum "$dbLinkPath" | awk '{print $1;}')"
 if [[ "$itemChecksum" != "$knownChecksum" ]]; then
     error-die "File does not match what its checksum should be!"
 fi

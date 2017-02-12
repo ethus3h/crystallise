@@ -3,12 +3,13 @@
 # Usage: fcache_request <cache directory> <URL>
 
 set -e
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 # FIXME: The next line should not be necessary
 source crystallize-bash_setup
 
 dbDir="$1"
 requestUrl="$2"
-hashFull="$("$requestUrl" | sha512sum | awk '{print $1;}')"
+hashFull="$(sha512sum <<< "$requestUrl" | awk '{print $1;}')"
 hashA="${hashFull:0:1}"
 hashB="${hashFull:1:1}"
 hashC="${hashFull:2:1}"

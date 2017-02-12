@@ -2,4 +2,4 @@
 # Verify that all entries in the stream database can be read correctly
 set -e
 dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
-find "$dbDir" -type f -exec scache_verify_entry {} \;
+find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -exec scache_verify_entry {} \;

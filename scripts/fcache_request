@@ -25,6 +25,7 @@ if ! [ -h "$dbLinkPath" ]; then
         requestCount=1
     else
         requestCount="$(<"$dbLinkPath")"
+        rm "$dbLinkPath"
     fi
     dbFileDir="$dbDir/ByCount/$requestCount/$hashSubdir"
     dbFilePath="$dbFileDir/$hashFull"
@@ -33,7 +34,6 @@ if ! [ -h "$dbLinkPath" ]; then
     if ! [ -f "$checksumName" ]; then
         sha512sum "$dbFilePath" > "$checksumName"
     fi
-    rm "$dbLinkPath"
     ln -s "$dbFilePath" "$dbLinkPath"
 else
     # Item is in the cache.

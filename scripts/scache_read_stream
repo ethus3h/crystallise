@@ -3,8 +3,13 @@
 # TODO: Make a separate script that takes a hash to stdin and returns the data, so that only hashes need to be stored in git, and so that the output can be validated before being returned (it could be validated now, but not really without downloading twice I don't think)
 set -e
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+if [[ "--disallow-hash-pointer" == "$1" ]]; then
+    disallowHashPointer="true"
+    shift
+fi
 crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
 streamId="biggify-stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+dbDir="/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry/"
 cd "$crystalWorkdir" || exit 1
 mkdir "$streamId"
 (
@@ -19,7 +24,7 @@ mkdir "$streamId"
         cp scache-*.tmp "$streamId.out"
     elif [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
         # LocalStore pointer
-        cp /Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry/LocalStore/"$(tail -c +38 "$streamId.xz")" "$streamId.out"
+        cp "$dbDir"/LocalStore/"$(tail -c +38 "$streamId.xz")" "$streamId.out"
     elif [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]]; then
         # Remote pack pointer
         tail -c +38 "$streamId.xz" | unxz --stdout - | tar -xf -
@@ -29,6 +34,16 @@ mkdir "$streamId"
         hashB="${hashFull:1:1}"
         hashC="${hashFull:2:1}"
         cp "$streamId.LocalStore/$hashA/$hashB/$hashC/$hashFull" "$streamId.out"
+    elif [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
+        # Hash pointer
+        if [[ "true" == "$disallowHashPointer" ]]; then
+            error-die "The provided pointer is a hash pointer!"
+        fi
+        hashFull="$(tail -c +38 "$streamId.xz")"
+        hashA="${hashFull:0:1}"
+        hashB="${hashFull:1:1}"
+        hashC="${hashFull:2:1}"
+        scache_read_stream < "$dbDir/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
     else
         error-die "Unknown pointer type signature! Either the file is corrupted, or this is a pointer version this version of scache_read_stream is familiar with, or this is not a pointer. Aborting."
     fi

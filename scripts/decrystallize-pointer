@@ -3,4 +3,4 @@
 set -e
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
-decrystallize "$(cat ."$1"-data/identifier)"
+decrystallize "$(cat "$(dirname "$1")"/."$(basename "$1")"-data/identifier)"

@@ -33,7 +33,9 @@ fi
 
 crystallize-getconf 'Passphrase' > "$tempId.tmp"
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
-fcache_init "$crystalWorkdir/.CrystalCache/" 5000000000
+if ! [ -e "$crystalWorkdir/.CrystalCache/" ]; then
+    fcache_init "$crystalWorkdir/.CrystalCache/" 5000000000
+fi
 fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - | tar -xvf - -C "$tempId/" &
 
 wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5-cwd" | gpg --yes --batch --passphrase-file "$tempId.tmp" - > "$tempId.cwd"

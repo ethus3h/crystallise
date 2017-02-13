@@ -9,6 +9,10 @@ source crystallize-bash_setup
 
 dbDir="$1"
 requestUrl="$2"
+if [[ -z "$requestUrl" ]]; then
+    echo "Please specify a directory and a request URL."
+    exit 1
+fi
 hashFull="$(sha512sum <<< "$requestUrl" | awk '{print $1;}')"
 hashA="${hashFull:0:1}"
 hashB="${hashFull:1:1}"
@@ -59,6 +63,8 @@ if [[ "$itemChecksum" != "$knownChecksum" ]]; then
 fi
 # Return the data to the caller
 cat "$dbLinkPath"
+# Clean up empty directories
+find "$dbDir" -type d -empty -delete
 # Remove the least-used items from the cache until it fits within the alloted disk space
 diskUsageLimit="$(<"$dbDir"/.fcache.limit)"
 while [ "$(du -sb "$dbDir" | awk '{print $1;}')" -lt "$diskUsageLimit" ]; do

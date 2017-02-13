@@ -1,6 +1,5 @@
 #!/bin/bash
 # Accepts a pointer on stdin, and outputs the corresponding data from the stream cache.
-# TODO: Make a separate script that takes a hash to stdin and returns the data, so that the output can be validated before being returned
 set -e
 # Does this really need root privileges?
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"

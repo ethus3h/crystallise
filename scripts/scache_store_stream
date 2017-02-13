@@ -71,7 +71,7 @@ dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
             echo "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" > "$streamId.bundle.pointer"
             mv "$streamId.LocalStore.tmp" "$streamId.LocalStore"
             echo "$hashFull" >> "$streamId.bundle.pointer"
-            tar -c -P -S --format pax "$streamId.LocalStore" ".$streamId.LocalStore.crystal-data" "${storeLogFiles[@]}" | xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - >> "$streamId.bundle.pointer"
+            tar -c -P -S --format pax "$streamId.LocalStore.crystal" ".$streamId.LocalStore.crystal-data" "${storeLogFiles[@]}" | xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - >> "$streamId.bundle.pointer"
             pointerName="$(readlink -f "$streamId.bundle.pointer")"
             find "$streamId.LocalStore" -type f -exec scachei_bundle_pointer "$pointerName" {} \;
         fi

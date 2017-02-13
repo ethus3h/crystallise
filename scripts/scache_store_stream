@@ -25,6 +25,18 @@ dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
         mkdir -p "$localStoreDir"
         localStoreFilePath="$localStoreDir/$hashFull"
     fi
+    if [ -f "$dbFilePath" ]; then
+        # Check that the item can be restored
+        recoveredHash="$(scache_read_stream --disallow-hash-pointer < "$dbFilePath" | sha512sum | awk '{print $1;}')"
+        if [[ "$recoveredHash" != "$hashFull" ]]; then
+            if [[ "$1" == "--verbose" ]]; then
+                warn "Could not read existing item."
+            fi
+            fsckDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
+            mkdir -p "$fsckDir"
+            mv "$dbFilePath" "$fsckDir"
+        fi
+    fi
     if ! [ -f "$dbFilePath" ]; then
         # Item not available in cache, so add it (c39... is the LocalStore pointer type signature; a5e... is the remote type signature)
         pointerTypeSignature="c39f8657-384b-438b-a5a2-eece17147589"

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Version:
-export crystallizeVersion='3_pre6.2.3.20'
+export crystallizeVersion='3_pre6.2.3.21'
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 

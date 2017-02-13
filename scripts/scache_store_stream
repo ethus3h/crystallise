@@ -76,7 +76,7 @@ dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
             find "$streamId.LocalStore" -type f -exec scachei_bundle_pointer "$pointerName" {} \;
         fi
         # Check that the data can be restored
-        scache_verify_entry "$dbFilePath" &> /dev/null
+        scache_verify_entry "$dbFilePath" &> /dev/null || exit 1
     fi
     if [[ "$1" != "--verbose" ]]; then
         cat "$dbFilePath"

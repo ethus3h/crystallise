@@ -15,3 +15,4 @@ dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
 mkdir -p "$dbDir"
 mv "$1" "$dbDir"
 error-die "Error verifying stream cache database entry $knownHash!"
+exit 1

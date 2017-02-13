@@ -2,6 +2,7 @@
 # Enroll the specified file(s) in the stream cache database
 set -e
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+scacheReplace=""
 if [[ "$1" == "--replace" ]]; then
     warn-timeout "Specified files and directories will be overwritten."
     scacheReplace="true"
@@ -21,7 +22,7 @@ while [[ ! -z "$1" ]]; do
         fi
     else
         if [ -d "$fileToStash" ]; then
-            find "$fileToStash" -type f -exec scache_store_files {} \;
+            find "$fileToStash" -type f -exec scache_store_files "$scacheReplace" {} \;
         else
             warn "Skipping item $fileToStash: not a regular file or directory."
         fi

@@ -72,7 +72,8 @@ dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
             mv "$streamId.LocalStore.tmp" "$streamId.LocalStore"
             echo "$hashFull" >> "$streamId.bundle.pointer"
             tar -c -P -S --format pax "$streamId.LocalStore" ".$streamId.LocalStore.crystal-data" "${storeLogFiles[@]}" | xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - >> "$streamId.bundle.pointer"
-            find "$streamId.LocalStore" -type f -exec scachei_bundle_pointer "$(readlink -f "$streamId.bundle.pointer")" {} \;
+            pointerName="$(readlink -f "$streamId.bundle.pointer")"
+            find "$streamId.LocalStore" -type f -exec scachei_bundle_pointer "$pointerName" {} \;
         fi
         # Check that the data can be restored
         scache_verify_entry "$dbFilePath" &> /dev/null

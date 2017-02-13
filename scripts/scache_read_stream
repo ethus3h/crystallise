@@ -1,6 +1,6 @@
 #!/bin/bash
 # Accepts a pointer on stdin, and outputs the corresponding data from the stream cache.
-# TODO: Make a separate script that takes a hash to stdin and returns the data, so that only hashes need to be stored in git, and so that the output can be validated before being returned (it could be validated now, but not really without downloading twice I don't think)
+# TODO: Make a separate script that takes a hash to stdin and returns the data, so that the output can be validated before being returned
 set -e
 # Does this really need root privileges?
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
@@ -51,6 +51,10 @@ mkdir "$streamId"
         hashB="${hashFull:1:1}"
         hashC="${hashFull:2:1}"
         scache_read_stream < "$dbDir/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
+        retrievedHash="$(sha512sum "$streamId.out" | awk '{print $1;}')"
+        if [[ "$retrievedHash" != "$hashFull" ]]; then
+            error-die "Checksum mismatch when retrieving the requested stream!"
+        fi
     else
         error-die "Unknown pointer type signature! Either the file is corrupted, or this is a pointer version this version of scache_read_stream is familiar with, or this is not a pointer. Aborting."
     fi

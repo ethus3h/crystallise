@@ -31,7 +31,7 @@ mkdir "$streamId"
         hashA="${hashFull:0:1}"
         hashB="${hashFull:1:1}"
         hashC="${hashFull:2:1}"
-        cp "$dbDir/LocalStore/$hashA/$hashB/$hashC/$hashFull" "$streamId.out"
+        unxz --stdout - < "$dbDir/LocalStore/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
     elif [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]]; then
         # Remote pack pointer
         tail -c +38 "$streamId.xz" | unxz --stdout - | tar -xf -

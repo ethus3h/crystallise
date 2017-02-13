@@ -41,7 +41,7 @@ else
     dbFileOldPath="$dbFilePath"
     dbFileDir="$(dirname "$dbFilePath")"
     # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
-    requestCount="$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")"
+    requestCount=$(( "$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")" + 1 ))
     # Increment the item's requestCount.
     # First, get the names of where the file should go.
     dbFileDir="$dbDir/ByCount/$requestCount/$hashSubdir"

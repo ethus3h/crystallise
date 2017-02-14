@@ -2,6 +2,8 @@
 # Stores data provided on stdin into the stream cache, and sends a pointer to it to stdout.
 set -e
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+# FIXME: The next line should not be necessary
+source crystallize-bash_setup
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
 dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
 (
@@ -67,16 +69,14 @@ dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
                 crystallize --leave-pointer "$streamId.LocalStore" > "$streamId.LocalStore.sstream-stdout" 2> "$streamId.LocalStore.sstream-stderr"
                 storeLogFiles=("$streamId.LocalStore.sstream-stdout" "$streamId.LocalStore.sstream-stderr")
             fi
-            # 209... is the remote bundle pointer type signature
-            echo "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" > "$streamId.bundle.pointer"
+            # (209... is the remote bundle pointer type signature)
             mv "$streamId.LocalStore.tmp" "$streamId.LocalStore"
-            echo "$hashFull" >> "$streamId.bundle.pointer"
-            tar -c -P -S --format pax "$streamId.LocalStore.crystal" ".$streamId.LocalStore.crystal-data" "${storeLogFiles[@]}" | xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - >> "$streamId.bundle.pointer"
+            tar -c -P -S --format pax "$streamId.LocalStore.crystal" ".$streamId.LocalStore.crystal-data" "${storeLogFiles[@]}" | xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - > "$streamId.bundle.pointer"
             pointerName="$(readlink -f "$streamId.bundle.pointer")"
             find "$streamId.LocalStore" -type f -exec scachei_bundle_pointer "$pointerName" {} \;
         fi
         # Check that the data can be restored
-        scache_verify_entry 5 "$dbFilePath" &> /dev/null || exit 1
+        scache_verify_entry 5 "$dbFilePath" &> /dev/null || error-die "Failed saving stream: stored stream could not be read!"
     fi
     if [[ "$1" != "--verbose" ]]; then
         cat "$dbFilePath"

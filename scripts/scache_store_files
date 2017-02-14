@@ -22,7 +22,11 @@ while [[ ! -z "$1" ]]; do
         fi
     else
         if [ -d "$fileToStash" ]; then
-            find "$fileToStash" -type f -exec scache_store_files "$scacheReplace" {} \;
+            if [[ "$scacheReplace" == "true" ]]; then
+                find "$fileToStash" -type f -exec scache_store_files --replace {} \;
+            else
+                find "$fileToStash" -type f -exec scache_store_files {} \;
+            fi
         else
             warn "Skipping item $fileToStash: not a regular file or directory."
         fi

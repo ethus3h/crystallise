@@ -4,6 +4,7 @@ set -e
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 # FIXME: The next line should not be necessary
 source crystallize-bash_setup
+echo "Started verifying stream cache database entry $knownHash."
 crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
 knownHash="$(basename "$1")"
 recoveredHash="$(scache_read_stream --disallow-hash-pointer < "$1" | sha512sum | awk '{print $1;}')"

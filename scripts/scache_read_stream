@@ -39,7 +39,7 @@ mkdir "$streamId"
         hashA="${hashFull:0:1}"
         hashB="${hashFull:1:1}"
         hashC="${hashFull:2:1}"
-        unxz --stdout - < "$streamId/scache-"*".LocalStore/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
+        unxz --stdout - < "scache-"*".LocalStore/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
     elif [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
         # Hash pointer
         if [[ "true" == "$disallowHashPointer" ]]; then

@@ -6,8 +6,8 @@ set -e
 source crystallize-bash_setup
 numRetries="$1"
 shift
-echo "Started verifying stream cache database entry $knownHash."
 knownHash="$(basename "$1")"
+echo "Started verifying stream cache database entry $knownHash."
 recoveredHash="$(scache_read_stream --disallow-hash-pointer < "$1" | sha512sum | awk '{print $1;}')"
 if [[ "$knownHash" == "$recoveredHash" ]]; then
     echo "Verified stream cache database entry $knownHash."

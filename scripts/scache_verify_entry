@@ -21,7 +21,7 @@ if [[ "$knownHash" != "$recoveredHash" ]]; then
         error-die "Error verifying stream cache database entry $knownHash! No retries left; giving up and marking entry as corrupted."
     else
         numRetries=$(( numRetries - 1 ))
-        error-notify "Error verifying stream cache database entry $knownHash! Waiting 30 seconds and retrying $numRetries more times."
+        warn "Error verifying stream cache database entry $knownHash! Waiting 30 seconds and retrying $numRetries more times."
         sleep 30
         scache_verify_entry "$numRetries" "$1" || exit 1
     fi

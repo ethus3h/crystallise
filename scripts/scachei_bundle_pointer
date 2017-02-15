@@ -18,5 +18,6 @@ if [ -f "$dbFilePath" ]; then
     fi
 fi
 # 209... is the remote bundle pointer type signature
-echo "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49$hashFull" > "$dbFilePath"
+echo "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" > "$dbFilePath"
+echo "$hashFull" >> "$dbFilePath"
 cat "$dbFilePath" "$1" | sponge "$dbFilePath"

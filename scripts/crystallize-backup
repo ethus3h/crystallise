@@ -35,8 +35,8 @@ cd "$CrystalID"
     wget "https://archive.org/download/$CrystalID/$CrystalID.coal5-idx-l"
     wget "https://archive.org/download/$CrystalID/$CrystalID.coal5-log"
     wget "https://archive.org/download/$CrystalID/$CrystalID.coal5-timestamp"
-    wget "https://archive.org/download/$CrystalID/$CrystalID_files.xml"
-    wget "https://archive.org/download/$CrystalID/$CrystalID_meta.sqlite"
-    wget "https://archive.org/download/$CrystalID/$CrystalID_meta.xml"
+    wget "https://archive.org/download/$CrystalID/$CrystalID"_files.xml
+    wget "https://archive.org/download/$CrystalID/$CrystalID"_meta.sqlite
+    wget "https://archive.org/download/$CrystalID/$CrystalID"_meta.xml
 )
 echo "Done! The crystal has been backed up to $CrystalID."

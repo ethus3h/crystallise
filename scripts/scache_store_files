@@ -15,7 +15,7 @@ while [[ ! -z "$1" ]]; do
     echo "Begun storing $fileToStash."
     if [ -f "$fileToStash" ]; then
         if [[ "$scacheReplace" == "true" ]]; then
-            scache_store_stream < "$fileToStash"
+            scache_store_stream --verbose < "$fileToStash"
             sha512sum "$fileToStash" | awk '{print "'760fa662-89cf-4ebd-9664-150b7637ddd4'"$1;}' | sponge "$fileToStash"
         else
             scache_store_stream --verbose < "$fileToStash"

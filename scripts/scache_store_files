@@ -16,7 +16,7 @@ while [[ ! -z "$1" ]]; do
     if [ -f "$fileToStash" ]; then
         if [[ "$scacheReplace" == "true" ]]; then
             scache_store_stream --verbose < "$fileToStash"
-            sha512sum "$fileToStash" | awk '{print "'760fa662-89cf-4ebd-9664-150b7637ddd4'"$1;}' | sponge "$fileToStash"
+            sha512sum "$fileToStash" | awk '{print "'760fa662-89cf-4ebd-9664-150b7637ddd4\\n'"$1;}' | sponge "$fileToStash"
         else
             scache_store_stream --verbose < "$fileToStash"
         fi

@@ -2,6 +2,7 @@
 # Copy $1 into $2 and replace with pointers
 set -e
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+warn-timeout "Specified files and directories will be overwritten."
 rsync -av --checksum --progress --no-i-r "$1" "$2/"
 rsync -av --checksum --progress --no-i-r "$1" "$2/"
 scache_store_files --replace "$2/$(basename "$1")"

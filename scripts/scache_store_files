@@ -4,7 +4,9 @@ set -e
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 scacheReplace=""
 if [[ "$1" == "--replace" ]]; then
-    warn-timeout "Specified files and directories will be overwritten."
+    if [ -t 1 ]; then
+        warn-timeout "Specified files and directories will be overwritten."
+    fi
     scacheReplace="true"
     shift
 fi

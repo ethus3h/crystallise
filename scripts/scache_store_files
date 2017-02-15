@@ -1,12 +1,10 @@
 #!/bin/bash
 # Enroll the specified file(s) in the stream cache database
+# Be VERY careful with the --replace option: it does not warn before acting!
 set -e
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 scacheReplace=""
 if [[ "$1" == "--replace" ]]; then
-    if [ -t 1 ]; then
-        warn-timeout "Specified files and directories will be overwritten."
-    fi
     scacheReplace="true"
     shift
 fi

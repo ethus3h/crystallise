@@ -60,6 +60,8 @@ fi
 knownChecksum="$(<"$checksumName")"
 itemChecksum="$(sha512sum "$dbLinkPath" | awk '{print $1;}')"
 if [[ "$itemChecksum" != "$knownChecksum" ]]; then
+    mkdir -p "$dbDir/Failed\ Checksum"
+    mv "$dbFilePath" "$dbDir/Failed\ Checksum/$(basename "$dbFilePath")"
     error-die "File does not match what its checksum should be!"
 fi
 # Return the data to the caller

@@ -60,8 +60,8 @@ fi
 knownChecksum="$(<"$checksumName")"
 itemChecksum="$(sha512sum "$dbLinkPath" | awk '{print $1;}')"
 if [[ "$itemChecksum" != "$knownChecksum" ]]; then
-    mkdir -p "$dbDir/Failed\ Checksum"
-    mv "$dbFilePath" "$dbDir/Failed\ Checksum/$(basename "$dbFilePath")"
+    mkdir -p "$dbDir/Failed Checksum"
+    mv "$dbFilePath" "$dbDir/Failed Checksum/$(basename "$dbFilePath")"
     error-die "File does not match what its checksum should be!"
 fi
 # Return the data to the caller
@@ -71,6 +71,7 @@ find "$dbDir" -type d -empty -delete
 # Remove the least-used items from the cache until it fits within the alloted disk space
 diskUsageLimit="$(<"$dbDir"/.fcache.limit)"
 while [ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]; do
+    rm "$dbDir"/Failed\ Checksum/*
     # Remove the least-used item from the cache
     leastUsedItemDirectory="$(find "$dbDir/ByCount" -maxdepth 1 -type d | sort -n | head -n 2 | tail -n 1)"
     largestLeastUsedItem="$(find "$leastUsedItemDirectory" -type f -printf "%s\t%p\n" | sort -n | tail -1 | awk '{print $2;}')"

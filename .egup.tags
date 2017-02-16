@@ -666,6 +666,10 @@ ea06cf1725edaf4703fc6e4fe69b33db4bd7c27c refs/tags/v2.16.6.4.9.9
 c075200d119b6b0b2ab061eda4d3b4a062dcfeb9 refs/tags/v2.16.6.4.9.9^{}
 6f8080206f27a61cf61b65b2e92ef3d03717f993 refs/tags/v3
 994900db86d20ea717ed42cf8229cf5fa7926ecc refs/tags/v3^{}
+f25b77f8e374dec48da00ae3e888d82556c0c3d6 refs/tags/v3.0.1
+79a0264e008a345a807835f11f3b56925cadf524 refs/tags/v3.0.1^{}
+67521f9f959c8978ad8d76294e99f670e4e555da refs/tags/v3.0.1.1_pre1
+a6d7aafec3d68ad2b68be76d8f7dc3596d420e73 refs/tags/v3.0.1.1_pre1^{}
 4a5c37f4cb154b4d4d4e7ab45e93b788f1c813b1 refs/tags/v3_pre1
 d6a7fa60f54b43faddabb6f6698b257f13adfcbc refs/tags/v3_pre1^{}
 ab361d9ddb7ddbd3f4562e2491e0f9d7139a9367 refs/tags/v3_pre2

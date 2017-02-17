@@ -2,7 +2,7 @@
 # Copy $1 into $2 and replace with pointers
 set -e
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-warn-timeout "Specified files and directories will be overwritten."
+warn-timeout "Destination files and directories, if present, will be overwritten."
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
 rsync -av --checksum --progress --no-i-r "$1" "$crystalWorkdir/"
 rsync -av --checksum --progress --no-i-r "$1" "$crystalWorkdir/"

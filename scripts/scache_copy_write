@@ -2,10 +2,21 @@
 # Copy $1 into $2 and replace with pointers
 set -e
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+if [[ "--verbose" == "$1" ]]; then
+    copyWriteIsVerbose="true"
+    shift
+fi
 warn-timeout "Destination files and directories, if present, will be overwritten."
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
-rsync -av --checksum --progress --no-i-r "$1" "$crystalWorkdir/"
-rsync -av --checksum --progress --no-i-r "$1" "$crystalWorkdir/"
-scache_store_files --replace "$crystalWorkdir/$(basename "$1")"
-rsync -av --checksum --progress --no-i-r "$crystalWorkdir/$(basename "$1")" "$2/"
-rsync -av --checksum --progress --no-i-r "$crystalWorkdir/$(basename "$1")" "$2/"
+streamId="scache-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+crystalSubdir="$crystalWorkdir/$streamId"
+mkdir -p "$crystalSubdir"
+rsync -av --checksum --progress --no-i-r "$1" "$crystalSubdir/"
+rsync -av --checksum --progress --no-i-r "$1" "$crystalSubdir/"
+if [[ "$copyWriteIsVerbose" == "true" ]]; then
+    scache_store_files --replace --verbose "$crystalSubdir/$(basename "$1")"
+else
+    scache_store_files --replace "$crystalSubdir/$(basename "$1")"
+fi
+rsync -av --checksum --progress --no-i-r "$crystalSubdir/$(basename "$1")" "$2/"
+rsync -av --checksum --progress --no-i-r "$crystalSubdir/$(basename "$1")" "$2/"

@@ -11,7 +11,7 @@ echo "Started verifying stream cache database entry $knownHash."
 recoveredHash="$(scache_read_stream --disallow-hash-pointer < "$1" | sha512sum | awk '{print $1;}')"
 if [[ "$knownHash" == "$recoveredHash" ]]; then
     echo "Verified stream cache database entry $knownHash."
-    exit 0
+    exit
 fi
 if [[ "$knownHash" != "$recoveredHash" ]]; then
     if [[ "$numRetries" == "0" ]]; then
@@ -24,6 +24,7 @@ if [[ "$knownHash" != "$recoveredHash" ]]; then
         warn "Error verifying stream cache database entry $knownHash! Waiting 30 seconds and retrying $numRetries more times."
         sleep 30
         scache_verify_entry "$numRetries" "$1" || exit 1
+        exit
     fi
 fi
 error-die "Internal error! This situation should never occur and almost certainly represents a bug in scache_verify_entry."

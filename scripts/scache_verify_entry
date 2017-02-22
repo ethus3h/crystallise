@@ -1,6 +1,7 @@
 #!/bin/bash
 # Accepts an integer and a pointer as an argument, and returns a success status if the data corresponding to the pointer can be read. If it fails, it moves the pointer that failed validation aside. The integer first argument is the number of times to retry if the retrieval fails.
 set -e
+set -x
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 # FIXME: The next line should not be necessary
 source crystallize-bash_setup

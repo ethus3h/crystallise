@@ -85,5 +85,5 @@ dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
     if [[ "$1" != "--verbose" ]]; then
         cat "$dbFilePath"
     fi
-    rm "$streamId.tmp"
+    rm "$streamId.tmp.crystal"
 )

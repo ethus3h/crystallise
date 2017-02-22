@@ -19,7 +19,7 @@ dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
     mkdir -p "$hashDir"
     dbFilePath="$hashDir/$hashFull"
     streamSize="$(du -sb "$streamId.tmp" | awk '{print $1;}')"
-    if [ "$streamSize" -gt 100000000 ]; then
+    if [ "$streamSize" -gt 10000000 ]; then
         useLocalStore="false"
     else
         useLocalStore="true"
@@ -60,7 +60,7 @@ dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
         fi
         # Upload a pack of the LocalStore items if there are enough, and update the pointers accordingly.
         localStoreSize="$(du -sb "$dbDir"/LocalStore | awk '{print $1;}')"
-        if [ "$localStoreSize" -gt 3000000 ]; then
+        if [ "$localStoreSize" -gt 100000000 ]; then
             mv "$dbDir"/LocalStore "$streamId.LocalStore"
             rsync -aq --checksum --no-i-r "$streamId.LocalStore" "$streamId.LocalStore.tmp"
             if [[ "$1" == "--verbose" ]]; then

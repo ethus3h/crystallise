@@ -73,11 +73,13 @@ dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
             mv "$streamId.LocalStore.tmp" "$streamId.LocalStore"
             tar -c -P -S --format pax "$streamId.LocalStore.crystal" ".$streamId.LocalStore.crystal-data" "${storeLogFiles[@]}" | xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - > "$streamId.bundle.pointer"
             pointerName="$(readlink -f "$streamId.bundle.pointer")"
+            mkdir -p "$dbDir/Packs/"
+            rsync -q --checksum "$pointerName" "$dbDir/Packs/"
             find "$streamId.LocalStore" -type f -exec scachei_bundle_pointer "$pointerName" {} \;
         fi
         # Check that the data can be restored
         if [[ "$1" == "--verbose" ]]; then
-            scache_verify_entry 5 "$dbFilePath" || error-die "Failed saving stream: stored stream could not be read!"
+            scache_verify_entry 30 "$dbFilePath" || error-die "Failed saving stream: stored stream could not be read!"
         else
             scache_verify_entry 5 "$dbFilePath" &> /dev/null || error-die "Failed saving stream: stored stream could not be read!"
         fi

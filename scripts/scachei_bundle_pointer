@@ -4,7 +4,7 @@
 set -e
 # FIXME: The next line should not be necessary
 source crystallize-bash_setup
-pointerData="$1"
+packPointerName="$1"
 dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
 hashFull="$(basename "$2")"
 hashA="${hashFull:0:1}"
@@ -17,6 +17,5 @@ if [ -f "$dbFilePath" ]; then
         error-die "The item $dbFilePath does not appear to be a LocalStore pointer! This is most likely a bug in scache. Aborting to avoid messing things up."
     fi
 fi
-# 209... is the remote bundle pointer type signature
-printf "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49\n$hashFull\n" > "$dbFilePath"
-cat "$dbFilePath" "$1" | sponge "$dbFilePath"
+# 2fa... is the remote bundle pointer type signature
+printf "2fae2004-94bb-4aa8-a01a-fc44298efc2c\n%s\n%s" "$hashFull" "$packPointerName" > "$dbFilePath"

@@ -1,0 +1,5 @@
+#!/bin/bash
+# Copy $1 into $2 and resolve pointers
+set -e
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+scache_copy_read "$@"

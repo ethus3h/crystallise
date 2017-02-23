@@ -44,6 +44,11 @@ else
     dbFilePath="$(readlink -e "$dbLinkPath")"
     dbFileOldPath="$dbFilePath"
     dbFileDir="$(dirname "$dbFilePath")"
+    # First, make sure the link is good and fix it up if it's not.
+    if ! [ -e "$dbFilePath" ]; then
+        rm "$dbLinkPath"
+        find -type f -name "$hashFull" -exec ln -s {} "$dbLinkPath" \;
+    fi
     # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
     oldCount="$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")"
     requestCount=$(( oldCount + 1 ))

@@ -57,14 +57,14 @@ mkdir "$streamId"
         hashB="${hashFull:1:1}"
         hashC="${hashFull:2:1}"
         scache_read_stream < "$dbDir/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
-        retrievedHash="$(sha512sum "$streamId.out" | awk '{print $1;}')"
+        retrievedHash="$(sha512sum < "$streamId.out" | awk '{print $1;}')"
         if [[ "$retrievedHash" != "$hashFull" ]]; then
             error-die "Checksum mismatch when retrieving the requested stream!"
         fi
     else
         error-die "Unknown pointer type signature! Either the file is corrupted, or this is a pointer version this version of scache_read_stream is familiar with, or this is not a pointer. Aborting."
     fi
-    #retrievedHash="$(sha512sum "$streamId.out" | awk '{print $1;}')"
+    #retrievedHash="$(sha512sum < "$streamId.out" | awk '{print $1;}')"
     #if [[ $retrievedHash == ]]
     cat "$streamId.out"
 )

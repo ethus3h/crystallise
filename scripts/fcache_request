@@ -36,7 +36,7 @@ if ! [ -h "$dbLinkPath" ]; then
     mkdir -p "$dbFileDir"
     wget -qO - "$requestUrl" > "$dbFilePath"
     if ! [ -f "$checksumName" ]; then
-        sha512sum "$dbFilePath" | awk '{print $1;}' > "$checksumName"
+        sha512sum < "$dbFilePath" | awk '{print $1;}' > "$checksumName"
     fi
     ln -s "$dbFilePath" "$dbLinkPath"
 else
@@ -58,7 +58,7 @@ else
 fi
 # Check that the data were retrieved successfully
 knownChecksum="$(<"$checksumName")"
-itemChecksum="$(sha512sum "$dbLinkPath" | awk '{print $1;}')"
+itemChecksum="$(sha512sum < "$dbLinkPath" | awk '{print $1;}')"
 if [[ "$itemChecksum" != "$knownChecksum" ]]; then
     mkdir -p "$dbDir/Failed Checksum"
     mv "$dbFilePath" "$dbDir/Failed Checksum/$(basename "$dbFilePath")"

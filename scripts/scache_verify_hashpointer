@@ -1,0 +1,22 @@
+#!/bin/bash
+# Accepts an integer and a pointer as an argument, and returns a success status if the data corresponding to the pointer can be read. If it fails, it moves the pointer that failed validation aside. The integer first argument is the number of times to retry if the retrieval fails.
+set -e
+set -x
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+# FIXME: The next line should not be necessary
+source crystallize-bash_setup
+
+pointerTypeSignature="$(head -c 36 "$2")"
+knownChecksum=""
+if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
+    knownChecksum="$(tail -c +38 "$2")"
+    recoveredChecksum="$(scache_read_stream < "$2" | sha512sum | awk '{print $1;}')"
+    if [[ "$knownChecksum" != "$knownChecksum" ]]; then
+        set +e
+        dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/HashPointers/
+        mkdir -p "$dbDir"
+        mv "$2" "$dbDir/"
+        set -e
+        error-die "Item $2 did not match the stored checksum!"
+    fi
+fi

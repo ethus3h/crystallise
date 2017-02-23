@@ -3,7 +3,7 @@
 # Internal use only.
 set -e
 knownHash="$(basename "$1")"
-recoveredHash="$(sha512sum "$1" | awk '{print $1;}')"
+recoveredHash="$(sha512sum < "$1" | awk '{print $1;}')"
 if [[ "$knownHash" != "$recoveredHash" ]]; then
     echo "Begun backup operation for $1"
     scache_read_stream < "$1" | sponge "$1"

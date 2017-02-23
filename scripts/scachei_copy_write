@@ -19,7 +19,7 @@ fi
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
 streamId="scache-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 crystalSubdir="$crystalWorkdir/$streamId"
-mkdir -p "$crystalSubdir"
+mkdir -p "$crystalSubdir/$(dirname "$1")"
 rsync -av --checksum --progress --no-i-r "$1" "$crystalSubdir/$1"
 rsync -av --checksum --progress --no-i-r "$1" "$crystalSubdir/$1"
 scache_store_files --replace "$crystalSubdir/$1"

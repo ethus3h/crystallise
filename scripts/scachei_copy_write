@@ -12,7 +12,7 @@ destinationChecksum=""
 if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
     destinationChecksum="$(tail -c +38 "$2/$1")"
 fi
-sourceChecksum="$(sha512sum "$1")"
+sourceChecksum="$(sha512sum < "$1" | awk '{print $1;}')"
 if [[ "$destinationChecksum" == "$sourceChecksum" ]]; then
     # The file is already present and pointerized, so exit without doing anything.
     exit 0

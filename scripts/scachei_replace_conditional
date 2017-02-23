@@ -1,0 +1,12 @@
+#!/bin/bash
+# Replace files with pointers, if not already a pointer.
+set -e
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+if ! [ -f "$1" ]; then
+    error-notify "Item must be a regular file."
+    exit 1
+fi
+if [[ "$(head -c 36 "$1")" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
+    exit 0
+fi
+scache_store_files --replace "$1"

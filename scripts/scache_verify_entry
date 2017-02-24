@@ -21,10 +21,10 @@ if [[ "$knownHash" != "$recoveredHash" ]]; then
         mv "$1" "$dbDir/"
         error-die "Error verifying stream cache database entry $knownHash! No retries left; giving up and marking entry as corrupted."
     else
+        numRetries=$(( numRetries - 1 ))
         if [[ "$recoveredHash" == "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e" ]]; then
-            echo "(Stored item is not ready yet. Sleeping 30 seconds and retrying.)"
+            echo "(Stored item is not ready yet, or nothing came back. Sleeping 30 seconds and retrying $numRetries more times.)"
         else
-            numRetries=$(( numRetries - 1 ))
             warn "Error verifying stream cache database entry $knownHash! Waiting 30 seconds and retrying $numRetries more times."
         fi
         sleep 30

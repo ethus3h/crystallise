@@ -6,14 +6,16 @@ if ! [ -f "$1" ]; then
     error-notify "Item must be a regular file."
     exit 1
 fi
-pointerTypeSignature="$(head -c 36 "$2/$1")"
-destinationChecksum=""
-if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
-    destinationChecksum="$(tail -c +38 "$2/$1")"
-    sourceChecksum="$(sha512sum < "$1" | awk '{print $1;}')"
-    if [[ "$destinationChecksum" == "$sourceChecksum" ]]; then
-        # The file is already present and pointerized, so exit without doing anything.
-        exit 0
+if [ -f "$2/$1" ]; then
+    pointerTypeSignature="$(head -c 36 "$2/$1")"
+    destinationChecksum=""
+    if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
+        destinationChecksum="$(tail -c +38 "$2/$1")"
+        sourceChecksum="$(sha512sum < "$1" | awk '{print $1;}')"
+        if [[ "$destinationChecksum" == "$sourceChecksum" ]]; then
+            # The file is already present and pointerized, so exit without doing anything.
+            exit 0
+        fi
     fi
 fi
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"

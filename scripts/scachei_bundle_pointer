@@ -18,4 +18,4 @@ if [ -f "$dbFilePath" ]; then
     fi
 fi
 # 2fa... is the remote bundle pointer type signature
-printf "2fae2004-94bb-4aa8-a01a-fc44298efc2c\n%s\n%s" "$hashFull" "$packPointerName" > "$dbFilePath"
+printf "2fae2004-94bb-4aa8-a01a-fc44298efc2c\n%s\n%s" "$hashFull" "$(basename "$packPointerName")" > "$dbFilePath"

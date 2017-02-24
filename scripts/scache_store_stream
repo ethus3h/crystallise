@@ -69,7 +69,7 @@ dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
                 crystallize --leave-pointer "$streamId.LocalStore" > "$streamId.LocalStore.sstream-stdout" 2> "$streamId.LocalStore.sstream-stderr"
                 storeLogFiles=("$streamId.LocalStore.sstream-stdout" "$streamId.LocalStore.sstream-stderr")
             fi
-            # (209... is the remote bundle pointer type signature)
+            # (2fa... is the remote bundle pointer type signature)
             mv "$streamId.LocalStore.tmp" "$streamId.LocalStore"
             tar -c -P -S --format pax "$streamId.LocalStore.crystal" ".$streamId.LocalStore.crystal-data" "${storeLogFiles[@]}" | xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - > "$streamId.bundle.pointer"
             pointerName="$(readlink -f "$streamId.bundle.pointer")"

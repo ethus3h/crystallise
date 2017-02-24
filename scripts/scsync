@@ -3,7 +3,7 @@
 set -e
 set -x
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-find "$1" -not -type f -exec rsync -lptgoDR --checksum "$1" "$2/" \;
+#find "$1" -not -type f -exec rsync -lptgoDR --checksum "$1" "$2/" \;
 find "$1" -type f -exec scachei_copy_write {} "$2" \;
 rsync -av --progress --ignore-existing --no-i-r "$1" "$2/"
 find "$2/$(basename "$1")" -type d -empty -exec touch {}/.keep \;

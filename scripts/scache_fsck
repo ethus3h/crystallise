@@ -3,4 +3,4 @@
 set -e
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
-find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -exec scache_verify_entry 5 {} \;
+find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -exec scache_verify_entry 5 {} \;

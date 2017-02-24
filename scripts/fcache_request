@@ -38,6 +38,9 @@ if [ ! -h "$dbLinkPath" ] || [ ! -s "$(readlink "$dbLinkPath")" ]; then
     if ! [ -f "$checksumName" ]; then
         sha512sum < "$dbFilePath" | awk '{print $1;}' > "$checksumName"
     fi
+    if [ -h "$dbLinkPath" ]; then
+        rm "$dbLinkPath"
+    fi
     ln -s "$dbFilePath" "$dbLinkPath"
 else
     # Item is in the cache.

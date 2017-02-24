@@ -2,6 +2,6 @@
 # Copy $1 into $2 and resolve pointers
 set -e
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-rsync -av --checksum --progress --no-i-r "$1" "$2/"
-rsync -av --checksum --progress --no-i-r "$1" "$2/"
+rsync -av --checksum --progress --no-i-r --ignore-existing "$1" "$2/"
+rsync -av --checksum --progress --no-i-r --ignore-existing "$1" "$2/"
 scache_read_files "$2/$(basename "$1")"

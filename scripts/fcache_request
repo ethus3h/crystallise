@@ -22,7 +22,7 @@ hashDir="$dbDir/$hashSubdir"
 mkdir -p "$hashDir"
 dbLinkPath="$hashDir/$hashFull"
 checksumName="$dbLinkPath.checksum"
-if ! [ -h "$dbLinkPath" ]; then
+if [ ! -h "$dbLinkPath" ] || [ ! -s "$(readlink "$dbLinkPath")" ]; then
     # Item is not in the cache, so add it
     if ! [ -f "$dbLinkPath" ]; then
         # Never seen this item before, so set the requestCount

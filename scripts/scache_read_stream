@@ -5,7 +5,7 @@ source "$(which ember_bash_setup)" &> /dev/null
 
 set -e
 # Does this really need root privileges?
-runAsRoot
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 
 if [[ "--disallow-hash-pointer" == "$1" ]]; then
     disallowHashPointer="true"

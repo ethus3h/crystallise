@@ -1,8 +1,11 @@
 #!/bin/bash
+source "$(which ember_bash_setup)" &> /dev/null
+
 # Copy $1 into $2 and replace with pointers. $1 cannot be a directory.
-set -e
+
+runAsRootAndSetE
+
 set -x
-[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 if ! [ -f "$1" ]; then
     error-notify "Item must be a regular file."
     exit 1

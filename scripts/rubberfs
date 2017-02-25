@@ -1,7 +1,5 @@
 #!/bin/bash
-
-# FIXME: The next line shouldn't be necessary
-source "$(which bash_setup)"
+source "$(which ember_bash_setup)" &> /dev/null
 
 set -e
 

@@ -1,10 +1,12 @@
 #!/bin/bash
+source "$(which ember_bash_setup)" &> /dev/null
+
 # Accepts a pointer on stdin, and outputs the corresponding data from the stream cache.
+
 set -e
 # Does this really need root privileges?
-[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-# FIXME: The next line should not be necessary
-source crystallize-bash_setup
+runAsRoot
+
 if [[ "--disallow-hash-pointer" == "$1" ]]; then
     disallowHashPointer="true"
     shift

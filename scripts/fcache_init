@@ -1,9 +1,12 @@
 #!/bin/bash
+source "$(which ember_bash_setup)" &> /dev/null
+
 # Create a cache directory. This is a naive caching layer for non-changing URLs.
 # Usage: fcache_init <directory-name> <cache size limit in bytes>
 # If the cache directory already exists, the current size limit will override the one provided as an argument.
-set -e
-[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+
+runAsRootAndSetE
+
 if [ -e "$1"/.fcache.limit ]; then
     exit 0
 elif [ -d "$1" ]; then

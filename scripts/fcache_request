@@ -1,11 +1,10 @@
 #!/bin/bash
+source "$(which ember_bash_setup)" &> /dev/null
+
 # Get an item through the cache
 # Usage: fcache_request <cache directory> <URL>
 
-set -e
-[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-# FIXME: The next line should not be necessary
-source crystallize-bash_setup
+runAsRootAndSetE
 
 dbDir="$1"
 requestUrl="$2"

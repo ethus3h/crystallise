@@ -1,5 +1,7 @@
 #!/bin/bash
+source "$(which ember_bash_setup)" &> /dev/null
+
 # Verify that all hash pointers in the specified directory can be read correctly
-set -e
-[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+
+runAsRootAndSetE
 find "$1" -type f -exec scache_verify_hashpointer 5 {} \;

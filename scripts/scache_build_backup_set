@@ -1,6 +1,10 @@
 #!/bin/bash
+source "$(which ember_bash_setup)" &> /dev/null
+
 # Make a clone of the stream database where the bodies of the streams are stored instead of the pointers.
+
 set -e
+
 dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
 backupDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Backups
 rsync -av --checksum --progress --no-i-r --ignore-existing "$dbDir"/ "$backupDir"

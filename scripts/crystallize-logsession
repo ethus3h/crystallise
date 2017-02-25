@@ -1,12 +1,10 @@
 #!/bin/bash
+source "$(which ember_bash_setup)" &> /dev/null
 
 # Do not run this script manually; use crystallize instead.
 
-#Script should run as root.
-[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+runAsRootAndSetE
 
-#Script should exit if any operation fails.
-set -e
 set -x
 
 echo "The crystal will have the following address when it is ready: $CrystalID"

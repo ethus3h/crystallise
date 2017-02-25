@@ -1,7 +1,10 @@
 #!/bin/bash
+source "$(which ember_bash_setup)" &> /dev/null
+
 # Resolve pointers within the specified file(s)
-set -e
-[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+
+runAsRootAndSetE
+
 while [[ ! -z "$1" ]]; do
     echo "Items remaining to resolve: "
     echo "$@"

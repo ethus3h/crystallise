@@ -1,8 +1,11 @@
 #!/bin/bash
+source "$(which ember_bash_setup)" &> /dev/null
+
 # Copy $1 into $2 and replace with pointers, skipping existing
-set -e
+
+runAsRootAndSetE
+
 set -x
-[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 # FIXME: Add a --verify option to have it check that each item can be correctly recovered
 #find "$1" -not -type f -exec rsync -lptgoDR --checksum "$1" "$2/" \;
 find "$1" -type f -exec scachei_copy_write {} "$2" \;

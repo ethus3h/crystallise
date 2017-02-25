@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# More verbose debugging
+PS4='+($?) $BASH_SOURCE:$FUNCNAME:$LINENO:'
+export PS4
+
+source "$(which crystallize-bash_setup)"
+
+# These may not be available on non-Wreathe systems
+source "$(which wreathe_bash_setup)" &> /dev/null
+source "$(which bash_math_functions)" &> /dev/null
+source "$(which futuramerlin-web-toolkit-aliases)" &> /dev/null
+source "$(which egup-env)" &> /dev/null
+
+# Useful functions
+
+runAsRoot() {
+    [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+}
+
+runAsRootAndSetE() {
+    runAsRoot
+    set -e
+}

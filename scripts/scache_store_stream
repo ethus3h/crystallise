@@ -1,9 +1,10 @@
 #!/bin/bash
+source "$(which ember_bash_setup)" &> /dev/null
+
 # Stores data provided on stdin into the stream cache, and sends a pointer to it to stdout.
-set -e
-[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-# FIXME: The next line should not be necessary
-source crystallize-bash_setup
+
+runAsRootAndSetE
+
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
 dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
 (

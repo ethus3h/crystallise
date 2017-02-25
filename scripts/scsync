@@ -3,7 +3,8 @@ source "$(which ember_bash_setup)" &> /dev/null
 
 # Copy $1 into $2 and replace with pointers, skipping existing
 
-runAsRootAndSetE
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+set -e
 
 set -x
 # FIXME: Add a --verify option to have it check that each item can be correctly recovered

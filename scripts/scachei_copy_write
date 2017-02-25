@@ -3,7 +3,8 @@ source "$(which ember_bash_setup)" &> /dev/null
 
 # Copy $1 into $2 and replace with pointers. $1 cannot be a directory.
 
-runAsRootAndSetE
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+set -e
 
 set -x
 if ! [ -f "$1" ]; then

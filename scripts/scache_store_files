@@ -4,7 +4,8 @@ source "$(which ember_bash_setup)" &> /dev/null
 # Enroll the specified file(s) in the stream cache database
 # Be VERY careful with the --replace option: it does not warn before acting!
 
-runAsRootAndSetE
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+set -e
 
 scacheReplace=""
 if [[ "$1" == "--replace" ]]; then

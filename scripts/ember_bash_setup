@@ -18,7 +18,8 @@ runAsRoot() {
     [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 }
 
-runAsRootAndSetE() {
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+set -e() {
     runAsRoot
     set -e
 }

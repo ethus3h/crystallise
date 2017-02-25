@@ -3,7 +3,8 @@ source "$(which ember_bash_setup)" &> /dev/null
 
 # Replace files with pointers, if not already a pointer.
 
-runAsRootAndSetE
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+set -e
 
 if ! [ -f "$1" ]; then
     error-notify "Item must be a regular file."

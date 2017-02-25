@@ -3,7 +3,8 @@ source "$(which ember_bash_setup)" &> /dev/null
 
 # Usage: crystallize-backup <crystal-address>
 
-runAsRootAndSetE
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+set -e
 
 shopt -s extglob
 

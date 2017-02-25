@@ -3,6 +3,7 @@ source "$(which ember_bash_setup)" &> /dev/null
 
 # Copy $1 into $2 and resolve pointers
 
-runAsRootAndSetE
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+set -e
 
 scache_copy_read "$@"

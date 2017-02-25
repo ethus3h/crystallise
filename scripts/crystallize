@@ -2,7 +2,7 @@
 source "$(which ember_bash_setup)" &> /dev/null
 
 # Version:
-export crystallizeVersion='3.0.1.4.23'
+export crystallizeVersion='3.0.1.4.24'
 
 runAsRootAndSetE
 

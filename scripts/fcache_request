@@ -35,9 +35,7 @@ if [ ! -h "$dbLinkPath" ] || [ ! -s "$(readlink "$dbLinkPath")" ]; then
     dbFilePath="$dbFileDir/$hashFull"
     mkdir -p "$dbFileDir"
     wget -qO - "$requestUrl" > "$dbFilePath"
-    if ! [ -f "$checksumName" ]; then
-        sha512sum < "$dbFilePath" | awk '{print $1;}' > "$checksumName"
-    fi
+    sha512sum < "$dbFilePath" | awk '{print $1;}' > "$checksumName"
     if [ -h "$dbLinkPath" ]; then
         rm "$dbLinkPath"
     fi
@@ -63,14 +61,14 @@ else
     mv "$dbFileOldPath" "$dbFilePath"
     rm "$dbLinkPath"
     ln -s "$dbFilePath" "$dbLinkPath"
-fi
-# Check that the data were retrieved successfully
-knownChecksum="$(<"$checksumName")"
-itemChecksum="$(sha512sum < "$dbLinkPath" | awk '{print $1;}')"
-if [[ "$itemChecksum" != "$knownChecksum" ]]; then
-    mkdir -p "$dbDir/Failed Checksum"
-    mv "$dbFilePath" "$dbDir/Failed Checksum/$(basename "$dbFilePath")"
-    error-die "File does not match what its checksum should be!"
+    # Check that the data were retrieved successfully
+    knownChecksum="$(<"$checksumName")"
+    itemChecksum="$(sha512sum < "$dbLinkPath" | awk '{print $1;}')"
+    if [[ "$itemChecksum" != "$knownChecksum" ]]; then
+        mkdir -p "$dbDir/Failed Checksum"
+        mv "$dbFilePath" "$dbDir/Failed Checksum/$(basename "$dbFilePath")"
+        error-die "File does not match what its checksum should be!"
+    fi
 fi
 # Return the data to the caller
 cat "$dbLinkPath"

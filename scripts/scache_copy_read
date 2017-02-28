@@ -4,7 +4,7 @@ source "$(which ember_bash_setup)" &> /dev/null
 # Copy $1 into $2 and resolve pointers
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-set -e
+trap 'error-die "${BASH_SOURCE}" "${LINENO}"' ERR
 
 rsync -av --checksum --progress --no-i-r --ignore-existing "$1" "$2/"
 rsync -av --checksum --progress --no-i-r --ignore-existing "$1" "$2/"

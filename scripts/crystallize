@@ -2,10 +2,10 @@
 source "$(which ember_bash_setup)" &> /dev/null
 
 # Version:
-export crystallizeVersion='3.0.1.4.28'
+export crystallizeVersion='3.0.1.4.29'
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-set -e
+trap 'error-die "${BASH_SOURCE}" "${LINENO}"' ERR
 
 if [ ! -e /Ember\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/ ]; then
     echo "ERROR: Could not find a usable Ember Library directory tree. Nothing done."

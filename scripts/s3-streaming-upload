@@ -1,6 +1,7 @@
 #!/bin/bash
+source "$(which ember_bash_setup)" &> /dev/null
 
-set -e
+trap 'error-die "${BASH_SOURCE}" "${LINENO}"' ERR
 
 AWS_ACCESS_KEY_ID="$(grep access ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
 AWS_SECRET_ACCESS_KEY="$(grep secret ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"

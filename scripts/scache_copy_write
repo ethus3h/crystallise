@@ -4,7 +4,7 @@ source "$(which ember_bash_setup)" &> /dev/null
 # Copy $1 into $2 and replace with pointers
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-set -e
+trap 'error-die "${BASH_SOURCE}" "${LINENO}"' ERR
 
 warn-timeout "Destination files and directories, if present, will be overwritten."
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"

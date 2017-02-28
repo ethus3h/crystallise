@@ -4,7 +4,7 @@ source "$(which ember_bash_setup)" &> /dev/null
 # Verify that all entries in the stream database can be read correctly
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-set -e
+trap 'error-die "${BASH_SOURCE}" "${LINENO}"' ERR
 
 dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
 find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -exec scache_verify_entry 5 {} \;

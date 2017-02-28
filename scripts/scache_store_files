@@ -5,7 +5,7 @@ source "$(which ember_bash_setup)" &> /dev/null
 # Be VERY careful with the --replace option: it does not warn before acting!
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-set -e
+trap 'error-die "${BASH_SOURCE}" "${LINENO}"' ERR
 #set -x
 
 scacheReplace=""
@@ -14,10 +14,10 @@ if [[ "$1" == "--replace" ]]; then
     shift
 fi
 while [[ ! -z "$1" ]]; do
-    echo "Items remaining to store: "
+    #echo "Items remaining to store: "
     echo "$@"
     fileToStash="$1"
-    echo "Begun storing $fileToStash."
+    #echo "Begun storing $fileToStash."
     if [ -f "$fileToStash" ]; then
         if [[ "$scacheReplace" == "true" ]]; then
             scache_store_stream --verbose < "$fileToStash"
@@ -36,8 +36,8 @@ while [[ ! -z "$1" ]]; do
             warn "Skipping item $fileToStash: not a regular file or directory."
         fi
     fi
-    echo "Done storing $fileToStash." || warn "Failed storing $fileToStash!"
+    #echo "Done storing $fileToStash."
     shift
 done
 #printf "\033c"
-echo "Done storing all items."
+#echo "Done storing all items."

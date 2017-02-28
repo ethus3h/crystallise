@@ -4,6 +4,6 @@ source "$(which ember_bash_setup)" &> /dev/null
 # Decrystallizes a .crystal pointer directory. (Does not handle single-file pointers; use scache_read_stream instead.)
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-set -e
+trap 'error-die "${BASH_SOURCE}" "${LINENO}"' ERR
 
 decrystallize "$(cat "$(dirname "$1")"/."$(basename "$1")"-data/identifier)"

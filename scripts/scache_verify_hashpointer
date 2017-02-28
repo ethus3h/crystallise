@@ -11,7 +11,7 @@ knownChecksum=""
 if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
     knownChecksum="$(tail -c +38 "$2")"
     recoveredChecksum="$(scache_read_stream < "$2" | sha512sum | awk '{print $1;}')"
-    if [[ "$knownChecksum" != "$knownChecksum" ]]; then
+    if [[ "$knownChecksum" != "$recoveredChecksum" ]]; then
         set +e
         mv "$2" "$2.CORRUPTED-HASHPOINTER"
         set -e

@@ -5,7 +5,10 @@ source "$(which ember_bash_setup)" &> /dev/null
 
 # TODO: Does this really need root privileges?
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
+function finish() {
+    rm -r "$streamId"
+}
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."; finish; exit 1' ERR
 
 if [[ "--disallow-hash-pointer" == "$1" ]]; then
     disallowHashPointer="true"
@@ -70,7 +73,5 @@ mkdir "$streamId"
     #if [[ $retrievedHash == ]]
     cat "$streamId.out"
 )
-function finish() {
-    rm -r "$streamId"
-}
+finish
 trap finish EXIT

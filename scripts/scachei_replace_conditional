@@ -4,7 +4,7 @@ source "$(which ember_bash_setup)" &> /dev/null
 # Replace files with pointers, if not already a pointer.
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-trap 'error-die "${BASH_SOURCE}" "${LINENO}"' ERR
+trap 'error-die "${BASH_SOURCE} line ${LINENO}"' ERR
 
 if ! [ -f "$1" ]; then
     error-notify "Item must be a regular file."

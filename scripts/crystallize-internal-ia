@@ -1,7 +1,7 @@
 #!/bin/bash
 source "$(which ember_bash_setup)" &> /dev/null
 
-trap 'error-die "${BASH_SOURCE}" "${LINENO}"' ERR
+trap 'error-die "${BASH_SOURCE} line ${LINENO}"' ERR
 set -x
 
 ia upload "$CrystalID" --verify --retries=100 --metadata="subject:Uploaded using Crystallize $crystallizeVersion" --metadata="subject:1EA21BD8-DB7E-11E5-9733-728C37852114" --metadata=subject:"$crystalTitle" --metadata=subject:"$CrystalID" --metadata="collection:$crystalCollection" --delete "$CrystalTmpUploadFile"

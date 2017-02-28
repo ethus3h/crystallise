@@ -4,7 +4,7 @@ source "$(which ember_bash_setup)" &> /dev/null
 # Usage: crystallize-backup <crystal-address>
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-trap 'error-die "${BASH_SOURCE}" "${LINENO}"' ERR
+trap 'error-die "${BASH_SOURCE} line ${LINENO}"' ERR
 
 shopt -s extglob
 

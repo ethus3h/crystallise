@@ -19,6 +19,7 @@ if [ -f "$2/$1" ]; then
         sourceChecksum="$(sha512sum < "$1" | awk '{print $1;}')"
         if [[ "$destinationChecksum" == "$sourceChecksum" ]]; then
             # The file is already present and pointerized, so exit without doing anything.
+            echo "(Nothing done for $1.)"
             exit 0
         fi
     fi

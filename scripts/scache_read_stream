@@ -6,7 +6,9 @@ source "$(which ember_bash_setup)" &> /dev/null
 # TODO: Does this really need root privileges?
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 function finish() {
-    rm -r "$streamId"
+    if [ -e "$streamId" ]; then
+        rm -r "$streamId"
+    fi
 }
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."; finish; exit 1' ERR
 

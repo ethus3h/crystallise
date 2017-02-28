@@ -70,4 +70,7 @@ mkdir "$streamId"
     #if [[ $retrievedHash == ]]
     cat "$streamId.out"
 )
-rm -r "$streamId"
+function finish() {
+    rm -r "$streamId"
+}
+trap finish EXIT

@@ -5,4 +5,5 @@ source "$(which ember_bash_setup)" &> /dev/null
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 set -e
+
 find "$1" -type f -exec scache_verify_hashpointer 5 {} \;

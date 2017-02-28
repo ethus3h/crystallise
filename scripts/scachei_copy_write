@@ -5,8 +5,8 @@ source "$(which ember_bash_setup)" &> /dev/null
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 set -e
+#set -x
 
-set -x
 if ! [ -f "$1" ]; then
     error-notify "Item must be a regular file."
     exit 1
@@ -28,10 +28,10 @@ streamId="scache-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 crystalSubdir="$crystalWorkdir/$streamId"
 targetDirName="$(dirname "$1")"
 mkdir -p "$crystalSubdir/$targetDirName"
-rsync -av --checksum --progress --no-i-r "$1" "$crystalSubdir/$targetDirName/"
-rsync -av --checksum --progress --no-i-r "$1" "$crystalSubdir/$targetDirName/"
+rsync -a --checksum --no-i-r "$1" "$crystalSubdir/$targetDirName/"
+rsync -a --checksum --no-i-r "$1" "$crystalSubdir/$targetDirName/"
 scache_store_files --replace "$crystalSubdir/$1"
 mkdir -p "$2/$targetDirName"
-rsync -av --checksum --progress --no-i-r "$crystalSubdir/$1" "$2/$targetDirName/"
-rsync -av --checksum --progress --no-i-r "$crystalSubdir/$1" "$2/$targetDirName/"
+rsync -a --checksum --no-i-r "$crystalSubdir/$1" "$2/$targetDirName/"
+rsync -a --checksum --no-i-r "$crystalSubdir/$1" "$2/$targetDirName/"
 rm -r "$crystalSubdir"

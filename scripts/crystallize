@@ -2,7 +2,7 @@
 source "$(which ember_bash_setup)" &> /dev/null
 
 # Version:
-export crystallizeVersion='3.0.1.4.27'
+export crystallizeVersion='3.0.1.4.28'
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 set -e

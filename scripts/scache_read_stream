@@ -3,9 +3,9 @@ source "$(which ember_bash_setup)" &> /dev/null
 
 # Accepts a pointer on stdin, and outputs the corresponding data from the stream cache.
 
-set -e
-# Does this really need root privileges?
+# TODO: Does this really need root privileges?
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+set -e
 
 if [[ "--disallow-hash-pointer" == "$1" ]]; then
     disallowHashPointer="true"

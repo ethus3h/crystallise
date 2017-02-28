@@ -2,7 +2,7 @@
 source "$(which ember_bash_setup)" &> /dev/null
 
 # Version:
-export crystallizeVersion='3.0.1.4.31'
+export crystallizeVersion='3.0.1.4.32.1'
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 trap 'error-die "${BASH_SOURCE}" "${LINENO}"' ERR

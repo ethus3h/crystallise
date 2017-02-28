@@ -4,7 +4,7 @@ source "$(which ember_bash_setup)" &> /dev/null
 # Accepts a pointer as an argument, and crystallizes the file if it does not match its hash.
 # Internal use only.
 
-trap 'error-die "${BASH_SOURCE} line ${LINENO}"' ERR
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 
 knownHash="$(basename "$1")"
 recoveredHash="$(sha512sum < "$1" | awk '{print $1;}')"

@@ -5,7 +5,7 @@ source "$(which ember_bash_setup)" &> /dev/null
 # Be VERY careful with the --replace option: it does not warn before acting!
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-trap 'error-die "${BASH_SOURCE} line ${LINENO}"' ERR
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 #set -x
 
 scacheReplace=""

@@ -4,7 +4,7 @@ source "$(which ember_bash_setup)" &> /dev/null
 # Given a LocalStore pointer, replace it with a remote pointer
 # First argument is the filename where the remote pointer data is stored; second is the pointer
 
-trap 'error-die "${BASH_SOURCE} line ${LINENO}"' ERR
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 
 packPointerName="$1"
 dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry

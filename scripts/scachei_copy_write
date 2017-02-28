@@ -4,7 +4,7 @@ source "$(which ember_bash_setup)" &> /dev/null
 # Copy $1 into $2 and replace with pointers. $1 cannot be a directory.
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-trap 'error-die "${BASH_SOURCE} line ${LINENO}"' ERR
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 #set -x
 
 if ! [ -f "$1" ]; then

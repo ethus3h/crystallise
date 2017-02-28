@@ -6,6 +6,7 @@ source "$(which ember_bash_setup)" &> /dev/null
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 set -e
+set -x
 
 scacheReplace=""
 if [[ "$1" == "--replace" ]]; then

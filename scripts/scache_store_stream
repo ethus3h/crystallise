@@ -5,6 +5,9 @@ source "$(which ember_bash_setup)" &> /dev/null
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 set -e
+if [[ "$1" == "--verbose" ]]; then
+    set -x
+fi
 
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
 dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry

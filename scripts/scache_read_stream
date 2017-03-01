@@ -24,53 +24,59 @@ mkdir "$streamId"
 (
     cd "$streamId" || exit 1
     sponge "$streamId.xz"
-    # Figure out what type of pointer it is
-    pointerTypeSignature="$(head -c 36 "$streamId.xz")"
-    if [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then
-        # Standard remote pointer
-        tail -c +38 "$streamId.xz" | unxz --stdout - | tar -xf -
-        decrystallize-pointer ./*.crystal &> /dev/null
-        cp scache-*.tmp "$streamId.out"
-    elif [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
-        # LocalStore pointer
-        hashFull="$(tail -c +38 "$streamId.xz")"
-        hashA="${hashFull:0:1}"
-        hashB="${hashFull:1:1}"
-        hashC="${hashFull:2:1}"
-        unxz --stdout - < "$dbDir/LocalStore/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
-    elif [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] || [[ "$pointerTypeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]]; then
-        # Remote pack pointer
-        if [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]]; then
-            # Pack pointer data is in the pointer
+    numRetries=5
+    while [ numRetries -gt 0 ]; do
+        numRetries=$(( numRetries - 1 ))
+        # Figure out what type of pointer it is
+        pointerTypeSignature="$(head -c 36 "$streamId.xz")"
+        hashFull=""
+        if [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then
+            # Standard remote pointer
             tail -c +167 "$streamId.xz" | unxz --stdout - | tar -xf -
+            hashFull="$(tail -c +38 "$streamId.xz" | head -c 129)"
+            decrystallize-pointer ./*.crystal &> /dev/null
+            cp scache-*.tmp "$streamId.out"
+        elif [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
+            # LocalStore pointer
+            hashFull="$(tail -c +38 "$streamId.xz")"
+            hashA="${hashFull:0:1}"
+            hashB="${hashFull:1:1}"
+            hashC="${hashFull:2:1}"
+            unxz --stdout - < "$dbDir/LocalStore/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
+        elif [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] || [[ "$pointerTypeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]]; then
+            # Remote pack pointer
+            if [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]]; then
+                # Pack pointer data is in the pointer
+                tail -c +167 "$streamId.xz" | unxz --stdout - | tar -xf -
+            else
+                # Pack pointer name is in the pointer, so get the pack pointer data from the Packs directory
+                packName="$(tail -c +167 "$streamId.xz")"
+                unxz --stdout - < "$dbDir/Packs/$packName" | tar -xf -
+            fi
+            decrystallize-pointer ./*.crystal &> /dev/null
+            hashFull="$(tail -c +38 "$streamId.xz" | head -c 129)"
+            hashA="${hashFull:0:1}"
+            hashB="${hashFull:1:1}"
+            hashC="${hashFull:2:1}"
+            unxz --stdout - < "scache-"*".LocalStore/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
+        elif [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
+            # Hash pointer
+            if [[ "true" == "$disallowHashPointer" ]]; then
+                error-die "The provided pointer is a hash pointer!"
+            fi
+            hashFull="$(tail -c +38 "$streamId.xz")"
+            hashA="${hashFull:0:1}"
+            hashB="${hashFull:1:1}"
+            hashC="${hashFull:2:1}"
+            scache_read_stream < "$dbDir/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
         else
-            # Pack pointer name is in the pointer, so get the pack pointer data from the Packs directory
-            packName="$(tail -c +167 "$streamId.xz")"
-            unxz --stdout - < "$dbDir/Packs/$packName" | tar -xf -
+            error-die "Unknown pointer type signature! Either the file is corrupted, or this is a pointer version this version of scache_read_stream is familiar with, or this is not a pointer. Aborting."
         fi
-        decrystallize-pointer ./*.crystal &> /dev/null
-        hashFull="$(tail -c +38 "$streamId.xz" | head -c 129)"
-        hashA="${hashFull:0:1}"
-        hashB="${hashFull:1:1}"
-        hashC="${hashFull:2:1}"
-        unxz --stdout - < "scache-"*".LocalStore/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
-    elif [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
-        # Hash pointer
-        if [[ "true" == "$disallowHashPointer" ]]; then
-            error-die "The provided pointer is a hash pointer!"
+        retrievedHash="$(sha512sum < "$streamId.out" | awk '{print $1;}')"
+        if [[ "$retrievedHash" != "$hashFull" ]]; then
+            error-die "Checksum mismatch when retrieving the requested stream!"
         fi
-        hashFull="$(tail -c +38 "$streamId.xz")"
-        hashA="${hashFull:0:1}"
-        hashB="${hashFull:1:1}"
-        hashC="${hashFull:2:1}"
-        scache_read_stream < "$dbDir/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
-    else
-        error-die "Unknown pointer type signature! Either the file is corrupted, or this is a pointer version this version of scache_read_stream is familiar with, or this is not a pointer. Aborting."
-    fi
-    retrievedHash="$(sha512sum < "$streamId.out" | awk '{print $1;}')"
-    if [[ "$retrievedHash" != "$hashFull" ]]; then
-        error-die "Checksum mismatch when retrieving the requested stream!"
-    fi
+    done
     cat "$streamId.out"
 )
 finish

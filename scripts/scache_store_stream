@@ -33,7 +33,7 @@ dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
         localStoreFilePath="$localStoreDir/$hashFull"
     fi
     if [ -f "$dbFilePath" ]; then
-        # Check that the item can be restored
+        # Item already has been stored, so check that the existing pointer can be restored
         recoveredHash="$(scache_read_stream --disallow-hash-pointer < "$dbFilePath" | sha512sum | awk '{print $1;}')"
         if [[ "$recoveredHash" != "$hashFull" ]]; then
             if [[ "$1" == "--verbose" ]]; then
@@ -43,8 +43,7 @@ dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
             mkdir -p "$fsckDir"
             mv "$dbFilePath" "$fsckDir"
         fi
-    fi
-    if ! [ -f "$dbFilePath" ]; then
+    else
         # Item not available in cache, so add it (c39... is the LocalStore pointer type signature; a5e... is the remote type signature)
         pointerTypeSignature="c39f8657-384b-438b-a5a2-eece17147589"
         if [[ "$useLocalStore" != "true" ]]; then
@@ -57,10 +56,10 @@ dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
             pointerTypeSignature="a5e2f296-3085-49c0-8f48-24ea436b7a8b"
         fi
         echo "$pointerTypeSignature" > "$dbFilePath"
+        echo "$hashFull" >> "$dbFilePath"
         if [[ "$useLocalStore" != "true" ]]; then
             tar -c -P -S --format pax "$streamId.tmp.crystal" ".$streamId.tmp.crystal-data" "${logFiles[@]}" | xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - >> "$dbFilePath"
         else
-            echo "$hashFull" >> "$dbFilePath"
             xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout "$streamId.tmp" >> "$localStoreFilePath"
         fi
         # Upload a pack of the LocalStore items if there are enough, and update the pointers accordingly.
@@ -84,7 +83,7 @@ dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
         fi
         # Check that the data can be restored
         if [[ "$1" == "--verbose" ]]; then
-            scache_verify_entry 1000 "$dbFilePath" || error-die "Failed saving stream: stored stream could not be read!"
+            scache_verify_entry 100 "$dbFilePath" || error-die "Failed saving stream: stored stream could not be read!"
         else
             scache_verify_entry 5 "$dbFilePath" &> /dev/null || error-die "Failed saving stream: stored stream could not be read!"
         fi

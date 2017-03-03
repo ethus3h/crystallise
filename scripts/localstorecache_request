@@ -5,8 +5,9 @@ source "$(which ember_bash_setup)" &> /dev/null
 # Usage: localstorecache_request <cache directory> <crystal identifier>
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
+trap 'rm -r; error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 
+crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
 dbDir="$1"
 crystalIdentifier="$2"
 if [[ -z "$crystalIdentifier" ]]; then
@@ -53,8 +54,11 @@ if [ ! -h "$dbLinkPath" ] || [ ! -s "$(readlink "$dbLinkPath")" ]; then
     dbFilePath="$dbFileDir/$hashFull"
     mkdir -p "$dbFilePath"
     (
-        cd "$dbFilePath" || exit 1
+        tempDirectoryName="$crystalWorkdir/localstorecache-request-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+        mkdir -p "$tempDirectoryName"
+        cd "$tempDirectoryName" || exit 1
         decrystallize "$crystalIdentifier" &> /dev/null
+        mv ./* "$dbFilePath"
     )
     if [ -h "$dbLinkPath" ]; then
         rm "$dbLinkPath"

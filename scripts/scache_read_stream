@@ -16,7 +16,7 @@ if [[ "--disallow-hash-pointer" == "$1" ]]; then
     disallowHashPointer="true"
     shift
 fi
-crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
+crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
 streamId="biggify-stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 dbDir="/Ember Library/Futuramerlin Projects/Data/Stream Registry/"
 cd "$crystalWorkdir" || exit 1

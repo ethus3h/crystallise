@@ -11,26 +11,24 @@ fsckStatusFile="$3"
 numRetries="$1"
 shift
 knownHash="$(basename "$1")"
-#echo "Started verifying stream cache database entry $knownHash."
+echo "Started verifying stream cache database entry $knownHash."
 recoveredHash="$(scache_read_stream --disallow-hash-pointer < "$1" | sha512sum | awk '{print $1;}')"
 if [[ "$knownHash" == "$recoveredHash" ]]; then
     if [ -n "$fsckStatusFile" ]; then
         numberExpected="$(<"$fsckStatusFile")"
         numberProcessedFile="$fsckStatusFile.done"
-        incrementProcessedCounter() {
-            if ! [ -f "$numberProcessedFile" ]; then
-                numberProcessed="1"
-            else
-                numberProcessed="$(<"$numberProcessedFile")"
-                numberProcessed=$(( numberProcessed + 1 ))
-            fi
-            echo "$numberProcessed" > "$numberProcessedFile"
-            if [[ "$numberExpected" == "0" ]]; then
-                numberExpected="-1"
-            fi
-            numberProcessedPercentage="$(printf "%.3f\n" "$(bc -l <<< "($numberProcessed / $numberExpected)")")"
-            echo "Verified stream cache database entry $knownHash: finished #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
-        }
+        if ! [ -f "$numberProcessedFile" ]; then
+            numberProcessed="1"
+        else
+            numberProcessed="$(<"$numberProcessedFile")"
+            numberProcessed=$(( numberProcessed + 1 ))
+        fi
+        echo "$numberProcessed" > "$numberProcessedFile"
+        if [[ "$numberExpected" == "0" ]]; then
+            numberExpected="-1"
+        fi
+        numberProcessedPercentage="$(printf "%.3f\n" "$(bc -l <<< "($numberProcessed / $numberExpected)")")"
+        echo "Verified stream cache database entry $knownHash: finished #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
     else
         echo "Verified stream cache database entry $knownHash."
     fi

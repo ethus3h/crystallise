@@ -30,8 +30,9 @@ mkdir "$streamId"
 (
     cd "$streamId" || exit 1
     sponge "$streamId.xz"
-    numRetries=5
-    while [ "$numRetries" -gt 0 ]; do
+    numRetries=3
+    successfulRetrieval="0"
+    while [ "$numRetries" -gt 0 ] && [ "$successfulRetrieval" -eq 0 ]; do
         numRetries=$(( numRetries - 1 ))
         # Get the hash of the stream
         hashFull="$(tail -c +38 "$streamId.xz" | head -c 129)"
@@ -125,6 +126,8 @@ mkdir "$streamId"
             mkdir -p "$cacheDbDir/Failed Checksum"
             mv "$dbFilePath" "$cacheDbDir/Failed Checksum/$(basename "$dbFilePath")"
             error-die "Checksum mismatch when retrieving the requested stream!"
+        else
+            successfulRetrieval="1"
         fi
     done
     cat "$dbLinkPath"

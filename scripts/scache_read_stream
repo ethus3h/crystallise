@@ -53,12 +53,19 @@ mkdir "$streamId"
                 packName="$(tail -c +167 "$streamId.xz")"
                 unxz --stdout - < "$dbDir/Packs/$packName" | tar -xf -
             fi
-            decrystallize-pointer ./*.crystal &> /dev/null
+            if ! [ -e "$crystalWorkdir/.LocalStoreCache/" ]; then
+                fcache_init "$crystalWorkdir/.LocalStoreCache/" 5000000000
+            fi
+            crystalFilePattern="*.crystal"
+            crystalFilePatternMatches=( $crystalFilePattern )
+            localStoreCrystalName="${crystalFilePatternMatches[0]}"
+            localStoreCrystalIdentifier="$(<"$localStoreCrystalName"/identifier)"
+            localstoreLocation="$(localstorecache_request "$crystalWorkdir/.LocalStoreCache/" "$localStoreCrystalIdentifier")"
             hashFull="$(tail -c +38 "$streamId.xz" | head -c 129)"
             hashA="${hashFull:0:1}"
             hashB="${hashFull:1:1}"
             hashC="${hashFull:2:1}"
-            unxz --stdout - < "scache-"*".LocalStore/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
+            unxz --stdout - < "$localstoreLocation/scache-"*".LocalStore/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
         elif [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
             # Hash pointer
             if [[ "true" == "$disallowHashPointer" ]]; then

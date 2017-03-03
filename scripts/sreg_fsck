@@ -4,6 +4,11 @@ source "$(which ember_bash_setup)" &> /dev/null
 # Verify that all entries in the stream database can be read correctly
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+function finish() {
+  if [ -e "$crystalWorkdir/$fsckId" ]; then
+    rm -r "$crystalWorkdir/$fsckId"
+  fi
+}
 trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
@@ -13,3 +18,5 @@ fsckStatusFile="$crystalWorkdir/$fsckId/.sreg_fsck.status"
 dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
 echo "$(find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -printf '.' | wc -c)" > "$fsckStatusFile"
 find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -exec sreg_verify_entry 5 {} "$fsckStatusFile" \;
+finish
+trap finish EXIT

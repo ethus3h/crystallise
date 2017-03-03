@@ -6,4 +6,4 @@ source "$(which ember_bash_setup)" &> /dev/null
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 
-find "$1" -type f -exec scache_verify_hashpointer 5 {} \;
+find "$1" -type f -exec sreg_verify_hashpointer 5 {} \;

@@ -413,9 +413,9 @@ stash)
         echo "$@"
         fileToStash="$2"
         echo "Begun stashing $fileToStash."
-        scache_store_stream --verbose < "$fileToStash"
+        sreg_store_stream --verbose < "$fileToStash"
         gapath="$(git rev-parse --show-toplevel)"/.gitattributes
-        echo "$(git-escape-path "$(git-absolute-path "$fileToStash")") filter=scache" >> "$gapath"
+        echo "$(git-escape-path "$(git-absolute-path "$fileToStash")") filter=sreg" >> "$gapath"
         sort < "$gapath" | uniq | sponge "$gapath"
         echo "Done stashing $fileToStash."
         shift

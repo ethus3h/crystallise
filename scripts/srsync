@@ -12,7 +12,7 @@ if ! [ -d "$2" ]; then
     error-die "Destination is not a directory."
 fi
 #find "$1" -not -type f -exec rsync -lptgoDR --checksum "$1" "$2/" \;
-find "$1" -type f -exec scachei_copy_write {} "$2" \;
+find "$1" -type f -exec sregi_copy_write {} "$2" \;
 rsync -a --ignore-existing --no-i-r "$1" "$2/"
 find "$2/$(basename "$1")" -type d -empty -exec touch {}/.keep \;
-find "$2/$(basename "$1")" -type f -exec scachei_replace_conditional {} \;
+find "$2/$(basename "$1")" -type f -exec sregi_replace_conditional {} \;

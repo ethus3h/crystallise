@@ -12,7 +12,7 @@ numRetries="$1"
 shift
 knownHash="$(basename "$1")"
 echo "Started verifying stream cache database entry $knownHash."
-recoveredHash="$(scache_read_stream --disallow-hash-pointer < "$1" | sha512sum | awk '{print $1;}')"
+recoveredHash="$(sreg_read_stream --disallow-hash-pointer < "$1" | sha512sum | awk '{print $1;}')"
 if [[ "$knownHash" == "$recoveredHash" ]]; then
     if [ -n "$fsckStatusFile" ]; then
         numberExpected="$(<"$fsckStatusFile")"
@@ -48,9 +48,9 @@ if [[ "$knownHash" != "$recoveredHash" ]]; then
             warn "Error verifying stream cache database entry $knownHash! Waiting 30 seconds and retrying $numRetries more times."
         fi
         sleep 30
-        scache_verify_entry "$numRetries" "$1" || exit 1
+        sreg_verify_entry "$numRetries" "$1" || exit 1
         exit
     fi
 fi
-error-die "Internal error! This situation should never occur and almost certainly represents a bug in scache_verify_entry."
+error-die "Internal error! This situation should never occur and almost certainly represents a bug in sreg_verify_entry."
 exit 1

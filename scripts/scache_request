@@ -2,7 +2,7 @@
 source "$(which ember_bash_setup)" &> /dev/null
 
 # Get an item through the cache
-# Usage: fcache_request <cache directory> <URL>
+# Usage: scache_request <cache directory> (with stdin as the pointer to request)
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR

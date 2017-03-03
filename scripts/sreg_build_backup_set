@@ -8,6 +8,6 @@ trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' 
 dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
 backupDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Backups
 rsync -av --checksum --progress --no-i-r --ignore-existing "$dbDir"/ "$backupDir"
-find "$backupDir" -type f -exec scachei_verify_backup {} \;
+find "$backupDir" -type f -exec sregi_verify_backup {} \;
 rsync -av --checksum --progress --no-i-r --ignore-existing "$dbDir"/ "$backupDir"
-find "$backupDir" -type f -exec scachei_file_backup {} \;
+find "$backupDir" -type f -exec sregi_file_backup {} \;

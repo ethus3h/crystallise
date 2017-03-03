@@ -8,9 +8,9 @@ source "$(which ember_bash_setup)" &> /dev/null
 trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 #set -x
 
-scacheReplace=""
+sregReplace=""
 if [[ "$1" == "--replace" ]]; then
-    scacheReplace="true"
+    sregReplace="true"
     shift
 fi
 while [[ ! -z "$1" ]]; do
@@ -19,18 +19,18 @@ while [[ ! -z "$1" ]]; do
     fileToStash="$1"
     #echo "Begun storing $fileToStash."
     if [ -f "$fileToStash" ]; then
-        if [[ "$scacheReplace" == "true" ]]; then
-            scache_store_stream --verbose < "$fileToStash"
+        if [[ "$sregReplace" == "true" ]]; then
+            sreg_store_stream --verbose < "$fileToStash"
             sha512sum < "$fileToStash" | awk '{print "'760fa662-89cf-4ebd-9664-150b7637ddd4\\n'"$1;}' | sponge "$fileToStash"
         else
-            scache_store_stream --verbose < "$fileToStash"
+            sreg_store_stream --verbose < "$fileToStash"
         fi
     else
         if [ -d "$fileToStash" ]; then
-            if [[ "$scacheReplace" == "true" ]]; then
-                find "$fileToStash" -type f -exec scache_store_files --replace {} \;
+            if [[ "$sregReplace" == "true" ]]; then
+                find "$fileToStash" -type f -exec sreg_store_files --replace {} \;
             else
-                find "$fileToStash" -type f -exec scache_store_files {} \;
+                find "$fileToStash" -type f -exec sreg_store_files {} \;
             fi
         else
             warn "Skipping item $fileToStash: not a regular file or directory."

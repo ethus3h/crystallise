@@ -13,4 +13,4 @@ fi
 if [[ "$(head -c 36 "$1")" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
     exit 0
 fi
-scache_store_files --replace "$1"
+sreg_store_files --replace "$1"

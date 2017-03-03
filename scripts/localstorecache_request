@@ -54,7 +54,7 @@ if [ ! -h "$dbLinkPath" ] || [ ! -s "$(readlink "$dbLinkPath")" ]; then
     mkdir -p "$dbFilePath"
     (
         cd "$dbFilePath" || exit 1
-        decrystallize "$crystalIdentifier"
+        decrystallize "$crystalIdentifier" &> /dev/null
     )
     if [ -h "$dbLinkPath" ]; then
         rm "$dbLinkPath"

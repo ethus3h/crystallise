@@ -77,7 +77,7 @@ find "$dbDir" -type d -empty -delete
 # Remove the least-used items from the cache until it fits within the alloted disk space
 diskUsageLimit="$(<"$dbDir"/.fcache.limit)"
 while [ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]; do
-    rm "$dbDir"/Failed\ Checksum/*
+    rm -f "$dbDir"/Failed\ Checksum/*
     # Remove the least-used item from the cache
     leastUsedItemDirectory="$(find "$dbDir/ByCount" -maxdepth 1 -type d | sort -n | head -n 2 | tail -n 1)"
     largestLeastUsedItem="$(find "$leastUsedItemDirectory" -type f -printf "%s\t%p\n" | sort -n | tail -1 | awk '{print $2;}')"

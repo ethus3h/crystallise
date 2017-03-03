@@ -90,3 +90,6 @@ fi
 echo "$dbLinkPath"
 # Clean up empty directories
 find "$dbDir" -type d -empty -delete
+if [ -d "$tempDirectoryName" ]; then
+    rm -r "$tempDirectoryName"
+fi

@@ -1,0 +1,95 @@
+#!/bin/bash
+source "$(which ember_bash_setup)" &> /dev/null
+
+# Get an item through the cache
+# Usage: fcache_request <cache directory> <URL>
+
+[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
+
+dbDir="$1"
+requestUrl="$2"
+if [[ -z "$requestUrl" ]]; then
+    echo "Please specify a directory and a request URL."
+    exit 1
+fi
+hashFull="$(sha512sum <<< "$requestUrl" | awk '{print $1;}')"
+hashA="${hashFull:0:1}"
+hashB="${hashFull:1:1}"
+hashC="${hashFull:2:1}"
+hashSubdir="$hashA/$hashB/$hashC"
+hashDir="$dbDir/$hashSubdir"
+mkdir -p "$hashDir"
+dbLinkPath="$hashDir/$hashFull"
+checksumName="$dbLinkPath.checksum"
+if [ ! -h "$dbLinkPath" ] || [ ! -s "$(readlink "$dbLinkPath")" ]; then
+    # Item is not in the cache, so add it
+    if ! [ -f "$dbLinkPath" ]; then
+        # Never seen this item before, so set the requestCount
+        requestCount=1
+    else
+        requestCount="$(<"$dbLinkPath")"
+        rm "$dbLinkPath"
+    fi
+    dbFileDir="$dbDir/ByCount/$requestCount/$hashSubdir"
+    dbFilePath="$dbFileDir/$hashFull"
+    mkdir -p "$dbFileDir"
+    wget -qO - "$requestUrl" > "$dbFilePath"
+    sha512sum < "$dbFilePath" | awk '{print $1;}' > "$checksumName"
+    if [ -h "$dbLinkPath" ]; then
+        rm "$dbLinkPath"
+    fi
+    ln -s "$dbFilePath" "$dbLinkPath"
+else
+    # Item is in the cache.
+    dbFilePath="$(readlink -e "$dbLinkPath")"
+    dbFileOldPath="$dbFilePath"
+    dbFileDir="$(dirname "$dbFilePath")"
+    # First, make sure the link is good and fix it up if it's not.
+    if ! [ -e "$dbFilePath" ]; then
+        rm "$dbLinkPath"
+        find -type f -name "$hashFull" -exec ln -s {} "$dbLinkPath" \;
+    fi
+    # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
+    oldCount="$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")"
+    requestCount=$(( oldCount + 1 ))
+    # Increment the item's requestCount.
+    # First, get the names of where the file should go.
+    dbFileDir="$dbDir/ByCount/$requestCount/$hashSubdir"
+    dbFilePath="$dbFileDir/$hashFull"
+    mkdir -p "$dbFileDir"
+    mv "$dbFileOldPath" "$dbFilePath"
+    rm "$dbLinkPath"
+    ln -s "$dbFilePath" "$dbLinkPath"
+    # Check that the data were retrieved successfully
+    knownChecksum="$(<"$checksumName")"
+    itemChecksum="$(sha512sum < "$dbLinkPath" | awk '{print $1;}')"
+    if [[ "$itemChecksum" != "$knownChecksum" ]]; then
+        mkdir -p "$dbDir/Failed Checksum"
+        mv "$dbFilePath" "$dbDir/Failed Checksum/$(basename "$dbFilePath")"
+        error-die "File does not match what its checksum should be!"
+    fi
+fi
+# Return the data to the caller
+cat "$dbLinkPath"
+# Clean up empty directories
+find "$dbDir" -type d -empty -delete
+# Remove the least-used items from the cache until it fits within the alloted disk space
+diskUsageLimit="$(<"$dbDir"/.fcache.limit)"
+while [ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]; do
+    rm -f "$dbDir"/Failed\ Checksum/*
+    # Remove the least-used item from the cache
+    leastUsedItemDirectory="$(find "$dbDir/ByCount" -maxdepth 1 -type d | sort -n | head -n 2 | tail -n 1)"
+    largestLeastUsedItem="$(find "$leastUsedItemDirectory" -maxdepth 1 -type f -printf "%s\t%p\n" | sort -n | tail -1 | awk '{print $2;}')"
+    leastUsedItemCount="$(basename "$leastUsedItemDirectory")"
+    hashFull="$(basename "$largestLeastUsedItem")"
+    rm "$largestLeastUsedItem"
+    hashA="${hashFull:0:1}"
+    hashB="${hashFull:1:1}"
+    hashC="${hashFull:2:1}"
+    hashSubdir="$hashA/$hashB/$hashC"
+    hashDir="$dbDir/$hashSubdir"
+    dbLinkPath="$hashDir/$hashFull"
+    rm "$dbLinkPath"
+    echo "$leastUsedItemCount" > "$dbLinkPath"
+done

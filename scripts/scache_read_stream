@@ -25,7 +25,7 @@ mkdir "$streamId"
     cd "$streamId" || exit 1
     sponge "$streamId.xz"
     numRetries=5
-    while [ numRetries -gt 0 ]; do
+    while [ "$numRetries" -gt 0 ]; do
         numRetries=$(( numRetries - 1 ))
         # Figure out what type of pointer it is
         pointerTypeSignature="$(head -c 36 "$streamId.xz")"

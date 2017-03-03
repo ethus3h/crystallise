@@ -20,10 +20,10 @@ streamId="biggify-stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z
 dbDir="/Ember Library/Futuramerlin Projects/Data/Stream Registry/"
 cd "$crystalWorkdir" || exit 1
 # Set up cache directory
-dbDir="$crystalWorkdir/.StreamCache/"
-if ! [ -e "$dbDir" ]; then
-    mkdir -p "$dbDir"
-    echo "5000000000" > "$dbDir/.fcache.limit"
+cacheDbDir="$crystalWorkdir/.StreamCache/"
+if ! [ -e "$cacheDbDir" ]; then
+    mkdir -p "$cacheDbDir"
+    echo "5000000000" > "$cacheDbDir/.scache.limit"
 fi
 # Get stream
 mkdir "$streamId"
@@ -40,7 +40,7 @@ mkdir "$streamId"
         hashC="${hashFull:2:1}"
         # Set up this item's cache directory
         hashSubdir="$hashA/$hashB/$hashC"
-        hashDir="$dbDir/$hashSubdir"
+        hashDir="$cacheDbDir/$hashSubdir"
         mkdir -p "$hashDir"
         dbLinkPath="$hashDir/$hashFull"
         if [ ! -h "$dbLinkPath" ] || [ ! -s "$(readlink "$dbLinkPath")" ]; then
@@ -52,7 +52,7 @@ mkdir "$streamId"
                 requestCount="$(<"$dbLinkPath")"
                 rm "$dbLinkPath"
             fi
-            dbFileDir="$dbDir/ByCount/$requestCount/$hashSubdir"
+            dbFileDir="$cacheDbDir/ByCount/$requestCount/$hashSubdir"
             dbFilePath="$dbFileDir/$hashFull"
             mkdir -p "$dbFileDir"
             # Figure out what type of pointer it is
@@ -106,14 +106,14 @@ mkdir "$streamId"
             # First, make sure the link is good and fix it up if it's not.
             if ! [ -e "$dbFilePath" ]; then
                 rm "$dbLinkPath"
-                find "$dbDir/ByCount" -maxdepth 2 -type f -name "$hashFull" -exec ln -s {} "$dbLinkPath" \;
+                find "$cacheDbDir/ByCount" -maxdepth 2 -type f -name "$hashFull" -exec ln -s {} "$dbLinkPath" \;
             fi
             # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
             oldCount="$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")"
             requestCount=$(( oldCount + 1 ))
             # Increment the item's requestCount.
             # First, get the names of where the file should go.
-            dbFileDir="$dbDir/ByCount/$requestCount/$hashSubdir"
+            dbFileDir="$cacheDbDir/ByCount/$requestCount/$hashSubdir"
             dbFilePath="$dbFileDir/$hashFull"
             mkdir -p "$dbFileDir"
             mv "$dbFileOldPath" "$dbFilePath"
@@ -127,13 +127,13 @@ mkdir "$streamId"
     done
     cat "$dbLinkPath"
     # Clean up empty directories
-    find "$dbDir" -type d -empty -delete
+    find "$cacheDbDir" -type d -empty -delete
     # Remove the least-used items from the cache until it fits within the alloted disk space
-    diskUsageLimit="$(<"$dbDir"/.fcache.limit)"
-    while [ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]; do
-        rm -f "$dbDir"/Failed\ Checksum/*
+    diskUsageLimit="$(<"$cacheDbDir"/.scache.limit)"
+    while [ "$(du -sb "$cacheDbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]; do
+        rm -f "$cacheDbDir"/Failed\ Checksum/*
         # Remove the least-used item from the cache
-        leastUsedItemDirectory="$(find "$dbDir/ByCount" -maxdepth 1 -type d | sort -n | head -n 2 | tail -n 1)"
+        leastUsedItemDirectory="$(find "$cacheDbDir/ByCount" -maxdepth 1 -type d | sort -n | head -n 2 | tail -n 1)"
         largestLeastUsedItem="$(find "$leastUsedItemDirectory" -maxdepth 1 -type f -printf "%s\t%p\n" | sort -n | tail -1 | awk '{print $2;}')"
         leastUsedItemCount="$(basename "$leastUsedItemDirectory")"
         hashFull="$(basename "$largestLeastUsedItem")"
@@ -142,7 +142,7 @@ mkdir "$streamId"
         hashB="${hashFull:1:1}"
         hashC="${hashFull:2:1}"
         hashSubdir="$hashA/$hashB/$hashC"
-        hashDir="$dbDir/$hashSubdir"
+        hashDir="$cacheDbDir/$hashSubdir"
         dbLinkPath="$hashDir/$hashFull"
         rm "$dbLinkPath"
         echo "$leastUsedItemCount" > "$dbLinkPath"

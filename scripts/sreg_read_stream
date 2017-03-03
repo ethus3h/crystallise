@@ -91,7 +91,7 @@ mkdir "$streamId"
                 fi
                 sreg_read_stream < "$dbDir/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
             else
-                error-die "Unknown pointer type signature! Either the file is corrupted, or this is a pointer version this version of sreg_read_stream is familiar with, or this is not a pointer. Aborting."
+                error-die "Unknown pointer type signature! Either the file is corrupted, or this is a pointer version this version of sreg_read_stream is not familiar with, or this is not a pointer. Aborting."
             fi
             mv "$streamId.out" "$dbFilePath"
             if [ -h "$dbLinkPath" ]; then
@@ -122,6 +122,8 @@ mkdir "$streamId"
         fi
         retrievedHash="$(sha512sum < "$dbLinkPath" | awk '{print $1;}')"
         if [[ "$retrievedHash" != "$hashFull" ]]; then
+            mkdir -p "$cacheDbDir/Failed Checksum"
+            mv "$dbFilePath" "$cacheDbDir/Failed Checksum/$(basename "$dbFilePath")"
             error-die "Checksum mismatch when retrieving the requested stream!"
         fi
     done

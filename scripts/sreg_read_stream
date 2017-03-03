@@ -4,10 +4,83 @@ source "$(which ember_bash_setup)" &> /dev/null
 # Accepts a pointer on stdin, and outputs the corresponding data from the stream cache.
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-trap 'error-notify "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
+function finish() {
+    if [ -e "$streamId" ]; then
+        rm -r "$streamId"
+    fi
+}
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."; finish; exit 1' ERR
 
-crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
-if ! [ -e "$crystalWorkdir/.StreamCache/" ]; then
-  scache_init "$crystalWorkdir/.StreamCache/" 5000000000
+if [[ "--disallow-hash-pointer" == "$1" ]]; then
+    disallowHashPointer="true"
+    shift
 fi
-scache_request < /dev/stdin
+crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
+streamId="biggify-stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+dbDir="/Ember Library/Futuramerlin Projects/Data/Stream Registry/"
+cd "$crystalWorkdir" || exit 1
+# Set up cache directory
+if ! [ -e "$crystalWorkdir/.StreamCache/" ]; then
+    mkdir -p "$crystalWorkdir/.StreamCache/"
+    echo "5000000000" > "$crystalWorkdir/.StreamCache/.fcache.limit"
+fi
+# Get stream
+mkdir "$streamId"
+(
+    cd "$streamId" || exit 1
+    sponge "$streamId.xz"
+    numRetries=5
+    while [ "$numRetries" -gt 0 ]; do
+        numRetries=$(( numRetries - 1 ))
+        # Get the hash of the stream
+        hashFull="$(tail -c +38 "$streamId.xz" | head -c 129)"
+        hashA="${hashFull:0:1}"
+        hashB="${hashFull:1:1}"
+        hashC="${hashFull:2:1}"
+        # Figure out what type of pointer it is
+        pointerTypeSignature="$(head -c 36 "$streamId.xz")"
+        if [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then
+            # Standard remote pointer
+            tail -c +167 "$streamId.xz" | unxz --stdout - | tar -xf -
+            decrystallize-pointer ./*.crystal &> /dev/null
+            cp scache-*.tmp "$streamId.out"
+        elif [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
+            # LocalStore pointer
+            unxz --stdout - < "$dbDir/LocalStore/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
+        elif [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] || [[ "$pointerTypeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]]; then
+            # Remote pack pointer
+            if [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]]; then
+                # Pack pointer data is in the pointer
+                tail -c +167 "$streamId.xz" | unxz --stdout - | tar -xf -
+            else
+                # Pack pointer name is in the pointer, so get the pack pointer data from the Packs directory
+                packName="$(tail -c +167 "$streamId.xz")"
+                unxz --stdout - < "$dbDir/Packs/$packName" | tar -xf -
+            fi
+            if ! [ -e "$crystalWorkdir/.LocalStoreCache/" ]; then
+              localstorecache_init "$crystalWorkdir/.LocalStoreCache/" 5000000000
+            fi
+            crystalFilePattern=".*.crystal-data"
+            crystalFilePatternMatches=( $crystalFilePattern )
+            localStoreCrystalName="${crystalFilePatternMatches[0]}"
+            localStoreCrystalIdentifier="$(<"$localStoreCrystalName"/identifier)"
+            localstoreLocation="$(localstorecache_request "$crystalWorkdir/.LocalStoreCache/" "$localStoreCrystalIdentifier")"
+            unxz --stdout - < "$localstoreLocation/scache-"*".LocalStore/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
+        elif [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
+            # Hash pointer
+            if [[ "true" == "$disallowHashPointer" ]]; then
+                error-die "The provided pointer is a hash pointer!"
+            fi
+            sreg_read_stream < "$dbDir/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
+        else
+            error-die "Unknown pointer type signature! Either the file is corrupted, or this is a pointer version this version of sreg_read_stream is familiar with, or this is not a pointer. Aborting."
+        fi
+        retrievedHash="$(sha512sum < "$streamId.out" | awk '{print $1;}')"
+        if [[ "$retrievedHash" != "$hashFull" ]]; then
+            error-die "Checksum mismatch when retrieving the requested stream!"
+        fi
+    done
+    cat "$streamId.out"
+)
+finish
+trap finish EXIT

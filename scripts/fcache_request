@@ -80,7 +80,7 @@ while [ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]; do
     rm -f "$dbDir"/Failed\ Checksum/*
     # Remove the least-used item from the cache
     leastUsedItemDirectory="$(find "$dbDir/ByCount" -maxdepth 1 -type d | sort -n | head -n 2 | tail -n 1)"
-    largestLeastUsedItem="$(find "$leastUsedItemDirectory" -type f -printf "%s\t%p\n" | sort -n | tail -1 | awk '{print $2;}')"
+    largestLeastUsedItem="$(find "$leastUsedItemDirectory" -maxdepth 1 -type f -printf "%s\t%p\n" | sort -n | tail -1 | awk '{print $2;}')"
     leastUsedItemCount="$(basename "$leastUsedItemDirectory")"
     hashFull="$(basename "$largestLeastUsedItem")"
     rm "$largestLeastUsedItem"

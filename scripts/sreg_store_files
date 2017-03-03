@@ -1,7 +1,7 @@
 #!/bin/bash
 source "$(which ember_bash_setup)" &> /dev/null
 
-# Enroll the specified file(s) in the stream cache database
+# Enroll the specified file(s) in the stream registry database
 # Be VERY careful with the --replace option: it does not warn before acting!
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"

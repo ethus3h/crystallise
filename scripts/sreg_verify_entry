@@ -11,7 +11,7 @@ fsckStatusFile="$3"
 numRetries="$1"
 shift
 knownHash="$(basename "$1")"
-echo "Started verifying stream cache database entry $knownHash."
+echo "Started verifying stream registry database entry $knownHash."
 recoveredHash="$(sreg_read_stream --disallow-hash-pointer < "$1" | sha512sum | awk '{print $1;}')"
 if [[ "$knownHash" == "$recoveredHash" ]]; then
     if [ -n "$fsckStatusFile" ]; then
@@ -28,9 +28,9 @@ if [[ "$knownHash" == "$recoveredHash" ]]; then
             numberExpected="-1"
         fi
         numberProcessedPercentage="$(printf "%.3f\n" "$(bc -l <<< "($numberProcessed / $numberExpected)")")"
-        echo "Verified stream cache database entry $knownHash: finished #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
+        echo "Verified stream registry database entry $knownHash: finished #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
     else
-        echo "Verified stream cache database entry $knownHash."
+        echo "Verified stream registry database entry $knownHash."
     fi
     exit
 fi
@@ -39,13 +39,13 @@ if [[ "$knownHash" != "$recoveredHash" ]]; then
         dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
         mkdir -p "$dbDir"
         mv "$1" "$dbDir/"
-        error-die "Error verifying stream cache database entry $knownHash! No retries left; giving up and marking entry as corrupted."
+        error-die "Error verifying stream registry database entry $knownHash! No retries left; giving up and marking entry as corrupted."
     else
         numRetries=$(( numRetries - 1 ))
         if [[ "$recoveredHash" == "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e" ]]; then
             echo "(Stored item is not ready yet, or nothing came back. Sleeping 30 seconds and retrying $numRetries more times.)"
         else
-            warn "Error verifying stream cache database entry $knownHash! Waiting 30 seconds and retrying $numRetries more times."
+            warn "Error verifying stream registry database entry $knownHash! Waiting 30 seconds and retrying $numRetries more times."
         fi
         sleep 30
         sreg_verify_entry "$numRetries" "$1" || exit 1

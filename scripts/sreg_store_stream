@@ -1,7 +1,7 @@
 #!/bin/bash
 source "$(which ember_bash_setup)" &> /dev/null
 
-# Stores data provided on stdin into the stream cache, and sends a pointer to it to stdout.
+# Stores data provided on stdin into the stream registry, and sends a pointer to it to stdout.
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR

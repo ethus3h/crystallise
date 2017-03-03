@@ -72,7 +72,7 @@ else
     # First, make sure the link is good and fix it up if it's not.
     if ! [ -e "$dbFilePath" ]; then
         rm "$dbLinkPath"
-        find . -type d -name "$hashFull" -exec ln -s {} "$dbLinkPath" \;
+        find "$dbDir/ByCount" -maxdepth 2 -type d -name "$hashFull" -exec ln -s {} "$dbLinkPath" \;
     fi
     # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
     oldCount="$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")"

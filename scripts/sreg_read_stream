@@ -20,9 +20,10 @@ streamId="biggify-stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z
 dbDir="/Ember Library/Futuramerlin Projects/Data/Stream Registry/"
 cd "$crystalWorkdir" || exit 1
 # Set up cache directory
-if ! [ -e "$crystalWorkdir/.StreamCache/" ]; then
-    mkdir -p "$crystalWorkdir/.StreamCache/"
-    echo "5000000000" > "$crystalWorkdir/.StreamCache/.fcache.limit"
+dbDir="$crystalWorkdir/.StreamCache/"
+if ! [ -e "$dbDir" ]; then
+    mkdir -p "$dbDir"
+    echo "5000000000" > "$dbDir/.fcache.limit"
 fi
 # Get stream
 mkdir "$streamId"
@@ -37,50 +38,115 @@ mkdir "$streamId"
         hashA="${hashFull:0:1}"
         hashB="${hashFull:1:1}"
         hashC="${hashFull:2:1}"
-        # Figure out what type of pointer it is
-        pointerTypeSignature="$(head -c 36 "$streamId.xz")"
-        if [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then
-            # Standard remote pointer
-            tail -c +167 "$streamId.xz" | unxz --stdout - | tar -xf -
-            decrystallize-pointer ./*.crystal &> /dev/null
-            cp scache-*.tmp "$streamId.out"
-        elif [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
-            # LocalStore pointer
-            unxz --stdout - < "$dbDir/LocalStore/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
-        elif [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] || [[ "$pointerTypeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]]; then
-            # Remote pack pointer
-            if [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]]; then
-                # Pack pointer data is in the pointer
-                tail -c +167 "$streamId.xz" | unxz --stdout - | tar -xf -
+        # Set up this item's cache directory
+        hashSubdir="$hashA/$hashB/$hashC"
+        hashDir="$dbDir/$hashSubdir"
+        mkdir -p "$hashDir"
+        dbLinkPath="$hashDir/$hashFull"
+        if [ ! -h "$dbLinkPath" ] || [ ! -s "$(readlink "$dbLinkPath")" ]; then
+            # Item is not in the cache, so add it
+            if ! [ -f "$dbLinkPath" ]; then
+                # Never seen this item before, so set the requestCount
+                requestCount=1
             else
-                # Pack pointer name is in the pointer, so get the pack pointer data from the Packs directory
-                packName="$(tail -c +167 "$streamId.xz")"
-                unxz --stdout - < "$dbDir/Packs/$packName" | tar -xf -
+                requestCount="$(<"$dbLinkPath")"
+                rm "$dbLinkPath"
             fi
-            if ! [ -e "$crystalWorkdir/.LocalStoreCache/" ]; then
-              localstorecache_init "$crystalWorkdir/.LocalStoreCache/" 5000000000
+            dbFileDir="$dbDir/ByCount/$requestCount/$hashSubdir"
+            dbFilePath="$dbFileDir/$hashFull"
+            mkdir -p "$dbFileDir"
+            # Figure out what type of pointer it is
+            pointerTypeSignature="$(head -c 36 "$streamId.xz")"
+            if [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then
+                # Standard remote pointer
+                tail -c +167 "$streamId.xz" | unxz --stdout - | tar -xf -
+                decrystallize-pointer ./*.crystal &> /dev/null
+                cp scache-*.tmp "$streamId.out"
+            elif [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
+                # LocalStore pointer
+                unxz --stdout - < "$dbDir/LocalStore/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
+            elif [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] || [[ "$pointerTypeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]]; then
+                # Remote pack pointer
+                if [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]]; then
+                    # Pack pointer data is in the pointer
+                    tail -c +167 "$streamId.xz" | unxz --stdout - | tar -xf -
+                else
+                    # Pack pointer name is in the pointer, so get the pack pointer data from the Packs directory
+                    packName="$(tail -c +167 "$streamId.xz")"
+                    unxz --stdout - < "$dbDir/Packs/$packName" | tar -xf -
+                fi
+                if ! [ -e "$crystalWorkdir/.LocalStoreCache/" ]; then
+                  localstorecache_init "$crystalWorkdir/.LocalStoreCache/" 5000000000
+                fi
+                crystalFilePattern=".*.crystal-data"
+                crystalFilePatternMatches=( $crystalFilePattern )
+                localStoreCrystalName="${crystalFilePatternMatches[0]}"
+                localStoreCrystalIdentifier="$(<"$localStoreCrystalName"/identifier)"
+                localstoreLocation="$(localstorecache_request "$crystalWorkdir/.LocalStoreCache/" "$localStoreCrystalIdentifier")"
+                unxz --stdout - < "$localstoreLocation/scache-"*".LocalStore/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
+            elif [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
+                # Hash pointer
+                if [[ "true" == "$disallowHashPointer" ]]; then
+                    error-die "The provided pointer is a hash pointer!"
+                fi
+                sreg_read_stream < "$dbDir/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
+            else
+                error-die "Unknown pointer type signature! Either the file is corrupted, or this is a pointer version this version of sreg_read_stream is familiar with, or this is not a pointer. Aborting."
             fi
-            crystalFilePattern=".*.crystal-data"
-            crystalFilePatternMatches=( $crystalFilePattern )
-            localStoreCrystalName="${crystalFilePatternMatches[0]}"
-            localStoreCrystalIdentifier="$(<"$localStoreCrystalName"/identifier)"
-            localstoreLocation="$(localstorecache_request "$crystalWorkdir/.LocalStoreCache/" "$localStoreCrystalIdentifier")"
-            unxz --stdout - < "$localstoreLocation/scache-"*".LocalStore/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
-        elif [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
-            # Hash pointer
-            if [[ "true" == "$disallowHashPointer" ]]; then
-                error-die "The provided pointer is a hash pointer!"
+            mv "$streamId.out" "$dbFilePath"
+            if [ -h "$dbLinkPath" ]; then
+                rm "$dbLinkPath"
             fi
-            sreg_read_stream < "$dbDir/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
+            ln -s "$dbFilePath" "$dbLinkPath"
         else
-            error-die "Unknown pointer type signature! Either the file is corrupted, or this is a pointer version this version of sreg_read_stream is familiar with, or this is not a pointer. Aborting."
+            # Item is in the cache.
+            dbFilePath="$(readlink -e "$dbLinkPath")"
+            dbFileOldPath="$dbFilePath"
+            dbFileDir="$(dirname "$dbFilePath")"
+            # First, make sure the link is good and fix it up if it's not.
+            if ! [ -e "$dbFilePath" ]; then
+                rm "$dbLinkPath"
+                find "$dbDir/ByCount" -maxdepth 2 -type f -name "$hashFull" -exec ln -s {} "$dbLinkPath" \;
+            fi
+            # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
+            oldCount="$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")"
+            requestCount=$(( oldCount + 1 ))
+            # Increment the item's requestCount.
+            # First, get the names of where the file should go.
+            dbFileDir="$dbDir/ByCount/$requestCount/$hashSubdir"
+            dbFilePath="$dbFileDir/$hashFull"
+            mkdir -p "$dbFileDir"
+            mv "$dbFileOldPath" "$dbFilePath"
+            rm "$dbLinkPath"
+            ln -s "$dbFilePath" "$dbLinkPath"
         fi
-        retrievedHash="$(sha512sum < "$streamId.out" | awk '{print $1;}')"
+        retrievedHash="$(sha512sum < "$dbLinkPath" | awk '{print $1;}')"
         if [[ "$retrievedHash" != "$hashFull" ]]; then
             error-die "Checksum mismatch when retrieving the requested stream!"
         fi
     done
-    cat "$streamId.out"
+    cat "$dbLinkPath"
+    # Clean up empty directories
+    find "$dbDir" -type d -empty -delete
+    # Remove the least-used items from the cache until it fits within the alloted disk space
+    diskUsageLimit="$(<"$dbDir"/.fcache.limit)"
+    while [ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]; do
+        rm -f "$dbDir"/Failed\ Checksum/*
+        # Remove the least-used item from the cache
+        leastUsedItemDirectory="$(find "$dbDir/ByCount" -maxdepth 1 -type d | sort -n | head -n 2 | tail -n 1)"
+        largestLeastUsedItem="$(find "$leastUsedItemDirectory" -maxdepth 1 -type f -printf "%s\t%p\n" | sort -n | tail -1 | awk '{print $2;}')"
+        leastUsedItemCount="$(basename "$leastUsedItemDirectory")"
+        hashFull="$(basename "$largestLeastUsedItem")"
+        rm "$largestLeastUsedItem"
+        hashA="${hashFull:0:1}"
+        hashB="${hashFull:1:1}"
+        hashC="${hashFull:2:1}"
+        hashSubdir="$hashA/$hashB/$hashC"
+        hashDir="$dbDir/$hashSubdir"
+        dbLinkPath="$hashDir/$hashFull"
+        rm "$dbLinkPath"
+        echo "$leastUsedItemCount" > "$dbLinkPath"
+    done
 )
 finish
 trap finish EXIT

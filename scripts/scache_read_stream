@@ -56,7 +56,7 @@ mkdir "$streamId"
             if ! [ -e "$crystalWorkdir/.LocalStoreCache/" ]; then
                 fcache_init "$crystalWorkdir/.LocalStoreCache/" 5000000000
             fi
-            crystalFilePattern="*.crystal"
+            crystalFilePattern=".*.crystal-data"
             crystalFilePatternMatches=( $crystalFilePattern )
             localStoreCrystalName="${crystalFilePatternMatches[0]}"
             localStoreCrystalIdentifier="$(<"$localStoreCrystalName"/identifier)"

@@ -13,7 +13,7 @@ knownHash="$(basename "$1")"
 #echo "Started verifying stream cache database entry $knownHash."
 recoveredHash="$(scache_read_stream --disallow-hash-pointer < "$1" | sha512sum | awk '{print $1;}')"
 if [[ "$knownHash" == "$recoveredHash" ]]; then
-    #echo "Verified stream cache database entry $knownHash."
+    echo "Verified stream cache database entry $knownHash."
     exit
 fi
 if [[ "$knownHash" != "$recoveredHash" ]]; then

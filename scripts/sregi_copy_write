@@ -26,7 +26,7 @@ if [ -n "$fsckStatusFile" ]; then
         numberExpected="-1"
     fi
     numberProcessedPercentage="$(printf "%.3f\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
-    echo "Started working on copying item $1: it is number $numberProcessed of $numberExpected ($numberProcessedPercentage%)"
+    echo "Copying item $1: #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
 fi
 destinationName="$2/$1"
 if [ -f "$destinationName" ]; then

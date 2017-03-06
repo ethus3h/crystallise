@@ -32,8 +32,13 @@ mkdir "$streamId"
     cd "$streamId" || exit 1
     sponge "$streamId.xz"
     numRetries=4
+    numTotalRetries=4
     successfulRetrieval="0"
+    trap 'warn "A nonfatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
     while [ "$numRetries" -gt 0 ] && [ "$successfulRetrieval" -eq 0 ]; do
+        if [ "$numRetries" -lt "$numTotalRetries" ]; then
+            echo "Beginning retry of reading stream. $numRetries retries remaining."
+        fi
         numRetries=$(( numRetries - 1 ))
         # Get the hash of the stream
         hashFull="$(tail -c +38 "$streamId.xz" | head -c 129)"
@@ -126,11 +131,15 @@ mkdir "$streamId"
         if [[ "$retrievedHash" != "$hashFull" ]]; then
             mkdir -p "$cacheDbDir/Failed Checksum"
             mv "$dbFilePath" "$cacheDbDir/Failed Checksum/$(basename "$dbFilePath")"
-            error-die "Checksum mismatch when retrieving the requested stream!"
+            warn "Checksum mismatch when retrieving the requested stream!"
         else
             successfulRetrieval="1"
         fi
     done
+    trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
+    if [[ "$successfulRetrieval" != "1" ]]; then
+        error-die "Failed retrieving stream, and no retries left!"
+    fi
     cat "$dbLinkPath"
     # Clean up empty directories
     find "$cacheDbDir" -type d -empty -delete

@@ -35,7 +35,7 @@ if [[ "$knownHash" == "$recoveredHash" ]]; then
     exit
 fi
 if [[ "$knownHash" != "$recoveredHash" ]]; then
-    if [[ "$numRetries" == "0" ]]; then
+    if [[ "$numRetries" -lt "0" ]]; then
         dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
         mkdir -p "$dbDir"
         mv "$1" "$dbDir/"

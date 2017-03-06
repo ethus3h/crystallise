@@ -15,11 +15,12 @@ destinationName="$2/$1"
 if [ -f "$destinationName" ]; then
     pointerTypeSignature="$(head -c 36 "$destinationName")"
     destinationChecksum=""
+    hasEncounteredError="0"
     if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
-        trap 'warn "A nonfatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
+        trap 'warn "A nonfatal error was reported on ${BASH_SOURCE} line ${LINENO}.; hasEncounteredError="1"' ERR
         destinationChecksum="$(sreg_read_stream < "$destinationName" | sha512sum | awk '{print $1;}')"
         sourceChecksum="$(sha512sum < "$1" | awk '{print $1;}')"
-        if [[ "$destinationChecksum" == "$sourceChecksum" ]]; then
+        if [[ "$destinationChecksum" == "$sourceChecksum" ]] && [[ "$hasEncounteredError" == "0" ]]; then
             # The file is already present, pointerized, and readable, so exit without doing anything.
             echo "(Nothing done for $1.)"
             exit 0

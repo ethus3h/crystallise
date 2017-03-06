@@ -11,28 +11,32 @@ if ! [ -f "$1" ]; then
     error-notify "Item must be a regular file."
     exit 1
 fi
-if [ -f "$2/$1" ]; then
-    pointerTypeSignature="$(head -c 36 "$2/$1")"
+destinationName="$2/$1"
+if [ -f "$destinationName" ]; then
+    pointerTypeSignature="$(head -c 36 "$destinationName")"
     destinationChecksum=""
     if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
-        destinationChecksum="$(sreg_read_stream < "$2/$1" | sha512sum | awk '{print $1;}')"
+        trap 'warn "A nonfatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
+        destinationChecksum="$(sreg_read_stream < "$destinationName" | sha512sum | awk '{print $1;}')"
         sourceChecksum="$(sha512sum < "$1" | awk '{print $1;}')"
         if [[ "$destinationChecksum" == "$sourceChecksum" ]]; then
-            # The file is already present and pointerized, so exit without doing anything.
+            # The file is already present, pointerized, and readable, so exit without doing anything.
             echo "(Nothing done for $1.)"
             exit 0
+        else
+            warn "(Destination pointer $destinationName could not be read; removing and recreating.)"
+            rm "$destinationName"
         fi
     fi
 fi
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
 streamId="sreg-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 crystalSubdir="$crystalWorkdir/$streamId"
 targetDirName="$(dirname "$1")"
 mkdir -p "$crystalSubdir/$targetDirName"
 rsync -a --checksum --no-i-r "$1" "$crystalSubdir/$targetDirName/"
-rsync -a --checksum --no-i-r "$1" "$crystalSubdir/$targetDirName/"
 sreg_store_files --replace "$crystalSubdir/$1"
 mkdir -p "$2/$targetDirName"
-rsync -a --checksum --no-i-r "$crystalSubdir/$1" "$2/$targetDirName/"
 rsync -a --checksum --no-i-r "$crystalSubdir/$1" "$2/$targetDirName/"
 rm -r "$crystalSubdir"

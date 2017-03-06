@@ -17,7 +17,7 @@ if [ -f "$destinationName" ]; then
     destinationChecksum=""
     hasEncounteredError="0"
     if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
-        trap 'warn "A nonfatal error was reported on ${BASH_SOURCE} line ${LINENO}.; hasEncounteredError="1"' ERR
+        trap 'warn "A nonfatal error was reported on ${BASH_SOURCE} line ${LINENO}."; hasEncounteredError="1"' ERR
         destinationChecksum="$(sreg_read_stream < "$destinationName" | sha512sum | awk '{print $1;}')"
         sourceChecksum="$(sha512sum < "$1" | awk '{print $1;}')"
         if [[ "$destinationChecksum" == "$sourceChecksum" ]] && [[ "$hasEncounteredError" == "0" ]]; then

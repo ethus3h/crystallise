@@ -30,7 +30,7 @@ mkdir "$streamId"
 (
     cd "$streamId" || exit 1
     sponge "$streamId.xz"
-    numRetries=3
+    numRetries=4
     successfulRetrieval="0"
     while [ "$numRetries" -gt 0 ] && [ "$successfulRetrieval" -eq 0 ]; do
         numRetries=$(( numRetries - 1 ))

@@ -11,6 +11,23 @@ if ! [ -f "$1" ]; then
     error-notify "Item must be a regular file."
     exit 1
 fi
+fsckStatusFile="$3"
+if [ -n "$fsckStatusFile" ]; then
+    numberExpected="$(<"$fsckStatusFile")"
+    numberProcessedFile="$fsckStatusFile.done"
+    if ! [ -f "$numberProcessedFile" ]; then
+        numberProcessed="1"
+    else
+        numberProcessed="$(<"$numberProcessedFile")"
+        numberProcessed=$(( numberProcessed + 1 ))
+    fi
+    echo "$numberProcessed" > "$numberProcessedFile"
+    if [[ "$numberExpected" == "0" ]]; then
+        numberExpected="-1"
+    fi
+    numberProcessedPercentage="$(printf "%.3f\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
+    echo "Started working on copying item $1: it is number $numberProcessed of $numberExpected ($numberProcessedPercentage%)"
+fi
 destinationName="$2/$1"
 if [ -f "$destinationName" ]; then
     pointerTypeSignature="$(head -c 36 "$destinationName")"

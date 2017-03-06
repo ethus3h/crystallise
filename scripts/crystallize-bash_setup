@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -o pipefail
+
 error-die() {
     source error-notify "$@"
     exit 1

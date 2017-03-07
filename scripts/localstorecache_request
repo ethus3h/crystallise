@@ -22,6 +22,10 @@ hashSubdir="$hashA/$hashB/$hashC"
 hashDir="$dbDir/$hashSubdir"
 mkdir -p "$hashDir"
 dbLinkPath="$hashDir/$hashFull"
+
+# Clean up if there's an error to avoid leaving a broken cache entry
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."; rm -rf "$dbLinkPath" "$(readlink -e "$dbLinkPath")"' ERR
+
 # Remove the least-used items from the cache until it fits within the alloted disk space
 diskUsageLimit="$(<"$dbDir"/.fcache.limit)"
 while [ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]; do
@@ -44,6 +48,9 @@ while [ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]; do
 done
 if [ ! -h "$dbLinkPath" ] || [ ! -s "$(readlink "$dbLinkPath")" ]; then
     # Item is not in the cache, so add it
+
+    # Make sure there isn't a dangling LocalStore content folder with no associated link
+    find "$dbDir/ByCount" -maxdepth 2 -type d -name "$hashFull" -exec rm -rf {} \;
     if ! [ -f "$dbLinkPath" ]; then
         # Never seen this item before, so set the requestCount
         requestCount=1

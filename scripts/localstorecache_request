@@ -46,7 +46,8 @@ while [ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]; do
     rm -f "$dbLinkPath"
     echo "$leastUsedItemCount" > "$dbLinkPath"
 done
-if [ ! -h "$dbLinkPath" ] || [ ! -s "$(readlink "$dbLinkPath")" ]; then
+oldFilePath="$(readlink "$dbLinkPath")"
+if [ ! -h "$dbLinkPath" ] || [ ! -s "$oldFilePath" ] || [ ! -d "$oldFilePath"/scache-*.LocalStore ]; then
     # Item is not in the cache, so add it
 
     # Make sure there isn't a dangling LocalStore content folder with no associated link

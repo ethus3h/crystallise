@@ -31,8 +31,8 @@ mkdir "$streamId"
     trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
     cd "$streamId" || exit 1
     sponge "$streamId.xz"
-    numRetries=4
-    numTotalRetries=4
+    numRetries=10
+    numTotalRetries=10
     successfulRetrieval="0"
     trap 'warn "A nonfatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
     while [ "$numRetries" -gt 0 ] && [ "$successfulRetrieval" -eq 0 ]; do

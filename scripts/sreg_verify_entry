@@ -35,6 +35,7 @@ if [[ "$knownHash" == "$recoveredHash" ]]; then
     exit
 fi
 if [[ "$knownHash" != "$recoveredHash" ]]; then
+    # FIXME: Retry code does not work. (seems to always stop after first try)
     if [[ "$numRetries" -lt "0" ]]; then
         dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
         mkdir -p "$dbDir"

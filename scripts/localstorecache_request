@@ -46,7 +46,9 @@ while [ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]; do
     rm -f "$dbLinkPath"
     echo "$leastUsedItemCount" > "$dbLinkPath"
 done
+trap - ERR
 oldFilePath="$(readlink "$dbLinkPath")"
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 if [ ! -h "$dbLinkPath" ] || [ ! -s "$oldFilePath" ] || [ ! -d "$oldFilePath"/scache-*.LocalStore ]; then
     # Item is not in the cache, so add it
 

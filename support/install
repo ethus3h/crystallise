@@ -47,6 +47,12 @@ crystallizeSharedstatedirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeS
 echo "crystallizeSharedstatedirEsc: $crystallizeSharedstatedirEsc"
 perl -0777 -p -i -e "s/\/usr\/local\/var/$crystallizeSharedstatedirEsc/g" support/crystallize.conf
 
+crystallizeEmberdir="$crystallizePrefix"/Ember\ Library
+export crystallizeEmberdir
+crystallizeEmberdirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeEmberdir}))')"
+echo "crystallizeEmberdirEsc: $crystallizeEmberdirEsc"
+perl -0777 -p -i -e "s/\/Ember\\ Library\//$crystallizeEmberdirEsc/g" support/crystallize.conf
+
 export crystallizeSysconfdir
 crystallizeSysconfdirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeSysconfdir}))')"
 echo "crystallizeSysconfdirEsc: $crystallizeSysconfdirEsc"

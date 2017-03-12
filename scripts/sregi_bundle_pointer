@@ -7,7 +7,7 @@ source "$(which ember_bash_setup)" &> /dev/null
 trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 
 packPointerName="$1"
-dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
+dbDir="$EmberLibrary"/Futuramerlin\ Projects/Data/Stream\ Registry
 hashFull="$(basename "$2")"
 hashA="${hashFull:0:1}"
 hashB="${hashFull:1:1}"

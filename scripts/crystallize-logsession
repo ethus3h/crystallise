@@ -236,7 +236,7 @@ script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-xz-b ${opt+/de
 
 echo "Copying indices..."
 
-rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.checksums" "$crystalWorkdir/$CrystalID.json.xz" /Ember\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/
+rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.checksums" "$crystalWorkdir/$CrystalID.json.xz" "$EmberLibrary"/Futuramerlin\ Projects/Data/Crystal\ Index/
 
 echo "rsynced..."
 

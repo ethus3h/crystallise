@@ -58,3 +58,6 @@ qlstash () {
     echo "Done qlstashing all items."
 }
 export -f qlstash
+
+EmberLibrary="$(crystallize-getconf EmberLibrary)"
+export EmberLibrary

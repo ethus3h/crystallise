@@ -435,8 +435,8 @@ historypull)
     exit 1
     ;;
 stub)
-    if [ ! -e /Ember\ Library ]; then
-        mkdir -p /Ember\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/
+    if [ ! -e "$EmberLibrary" ]; then
+        mkdir -p "$EmberLibrary"/Futuramerlin\ Projects/Data/Crystal\ Index/
     else
         echo "There appears to already be an Ember Library instance available; no action taken."
         exit 1

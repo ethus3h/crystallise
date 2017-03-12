@@ -37,7 +37,7 @@ fi
 if [[ "$knownHash" != "$recoveredHash" ]]; then
     # FIXME: Retry code does not work. (seems to always stop after first try)
     if [[ "$numRetries" -lt "0" ]]; then
-        dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
+        dbDir="$EmberLibrary"/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
         mkdir -p "$dbDir"
         mv "$1" "$dbDir/"
         error-die "Error verifying stream registry database entry $knownHash! No retries left; giving up and marking entry as corrupted."

@@ -16,7 +16,7 @@ crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
 fsckId="sreg_fsck-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 mkdir -p "$crystalWorkdir/$fsckId"
 fsckStatusFile="$crystalWorkdir/$fsckId/.sreg_fsck.status"
-dbDir=/Ember\ Library/Futuramerlin\ Projects/Data/Stream\ Registry
+dbDir="$EmberLibrary"/Futuramerlin\ Projects/Data/Stream\ Registry
 echo "$(find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -printf '.' | wc -c)" > "$fsckStatusFile"
 find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -exec sreg_verify_entry 1 {} "$fsckStatusFile" \;
 echo "Done all items."

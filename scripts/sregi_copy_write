@@ -42,11 +42,12 @@ if [ -f "$destinationName" ]; then
         trap 'warn "A nonfatal error was reported on ${BASH_SOURCE} line ${LINENO}."; hasEncounteredError="1"' ERR
         if [[ "$sregNoVerify" == "true" ]]; then
             destinationChecksum="$(tail -c +38 "$destinationName" | head -c 129)"
+            pointerDbEntryFile="$EmberLibrary/Futuramerlin Projects/Data/Stream Registry/${destinationChecksum:0:1}/${destinationChecksum:1:1}/${destinationChecksum:2:1}/$destinationChecksum"
         else
             destinationChecksum="$(sreg_read_stream < "$destinationName" | sha512sum | awk '{print $1;}')"
         fi
         sourceChecksum="$(sha512sum < "$1" | awk '{print $1;}')"
-        if [[ "$destinationChecksum" == "$sourceChecksum" ]] && [[ "$hasEncounteredError" == "0" ]]; then
+        if [[ "$destinationChecksum" == "$sourceChecksum" && "$hasEncounteredError" == "0" && -e "$pointerDbEntryFile" ]]; then
             # The file is already present, pointerized, and readable, so exit without doing anything.
             echo "(Nothing done for $1.)"
             exit 0

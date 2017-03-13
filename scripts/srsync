@@ -7,6 +7,11 @@ source "$(which ember_bash_setup)" &> /dev/null
 trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 #set -x
 
+if [ "$1" == "--no-verify" ]; then
+    echo "(Not verifying pointers.)"
+    sregNoVerify=true
+    shift
+fi
 if ! [ -d "$2" ]; then
     error-die "Destination is not a directory."
 fi
@@ -17,6 +22,10 @@ mkdir -p "$crystalWorkdir/$fsckId"
 fsckStatusFile="$crystalWorkdir/$fsckId/.srsync.status"
 dbDir="$EmberLibrary"/Futuramerlin\ Projects/Data/Stream\ Registry
 echo "$(find "$1" -type f -printf '.' | wc -c)" > "$fsckStatusFile"
-find "$1" -type f -exec sregi_copy_write {} "$2" "$fsckStatusFile" \;
+if [[ "$sregNoVerify" == "true" ]]; then
+    find "$1" -type f -exec sregi_copy_write --no-verify {} "$2" "$fsckStatusFile" \;
+else
+    find "$1" -type f -exec sregi_copy_write {} "$2" "$fsckStatusFile" \;
+fi
 rsync -a --ignore-existing --no-i-r "$1" "$2/"
 find "$2/$(basename "$1")" -type d -empty -exec touch {}/.keep \;

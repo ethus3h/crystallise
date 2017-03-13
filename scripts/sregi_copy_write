@@ -7,6 +7,11 @@ source "$(which ember_bash_setup)" &> /dev/null
 trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 #set -x
 
+if [ "$1" == "--no-verify" ]; then
+    echo "(Not verifying pointers.)"
+    sregNoVerify=true
+    shift
+fi
 if ! [ -f "$1" ]; then
     error-notify "Item must be a regular file."
     exit 1
@@ -35,14 +40,18 @@ if [ -f "$destinationName" ]; then
     hasEncounteredError="0"
     if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
         trap 'warn "A nonfatal error was reported on ${BASH_SOURCE} line ${LINENO}."; hasEncounteredError="1"' ERR
-        destinationChecksum="$(sreg_read_stream < "$destinationName" | sha512sum | awk '{print $1;}')"
+        if [[ "$sregNoVerify" == "true" ]]; then
+            destinationChecksum="$(tail -c +38 "$destinationName" | head -c 129)"
+        else
+            destinationChecksum="$(sreg_read_stream < "$destinationName" | sha512sum | awk '{print $1;}')"
+        fi
         sourceChecksum="$(sha512sum < "$1" | awk '{print $1;}')"
         if [[ "$destinationChecksum" == "$sourceChecksum" ]] && [[ "$hasEncounteredError" == "0" ]]; then
             # The file is already present, pointerized, and readable, so exit without doing anything.
             echo "(Nothing done for $1.)"
             exit 0
         else
-            warn "(Destination pointer $destinationName could not be read; removing and recreating.)"
+            warn "(Destination pointer $destinationName could not be read or did not match source checksum; removing and recreating.)"
             rm "$destinationName"
         fi
     fi

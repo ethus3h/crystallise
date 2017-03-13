@@ -89,6 +89,9 @@ mkdir "$streamId"
                 crystalFilePattern=".*.crystal-data"
                 crystalFilePatternMatches=( $crystalFilePattern )
                 localStoreCrystalName="${crystalFilePatternMatches[0]}"
+                if ! [ -e "$localStoreCrystalName" ]; then
+                    error-die "Crystal info could not be found in the pointer, so giving up immediately (retrying probably wouldn't help this)."
+                fi
                 localStoreCrystalIdentifier="$(<"$localStoreCrystalName"/identifier)"
                 localstoreLocation="$(localstorecache_request "$crystalWorkdir/.LocalStoreCache/" "$localStoreCrystalIdentifier")"
                 unxz --stdout - < "$localstoreLocation/scache-"*".LocalStore/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"

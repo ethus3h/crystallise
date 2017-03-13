@@ -4,10 +4,12 @@ source "$(which ember_bash_setup)" &> /dev/null
 # Stores data provided on stdin into the stream registry, and sends a pointer to it to stdout.
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
-trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
-# if [[ "$1" == "--verbose" ]]; then
-#     set -x
-# fi
+function finish() {
+    if [ -e "$streamId" ]; then
+        rm -r "$streamId"
+    fi
+}
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."; finish; exit 1' ERR
 
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
 dbDir="$EmberLibrary"/Futuramerlin\ Projects/Data/Stream\ Registry

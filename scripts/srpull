@@ -6,4 +6,6 @@ source "$(which ember_bash_setup)" &> /dev/null
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
 trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 
-sreg_copy_read "$@"
+rsync -av --checksum --progress --no-i-r --ignore-existing "$1" "$2/"
+rsync -av --checksum --progress --no-i-r --ignore-existing "$1" "$2/"
+sreg_read_files "$2/$(basename "$1")"

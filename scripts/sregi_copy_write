@@ -47,7 +47,7 @@ if [ -f "$destinationName" ]; then
             destinationChecksum="$(sreg_read_stream < "$destinationName" | sha512sum | awk '{print $1;}')"
         fi
         sourceChecksum="$(sha512sum < "$1" | awk '{print $1;}')"
-        if [[ "$destinationChecksum" == "$sourceChecksum" && "$hasEncounteredError" == "0" && -e "$pointerDbEntryFile" ]]; then
+        if [[ "$destinationChecksum" == "$sourceChecksum" && "$hasEncounteredError" == "0" && ! -e "$pointerDbEntryFile" ]]; then
             # The file is already present, pointerized, and readable, so exit without doing anything.
             echo "(Nothing done for $1.)"
             exit 0

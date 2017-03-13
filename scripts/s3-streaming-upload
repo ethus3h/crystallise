@@ -3,9 +3,6 @@ source "$(which ember_bash_setup)" &> /dev/null
 
 trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 
-AWS_ACCESS_KEY_ID="$(grep access ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
-AWS_SECRET_ACCESS_KEY="$(grep secret ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
-
 hostName="$1"
 shift
 collection="$1"
@@ -21,6 +18,16 @@ shift
 description="$1"
 shift
 keywords="$1"
+shift
+AWS_ACCESS_KEY_ID="$1"
+if [ -z "$AWS_ACCESS_KEY_ID" ]; then
+    AWS_ACCESS_KEY_ID="$(grep access ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
+fi
+shift
+AWS_SECRET_ACCESS_KEY="$1"
+if [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
+    AWS_SECRET_ACCESS_KEY="$(grep secret ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
+fi
 
 WorkDirectory="$(crystallize-getconf WorkDirectory)"
 

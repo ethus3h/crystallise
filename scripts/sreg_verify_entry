@@ -10,7 +10,7 @@ trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' 
 fsckStatusFile="$3"
 numRetries="$1"
 shift
-knownHash="$(basename "$1")"
+knownHash="$(tail -c +38 "$1" | head -c 129)"
 echo "Started verifying stream registry database entry $knownHash."
 recoveredHash="$(sreg_read_stream --disallow-hash-pointer < "$1" | sha512sum | awk '{print $1;}')"
 if [[ "$knownHash" == "$recoveredHash" ]]; then

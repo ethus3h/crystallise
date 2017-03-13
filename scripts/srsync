@@ -27,5 +27,5 @@ if [[ "$sregNoVerify" == "true" ]]; then
 else
     find "$1" -type f -exec sregi_copy_write {} "$2" "$fsckStatusFile" \;
 fi
-rsync -a --ignore-existing --no-i-r "$1" "$2/"
-find "$2/$(basename "$1")" -type d -empty -exec touch {}/.keep \;
+rsync -a --ignore-existing --no-i-r "$1" "$2/$(dirname "$1")/"
+find "$2/$1")" -type d -empty -exec touch {}/.keep \;

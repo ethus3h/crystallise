@@ -4,6 +4,7 @@ source "$(which ember_bash_setup)" &> /dev/null
 # Accepts a pointer on stdin, and outputs the corresponding data from the stream registry.
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+#set -x
 function finish() {
     if [ -e "$streamId" ]; then
         rm -r "$streamId"
@@ -99,6 +100,9 @@ mkdir "$streamId"
                 # Hash pointer
                 if [[ "true" == "$disallowHashPointer" ]]; then
                     error-die "The provided pointer is a hash pointer!"
+                fi
+                if ! [ -e "$dbDir/$hashA/$hashB/$hashC/$hashFull" ]; then
+                    error-die "The provided pointer is a hash pointer, but the corresponding hash is not registered in the database!"
                 fi
                 sreg_read_stream < "$dbDir/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
             else

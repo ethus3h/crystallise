@@ -57,6 +57,7 @@ if [ -f "$destinationName" ]; then
             exit 0
         else
             warn "(Destination pointer $destinationName could not be read or did not match source checksum; removing and recreating.)"
+            cat "$destinationName"
             rm "$destinationName"
         fi
     fi

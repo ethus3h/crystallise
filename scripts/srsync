@@ -23,9 +23,9 @@ fsckStatusFile="$crystalWorkdir/$fsckId/.srsync.status"
 dbDir="$EmberLibrary"/Futuramerlin\ Projects/Data/Stream\ Registry
 echo "$(find "$1" -type f -printf '.' | wc -c)" > "$fsckStatusFile"
 if [[ "$sregNoVerify" == "true" ]]; then
-    find "$1" -type f -exec sregi_copy_write --no-verify "$(basename "$1")"/{} "$2" "$fsckStatusFile" \;
+    find "$1" -type f -exec sregi_copy_write --no-verify {} "$2" "$fsckStatusFile" \;
 else
-    find "$1" -type f -exec sregi_copy_write "$(basename "$1")"/{} "$2" "$fsckStatusFile" \;
+    find "$1" -type f -exec sregi_copy_write {} "$2" "$fsckStatusFile" \;
 fi
 rsync -a --ignore-existing --no-i-r "$1" "$2/"
 find "$2/$(basename "$1")" -type d -empty -exec touch {}/.keep \;

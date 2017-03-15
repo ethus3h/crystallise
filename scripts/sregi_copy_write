@@ -33,7 +33,7 @@ if [ -n "$fsckStatusFile" ]; then
     numberProcessedPercentage="$(printf "%.3f\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
     echo "Copying item $1: #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
 fi
-destinationName="$2/$1"
+destinationName="$2/$(basename "$1")"
 if [ -f "$destinationName" ]; then
     pointerTypeSignature="$(head -c 36 "$destinationName")"
     destinationChecksum=""

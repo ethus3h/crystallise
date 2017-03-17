@@ -22,7 +22,11 @@ mkdir -p "$crystalWorkdir/$fsckId"
 fsckStatusFile="$crystalWorkdir/$fsckId/.srsync.status"
 find "$1" -type f -printf '.' | wc -c > "$fsckStatusFile"
 destinationRoot="$(dirname "$1")"
-destinationRootLength=${#destinationRoot}
+if [[ "$destinationRoot" == "." ]]; then
+    destinationRootLength="0"
+else
+    destinationRootLength=${#destinationRoot}
+fi
 if [[ "$sregNoVerify" == "true" ]]; then
     find "$1" -type f -exec sregi_copy_write --no-verify {} "$2" "$fsckStatusFile" "$destinationRootLength" \;
 else

@@ -4,6 +4,7 @@ source "$(which ember_bash_setup)" &> /dev/null
 # Stores data provided on stdin into the stream registry, and sends a pointer to it to stdout.
 
 [ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+#set -x
 function finish() {
     if [ -e "$streamId" ]; then
         rm -r "$streamId"

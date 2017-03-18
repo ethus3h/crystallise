@@ -1,7 +1,7 @@
 #!/bin/bash
 source "$(which ember_bash_setup)" &> /dev/null
 
-export crystallizeVersion='3.1.1.1_pre5.4'
+export crystallizeVersion='3.1.1.1_pre5.5'
 
 # ( sudo echo; cd "/Ember Library/Ember satellite projects/crystallize"; git add -A .; git commit -m "version"; git tag -a v3.1.0.29 -m "version"; egup-single .; sudo emerge crystallize )
 

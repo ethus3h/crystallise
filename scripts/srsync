@@ -7,9 +7,13 @@ source "$(which ember_bash_setup)" &> /dev/null
 trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 #set -x
 
+echo "(Not verifying pointers: use sreg_fsck to test the entire stream registry.)"
+sregNoVerify=true
 if [ "$1" == "--no-verify" ]; then
-    echo "(Not verifying pointers.)"
-    sregNoVerify=true
+    shift
+fi
+if [ "$1" == "--verify" ]; then
+    sregNoVerify=false
     shift
 fi
 if ! [ -d "$2" ]; then

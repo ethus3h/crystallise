@@ -12,10 +12,10 @@ while [[ ! -z "$1" ]]; do
     echo "$@"
     fileToResolve="$1"
     echo "Begun resolving $fileToResolve."
-    if [ -f "$fileToResolve" ]; then
+    if [[ -f "$fileToResolve" ]]; then
         sreg_read_stream < "$fileToResolve" | sponge "$fileToResolve" || echo "(Note: ignoring failed read of $fileToResolve)"
     else
-        if [ -d "$fileToResolve" ]; then
+        if [[ -d "$fileToResolve" ]]; then
             find "$fileToResolve" -type f -exec sreg_read_files {} \;
         else
             warn "Skipping item $fileToResolve: not a regular file or directory."

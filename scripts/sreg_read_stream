@@ -85,13 +85,13 @@ mkdir "$streamId"
                     packName="$(tail -c +167 "$streamId.xz")"
                     unxz --stdout - < "$dbDir/Packs/$packName" | tar -xf -
                 fi
-                if ! [ -e "$crystalWorkdir/.LocalStoreCache/" ]; then
+                if ! [[ -e "$crystalWorkdir/.LocalStoreCache/" ]]; then
                   localstorecache_init "$crystalWorkdir/.LocalStoreCache/" 5000000000
                 fi
                 crystalFilePattern=".*.crystal-data"
                 crystalFilePatternMatches=( $crystalFilePattern )
                 localStoreCrystalName="${crystalFilePatternMatches[0]}"
-                if ! [ -e "$localStoreCrystalName" ]; then
+                if ! [[ -e "$localStoreCrystalName" ]]; then
                     error-die "Crystal info could not be found in the pointer, so giving up immediately (retrying probably wouldn't help this)."
                 fi
                 localStoreCrystalIdentifier="$(<"$localStoreCrystalName"/identifier)"

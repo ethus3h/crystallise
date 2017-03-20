@@ -15,7 +15,7 @@ rubberfsUser="$(cat /tmp/rubberfsUser)"
 
 set -e
 
-if [ ! -n "$name" ]; then
+if [[ ! -n "$name" ]]; then
     name="library"
 fi
 
@@ -23,11 +23,11 @@ fi
 
 case $action in
 create)
-    if [ -e "/$name" ]; then
+    if [[ -e "/$name" ]]; then
         echo "ERROR: The requested name \"$name\" is already in use." >&2
         exit 1
     fi
-    if [ -e "/Wreathe/.Resources/RubberFS/$name" ]; then
+    if [[ -e "/Wreathe/.Resources/RubberFS/$name" ]]; then
         echo "ERROR: The requested name \"$name\" is already in use by a RubberFS." >&2
         exit 1
     fi
@@ -88,7 +88,7 @@ soft-remount)
     ;;
 rename)
     newname="$3"
-    if [ -e "/$newname" ]; then
+    if [[ -e "/$newname" ]]; then
         echo "ERROR: The requested name \"$newname\" is already in use." >&2
         exit 1
     fi
@@ -107,7 +107,7 @@ cd)
     exit 1
     ;;
 unmount)
-    if [ ! -d "/$name/.rubberfs" ]; then
+    if [[ ! -d "/$name/.rubberfs" ]]; then
         echo "ERROR! RubberFS named $name does not appear to be mounted." >&2
     else
         rubberfs save "$name"
@@ -117,7 +117,7 @@ unmount)
     echo "RubberFS named $name has been unmounted."
     ;;
 soft-unmount)
-    if [ ! -d "/$name/.rubberfs" ]; then
+    if [[ ! -d "/$name/.rubberfs" ]]; then
         echo "ERROR! RubberFS named $name does not appear to be mounted." >&2
     else
         rubberfs save "$name"
@@ -142,7 +142,7 @@ check)
     ;;
 save)
     cd "/$name"
-    if [ ! -d .rubberfs ]; then
+    if [[ ! -d .rubberfs ]]; then
         echo "ERROR! RubberFS named $name does not appear to be mounted." >&2
         exit 1
     fi
@@ -207,7 +207,7 @@ freeze)
     ;;
 delta)
     cd /
-    if [ ! -f "$name/.rubberfs/lastFreeze" ]; then
+    if [[ ! -f "$name/.rubberfs/lastFreeze" ]]; then
         echo "ERROR! There does not appear to be an existing freeze state. Please use rubberfs freeze instead." >&2
     fi
     freezeId="rubberfs-delta-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
@@ -264,11 +264,11 @@ thaw)
     fi
     #Use: rubberfs thaw poolname freezeId
     #echo "To restore, first make a new zpool, then run zfs recv (new-zpool-name) -F < /foo/bar.zfsrepl"
-    if [ -e "/$name" ]; then
+    if [[ -e "/$name" ]]; then
         echo "ERROR: The requested name \"$name\" is already in use." >&2
         exit 1
     fi
-    if [ -e "/Wreathe/.Resources/RubberFS/$name" ]; then
+    if [[ -e "/Wreathe/.Resources/RubberFS/$name" ]]; then
         echo "ERROR: The requested name \"$name\" is already in use by a RubberFS." >&2
         exit 1
     fi
@@ -343,7 +343,7 @@ usage-write)
     ;;
 whereami)
     rubberDir="$(find_up.sh "$(readlink -f -- "$(pwd)")" -type d -name ".rubberfs" -execdir pwd \; -quit)"
-    if [ ! -d "$rubberDir" ]; then
+    if [[ ! -d "$rubberDir" ]]; then
         echo "You do not appear to be in a rubberfs directory."
         exit 1
     fi
@@ -355,11 +355,11 @@ destroy)
     echo "press Ctrl+C to cancel."
     echo "### WARNING! ^^^ WARNING! ### WARNING! ### WARNING! ^^^ WARNING! ###"
     sleep 60
-    if [ -z "$name" ]; then
+    if [[ -z "$name" ]]; then
         echo "ERROR: No name found. This should never happen! Not continuing, because it would cause a disaster."
     fi
     cd /
-    if [ ! -f "$name/.rubberfs/lastFreeze" ]; then
+    if [[ ! -f "$name/.rubberfs/lastFreeze" ]]; then
         rubberfs freeze "$name"
     fi
     rubberfs delta "$name"
@@ -383,7 +383,7 @@ destroy-no-upload)
     echo "press Ctrl+C to cancel."
     echo "### WARNING! ^^^ WARNING! ### WARNING! ### WARNING! ^^^ WARNING! ###"
     sleep 60
-    if [ -z "$name" ]; then
+    if [[ -z "$name" ]]; then
         echo "ERROR: No name found. This should never happen! Not continuing, because it would cause a disaster."
     fi
     cd /
@@ -436,7 +436,7 @@ historypull)
     exit 1
     ;;
 stub)
-    if [ ! -e "${EmberLibrary:?}" ]; then
+    if [[ ! -e "${EmberLibrary:?}" ]]; then
         mkdir -p "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
     else
         echo "There appears to already be an Ember Library instance available; no action taken."

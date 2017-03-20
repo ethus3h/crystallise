@@ -8,20 +8,20 @@ source ember_bash_setup &> /dev/null
 trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 #set -x
 
-if [ "$1" == "--no-verify" ]; then
+if [[ "$1" == "--no-verify" ]]; then
     echo "(Not verifying pointers.)"
     sregNoVerify=true
     shift
 fi
-if ! [ -f "$1" ]; then
+if ! [[ -f "$1" ]]; then
     error-notify "Item must be a regular file."
     exit 1
 fi
 fsckStatusFile="$3"
-if [ -n "$fsckStatusFile" ]; then
+if [[ -n "$fsckStatusFile" ]]; then
     numberExpected="$(<"$fsckStatusFile")"
     numberProcessedFile="$fsckStatusFile.done"
-    if ! [ -f "$numberProcessedFile" ]; then
+    if ! [[ -f "$numberProcessedFile" ]]; then
         numberProcessed="1"
     else
         numberProcessed="$(<"$numberProcessedFile")"
@@ -38,7 +38,7 @@ destinationRootLength="$4"
 targetLength=${#1}
 destinationName="$2/${1:destinationRootLength:targetLength}"
 #echo "$destinationRootLength - $targetLength - $destinationName"
-if [ -f "$destinationName" ]; then
+if [[ -f "$destinationName" ]]; then
     pointerTypeSignature="$(head -c 36 "$destinationName")"
     destinationChecksum=""
     hasEncounteredError="0"

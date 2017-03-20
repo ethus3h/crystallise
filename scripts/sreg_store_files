@@ -19,7 +19,7 @@ while [[ ! -z "$1" ]]; do
     #echo "$@"
     fileToStash="$1"
     echo "Begun storing $fileToStash."
-    if [ -f "$fileToStash" ]; then
+    if [[ -f "$fileToStash" ]]; then
         if [[ "$sregReplace" == "true" ]]; then
             sreg_store_stream --verbose < "$fileToStash"
             sha512sum < "$fileToStash" | awk '{print "'760fa662-89cf-4ebd-9664-150b7637ddd4\\n'"$1;}' | sponge "$fileToStash"
@@ -27,7 +27,7 @@ while [[ ! -z "$1" ]]; do
             sreg_store_stream --verbose < "$fileToStash"
         fi
     else
-        if [ -d "$fileToStash" ]; then
+        if [[ -d "$fileToStash" ]]; then
             if [[ "$sregReplace" == "true" ]]; then
                 find "$fileToStash" -type f -exec sreg_store_files --replace {} \;
             else

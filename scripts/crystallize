@@ -45,8 +45,8 @@ if [[ "$1" == "--leave-pointer" ]]; then
     mkdir -p "$crystalWorkdir/pointers"
     #Only use first 136 characters of file name for directory name; hopefully this will prevent the name being too long for the filesystem
     crystallizeBaseName="$(basename "$1")"
-    crystallizePointerDir="$crystalWorkdir/pointers"/."${crystallizeBaseName:0:136}".crystal-data
-    crystallizePointerName="$crystalWorkdir/pointers"/"${crystallizeBaseName:0:136}".crystal
+    crystallizePointerDir="$crystalWorkdir/pointers/.${crystallizeBaseName:0:136}".crystal-data
+    crystallizePointerName="$crystalWorkdir/pointers/${crystallizeBaseName:0:136}".crystal
     if [[ -e "$crystallizePointerDir" ]]; then
         crystallize "$crystallizePointerDir"
     fi

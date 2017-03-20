@@ -96,7 +96,7 @@ echo "First entry in array: $CrystallizePaths"
 for i in "${!CrystallizePaths[@]}"; do
     #resolve path
     echo "Trying to resolve ${CrystallizePaths[$i]}..."
-    setVariable "abspath" "emreadlink" "${CrystallizePaths[$i]}"
+    setVariableToCommandOutput "abspath" "emreadlink" "${CrystallizePaths[$i]}"
     CrystallizePaths[$i]="$abspath"
 done
 

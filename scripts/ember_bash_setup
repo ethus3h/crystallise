@@ -24,7 +24,7 @@ error-die() {
 }
 export -f error-die
 
-function emreadlink() {
+function embasename() {
     (
         path="$1"
         if [[ "$path" == "/" ]]; then
@@ -36,11 +36,20 @@ function emreadlink() {
         printf "%s" "$path"
     )
 }
+export -f embasename
+
+function emreadlink() {
+    (
+        cd "$(dirname "$1")" || exit 1
+        setVariableToCommandOutput "basename" "embasename" "$1"
+        printf "%s%s" "$PWD" "${basename:?}"
+    )
+}
 export -f emreadlink
 
-function setVariable() {
+function setVariableToCommandOutput() {
     var="$1"
     shift
     IFS= read -rd '' "$var" < <( eval "$@" )
 }
-export -f setVariable
+export -f setVariableToCommandOutput

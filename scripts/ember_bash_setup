@@ -48,7 +48,7 @@ function emreadlink() {
 export -f emreadlink
 
 function setVariableToCommandOutput() {
-    if [[ "$1" == "var" ]];
+    if [[ "$1" == "var" ]]; then
         exit 1
     fi
     var="$1"

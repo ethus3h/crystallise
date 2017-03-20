@@ -6,10 +6,10 @@ export crystallizeVersion='3.1.1.1_pre5.6'
 
 # ( sudo echo; cd "/Ember Library/Ember satellite projects/crystallize"; git add -A .; git commit -m "version"; git tag -a v3.1.0.29 -m "version"; egup-single .; sudo emerge crystallize )
 
-[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+((EUID)) && exec sudo -- "$0" "$@"
 set -e
 
-if [ ! -e "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/ ]; then
+if [[ ! -e "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/ ]]; then
     echo "ERROR: Could not find a usable Ember Library directory tree. Nothing done."
     exit 1
 fi

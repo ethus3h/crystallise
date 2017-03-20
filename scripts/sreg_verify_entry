@@ -4,7 +4,7 @@ source ember_bash_setup &> /dev/null
 
 # Accepts an integer and a pointer as an argument, and returns a success status if the data corresponding to the pointer can be read. If it fails, it moves the pointer that failed validation aside. The integer first argument is the number of times to retry if the retrieval fails. The optional third argument is a filename to a file to be used for tracking progress in an enclosing process.
 
-[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+((EUID)) && exec sudo -- "$0" "$@"
 trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 #set -x
 

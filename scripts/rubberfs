@@ -10,7 +10,7 @@ name="$2"
 if [[ "$(whoami)" != "root" ]]; then
     whoami > /tmp/rubberfsUser
 fi
-[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+((EUID)) && exec sudo -- "$0" "$@"
 rubberfsUser="$(cat /tmp/rubberfsUser)"
 
 set -e

@@ -5,7 +5,7 @@ source ember_bash_setup &> /dev/null
 # Get an item through the cache
 # Usage: localstorecache_request <cache directory> <crystal identifier>
 
-[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+((EUID)) && exec sudo -- "$0" "$@"
 trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"

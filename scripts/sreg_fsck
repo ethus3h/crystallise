@@ -4,7 +4,7 @@ source ember_bash_setup &> /dev/null
 
 # Verify that all entries in the stream database can be read correctly
 
-[ "$(whoami)" != "root" ] && exec sudo -- "$0" "$@"
+((EUID)) && exec sudo -- "$0" "$@"
 function finish() {
   if [ -e "$crystalWorkdir/$fsckId" ]; then
     rm -r "$crystalWorkdir/$fsckId"

@@ -47,7 +47,7 @@ if [ -f "$destinationName" ]; then
         assumePointerDbEntryFileExists="true"
         if [[ "$sregNoVerify" == "true" ]]; then
             destinationChecksum="$(tail -c +38 "$destinationName" | head -c 129)"
-            pointerDbEntryFile="$EmberLibrary/Futuramerlin Projects/Data/Stream Registry/${destinationChecksum:0:1}/${destinationChecksum:1:1}/${destinationChecksum:2:1}/$destinationChecksum"
+            pointerDbEntryFile="${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/${destinationChecksum:0:1}/${destinationChecksum:1:1}/${destinationChecksum:2:1}/$destinationChecksum"
             if ! [[ -e "$pointerDbEntryFile" ]]; then
                 assumePointerDbEntryFileExists="false"
             fi

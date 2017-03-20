@@ -48,8 +48,11 @@ function emreadlink() {
 export -f emreadlink
 
 function setVariableToCommandOutput() {
+    if [[ "$1" == "var" ]];
+        exit 1
+    fi
     var="$1"
     shift
-    IFS= read -rd '' "$var" < <( eval "$@" )
+    IFS= read -rd '' "$var" < <( "$@" )
 }
 export -f setVariableToCommandOutput

@@ -15,7 +15,7 @@ hashB="${hashFull:1:1}"
 hashC="${hashFull:2:1}"
 hashDir="$dbDir/$hashA/$hashB/$hashC"
 dbFilePath="$hashDir/$hashFull"
-if [ -f "$dbFilePath" ]; then
+if [[ -f "$dbFilePath" ]]; then
     if [[ "$(head -c 36 "$dbFilePath")" != "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
         error-die "The item $dbFilePath does not appear to be a LocalStore pointer! This is most likely a bug in sreg. Aborting to avoid messing things up."
     fi

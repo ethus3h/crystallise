@@ -2,7 +2,7 @@
 # Warn the user and wait a bit
 
 time="$2"
-if [ ! -n "$time" ]; then
+if [[ ! -n "$time" ]]; then
     time="10"
 fi
 
@@ -10,7 +10,7 @@ printf %b '\033[1;31m'
 
 echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
 echo "$1"
-if [ "$time" -gt 0 ]; then
+if [[ "$time" -gt 0 ]]; then
     echo "Continuing in $time seconds; press Ctrl+C to cancel."
 fi
 echo "### WARNING! ^^^ WARNING! ### WARNING! ### WARNING! ^^^ WARNING! ###"

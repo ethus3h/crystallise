@@ -15,10 +15,10 @@ knownHash="$(tail -c +38 "$1" | head -c 129)"
 echo "Started verifying stream registry database entry $knownHash."
 recoveredHash="$(sreg_read_stream --disallow-hash-pointer < "$1" | sha512sum | awk '{print $1;}')"
 if [[ "$knownHash" == "$recoveredHash" ]]; then
-    if [ -n "$fsckStatusFile" ]; then
+    if [[ -n "$fsckStatusFile" ]]; then
         numberExpected="$(<"$fsckStatusFile")"
         numberProcessedFile="$fsckStatusFile.done"
-        if ! [ -f "$numberProcessedFile" ]; then
+        if ! [[ -f "$numberProcessedFile" ]]; then
             numberProcessed="1"
         else
             numberProcessed="$(<"$numberProcessedFile")"

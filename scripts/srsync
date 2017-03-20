@@ -10,14 +10,14 @@ trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' 
 
 echo "(Not verifying pointers: use sreg_fsck to test the entire stream registry.)"
 sregNoVerify=true
-if [ "$1" == "--no-verify" ]; then
+if [[ "$1" == "--no-verify" ]]; then
     shift
 fi
-if [ "$1" == "--verify" ]; then
+if [[ "$1" == "--verify" ]]; then
     sregNoVerify=false
     shift
 fi
-if ! [ -d "$2" ]; then
+if ! [[ -d "$2" ]]; then
     error-die "Destination is not a directory."
 fi
 echo "Counting items..."

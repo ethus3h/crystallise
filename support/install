@@ -9,35 +9,35 @@ crystallizeDatarootdir="$6"
 crystallizeDatadir="$7"
 crystallizeSysconfdir="$8"
 crystallizeSharedstatedir="$9"
-if ! [ -n "$crystallizePrefix" ]; then
-    if ! [ -n "$crystallizeCapPrefix" ]; then
+if ! [[ -n "$crystallizePrefix" ]]; then
+    if ! [[ -n "$crystallizeCapPrefix" ]]; then
         crystallizePrefix="$crystallizeDestdir"/usr/local
     else
         crystallizePrefix="$crystallizeCapPrefix"
     fi
 fi
 echo "crystallizePrefix: $crystallizePrefix"
-if ! [ -n "$crystallizeExecPrefix" ]; then
+if ! [[ -n "$crystallizeExecPrefix" ]]; then
     crystallizeExecPrefix="$crystallizePrefix"
 fi
 echo "crystallizeExecPrefix: $crystallizeExecPrefix"
-if ! [ -n "$crystallizeBindir" ]; then
+if ! [[ -n "$crystallizeBindir" ]]; then
     crystallizeBindir="$crystallizeExecPrefix"/bin
 fi
 echo "crystallizeBindir: $crystallizeBindir"
-if ! [ -n "$crystallizeDatarootdir" ]; then
+if ! [[ -n "$crystallizeDatarootdir" ]]; then
     crystallizeDatarootdir="$crystallizePrefix"/share
 fi
 echo "crystallizeDatarootdir: $crystallizeDatarootdir"
-if ! [ -n "$crystallizeDatadir" ]; then
+if ! [[ -n "$crystallizeDatadir" ]]; then
     crystallizeDatadir="$crystallizeDatarootdir"
 fi
 echo "crystallizeDatadir: $crystallizeDatadir"
-if ! [ -n "$crystallizeSysconfdir" ]; then
+if ! [[ -n "$crystallizeSysconfdir" ]]; then
     crystallizeSysconfdir="$crystallizePrefix"/etc
 fi
 echo "crystallizeSysconfdir: $crystallizeSysconfdir"
-if ! [ -n "$crystallizeSharedstatedir" ]; then
+if ! [[ -n "$crystallizeSharedstatedir" ]]; then
     crystallizeSharedstatedir="$crystallizePrefix"/var
 fi
 echo "crystallizeSharedstatedir: $crystallizeSharedstatedir"

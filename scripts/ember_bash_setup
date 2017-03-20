@@ -43,3 +43,4 @@ function setVariable() {
     shift
     IFS= read -rd '' "$var" < <( eval "$@" )
 }
+export -f setVariable

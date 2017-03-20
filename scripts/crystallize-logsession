@@ -89,16 +89,6 @@ printf "%s" "$crystallizePassphrase" > "$crystalWorkdir/$CrystalID".tmp
 CrystallizeFirstArg="$1"
 shift
 
-#Needed because readlink isn't available in OS X. From http://stackoverflow.com/questions/17577093/how-do-i-get-the-absolute-directory-of-a-file-in-bash
-function myreadlink() {
-  (
-  cd "$(dirname "$1")"         # or  cd ${1%/*}
-  echo "$PWD"/"$(basename "$1")" # or  echo $PWD/${1##*/}
-  )
-}
-
-export -f myreadlink
-
 #Resolve relative paths in the arguments, since GNU tar's -P doesn't
 CrystallizePaths=( "$@" )
 # shellcheck disable=SC2128
@@ -106,7 +96,7 @@ echo "First entry in array: $CrystallizePaths"
 for i in "${!CrystallizePaths[@]}"; do
     #resolve path
     echo "Trying to resolve ${CrystallizePaths[$i]}..."
-    abspath="$(myreadlink "${CrystallizePaths[$i]}")"
+    abspath="$(emreadlink "${CrystallizePaths[$i]}")"
     CrystallizePaths[$i]="$abspath"
 done
 

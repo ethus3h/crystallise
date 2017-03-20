@@ -2,12 +2,6 @@
 
 set -o pipefail
 
-error-die() {
-    source error-notify "$@"
-    exit 1
-}
-export -f error-die
-
 rubberfs() {
     if [[ "$1" == "cd" ]]; then
         name="$2"

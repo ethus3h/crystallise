@@ -101,22 +101,12 @@ set -e
 ia upload "$CrystalID" --retries=100 --verify --delete "$crystalWorkdir/$CrystalID.coal5-log" "$crystalWorkdir/$CrystalID.coal5-idx-l" "$crystalWorkdir/$CrystalID.coal5-idx-d" "$crystalWorkdir/$CrystalID.coal5-cmd" "$crystalWorkdir/$CrystalID.coal5-cwd"
 ia upload "$CrystalID" --retries=100 --verify "$crystalWorkdir/$CrystalID.coal5-timestamp"
 
-#Needed because readlink isn't available in OS X. From http://stackoverflow.com/questions/17577093/how-do-i-get-the-absolute-directory-of-a-file-in-bash
-function myreadlink() {
-  (
-  cd "$(dirname "$1")"         # or  cd ${1%/*}
-  echo "$PWD"/"$(basename "$1")" # or  echo $PWD/${1##*/}
-  )
-}
-
-export -f myreadlink
-
 #Build this again for the rm command
 CrystallizePaths=( "$@" )
 for i in "${!CrystallizePaths[@]}"; do
     #resolve path
     echo "Trying to resolve ${CrystallizePaths[$i]}..."
-    abspath="$(myreadlink "${CrystallizePaths[$i]}")"
+    abspath="$(emreadlink "${CrystallizePaths[$i]}")"
     CrystallizePaths[$i]="$abspath"
 done
 

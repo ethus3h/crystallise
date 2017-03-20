@@ -8,7 +8,32 @@ export PS4
 source crystallize-bash_setup
 
 # These may not be available on non-Wreathe systems
+# shellcheck disable=SC1091
 source wreathe_bash_setup &> /dev/null
+# shellcheck disable=SC1091
 source bash_math_functions &> /dev/null
+# shellcheck disable=SC1091
 source futuramerlin-web-toolkit-s &> /dev/null
+# shellcheck disable=SC1091
 source egup-env &> /dev/null
+
+error-die() {
+    # shellcheck disable=SC1091
+    source error-notify "$@"
+    exit 1
+}
+export -f error-die
+
+function emreadlink() {
+    (
+        path="$1"
+        if [[ "$path" == "/" ]]; then
+            printf "/"
+            exit 0
+        elif [[ "$1" =~ '/'$ ]]; then
+            path="${path::${#path}-1}"
+        fi
+        printf "%s" "$path"
+    )
+}
+export -f emreadlink

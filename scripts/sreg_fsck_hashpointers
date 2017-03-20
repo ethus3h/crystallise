@@ -1,5 +1,5 @@
 #!/bin/bash
-source "$(which ember_bash_setup)" &> /dev/null
+source ember_bash_setup &> /dev/null
 
 # Verify that all hash pointers in the specified directory can be read correctly
 

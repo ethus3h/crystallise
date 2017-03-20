@@ -1,5 +1,5 @@
 #!/bin/bash
-source "$(which ember_bash_setup)" &> /dev/null
+source ember_bash_setup &> /dev/null
 
 # Accepts a pointer on stdin, and outputs the corresponding data from the stream registry.
 

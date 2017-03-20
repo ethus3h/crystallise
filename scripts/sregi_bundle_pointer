@@ -1,5 +1,5 @@
 #!/bin/bash
-source "$(which ember_bash_setup)" &> /dev/null
+source ember_bash_setup &> /dev/null
 
 # Given a LocalStore pointer, replace it with a remote pointer
 # First argument is the filename where the remote pointer data is stored; second is the pointer

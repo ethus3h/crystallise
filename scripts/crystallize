@@ -1,5 +1,5 @@
 #!/bin/bash
-source "$(which ember_bash_setup)" &> /dev/null
+source ember_bash_setup &> /dev/null
 
 export crystallizeVersion='3.1.1.1_pre5.6'
 

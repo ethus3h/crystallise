@@ -1,5 +1,5 @@
 #!/bin/bash
-source "$(which ember_bash_setup)" &> /dev/null
+source ember_bash_setup &> /dev/null
 
 # Accepts a pointer as an argument, and replaces the file with the pointer's contents if it does not match its hash.
 # Internal use only.

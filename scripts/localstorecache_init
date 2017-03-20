@@ -1,5 +1,5 @@
 #!/bin/bash
-source "$(which ember_bash_setup)" &> /dev/null
+source ember_bash_setup &> /dev/null
 
 # Create a cache directory. This is a naive caching layer for LocalStore crystals.
 # Usage: localstorecache_init <directory-name> <cache size limit in bytes>

@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
 
 # Given a LocalStore pointer, replace it with a remote pointer

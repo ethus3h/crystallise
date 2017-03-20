@@ -4,6 +4,7 @@
 PS4='+($?) $BASH_SOURCE:$FUNCNAME:$LINENO:'
 export PS4
 
+# shellcheck disable=SC1091
 source crystallize-bash_setup
 
 # These may not be available on non-Wreathe systems

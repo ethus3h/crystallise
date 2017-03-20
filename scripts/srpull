@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
 
 # Copy $1 into $2 and resolve pointers

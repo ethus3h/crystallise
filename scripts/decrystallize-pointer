@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
 
 # Decrystallizes a .crystal pointer directory. (Does not handle single-file pointers; use sreg_read_stream instead.)

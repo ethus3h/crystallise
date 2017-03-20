@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
 
 # Stores data provided on stdin into the stream registry, and sends a pointer to it to stdout.

@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
 
 # Accepts a pointer as an argument, and replaces the file with the pointer's contents if it does not match its hash.

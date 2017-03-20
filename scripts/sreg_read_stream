@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
 
 # Accepts a pointer on stdin, and outputs the corresponding data from the stream registry.

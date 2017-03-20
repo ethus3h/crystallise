@@ -1,4 +1,5 @@
 #!/bin/bash
 # This should be overridden by a bash function to make the calling script exit, but in case it's not, this script is here to make sure the error gets printed anyway.
 error-notify "error-die called, but not properly set up! Please check your configuration."
+# shellcheck disable=SC1091
 source error-notify "$@"

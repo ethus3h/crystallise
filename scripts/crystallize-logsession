@@ -157,7 +157,7 @@ echo "cd \"$(pwd)\""
 echo "CrystalID=\"$CrystalID\""
 echo "crystalWorkdir=\"$crystalWorkdir\""
 echo "crystalTitle=\"$crystalTitle\""
-echo "crystallizeVersion=\"$crystallizeVersion\""
+echo "crystallizeVersion=\"${crystallizeVersion:?}\""
 echo "crystalCollection=\"$crystalCollection\""
 
 CrystalFileName="$(basename "$crystalWorkdir/$CrystalID".coal5)"
@@ -166,8 +166,8 @@ echo "Filesize estimate: $crystalFilesSize"
 
 echo "Sending..."
 #Get API keys for the non-streaming upload method
-crystallizeAccessKey="$(grep access ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
-crystallizeSecretKey="$(grep secret ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
+#crystallizeAccessKey="$(grep access ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
+#crystallizeSecretKey="$(grep secret ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
 #FIXME: May continue even when hashdeep is missing
 #pack files into stream | measure rate of stream's flow | compress the stream | encrypt the stream | send the input to a checksummer and to the output | send the stream to ia
 #For debugging the curl command, can add tee >(cat > "$crystalWorkdir/$CrystalID.local-coal5") to the pipeline to get a local copy of the coal5

@@ -190,7 +190,7 @@ set -e
 script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/null}
 
 #sendRetries=0
-#until [ $sendRetries -ge 100 ]; do
+#until [[ $sendRetries -ge 100 ]]; do
     #curl --location --raw -X PUT --data-binary @"$CrystalTmpUploadFile" --header "x-amz-auto-make-bucket:1" --header "x-archive-queue-derive:0" --header "x-archive-size-hint:$crystalFilesSize" --header "authorization: LOW $crystallizeAccessKey:$crystallizeSecretKey" --header "x-archive-meta-collection:$crystalCollection" --header "x-archive-meta-title:$CrystalID" --header "x-archive-meta-description:Crystal $CrystalID" --header "x-archive-meta-subject:Uploaded using Crystallize $crystallizeVersion; 1EA21BD8-DB7E-11E5-9733-728C37852114; $crystalTitle; $CrystalID" "http://s3.us.archive.org/$CrystalID/$CrystalFileName" && break
 #    sendRetries=$((sendRetries+1))
 #    sleep 30
@@ -199,11 +199,11 @@ script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/
 getChecksumRetries=0
 retryDelayTime=5
 sleep 2
-until [ $getChecksumRetries -ge 1000 ]; do
+until [[ $getChecksumRetries -ge 1000 ]]; do
     wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep "<file name=\"$CrystalFileName\" source=\"original\">" && break
     getChecksumRetries=$((getChecksumRetries+1))
     sleep $retryDelayTime
-    if [ $retryDelayTime -lt 30 ]; then
+    if [[ $retryDelayTime -lt 30 ]]; then
         retryDelayTime=$((retryDelayTime + 5))
     fi
 done
@@ -220,10 +220,10 @@ fi
 exitcode="${PIPESTATUS[0]}"
 
 #Ignore exit code 1 from tar on Linux, which indicates files changed while reading; see http://stackoverflow.com/questions/20318852/tar-file-changed-as-we-read-it
-if [ "$exitcode" != "0" ] && [[ $OSTYPE != *inux* ]]; then
+if [[ "$exitcode" != "0" ]] && [[ $OSTYPE != *inux* ]]; then
     exit "$exitcode"
 fi
-if [ "$exitcode" != "1" ] && [ "$exitcode" != "0" ]; then
+if [[ "$exitcode" != "1" ]] && [[ "$exitcode" != "0" ]]; then
     exit "$exitcode"
 fi
 

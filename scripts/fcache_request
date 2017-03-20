@@ -23,9 +23,9 @@ hashDir="$dbDir/$hashSubdir"
 mkdir -p "$hashDir"
 dbLinkPath="$hashDir/$hashFull"
 checksumName="$dbLinkPath.checksum"
-if [ ! -h "$dbLinkPath" ] || [ ! -s "$(readlink "$dbLinkPath")" ]; then
+if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$(readlink "$dbLinkPath")" ]]; then
     # Item is not in the cache, so add it
-    if ! [ -f "$dbLinkPath" ]; then
+    if ! [[ -f "$dbLinkPath" ]]; then
         # Never seen this item before, so set the requestCount
         requestCount=1
     else
@@ -37,7 +37,7 @@ if [ ! -h "$dbLinkPath" ] || [ ! -s "$(readlink "$dbLinkPath")" ]; then
     mkdir -p "$dbFileDir"
     wget -qO - "$requestUrl" > "$dbFilePath"
     sha512sum < "$dbFilePath" | awk '{print $1;}' > "$checksumName"
-    if [ -h "$dbLinkPath" ]; then
+    if [[ -h "$dbLinkPath" ]]; then
         rm "$dbLinkPath"
     fi
     ln -s "$dbFilePath" "$dbLinkPath"
@@ -47,7 +47,7 @@ else
     dbFileOldPath="$dbFilePath"
     dbFileDir="$(dirname "$dbFilePath")"
     # First, make sure the link is good and fix it up if it's not.
-    if ! [ -e "$dbFilePath" ]; then
+    if ! [[ -e "$dbFilePath" ]]; then
         rm "$dbLinkPath"
         find "$dbDir/ByCount" -maxdepth 2 -type f -name "$hashFull" -exec ln -s {} "$dbLinkPath" \;
     fi
@@ -78,8 +78,8 @@ find "$dbDir" -type d -empty -delete
 # Remove the least-used items from the cache until it fits within the alloted disk space
 diskUsageLimit="$(<"$dbDir"/.fcache.limit)"
 diskUsageLimitSub=$(( diskUsageLimit - 1000000000 ))
-if [ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]; then
-    while [ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimitSub" ]; do
+if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
+    while [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimitSub" ]]; do
         rm -f "$dbDir"/Failed\ Checksum/*
         # Remove the least-used item from the cache
         leastUsedItemDirectory="$(find "$dbDir/ByCount" -maxdepth 1 -type d | sort -n | head -n 2 | tail -n 1)"

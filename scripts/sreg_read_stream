@@ -7,7 +7,7 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 #set -x
 function finish() {
-    if [ -e "$streamId" ]; then
+    if [[ -e "$streamId" ]]; then
         rm -r "$streamId"
     fi
 }
@@ -23,7 +23,7 @@ dbDir="${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"
 cd "$crystalWorkdir" || exit 1
 # Set up cache directory
 cacheDbDir="$crystalWorkdir/.StreamCache/"
-if ! [ -e "$cacheDbDir" ]; then
+if ! [[ -e "$cacheDbDir" ]]; then
     mkdir -p "$cacheDbDir"
     echo "5000000000" > "$cacheDbDir/.scache.limit"
 fi
@@ -37,8 +37,8 @@ mkdir "$streamId"
     numTotalRetries=40
     successfulRetrieval="0"
     trap 'warn "A nonfatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
-    while [ "$numRetries" -gt 0 ] && [ "$successfulRetrieval" -eq 0 ]; do
-        if [ "$numRetries" -lt "$numTotalRetries" ]; then
+    while [[ "$numRetries" -gt 0 ]] && [[ "$successfulRetrieval" -eq 0 ]]; do
+        if [[ "$numRetries" -lt "$numTotalRetries" ]]; then
             sleep 30
             #echo "Beginning retry of reading stream. $numRetries retries remaining."
         fi
@@ -53,9 +53,9 @@ mkdir "$streamId"
         hashDir="$cacheDbDir/$hashSubdir"
         mkdir -p "$hashDir"
         dbLinkPath="$hashDir/$hashFull"
-        if [ ! -h "$dbLinkPath" ] || [ ! -s "$(readlink "$dbLinkPath")" ]; then
+        if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$(readlink "$dbLinkPath")" ]]; then
             # Item is not in the cache, so add it
-            if ! [ -f "$dbLinkPath" ]; then
+            if ! [[ -f "$dbLinkPath" ]]; then
                 # Never seen this item before, so set the requestCount
                 requestCount=1
             else
@@ -102,7 +102,7 @@ mkdir "$streamId"
                 if [[ "true" == "$disallowHashPointer" ]]; then
                     error-die "The provided pointer is a hash pointer!"
                 fi
-                if ! [ -e "$dbDir/$hashA/$hashB/$hashC/$hashFull" ]; then
+                if ! [[ -e "$dbDir/$hashA/$hashB/$hashC/$hashFull" ]]; then
                     error-die "The provided pointer is a hash pointer, but the corresponding hash is not registered in the database! ($dbDir/$hashA/$hashB/$hashC/$hashFull does not exist.)"
                 fi
                 sreg_read_stream < "$dbDir/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
@@ -110,7 +110,7 @@ mkdir "$streamId"
                 error-die "Unknown pointer type signature! Either the file is corrupted, or this is a pointer version this version of sreg_read_stream is not familiar with, or this is not a pointer. Aborting."
             fi
             mv "$streamId.out" "$dbFilePath"
-            if [ -h "$dbLinkPath" ]; then
+            if [[ -h "$dbLinkPath" ]]; then
                 rm "$dbLinkPath"
             fi
             ln -s "$dbFilePath" "$dbLinkPath"
@@ -120,7 +120,7 @@ mkdir "$streamId"
             dbFileOldPath="$dbFilePath"
             dbFileDir="$(dirname "$dbFilePath")"
             # First, make sure the link is good and fix it up if it's not.
-            if ! [ -e "$dbFilePath" ]; then
+            if ! [[ -e "$dbFilePath" ]]; then
                 rm "$dbLinkPath"
                 find "$cacheDbDir/ByCount" -maxdepth 2 -type f -name "$hashFull" -exec ln -s {} "$dbLinkPath" \;
             fi
@@ -155,8 +155,8 @@ mkdir "$streamId"
     # Remove the least-used items from the cache until it fits within the alloted disk space
     diskUsageLimit="$(<"$cacheDbDir"/.scache.limit)"
     diskUsageLimitSub=$(( diskUsageLimit - 1000000000 ))
-    if [ "$(du -sb "$cacheDbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]; then
-      while [ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimitSub" ]; do
+    if [[ "$(du -sb "$cacheDbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
+      while [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimitSub" ]]; do
             rm -f "$cacheDbDir"/Failed\ Checksum/*
             # Remove the least-used item from the cache
             leastUsedItemDirectory="$(find "$cacheDbDir/ByCount" -maxdepth 1 -type d | sort -n | head -n 2 | tail -n 1)"

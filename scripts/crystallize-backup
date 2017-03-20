@@ -15,7 +15,7 @@ CrystalAddress="${1#https://archive.org/@(details|download)/}"
 CrystalAddress="${CrystalAddress%%/*}"
 CrystalAddress="${CrystalAddress%\.coal5*}"
 
-if [ "$CrystalAddress" == "" ]; then
+if [[ "$CrystalAddress" == "" ]]; then
     echo "Please specify a crystal address to back up."
     exit 1
 fi
@@ -24,7 +24,7 @@ CrystalID="$CrystalAddress"
 
 echo "Crystal address: $CrystalID"
 
-if [ -e "$CrystalID" ]; then
+if [[ -e "$CrystalID" ]]; then
     exit 1
 fi
 mkdir "$CrystalID"

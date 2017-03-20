@@ -11,7 +11,7 @@ export -f error-die
 rubberfs() {
     if [[ "$1" == "cd" ]]; then
         name="$2"
-        if [ ! -n "$name" ]; then
+        if [[ ! -n "$name" ]]; then
             name="library"
         fi
         cd "/Wreathe/.Resources/RubberFS/$name/mount" || exit 1

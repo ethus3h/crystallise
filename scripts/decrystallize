@@ -15,7 +15,7 @@ CrystalAddress="${1#https://archive.org/@(details|download)/}"
 CrystalAddress="${CrystalAddress%%/*}"
 CrystalAddress="${CrystalAddress%\.coal5*}"
 
-if [ "$CrystalAddress" == "" ]; then
+if [[ "$CrystalAddress" == "" ]]; then
     echo "Please specify a crystal address to unpack."
     exit 1
 fi
@@ -29,14 +29,14 @@ tempId="decrystallize-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")
 mkdir "$tempId"
 
 crystalXzFileSize=1
-if [ -t 1 ]; then
+if [[ -t 1 ]]; then
     crystalXzFileSize="$(curl -sIL "https://archive.org/download/$CrystalID/$CrystalID.coal5" | grep Content-Length | awk '{print $2}')"
     crystalXzFileSize="${crystalXzFileSize::-2}"
 fi
 
 crystallize-getconf 'Passphrase' > "$tempId.tmp"
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
-if ! [ -e "$crystalWorkdir/.CrystalCache/" ]; then
+if ! [[ -e "$crystalWorkdir/.CrystalCache/" ]]; then
     fcache_init "$crystalWorkdir/.CrystalCache/" 5000000000
 fi
 fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - | tar -xvf - -C "$tempId/" &

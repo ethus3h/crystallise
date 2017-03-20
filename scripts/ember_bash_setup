@@ -37,3 +37,7 @@ function emreadlink() {
     )
 }
 export -f emreadlink
+
+function setVariable() {
+    IFS= read -rd '' "$1" < <( printf "%s" "$2" )
+}

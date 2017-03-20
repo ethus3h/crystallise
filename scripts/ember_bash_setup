@@ -26,17 +26,18 @@ export -f error-die
 
 function emreadlink() {
     (
-        emReadlinkPath="$1"
+        path="$1"
         if [[ "$path" == "/" ]]; then
-            emReadlinkPath="/"
+            printf "/"
             exit 0
         elif [[ "$1" =~ '/'$ ]]; then
-            emReadlinkPath="${path::${#path}-1}"
+            path="${path::${#path}-1}"
         fi
+        printf "%s" "$path"
     )
 }
 export -f emreadlink
 
 function setVariable() {
-    IFS= read -rd '' $1 < <( printf "%s" "$2" )
+    IFS= read -rd '' "$1" < <( printf "%s" "$2" )
 }

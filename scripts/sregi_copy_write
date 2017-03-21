@@ -7,6 +7,7 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 #set -x
+echo "$@"
 
 if [[ "$1" == "--no-verify" ]]; then
     echo "(Not verifying pointers.)"
@@ -36,8 +37,9 @@ if [[ -n "$fsckStatusFile" ]]; then
 fi
 destinationRootLength="$4"
 targetLength=${#1}
+echo "$destinationRootLength - $targetLength"
 destinationName="$2/${1:destinationRootLength:targetLength}"
-#echo "$destinationRootLength - $targetLength - $destinationName"
+#echo "$destinationName"
 if [[ -f "$destinationName" ]]; then
     pointerTypeSignature="$(head -c 36 "$destinationName")"
     destinationChecksum=""

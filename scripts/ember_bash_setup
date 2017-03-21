@@ -42,7 +42,7 @@ function emreadlink() {
     (
         cd "$(dirname "$1")" || exit 1
         setVariableToCommandOutput "basename" "embasename" "$1"
-        printf "%s%s" "$PWD" "${basename:?}"
+        printf "%s/%s" "$PWD" "${basename:?}"
     )
 }
 export -f emreadlink

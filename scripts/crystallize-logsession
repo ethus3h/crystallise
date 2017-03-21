@@ -3,7 +3,7 @@
 source ember_bash_setup &> /dev/null
 
 ((EUID)) && exec sudo -- "$0" "$@"
-set -e
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 set -x
 
 echo "The crystal will have the following address when it is ready: $CrystalID"
@@ -18,9 +18,9 @@ export crystalWorkdir
 
 echo "Time (log stage 1) from http://timeapi.org/: "
 
-set +e
+trap - ERR
 wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-start" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z";
-set -e
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 
 echo "Time (log stage 1b) locally:"
 
@@ -60,9 +60,9 @@ dig +short myip.opendns.com @resolver1.opendns.com
 
 echo "IP address from http://icanhazip.com/: "
 
-set +e
+trap - ERR
 wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.ip" -e robots=off http://icanhazip.com/ &
-set -e
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 
 echo "Time (log stage 2) locally:"
 
@@ -71,9 +71,9 @@ xxd -pu <<< "$(date +%z)"
 
 echo "Time (log stage 2) from http://timeapi.org/: "
 
-set +e
+trap - ERR
 wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-env" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z" &
-set -e
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 
 echo "Time (log stage 2b) locally:"
 
@@ -169,11 +169,11 @@ set -o pipefail
 unset opt
 unset optb
 
-set +e
+trap - ERR
 #If GNU/Linux, set opt to 1 and unset optb; otherwise opposite
 [[ $OSTYPE = *inux* ]] && (( opt++ ))
 [[ $OSTYPE != *inux* ]] && (( optb++ ))
-set -e
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 
 script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/null}
 
@@ -244,9 +244,9 @@ xxd -pu <<< "$(date +%z)"
 
 echo "Time (log stage 3) from http://timeapi.org/: "
 
-set +e
+trap - ERR
 wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-done" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z"
-set -e
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 
 echo "Time (log stage 3b) locally:"
 

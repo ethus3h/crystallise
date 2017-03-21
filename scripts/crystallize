@@ -2,12 +2,12 @@
 # shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
 
-export crystallizeVersion='3.1.1.1_pre6.1.1'
+export crystallizeVersion='3.1.1.1_pre6.2'
 
 # ( sudo echo; cd "/Ember Library/Ember satellite projects/crystallize"; git add -A .; git commit -m "version"; git tag -a v3.1.0.29 -m "version"; egup-single .; sudo emerge crystallize )
 
 ((EUID)) && exec sudo -- "$0" "$@"
-set -e
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 
 if [[ ! -e "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/ ]]; then
     echo "ERROR: Could not find a usable Ember Library directory tree. Nothing done."
@@ -77,7 +77,7 @@ if [[ $crystallizeLeavePointer == true ]]; then
     rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.cmd" "$crystalWorkdir/$CrystalID.cwd" "$crystallizePointerDir"/
     echo "Added crystal metadata"
 fi
-set +e
+trap - ERR
 xz -C sha256 -v -9 -e "$crystalWorkdir/$CrystalID"
 xz -C sha256 -v -9 -e -k "$crystalWorkdir/$CrystalID.time-done.warc.gz"
 xz -C sha256 -v -9 -e "$crystalWorkdir/$CrystalID.local.idx"
@@ -97,7 +97,7 @@ mv -v "$crystalWorkdir/$CrystalID.deep.idx.xz.gpg" "$crystalWorkdir/$CrystalID.c
 mv -v "$crystalWorkdir/$CrystalID.cmd.gpg" "$crystalWorkdir/$CrystalID.coal5-cmd"
 mv -v "$crystalWorkdir/$CrystalID.cwd.gpg" "$crystalWorkdir/$CrystalID.coal5-cwd"
 
-set -e
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 ia upload "$CrystalID" --retries=100 --verify --delete "$crystalWorkdir/$CrystalID.coal5-log" "$crystalWorkdir/$CrystalID.coal5-idx-l" "$crystalWorkdir/$CrystalID.coal5-idx-d" "$crystalWorkdir/$CrystalID.coal5-cmd" "$crystalWorkdir/$CrystalID.coal5-cwd"
 ia upload "$CrystalID" --retries=100 --verify "$crystalWorkdir/$CrystalID.coal5-timestamp"
 

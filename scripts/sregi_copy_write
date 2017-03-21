@@ -7,13 +7,13 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 #set -x
-echo "$@"
 
 if [[ "$1" == "--no-verify" ]]; then
     echo "(Not verifying pointers.)"
     sregNoVerify=true
     shift
 fi
+echo "$@"
 if ! [[ -f "$1" ]]; then
     error-notify "Item must be a regular file."
     exit 1

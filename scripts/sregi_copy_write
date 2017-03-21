@@ -13,7 +13,7 @@ if [[ "$1" == "--no-verify" ]]; then
     sregNoVerify=true
     shift
 fi
-echo "$@"
+#echo "$@"
 if ! [[ -f "$1" ]]; then
     error-notify "Item must be a regular file."
     exit 1
@@ -37,7 +37,7 @@ if [[ -n "$fsckStatusFile" ]]; then
 fi
 destinationRootLength="$4"
 targetLength=${#1}
-echo "$destinationRootLength - $targetLength"
+#echo "$destinationRootLength - $targetLength"
 destinationName="$2/${1:destinationRootLength:targetLength}"
 #echo "$destinationName"
 if [[ -f "$destinationName" ]]; then

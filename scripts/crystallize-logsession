@@ -95,7 +95,7 @@ for i in "${!CrystallizePaths[@]}"; do
     #resolve path
     echo "Trying to resolve ${CrystallizePaths[$i]}..."
     setVariableToCommandOutput "abspath" "emreadlink" "${CrystallizePaths[$i]}"
-    CrystallizePaths[$i]="$abspath"
+    CrystallizePaths[$i]="${abspath:?}"
 done
 
 echo "Building local index..."

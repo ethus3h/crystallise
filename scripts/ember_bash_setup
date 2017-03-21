@@ -33,7 +33,7 @@ function embasename() {
         elif [[ "$1" =~ '/'$ ]]; then
             path="${path::${#path}-1}"
         fi
-        printf "%s" "$path"
+        printf "%s" "${path##*/}"
     )
 }
 export -f embasename

@@ -2,8 +2,6 @@
 # shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
 
-# Resolve pointers within the specified file(s)
-
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
 
@@ -16,7 +14,7 @@ while [[ ! -z "$1" ]]; do
         sreg_read_stream < "$fileToResolve" | sponge "$fileToResolve" || echo "(Note: ignoring failed read of $fileToResolve)"
     else
         if [[ -d "$fileToResolve" ]]; then
-            find "$fileToResolve" -type f -exec sreg_read_files {} \;
+            find "$fileToResolve" -type f -exec sregi_expand_pointers {} \;
         else
             warn "Skipping item $fileToResolve: not a regular file or directory."
         fi

@@ -93,9 +93,9 @@ dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
         fi
         # Check that the data can be restored
         if [[ "$1" == "--verbose" ]]; then
-            sreg_verify_entry 1 "$dbFilePath" || error-die "Failed saving stream: stored stream could not be read!"
+            sregi_verify_entry "$dbFilePath" || error-die "Failed saving stream: stored stream could not be read!"
         else
-            sreg_verify_entry 5 "$dbFilePath" &> /dev/null || error-die "Failed saving stream: stored stream could not be read!"
+            sregi_verify_entry "$dbFilePath" &> /dev/null || error-die "Failed saving stream: stored stream could not be read!"
         fi
     fi
     if [[ "$1" != "--verbose" ]]; then

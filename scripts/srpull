@@ -9,4 +9,4 @@ trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' 
 
 rsync -av --checksum --progress --no-i-r --ignore-existing "$1" "$2/"
 rsync -av --checksum --progress --no-i-r --ignore-existing "$1" "$2/"
-sreg_read_files "$2/$(basename "$1")"
+sregi_expand_pointers "$2/$(basename "$1")"

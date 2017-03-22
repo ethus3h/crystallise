@@ -4,7 +4,7 @@ source ember_bash_setup &> /dev/null
 
 # Internal use only.
 
-trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 knownHash="$(basename "$1")"
 recoveredHash="$(sha512sum < "$1" | awk '{print $1;}')"

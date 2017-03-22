@@ -5,7 +5,7 @@ source ember_bash_setup &> /dev/null
 # Copy $1 into $2 and replace with pointers. $1 cannot be a directory.
 
 ((EUID)) && exec sudo -- "$0" "$@"
-trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 #set -x
 
 if [[ "$1" == "--no-verify" ]]; then
@@ -46,7 +46,7 @@ if [[ -f "$destinationName" ]]; then
     destinationChecksum=""
     hasEncounteredError="0"
     if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
-        trap 'warn "A nonfatal error was reported on ${BASH_SOURCE} line ${LINENO}."; hasEncounteredError="1"' ERR
+        trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; hasEncounteredError="1"' ERR
         assumePointerDbEntryFileExists="true"
         if [[ "$sregNoVerify" == "true" ]]; then
             destinationChecksum="$(tail -c +38 "$destinationName" | head -c 129)"
@@ -56,7 +56,7 @@ if [[ -f "$destinationName" ]]; then
             fi
         else
             destinationChecksum="$(tail -c +38 "$destinationName" | head -c 129)"
-            sreg_read_stream < "$destinationName" > /dev/null || 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."'
+            sreg_read_stream < "$destinationName" > /dev/null || error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."
         fi
         if [[ "$destinationChecksum" == "$sourceChecksum" && "$hasEncounteredError" == "0" && "$assumePointerDbEntryFileExists" == "true" ]]; then
             # The file is already present, pointerized, and readable, so exit without doing anything.
@@ -69,14 +69,14 @@ if [[ -f "$destinationName" ]]; then
         fi
     fi
 fi
-trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
 streamId="sreg-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 crystalSubdir="$crystalWorkdir/$streamId"
 mkdir -p "$crystalSubdir"
 rsync -a --checksum --no-i-r "$1" "$crystalSubdir/"
 setVariableToCommandOutput "basename" "embasename" "$1"
-fileToStash="$crystalSubdir/$basename"
+fileToStash="$crystalSubdir/${basename:?}"
 echo "Begun storing $fileToStash."
 if [[ -f "$fileToStash" ]]; then
     sreg_store_stream --assume-checksum "$sourceChecksum" --verbose < "$fileToStash"

@@ -3,7 +3,7 @@
 source ember_bash_setup &> /dev/null
 
 ((EUID)) && exec sudo -- "$0" "$@"
-trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 pointerTypeSignature="$(head -c 36 "$1")"
 knownChecksum=""
@@ -12,7 +12,7 @@ if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
     if ! sreg_read_stream --checksum "$knownChecksum" < "$1"; then
         trap - ERR
         mv "$2" "$2.CORRUPTED-HASHPOINTER"
-        trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
+        trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
         error-die "Item $1 did not match the stored checksum!"
     fi
 fi

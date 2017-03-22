@@ -5,7 +5,7 @@ source ember_bash_setup &> /dev/null
 # Copy $1 into $2 and resolve pointers
 
 ((EUID)) && exec sudo -- "$0" "$@"
-trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 rsync -av --checksum --progress --no-i-r --ignore-existing "$1" "$2/"
 rsync -av --checksum --progress --no-i-r --ignore-existing "$1" "$2/"

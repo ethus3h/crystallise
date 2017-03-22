@@ -11,7 +11,7 @@ function finish() {
         rm -r "$streamId"
     fi
 }
-trap 'error-notify "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."; finish; exit 1' ERR
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR
 
 if [[ "$1" == "--checksum" ]]; then
     shift
@@ -35,13 +35,13 @@ fi
 # Get stream
 mkdir "$streamId"
 (
-    trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
+    trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
     cd "$streamId" || exit 1
     sponge "$streamId.xz"
     numRetries=40
     numTotalRetries=40
     successfulRetrieval="0"
-    trap 'warn "A nonfatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
+    trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
     # Get the hash of the stream
     hashFull="$(tail -c +38 "$streamId.xz" | head -c 129)"
     if [[ -n "$knownChecksum" ]]; then
@@ -153,7 +153,7 @@ mkdir "$streamId"
             successfulRetrieval="1"
         fi
     done
-    trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
+    trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
     if [[ "$successfulRetrieval" != "1" ]]; then
         error-die "Failed retrieving stream, and no retries left!"
     fi

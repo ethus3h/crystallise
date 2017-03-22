@@ -6,7 +6,7 @@ source ember_bash_setup &> /dev/null
 # Usage: localstorecache_request <cache directory> <crystal identifier>
 
 ((EUID)) && exec sudo -- "$0" "$@"
-trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
 dbDir="$1"
@@ -25,7 +25,7 @@ mkdir -p "$hashDir"
 dbLinkPath="$hashDir/$hashFull"
 
 # Clean up if there's an error to avoid leaving a broken cache entry
-trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."; rm -rf "$dbLinkPath" "$(readlink -e "$dbLinkPath")"' ERR
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; rm -rf "$dbLinkPath" "$(readlink -e "$dbLinkPath")"' ERR
 
 # Remove the least-used items from the cache until it fits within the alloted disk space
 diskUsageLimit="$(<"$dbDir"/.localstorecache.limit)"
@@ -52,7 +52,7 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
 fi
 trap - ERR
 oldFilePath="$(readlink "$dbLinkPath")"
-trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$oldFilePath" ]] || [[ ! -d "$oldFilePath"/scache-*.LocalStore ]]; then
     # Item is not in the cache, so add it
 

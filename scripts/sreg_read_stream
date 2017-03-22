@@ -122,6 +122,7 @@ mkdir "$streamId"
                 rm "$dbLinkPath"
             fi
             ln -s "$dbFilePath" "$dbLinkPath"
+        fi
         dbFilePath="$(readlink -e "$dbLinkPath")"
         dbFileOldPath="$dbFilePath"
         dbFileDir="$(dirname "$dbFilePath")"

@@ -46,31 +46,31 @@ else
     dbFilePath="$(readlink -e "$dbLinkPath")"
     dbFileOldPath="$dbFilePath"
     dbFileDir="$(dirname "$dbFilePath")"
-    # First, make sure the link is good and fix it up if it's not.
-    if ! [[ -e "$dbFilePath" ]]; then
-        rm "$dbLinkPath"
-        find "$dbDir/ByCount" -maxdepth 2 -type f -name "$hashFull" -exec ln -s {} "$dbLinkPath" \;
-    fi
-    # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
-    oldCount="$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")"
-    requestCount=$(( oldCount + 1 ))
-    # Increment the item's requestCount.
-    # First, get the names of where the file should go.
-    dbFileDir="$dbDir/ByCount/$requestCount/$hashSubdir"
-    dbFilePath="$dbFileDir/$hashFull"
-    mkdir -p "$dbFileDir"
-    mv "$dbFileOldPath" "$dbFilePath"
-    rm "$dbLinkPath"
-    ln -s "$dbFilePath" "$dbLinkPath"
     # Check that the data were retrieved successfully
     knownChecksum="$(<"$checksumName")"
     itemChecksum="$(sha512sum < "$dbLinkPath" | awk '{print $1;}')"
     if [[ "$itemChecksum" != "$knownChecksum" ]]; then
-        mkdir -p "$dbDir/Failed Checksum"
-        mv "$dbFilePath" "$dbDir/Failed Checksum/$(basename "$dbFilePath")"
-        error-die "File does not match what its checksum should be!"
+      mkdir -p "$dbDir/Failed Checksum"
+      mv "$dbFilePath" "$dbDir/Failed Checksum/$(basename "$dbFilePath")"
+      error-die "File does not match what its checksum should be!"
     fi
 fi
+# First, make sure the link is good and fix it up if it's not.
+if ! [[ -e "$dbFilePath" ]]; then
+    rm "$dbLinkPath"
+    find "$dbDir/ByCount" -maxdepth 2 -type f -name "$hashFull" -exec ln -s {} "$dbLinkPath" \;
+fi
+# Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
+oldCount="$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")"
+requestCount=$(( oldCount + 1 ))
+# Increment the item's requestCount.
+# First, get the names of where the file should go.
+dbFileDir="$dbDir/ByCount/$requestCount/$hashSubdir"
+dbFilePath="$dbFileDir/$hashFull"
+mkdir -p "$dbFileDir"
+mv "$dbFileOldPath" "$dbFilePath"
+rm "$dbLinkPath"
+ln -s "$dbFilePath" "$dbLinkPath"
 # Return the data to the caller
 cat "$dbLinkPath"
 # Clean up empty directories

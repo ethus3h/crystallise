@@ -61,7 +61,7 @@ mkdir "$streamId"
             echo "Beginning retry of reading stream. $numRetries retries remaining."
         fi
         numRetries=$(( numRetries - 1 ))
-        if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$(readlink "$dbLinkPath")" ]]; then
+        if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$(readlink "$dbLinkPath")" ]]; then
             # Item is not in the cache, so add it
             if ! [[ -f "$dbLinkPath" ]]; then
                 # Never seen this item before, so set the requestCount
@@ -127,23 +127,24 @@ mkdir "$streamId"
             dbFilePath="$(readlink -e "$dbLinkPath")"
             dbFileOldPath="$dbFilePath"
             dbFileDir="$(dirname "$dbFilePath")"
-            # First, make sure the link is good and fix it up if it's not.
-            if ! [[ -e "$dbFilePath" ]]; then
-                rm "$dbLinkPath"
-                find "$cacheDbDir/ByCount" -maxdepth 2 -type f -name "$hashFull" -exec ln -s {} "$dbLinkPath" \;
-            fi
-            # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
-            oldCount="$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")"
-            requestCount=$(( oldCount + 1 ))
-            # Increment the item's requestCount.
-            # First, get the names of where the file should go.
-            dbFileDir="$cacheDbDir/ByCount/$requestCount/$hashSubdir"
-            dbFilePath="$dbFileDir/$hashFull"
-            mkdir -p "$dbFileDir"
-            mv "$dbFileOldPath" "$dbFilePath"
-            rm "$dbLinkPath"
-            ln -s "$dbFilePath" "$dbLinkPath"
         fi
+        # First, make sure the link is good and fix it up if it's not.
+        if ! [[ -f "$dbFilePath" ]]; then
+            rm "$dbLinkPath"
+            find "$cacheDbDir/ByCount" -maxdepth 2 -type f -name "$hashFull" -exec ln -s {} "$dbLinkPath" \;
+        fi
+        # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
+        oldCount="$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")"
+        requestCount=$(( oldCount + 1 ))
+        # Increment the item's requestCount.
+        # First, get the names of where the file should go.
+        dbFileDir="$cacheDbDir/ByCount/$requestCount/$hashSubdir"
+        dbFilePath="$dbFileDir/$hashFull"
+        mkdir -p "$dbFileDir"
+        mv "$dbFileOldPath" "$dbFilePath"
+        rm "$dbLinkPath"
+        ln -s "$dbFilePath" "$dbLinkPath"
+        # Done cache cleanup
         retrievedHash="$(sha512sum < "$dbLinkPath" | awk '{print $1;}')"
         if [[ "$retrievedHash" != "$hashFull" ]]; then
             mkdir -p "$cacheDbDir/Failed Checksum"

@@ -71,9 +71,9 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$oldFilePath" ]] || [[ ! -d "$oldFilePat
     rm -rf "$dbFilePath"
     mkdir -p "$dbFilePath"
     (
-        tempDirectoryName="$crystalWorkdir/localstorecache-request-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
-        mkdir -p "$tempDirectoryName"
-        cd "$tempDirectoryName" || exit 1
+        tempDirectoryNameB="$crystalWorkdir/localstorecache-request-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+        mkdir -p "$tempDirectoryNameB"
+        cd "$tempDirectoryNameB" || exit 1
         decrystallize "$crystalIdentifier" &> /dev/null
         mv ./* "$dbFilePath"
     )
@@ -86,23 +86,23 @@ else
     dbFilePath="$(readlink -e "$dbLinkPath")"
     dbFileOldPath="$dbFilePath"
     dbFileDir="$(dirname "$dbFilePath")"
-    # First, make sure the link is good and fix it up if it's not.
-    if ! [[ -e "$dbFilePath" ]]; then
-        rm "$dbLinkPath"
-        find "$dbDir/ByCount" -maxdepth 2 -type d -name "$hashFull" -exec ln -s {} "$dbLinkPath" \;
-    fi
-    # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
-    oldCount="$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")"
-    requestCount=$(( oldCount + 1 ))
-    # Increment the item's requestCount.
-    # First, get the names of where the file should go.
-    dbFileDir="$dbDir/ByCount/$requestCount/$hashSubdir"
-    dbFilePath="$dbFileDir/$hashFull"
-    mkdir -p "$dbFileDir"
-    mv "$dbFileOldPath" "$dbFilePath"
-    rm "$dbLinkPath"
-    ln -s "$dbFilePath" "$dbLinkPath"
 fi
+# First, make sure the link is good and fix it up if it's not.
+if ! [[ -e "$dbFilePath" ]]; then
+    rm "$dbLinkPath"
+    find "$dbDir/ByCount" -maxdepth 2 -type d -name "$hashFull" -exec ln -s {} "$dbLinkPath" \;
+fi
+# Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
+oldCount="$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")"
+requestCount=$(( oldCount + 1 ))
+# Increment the item's requestCount.
+# First, get the names of where the file should go.
+dbFileDir="$dbDir/ByCount/$requestCount/$hashSubdir"
+dbFilePath="$dbFileDir/$hashFull"
+mkdir -p "$dbFileDir"
+mv "$dbFileOldPath" "$dbFilePath"
+rm "$dbLinkPath"
+ln -s "$dbFilePath" "$dbLinkPath"
 # Return the data to the caller
 echo "$dbLinkPath"
 # Clean up empty directories

@@ -20,7 +20,13 @@ dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
     streamId="scache-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
     sponge "$streamId.tmp"
     # Calculate hash
-    hashFull="$(sha512sum < "$streamId.tmp" | awk '{print $1;}')"
+    if [[ "$1" == "--assume-checksum" ]]; then
+        shift
+        hashFull="$2"
+        shift
+    else
+        hashFull="$(sha512sum < "$streamId.tmp" | awk '{print $1;}')"
+    fi
     hashA="${hashFull:0:1}"
     hashB="${hashFull:1:1}"
     hashC="${hashFull:2:1}"

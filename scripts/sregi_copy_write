@@ -55,7 +55,10 @@ if [[ -f "$destinationName" ]]; then
                 assumePointerDbEntryFileExists="false"
             fi
         else
-            destinationChecksum="$(sreg_read_stream < "$destinationName" | sha512sum | awk '{print $1;}')"
+            destinationChecksum="$(tail -c +38 "$destinationName" | head -c 129)"
+            trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
+            sreg_read_stream < "$destinationName"
+            trap 'warn "A nonfatal error was reported on ${BASH_SOURCE} line ${LINENO}."; hasEncounteredError="1"' ERR
         fi
         if [[ "$destinationChecksum" == "$sourceChecksum" && "$hasEncounteredError" == "0" && "$assumePointerDbEntryFileExists" == "true" ]]; then
             # The file is already present, pointerized, and readable, so exit without doing anything.

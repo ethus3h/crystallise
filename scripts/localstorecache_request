@@ -82,12 +82,10 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$oldFilePath" ]] || [[ ! -d "${cacheEntr
         rm "$dbLinkPath"
     fi
     ln -s "$dbFilePath" "$dbLinkPath"
-else
-    # Item is in the cache.
-    dbFilePath="$(readlink -e "$dbLinkPath")"
-    dbFileOldPath="$dbFilePath"
-    dbFileDir="$(dirname "$dbFilePath")"
 fi
+dbFilePath="$(readlink -e "$dbLinkPath")"
+dbFileOldPath="$dbFilePath"
+dbFileDir="$(dirname "$dbFilePath")"
 # First, make sure the link is good and fix it up if it's not.
 if ! [[ -e "$dbFilePath" ]]; then
     rm "$dbLinkPath"

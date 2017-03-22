@@ -75,7 +75,8 @@ streamId="sreg-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 crystalSubdir="$crystalWorkdir/$streamId"
 mkdir -p "$crystalSubdir"
 rsync -a --checksum --no-i-r "$1" "$crystalSubdir/"
-fileToStash="$crystalSubdir/$(basename "$1")"
+setVariableToCommandOutput "basename" "embasename" "$1"
+fileToStash="$crystalSubdir/$basename"
 echo "Begun storing $fileToStash."
 if [[ -f "$fileToStash" ]]; then
     sreg_store_stream --assume-checksum "$sourceChecksum" --verbose < "$fileToStash"
@@ -85,5 +86,6 @@ else
 fi
 echo "Done storing $fileToStash."
 mkdir -p "$(dirname "$destinationName")"
-rsync -a --checksum --no-i-r "$crystalSubdir/$(basename "$1")" "$destinationName"
+rsync -a --checksum --no-i-r "$fileToStash" "$destinationName"
+chmod a+r "$destinationName"
 rm -r "$crystalSubdir"

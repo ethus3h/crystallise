@@ -53,8 +53,8 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
 fi
 trap - ERR
 oldFilePath="$(readlink "$dbLinkPath")"
-trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
-if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$oldFilePath" ]] || [[ ! -d "$oldFilePath"/scache-*.LocalStore ]]; then
+trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; rm -rf "$dbLinkPath" "$(readlink -e "$dbLinkPath")"' ERR
+if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$oldFilePath" ]] || [[ ! -d "$oldFilePath"/scache-*.LocalStore ]]; then
     # Item is not in the cache, so add it
 
     # Make sure there isn't a dangling LocalStore content folder with no associated link

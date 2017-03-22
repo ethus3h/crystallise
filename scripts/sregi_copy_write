@@ -74,7 +74,15 @@ streamId="sreg-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 crystalSubdir="$crystalWorkdir/$streamId"
 mkdir -p "$crystalSubdir"
 rsync -a --checksum --no-i-r "$1" "$crystalSubdir/"
-sreg_store_files --replace "$crystalSubdir/$(basename "$1")"
+fileToStash="$crystalSubdir/$(basename "$1")"
+echo "Begun storing $fileToStash."
+if [[ -f "$fileToStash" ]]; then
+    sreg_store_stream --verbose < "$fileToStash"
+    sha512sum < "$fileToStash" | awk '{print "'760fa662-89cf-4ebd-9664-150b7637ddd4\\n'"$1;}' | sponge "$fileToStash"
+else
+    error-die "Skipping item $fileToStash: not a regular file."
+fi
+echo "Done storing $fileToStash."
 mkdir -p "$(dirname "$destinationName")"
 rsync -a --checksum --no-i-r "$crystalSubdir/$(basename "$1")" "$destinationName"
 rm -r "$crystalSubdir"

@@ -57,7 +57,7 @@ if [[ -f "$destinationName" ]]; then
         else
             destinationChecksum="$(tail -c +38 "$destinationName" | head -c 129)"
             trap 'error-die "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
-            sreg_read_stream < "$destinationName"
+            sreg_read_stream < "$destinationName" > /dev/null
             trap 'warn "A nonfatal error was reported on ${BASH_SOURCE} line ${LINENO}."; hasEncounteredError="1"' ERR
         fi
         if [[ "$destinationChecksum" == "$sourceChecksum" && "$hasEncounteredError" == "0" && "$assumePointerDbEntryFileExists" == "true" ]]; then

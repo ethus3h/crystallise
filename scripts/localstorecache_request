@@ -54,7 +54,8 @@ fi
 trap - ERR
 oldFilePath="$(readlink "$dbLinkPath")"
 trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; rm -rf "$dbLinkPath" "$(readlink -e "$dbLinkPath")"' ERR
-if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$oldFilePath" ]] || [[ ! -d "$oldFilePath"/scache-*.LocalStore ]]; then
+cacheEntryFileList=("$oldFilePath"/scache-*.LocalStore)
+if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$oldFilePath" ]] || [[ ! -d "${cacheEntryFileList[0]}" ]]; then
     # Item is not in the cache, so add it
 
     # Make sure there isn't a dangling LocalStore content folder with no associated link
@@ -70,10 +71,10 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$oldFilePath" ]] || [[ ! -d "$oldFilePat
     dbFilePath="$dbFileDir/$hashFull"
     rm -rf "$dbFilePath"
     mkdir -p "$dbFilePath"
+    tempDirectoryName="$crystalWorkdir/localstorecache-request-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    mkdir -p "$tempDirectoryName"
     (
-        tempDirectoryNameB="$crystalWorkdir/localstorecache-request-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
-        mkdir -p "$tempDirectoryNameB"
-        cd "$tempDirectoryNameB" || exit 1
+        cd "$tempDirectoryName" || exit 1
         decrystallize "$crystalIdentifier" &> /dev/null
         mv ./* "$dbFilePath"
     )

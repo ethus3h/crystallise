@@ -22,7 +22,7 @@ dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
     # Calculate hash
     if [[ "$1" == "--assume-checksum" ]]; then
         shift
-        hashFull="$2"
+        hashFull="$1"
         shift
     else
         hashFull="$(sha512sum < "$streamId.tmp" | awk '{print $1;}')"

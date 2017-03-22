@@ -13,6 +13,11 @@ function finish() {
 }
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE} line ${LINENO}."; finish; exit 1' ERR
 
+if [[ "$1" == "--checksum" ]]; then
+    shift
+    knownChecksum="$1"
+    shift
+fi
 if [[ "--disallow-hash-pointer" == "$1" ]]; then
     disallowHashPointer="true"
     shift
@@ -37,22 +42,25 @@ mkdir "$streamId"
     numTotalRetries=40
     successfulRetrieval="0"
     trap 'warn "A nonfatal error was reported on ${BASH_SOURCE} line ${LINENO}."' ERR
+    # Get the hash of the stream
+    hashFull="$(tail -c +38 "$streamId.xz" | head -c 129)"
+    if [[ -n "$knownChecksum" ]]; then
+        [[ "$knownChecksum" == "$hashFull" ]] || error-die "The checksum provided by the pointer does not match the provided checksum."
+    fi
+    hashA="${hashFull:0:1}"
+    hashB="${hashFull:1:1}"
+    hashC="${hashFull:2:1}"
+    # Set up this item's cache directory
+    hashSubdir="$hashA/$hashB/$hashC"
+    hashDir="$cacheDbDir/$hashSubdir"
+    mkdir -p "$hashDir"
+    dbLinkPath="$hashDir/$hashFull"
     while [[ "$numRetries" -gt 0 ]] && [[ "$successfulRetrieval" -eq 0 ]]; do
         if [[ "$numRetries" -lt "$numTotalRetries" ]]; then
             sleep 30
             echo "Beginning retry of reading stream. $numRetries retries remaining."
         fi
         numRetries=$(( numRetries - 1 ))
-        # Get the hash of the stream
-        hashFull="$(tail -c +38 "$streamId.xz" | head -c 129)"
-        hashA="${hashFull:0:1}"
-        hashB="${hashFull:1:1}"
-        hashC="${hashFull:2:1}"
-        # Set up this item's cache directory
-        hashSubdir="$hashA/$hashB/$hashC"
-        hashDir="$cacheDbDir/$hashSubdir"
-        mkdir -p "$hashDir"
-        dbLinkPath="$hashDir/$hashFull"
         if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$(readlink "$dbLinkPath")" ]]; then
             # Item is not in the cache, so add it
             if ! [[ -f "$dbLinkPath" ]]; then

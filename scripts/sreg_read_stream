@@ -167,7 +167,7 @@ mkdir "$streamId"
     fi
     cat "$dbLinkPath"
     # Cache cleanup is expensive, so only do it occasionally
-    if [[ "$RANDOM" -lt 1500 ]]; then
+    if [[ "$RANDOM" -lt 250 ]]; then
         # Clean up empty directories
         find "$cacheDbDir" -type d -empty -delete
         # Remove the least-used items from the cache until it fits within the alloted disk space

@@ -70,7 +70,7 @@ dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
         if [[ "$useLocalStore" != "true" ]]; then
             tar -c -P -S --format pax "$streamId.tmp.crystal" ".$streamId.tmp.crystal-data" "${logFiles[@]}" | xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - >> "$dbFilePath"
         else
-            xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout "$streamId.tmp" >> "$localStoreFilePath"
+            xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout "$streamId.tmp" > "$localStoreFilePath"
         fi
         # Upload a pack of the LocalStore items if there are enough, and update the pointers accordingly.
         localStoreSize="$(du -sb "$dbDir"/LocalStore | awk '{print $1;}')"

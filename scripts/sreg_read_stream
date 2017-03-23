@@ -148,6 +148,11 @@ mkdir "$streamId"
             mkdir -p "$cacheDbDir/Failed Checksum"
             mv "$dbFilePath" "$cacheDbDir/Failed Checksum/$(basename "$dbFilePath")"
             warn "Checksum mismatch when retrieving the requested stream!"
+            if [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
+                mkdir -p "$dbDir/LocalStore/Failed\ Fsck/"
+                mv "$dbDir/LocalStore/$hashA/$hashB/$hashC/$hashFull" "$dbDir/LocalStore/Failed\ Fsck/"
+                error-die "LocalStore entry was corrupted!"
+            fi
         else
             successfulRetrieval="1"
         fi

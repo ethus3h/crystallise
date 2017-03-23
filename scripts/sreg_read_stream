@@ -35,7 +35,7 @@ fi
 # Get stream
 mkdir "$streamId"
 (
-    trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
     cd "$streamId" || exit 1
     sponge "$streamId.xz"
     numRetries=40
@@ -45,7 +45,7 @@ mkdir "$streamId"
     # Get the hash of the stream
     hashFull="$(tail -c +38 "$streamId.xz" | head -c 129)"
     if [[ -n "$knownChecksum" ]]; then
-        [[ "$knownChecksum" == "$hashFull" ]] || error-die "The checksum provided by the pointer does not match the provided checksum."
+        [[ "$knownChecksum" == "$hashFull" ]] || die "The checksum provided by the pointer does not match the provided checksum."
     fi
     hashA="${hashFull:0:1}"
     hashB="${hashFull:1:1}"
@@ -100,7 +100,7 @@ mkdir "$streamId"
                 crystalFilePatternMatches=( $crystalFilePattern )
                 localStoreCrystalName="${crystalFilePatternMatches[0]}"
                 if ! [[ -e "$localStoreCrystalName" ]]; then
-                    error-die "Crystal info could not be found in the pointer, so giving up immediately (retrying probably wouldn't help this)."
+                    die "Crystal info could not be found in the pointer, so giving up immediately (retrying probably wouldn't help this)."
                 fi
                 localStoreCrystalIdentifier="$(<"$localStoreCrystalName"/identifier)"
                 localstoreLocation="$(localstorecache_request "$crystalWorkdir/.LocalStoreCache/" "$localStoreCrystalIdentifier")"
@@ -108,14 +108,14 @@ mkdir "$streamId"
             elif [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
                 # Hash pointer
                 if [[ "true" == "$disallowHashPointer" ]]; then
-                    error-die "The provided pointer is a hash pointer!"
+                    die "The provided pointer is a hash pointer!"
                 fi
                 if ! [[ -e "$dbDir/$hashA/$hashB/$hashC/$hashFull" ]]; then
-                    error-die "The provided pointer is a hash pointer, but the corresponding hash is not registered in the database! ($dbDir/$hashA/$hashB/$hashC/$hashFull does not exist.)"
+                    die "The provided pointer is a hash pointer, but the corresponding hash is not registered in the database! ($dbDir/$hashA/$hashB/$hashC/$hashFull does not exist.)"
                 fi
                 sreg_read_stream < "$dbDir/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
             else
-                error-die "Unknown pointer type signature! Either the file is corrupted, or this is a pointer version this version of sreg_read_stream is not familiar with, or this is not a pointer. Aborting."
+                die "Unknown pointer type signature! Either the file is corrupted, or this is a pointer version this version of sreg_read_stream is not familiar with, or this is not a pointer. Aborting."
             fi
             mv "$streamId.out" "$dbFilePath"
             if [[ -h "$dbLinkPath" ]]; then
@@ -155,15 +155,15 @@ mkdir "$streamId"
             if [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
                 mkdir -p "$dbDir/LocalStore/Failed\ Fsck/"
                 mv "$dbDir/LocalStore/$hashA/$hashB/$hashC/$hashFull" "$dbDir/LocalStore/Failed\ Fsck/"
-                error-die "LocalStore entry was corrupted!"
+                die "LocalStore entry was corrupted!"
             fi
         else
             successfulRetrieval="1"
         fi
     done
-    trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
     if [[ "$successfulRetrieval" != "1" ]]; then
-        error-die "Failed retrieving stream, and no retries left!"
+        die "Failed retrieving stream, and no retries left!"
     fi
     cat "$dbLinkPath"
     # Cache cleanup is expensive, so only do it occasionally

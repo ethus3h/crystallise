@@ -17,12 +17,12 @@ source futuramerlin-web-toolkit-s &> /dev/null
 # shellcheck disable=SC1091
 source egup-env &> /dev/null
 
-error-die() {
+die() {
     # shellcheck disable=SC1091
     source error-notify "$@"
     exit 1
 }
-export -f error-die
+export -f die
 
 function embasename() {
     (
@@ -56,7 +56,7 @@ function setVariableToCommandOutput() {
     save_traps="$(trap)"
     trap - ERR
     IFS= read -rd '' "$emSetVariableToCommandOutputVar" < <( "$@" )
-    trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
     eval "$save_traps"
 }
 export -f setVariableToCommandOutput

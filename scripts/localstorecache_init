@@ -7,7 +7,7 @@ source ember_bash_setup &> /dev/null
 # If the cache directory already exists, the current size limit will override the one provided as an argument.
 
 ((EUID)) && exec sudo -- "$0" "$@"
-trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 if [[ -e "$1"/.localstorecache.limit ]]; then
     exit 0

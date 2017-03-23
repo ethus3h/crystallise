@@ -4,7 +4,7 @@ source ember_bash_setup &> /dev/null
 
 # Make a clone of the stream database where the bodies of the streams are stored instead of the pointers.
 
-trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
 backupDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Backups

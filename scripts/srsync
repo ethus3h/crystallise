@@ -5,7 +5,7 @@ source ember_bash_setup &> /dev/null
 # Copy $1 into $2 and replace with pointers, skipping existing
 
 ((EUID)) && exec sudo -- "$0" "$@"
-trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 #set -x
 
 sregNoVerify=true
@@ -20,7 +20,7 @@ if [[ "$sregNoVerify" == "true" ]]; then
     echo "(Not verifying pointers: use sreg_fsck to test the entire stream registry.)"
 fi
 if ! [[ -d "$2" ]]; then
-    error-die "Destination is not a directory."
+    die "Destination is not a directory."
 fi
 echo "Counting items..."
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"

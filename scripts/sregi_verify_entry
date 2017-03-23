@@ -9,7 +9,7 @@ trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}.
 fsckStatusFile="$2"
 knownHash="$(tail -c +38 "$1" | head -c 129)"
 echo "Started verifying stream registry database entry $knownHash."
-if sreg_read_stream --checksum "$knownHash" --disallow-hash-pointer < "$1"; then
+if sreg_read_stream --checksum "$knownHash" --disallow-hash-pointer < "$1" > /dev/null; then
     if [[ -n "$fsckStatusFile" ]]; then
         numberExpected="$(<"$fsckStatusFile")"
         numberProcessedFile="$fsckStatusFile.done"

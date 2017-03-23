@@ -43,8 +43,6 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$(readlink "$dbLinkPath")" ]]; then
     ln -s "$dbFilePath" "$dbLinkPath"
 fi
 dbFilePath="$(readlink -e "$dbLinkPath")"
-dbFileOldPath="$dbFilePath"
-dbFileDir="$(dirname "$dbFilePath")"
 # Check that the data were retrieved successfully
 knownChecksum="$(<"$checksumName")"
 itemChecksum="$(sha512sum < "$dbLinkPath" | awk '{print $1;}')"
@@ -57,11 +55,14 @@ fi
 if ! [[ -e "$dbFilePath" ]]; then
     rm "$dbLinkPath"
     find "$dbDir/ByCount" -maxdepth 2 -type f -name "$hashFull" -exec ln -s {} "$dbLinkPath" \;
+    dbFilePath="$(readlink -e "$dbLinkPath")"
 fi
+dbFileOldPath="$dbFilePath"
+dbFileDir="$(dirname "$dbFilePath")"
 # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
 oldCount="$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")"
-requestCount=$(( oldCount + 1 ))
 # Increment the item's requestCount.
+requestCount=$(( oldCount + 1 ))
 # First, get the names of where the file should go.
 dbFileDir="$dbDir/ByCount/$requestCount/$hashSubdir"
 dbFilePath="$dbFileDir/$hashFull"

@@ -6,111 +6,116 @@ source ember_bash_setup &> /dev/null
 trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 #set -x
 
-echo "The crystal will have the following address when it is ready: $CrystalID"
-
-echo "Time (log stage 1) locally:"
-
-date +%Y-%m-%d-%H-%M-%S-%N
-xxd -pu <<< "$(date +%z)"
-
-crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
-export crystalWorkdir
-
-echo "Time (log stage 1) from http://timeapi.org/: "
-
-trap - ERR
-wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-start" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z";
-trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
-
-echo "Time (log stage 1b) locally:"
-
-date +%Y-%m-%d-%H-%M-%S-%N
-xxd -pu <<< "$(date +%z)"
-
-echo "Working in $crystalWorkdir".
-
-echo "Arguments: " "$@"
-
-echo "Configuration: "
-
-cat /usr/local/etc/crystallize.conf
-
-crystalTitle=$(crystallize-getconf 'InstallationIdentifier')
-export crystalTitle
-crystalCollection=$(crystallize-getconf 'Collection')
-export crystalCollection
-crystallizePassphrase=$(crystallize-getconf 'Passphrase')
-export crystallizePassphrase
-
-export CrystalID="$1"
-
-echo "Environment: "
-
-uname -ap
-
-echo "Environment variables: "
-
-printenv
-
-echo "Network environment: "
-
-echo "IP address from DNS: "
-
-dig +short myip.opendns.com @resolver1.opendns.com
-
-echo "IP address from http://icanhazip.com/: "
-
-trap - ERR
-wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.ip" -e robots=off http://icanhazip.com/ &
-trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
-
-echo "Time (log stage 2) locally:"
-
-date +%Y-%m-%d-%H-%M-%S-%N
-xxd -pu <<< "$(date +%z)"
-
-echo "Time (log stage 2) from http://timeapi.org/: "
-
-trap - ERR
-wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-env" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z" &
-trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
-
-echo "Time (log stage 2b) locally:"
-
-date +%Y-%m-%d-%H-%M-%S-%N
-xxd -pu <<< "$(date +%z)"
-
-echo "The crystal will have the following address when it is ready: $CrystalID"
-
-printf "%s" "$crystallizePassphrase" > "$crystalWorkdir/$CrystalID".tmp
-
-CrystallizeFirstArg="$1"
+logfile="$1"
 shift
 
-#Resolve relative paths in the arguments, since GNU tar's -P doesn't
-CrystallizePaths=( "$@" )
-echo "First entry in array: ${CrystallizePaths[0]}"
-for i in "${!CrystallizePaths[@]}"; do
-    #resolve path
-    echo "Trying to resolve ${CrystallizePaths[$i]}..."
-    setVariableToCommandOutput "abspath" "emreadlink" "${CrystallizePaths[$i]}"
-    CrystallizePaths[$i]="${abspath:?}"
-done
+echo "The crystal will have the following address when it is ready: $CrystalID"
 
-echo "Building local index..."
+{
+    echo "Time (log stage 1) locally:"
 
-hashdeep -c md5,sha1,sha256,tiger,whirlpool -e -o fbsd "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.local.idx" &
+    date +%Y-%m-%d-%H-%M-%S-%N
+    xxd -pu <<< "$(date +%z)"
+
+    crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
+    export crystalWorkdir
+
+    echo "Time (log stage 1) from http://timeapi.org/: "
+
+    trap - ERR
+    wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-start" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z"
+    trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+
+    echo "Time (log stage 1b) locally:"
+
+    date +%Y-%m-%d-%H-%M-%S-%N
+    xxd -pu <<< "$(date +%z)"
+
+    echo "Working in $crystalWorkdir".
+
+    echo "Arguments: " "$@"
+
+    echo "Configuration: "
+
+    cat /usr/local/etc/crystallize.conf
+
+    crystalTitle=$(crystallize-getconf 'InstallationIdentifier')
+    export crystalTitle
+    crystalCollection=$(crystallize-getconf 'Collection')
+    export crystalCollection
+    crystallizePassphrase=$(crystallize-getconf 'Passphrase')
+    export crystallizePassphrase
+
+    export CrystalID="$1"
+
+    echo "Environment: "
+
+    uname -ap
+
+    echo "Environment variables: "
+
+    printenv
+
+    echo "Network environment: "
+
+    echo "IP address from DNS: "
+
+    dig +short myip.opendns.com @resolver1.opendns.com
+
+    echo "IP address from http://icanhazip.com/: "
+
+    trap - ERR
+    wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.ip" -e robots=off http://icanhazip.com/ &
+    trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+
+    echo "Time (log stage 2) locally:"
+
+    date +%Y-%m-%d-%H-%M-%S-%N
+    xxd -pu <<< "$(date +%z)"
+
+    echo "Time (log stage 2) from http://timeapi.org/: "
+
+    trap - ERR
+    wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-env" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z" &
+    trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+
+    echo "Time (log stage 2b) locally:"
+
+    date +%Y-%m-%d-%H-%M-%S-%N
+    xxd -pu <<< "$(date +%z)"
+
+    printf "%s" "$crystallizePassphrase" > "$crystalWorkdir/$CrystalID".tmp
+
+    CrystallizeFirstArg="$1"
+    shift
+
+    #Resolve relative paths in the arguments, since GNU tar's -P doesn't
+    CrystallizePaths=( "$@" )
+    echo "First entry in array: ${CrystallizePaths[0]}"
+    for i in "${!CrystallizePaths[@]}"; do
+        #resolve path
+        echo "Trying to resolve ${CrystallizePaths[$i]}..."
+        setVariableToCommandOutput "abspath" "emreadlink" "${CrystallizePaths[$i]}"
+        CrystallizePaths[$i]="${abspath:?}"
+    done
+
+    echo "Building local index..."
+} &>> "$logfile"
+
+hashdeep -c md5,sha1,sha256,tiger,whirlpool -e -o fbsd "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.local.idx" 2&>1 | tee -a "$logfile" &
 localIndexPid="$!"
 
 echo "Building deep index..."
-hashdeep -c md5,sha1,sha256,tiger,whirlpool -e -o fbsd -r "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.deep.idx"
+hashdeep -c md5,sha1,sha256,tiger,whirlpool -e -o fbsd -r "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.deep.idx" 2&>1 | tee -a "$logfile"
 
-echo "Waiting for local index..."
-wait "$localIndexPid"
+{
+    echo "Waiting for local index..."
+    wait "$localIndexPid"
 
-echo "Counting size..."
+    echo "Counting size..."
 
-crystalFilesSize="$(disk-size-in-bytes "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID")"
+    crystalFilesSize="$(disk-size-in-bytes "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID")"
+} &>> "$logfile"
 
 #get available memory
 memlimit=-1
@@ -135,23 +140,25 @@ elif hash vm_stat 2>/dev/null; then
     #Output is in 4096-byte pages
     memlimit="$((memlimit * 4096))"
 else
-    warn "Could not determine how much memory is available."
+    warn "Could not determine how much memory is available." 2&>1 | tee -a "$logfile"
 fi
 
 memlimit="$((memlimit - 1073741824))"
 
-echo "cd \"$(pwd)\""
-echo "CrystalID=\"$CrystalID\""
-echo "crystalWorkdir=\"$crystalWorkdir\""
-echo "crystalTitle=\"$crystalTitle\""
-echo "crystallizeVersion=\"${crystallizeVersion:?}\""
-echo "crystalCollection=\"$crystalCollection\""
+{
+    echo "cd \"$(pwd)\""
+    echo "CrystalID=\"$CrystalID\""
+    echo "crystalWorkdir=\"$crystalWorkdir\""
+    echo "crystalTitle=\"$crystalTitle\""
+    echo "crystallizeVersion=\"${crystallizeVersion:?}\""
+    echo "crystalCollection=\"$crystalCollection\""
 
-CrystalFileName="$(basename "$crystalWorkdir/$CrystalID".coal5)"
+    CrystalFileName="$(basename "$crystalWorkdir/$CrystalID".coal5)"
 
-echo "Filesize estimate: $crystalFilesSize"
+    echo "Filesize estimate: $crystalFilesSize"
 
-echo "Sending..."
+    echo "Sending..."
+} &>> "$logfile"
 #Get API keys for the non-streaming upload method
 #crystallizeAccessKey="$(grep access ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
 #crystallizeSecretKey="$(grep secret ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
@@ -162,7 +169,7 @@ echo "Sending..."
 CrystalTmpUploadFile="$crystalWorkdir/$CrystalID.coal5"
 export CrystalTmpUploadFile
 set +o pipefail
-tar -cv -P -S --format pax "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.time-env.warc.gz" | pv -tparbIfei 0.1 -s "$crystalFilesSize" | xz -k -C sha256 -T 0 --lzma2=preset=1 --memlimit-compress="$memlimit" --stdout - | gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - | tee >(hashdeep -c md5,sha1,sha256 -o fbcpsde > "$crystalWorkdir/$CrystalID.checksums") > "$CrystalTmpUploadFile"
+tar -cv -P -S --format pax "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.time-env.warc.gz" | pv -tparbIfei 0.1 -s "$crystalFilesSize" | xz -k -C sha256 -T 0 --lzma2=preset=1 --memlimit-compress="$memlimit" --stdout - | gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - | tee >(hashdeep -c md5,sha1,sha256 -o fbcpsde > "$crystalWorkdir/$CrystalID.checksums") > "$CrystalTmpUploadFile" 2&>1 | tee -a "$logfile"
 set -o pipefail
 
 unset opt
@@ -214,47 +221,49 @@ if [[ "$exitcode" != "1" ]] && [[ "$exitcode" != "0" ]]; then
     exit "$exitcode"
 fi
 
-echo "Retrieving remote index..."
+{
+    echo "Retrieving remote index..."
 
-wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" | tee "$crystalWorkdir/$CrystalID.json"
+    wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" | tee "$crystalWorkdir/$CrystalID.json"
 
-#If the opt(b) variable is unset, insert the text after "opt(b)+"
-#opt is for GNU/Linux; optb is for others
-script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-xz-b ${opt+/dev/null}
+    #If the opt(b) variable is unset, insert the text after "opt(b)+"
+    #opt is for GNU/Linux; optb is for others
+    script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-xz-b ${opt+/dev/null}
 
-echo "Copying indices..."
+    echo "Copying indices..."
 
-rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.checksums" "$crystalWorkdir/$CrystalID.json.xz" "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
+    rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.checksums" "$crystalWorkdir/$CrystalID.json.xz" "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
 
-echo "rsynced..."
+    echo "rsynced..."
 
-#Clear the screen
-printf "\033c"
+    #Clear the screen
+    printf "\033c"
 
-#Delete everything except log
-#echo "Cleaning up..."
-#yes | rm -rv "${CrystallizePaths[@]}"
-#echo "Done cleaning up..."
+    #Delete everything except log
+    #echo "Cleaning up..."
+    #yes | rm -rv "${CrystallizePaths[@]}"
+    #echo "Done cleaning up..."
 
-echo "Time (log stage 3) locally:"
+    echo "Time (log stage 3) locally:"
 
-date +%Y-%m-%d-%H-%M-%S-%N
-xxd -pu <<< "$(date +%z)"
+    date +%Y-%m-%d-%H-%M-%S-%N
+    xxd -pu <<< "$(date +%z)"
 
-echo "Time (log stage 3) from http://timeapi.org/: "
+    echo "Time (log stage 3) from http://timeapi.org/: "
 
-trap - ERR
-wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-done" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z"
-trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+    trap - ERR
+    wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-done" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z"
+    trap 'error-die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
-echo "Time (log stage 3b) locally:"
+    echo "Time (log stage 3b) locally:"
 
-date +%Y-%m-%d-%H-%M-%S-%N
-xxd -pu <<< "$(date +%z)"
+    date +%Y-%m-%d-%H-%M-%S-%N
+    xxd -pu <<< "$(date +%z)"
 
-#Clear the screen
-printf "\033c"
+    #Clear the screen
+    printf "\033c"
 
-echo "Finishing $CrystalID..."
+    echo "Finishing $CrystalID..."
 
-echo "Please wait..."
+    echo "Please wait..."
+} &>> "$logfile"

@@ -2,7 +2,7 @@
 # shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
 
-export crystallizeVersion='3.1.2_pre1.3.10'
+export crystallizeVersion='3.1.2_pre2'
 
 # ( sudo echo; cd "/Ember Library/Ember satellite projects/crystallize"; git add -A .; git commit -m "version"; git tag -a v3.1.0.29 -m "version"; egup-single .; sudo emerge crystallize )
 
@@ -65,7 +65,7 @@ CrystalID="$(date +%Y-%m-%d-%H-%M-%S-%N)_$(xxd -pu <<< "$(date +%z)")-$(python -
 CrystalID="C3-${CrystalID//-/}"
 export CrystalID
 
-crystallize-logsession "$CrystalID" "$@" >> "$crystalWorkdir/$CrystalID" 2>&1
+crystallize-logsession "$crystalWorkdir/$CrystalID" "$CrystalID" "$@"
 
 #echo "Working..."
 echo "$0 $*" > "$crystalWorkdir/$CrystalID.cmd"

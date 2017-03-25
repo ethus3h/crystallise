@@ -33,7 +33,6 @@ diskUsageLimit="$(<"$dbDir"/.localstorecache.limit)"
 diskUsageLimitSub=$(( diskUsageLimit - 1000000000 ))
 if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
     while [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimitSub" ]]; do
-        rm "$dbDir"/Failed\ Checksum/*
         # Remove the least-used item from the cache
         leastUsedItemDirectory="$(find "$dbDir/ByCount" -maxdepth 1 -type d | sort -n | head -n 2 | tail -n 1)"
         #FIXME: This won't accurately sort by size.

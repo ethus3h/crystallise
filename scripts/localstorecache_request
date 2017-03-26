@@ -99,6 +99,7 @@ requestCount=$(( oldCount + 1 ))
 dbFileDir="$dbDir/ByCount/$requestCount/$hashSubdir"
 dbFilePath="$dbFileDir/$hashFull"
 mkdir -p "$dbFileDir"
+rm -rf "$dbFilePath"
 mv "$dbFileOldPath" "$dbFilePath"
 rm "$dbLinkPath"
 ln -s "$dbFilePath" "$dbLinkPath"

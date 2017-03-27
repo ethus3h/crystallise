@@ -46,5 +46,6 @@ if [[ "$sregNoVerify" == "true" ]]; then
 else
     find "$1" -type f -exec sregi_copy_write {} "$2" "$fsckStatusFile" "$destinationRootLength" \;
 fi
-rsync -a --ignore-existing --no-i-r "$1" "$2/"
+# This NEEDS to skip regular files, because otherwise files that don't exist in the directory will be copied and take up space!
+# rsync -a --ignore-existing --no-i-r "$1" "$2/"
 find "$destinationFindTarget" -type d -empty -exec touch {}/.keep \;

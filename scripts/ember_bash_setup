@@ -104,6 +104,6 @@ export -f readconf
 
 function preadconf() {
     readconf "$@"
-    print "${readconfValue[0]}"
+    print "${readconfValue[1]}"
 }
 export -f preadconf

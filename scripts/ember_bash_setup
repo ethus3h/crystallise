@@ -90,10 +90,10 @@ function readconf() {
     while IFS= read -r line; do
         if ! [[ "$line" =~ ^# ]]; then
             if [[ -z "$key" ]]; then
-                readconfValue+="$line"
+                readconfValue+=("$line")
             else
                 if [[ "$(cut -f1 -d, <<< "$line")" == "$1" ]]; then
-                    readconfValue+="$(cut -f2 -d, <<< "$line")"
+                    readconfValue+=("$(cut -f2 -d, <<< "$line")")
                 fi
             fi
         fi

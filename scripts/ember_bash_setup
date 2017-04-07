@@ -86,7 +86,7 @@ function readconf() {
         file="$1"
         key=""
     fi
-    declare -a readconfValue
+    declare -A readconfValue
     count=0
     while IFS= read -r line; do
         if ! [[ "$line" =~ ^# ]]; then
@@ -99,7 +99,9 @@ function readconf() {
             fi
             count=$(( count + 1 ))
         fi
+        printf '%s\n' "${readconfValue[@]}"
     done < "$2"
+    printf '%s\n' "${readconfValue[@]}"
     export readconfValue
 }
 export -f readconf

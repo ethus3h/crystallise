@@ -58,7 +58,7 @@ function setVariableToCommandOutput() {
 }
 
 function ereplace() {
-    ereplaceFrom="$1" ereplaceTo="$2" perl -0777 -p -i -e 's/\Q$ENV{ereplaceFrom}/\Q$ENV{ereplaceTo}/g' "$3"
+    ereplaceFrom="$1" ereplaceTo="$2" perl -0777 -p -i -e 's/$ENV{ereplaceFrom}/$ENV{ereplaceTo}/g' "$3"
 }
 
 function print() {

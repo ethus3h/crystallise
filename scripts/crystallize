@@ -2,7 +2,7 @@
 # shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
 
-export crystallizeVersion='3.1.2_pre2.2.7'
+export crystallizeVersion='3.1.2_pre2.3'
 
 # ( sudo echo; cd "/Ember Library/Ember satellite projects/crystallize"; git add -A .; git commit -m "version"; git tag -a v3.1.0.29 -m "version"; egup-single .; sudo emerge crystallize )
 

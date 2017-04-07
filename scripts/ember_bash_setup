@@ -17,7 +17,7 @@ source futuramerlin-web-toolkit-s &> /dev/null
 # shellcheck disable=SC1091
 source egup-env &> /dev/null
 
-die() {
+function die() {
     # shellcheck disable=SC1091
     source error-notify "$@"
     exit 1

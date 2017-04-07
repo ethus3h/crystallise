@@ -94,6 +94,7 @@ function readconf() {
             else
                 if [[ "$(cut -f1 -d, <<< "$line")" == "$1" ]]; then
                     readconfValue+=("$(cut -f2 -d, <<< "$line")")
+                    print "${readconfValue[0]}"
                 fi
             fi
         fi
@@ -105,6 +106,5 @@ export -f readconf
 function preadconf() {
     readconf "$@"
     print "${readconfValue[0]}"
-    printf "%s VARIBA " "${readconfValue[@]}"
 }
 export -f preadconf

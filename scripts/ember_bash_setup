@@ -86,22 +86,18 @@ function readconf() {
         file="$1"
         key=""
     fi
-    declare -A readconfValue
-    count=0
+    declare -a readconfValue
     while IFS= read -r line; do
         if ! [[ "$line" =~ ^# ]]; then
             if [[ -z "$key" ]]; then
-                readconfValue[$count]="$line"
+                readconfValue+="$line"
             else
                 if [[ "$(cut -f1 -d, <<< "$line")" == "$1" ]]; then
-                    readconfValue[$count]="$(cut -f2 -d, <<< "$line")"
+                    readconfValue+="$(cut -f2 -d, <<< "$line")"
                 fi
             fi
-            count=$(( count + 1 ))
         fi
-        printf '%s\n' "${readconfValue[@]}"
     done < "$2"
-    printf '%s\n' "${readconfValue[@]}"
     export readconfValue
 }
 export -f readconf

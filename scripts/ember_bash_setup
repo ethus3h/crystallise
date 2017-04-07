@@ -104,6 +104,7 @@ export -f readconf
 
 function preadconf() {
     readconf "$@"
-    print "${readconfValue[1]}"
+    print "${readconfValue[0]}"
+    printf "%s VARIBA " "${readconfValue[@]}"
 }
 export -f preadconf

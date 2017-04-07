@@ -74,13 +74,38 @@ function ereplace() {
 }
 export -f ereplace
 
+function print() {
+    printf "%s" "$1"
+}
+export -f print
+
 function readconf() {
+    key="$1"
+    file="$2"
+    if [[ -z "$file" ]]; then
+        file="$1"
+        key=""
+    fi
     declare -a readconfValue
     count=0
     while IFS= read -r line; do
         if ! [[ "$line" =~ ^# ]]; then
-            readconfValue[$count]=
+            if [[ -z "$key" ]]; then
+                readconfValue[$count]="$line"
+            else
+                if [[ "$(cut -f1 -d, <<< "$line")" == "$1" ]]; then
+                    readconfValue[$count]="$(cut -f2 -d, <<< "$line")"
+                fi
+            fi
+            count=$(( count + 1 ))
         fi
     done < "$2"
-    readconfValue=
+    export readconfValue
 }
+export -f readconf
+
+function preadconf() {
+    readconf "$@"
+    print "${readconfValue[0]}"
+}
+export -f preadconf

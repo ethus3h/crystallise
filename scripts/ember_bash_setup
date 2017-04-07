@@ -60,3 +60,27 @@ function setVariableToCommandOutput() {
     eval "$save_traps"
 }
 export -f setVariableToCommandOutput
+
+function ereplace() {
+    ereplaceFrom="$1"
+    ereplaceTo="$2"
+    export ereplaceFrom
+    export ereplaceTo
+    ereplaceFromEsc="$(perl -0777 -e 'print(quotemeta($ENV{ereplaceFrom}))')"
+    ereplaceToEsc="$(perl -0777 -e 'print(quotemeta($ENV{ereplaceTo}))')"
+    unset ereplaceFrom
+    unset ereplaceTo
+    perl -0777 -p -i -e "s/$ereplaceFromEsc/$ereplaceToEsc/g" "$3"
+}
+export -f ereplace
+
+function readconf() {
+    declare -a readconfValue
+    count=0
+    while IFS= read -r line; do
+        if ! [[ "$line" =~ ^# ]]; then
+            readconfValue[$count]=
+        fi
+    done < "$2"
+    readconfValue=
+}

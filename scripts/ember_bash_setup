@@ -22,7 +22,6 @@ die() {
     source error-notify "$@"
     exit 1
 }
-export -f die
 
 function embasename() {
     (
@@ -36,7 +35,6 @@ function embasename() {
         printf "%s" "${path##*/}"
     )
 }
-export -f embasename
 
 function emreadlink() {
     (
@@ -45,7 +43,6 @@ function emreadlink() {
         printf "%s/%s" "$PWD" "${basename:?}"
     )
 }
-export -f emreadlink
 
 function setVariableToCommandOutput() {
     if [[ "$1" == "emSetVariableToCommandOutputVar" ]]; then
@@ -59,29 +56,18 @@ function setVariableToCommandOutput() {
     trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
     eval "$save_traps"
 }
-export -f setVariableToCommandOutput
 
 function ereplace() {
-    ereplaceFrom="$1"
-    ereplaceTo="$2"
-    export ereplaceFrom
-    export ereplaceTo
-    ereplaceFromEsc="$(perl -0777 -e 'print(quotemeta($ENV{ereplaceFrom}))')"
-    ereplaceToEsc="$(perl -0777 -e 'print(quotemeta($ENV{ereplaceTo}))')"
-    unset ereplaceFrom
-    unset ereplaceTo
-    perl -0777 -p -i -e "s/$ereplaceFromEsc/$ereplaceToEsc/g" "$3"
+    ereplaceFrom="$1" ereplaceTo="$2" perl -0777 -p -i -e 's/\Q$ENV{ereplaceFrom}/\Q$ENV{ereplaceTo}/g' "$3"
 }
-export -f ereplace
 
 function print() {
     printf "%s" "$1"
 }
-export -f print
 
 function readconf() {
-    key="$1"
-    file="$2"
+    local key="$1"
+    local file="$2"
     if [[ -z "$file" ]]; then
         file="$1"
         key=""
@@ -99,12 +85,9 @@ function readconf() {
             fi
         fi
     done < "$2"
-    export readconfValue
 }
-export -f readconf
 
 function preadconf() {
     readconf "$@"
     print "${readconfValue[0]}"
 }
-export -f preadconf

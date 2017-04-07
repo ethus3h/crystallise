@@ -13,14 +13,12 @@ rubberfs() {
         "$(which rubberfs)" "$@"
     fi
 }
-export -f rubberfs
 
 git-absolute-path () {
     fullpath="$(readlink -f "$1")"
     gitroot="$(git rev-parse --show-toplevel)" || return 1
     [[ $fullpath == *$(printf %q "$gitroot")* ]] && echo "${fullpath/$gitroot\//}"
 }
-export -f git-absolute-path
 
 git-escape-path () {
     # (doesn't handle the case of the bash variable containing exactly one newline and that newline not being at the end)
@@ -30,7 +28,5 @@ git-escape-path () {
         exit 1
     fi
 }
-export -f git-escape-path
 
 EmberLibrary="$(crystallize-getconf EmberLibrary)"
-export EmberLibrary

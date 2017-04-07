@@ -86,7 +86,7 @@ function readconf() {
         file="$1"
         key=""
     fi
-    declare -a readconfValue
+    readconfValue=()
     while IFS= read -r line; do
         if ! [[ "$line" =~ ^# ]]; then
             if [[ -z "$key" ]]; then

@@ -93,13 +93,13 @@ function preadconf() {
 
 function ia () {
     # Retry wrapper for ia since it usually blows up when it hits an error
-    retryCount = 0
-    succeded = false
-    while [[ !succeded && retryCount < 30 ]]; do
-        ia "$@" && succeded = true
-        retryCount = $(( retryCount + 1 ))
+    retryCount=0
+    succeded="false"
+    while [[ ! "$succeded" == "true" && retryCount -lt 30 ]]; do
+        ia "$@" && "$succeded"=true
+        retryCount=$(( retryCount + 1 ))
     done
-    if [[ retryCount >= 30 ]]; then
+    if [[ "$retryCount" -ge 30 ]]; then
         exit 1
     fi
 }

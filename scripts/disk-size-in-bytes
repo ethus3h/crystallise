@@ -1,2 +1,0 @@
-#!/bin/bash
-du -cb "$@" | tail -1 | cut -f 1

@@ -98,7 +98,7 @@ function ia () {
     while [[ ! "$succeded" == "true" && retryCount -lt 30 ]]; do
         "$(which ia)" "$@" && succeded="true"
         retryCount=$(( retryCount + 1 ))
-        if [[ "$retryCount" -ge 1 ]]; then
+        if [[ "$retryCount" -gt 1 ]]; then
             sleep 60
         fi
     done

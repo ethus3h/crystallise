@@ -155,17 +155,28 @@ memlimit="$((memlimit - 1073741824))"
 
     CrystalFileName="$(basename "$crystalWorkdir/$CrystalID".coal5)"
 
+    echo "Filesize: $crystalFilesSize"
+    # For the progress bar, the estimate should be scaled up a bit to account
+    # for the overhead of tarring the files (the amount varies depending
+    # on the size of the files — many small files have more overhead than
+    # a few big files). So, multiply the filesize estimate by 1.2, since that
+    # seems to be a fairly typical increase, although this isn't scientific.
+    # Because bash doesn't support arethmetic with decimals, instead of
+    # multiplying by 1.2 directly, I multiply by 12 and then divide by 10,
+    # which I'm pretty sure is the same thing.
+    crystalFilesSize=$(( crystalFilesSize * 12 ))
+    crystalFilesSize=$(( crystalFilesSize / 10 ))
     echo "Filesize estimate: $crystalFilesSize"
 
     echo "Sending..."
 } &>> "$logfile"
-#Get API keys for the non-streaming upload method
-#crystallizeAccessKey="$(grep access ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
-#crystallizeSecretKey="$(grep secret ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
-#FIXME: May continue even when hashdeep is missing
-#pack files into stream | measure rate of stream's flow | compress the stream | encrypt the stream | send the input to a checksummer and to the output | send the stream to ia
-#For debugging the curl command, can add tee >(cat > "$crystalWorkdir/$CrystalID.local-coal5") to the pipeline to get a local copy of the coal5
-#For the streaming upload (broken atm), (also remove the TmpUploadFile and pipe directly) do: s3-streaming-upload s3.us.archive.org "$crystalCollection" "$CrystalID" "$CrystalFileName" "$crystalFilesSize" "$crystalTitle" "Crystal $CrystalID" "Uploaded using Crystallize $crystallizeVersion; 1EA21BD8-DB7E-11E5-9733-728C37852114; $crystalTitle; $CrystalID"
+# Get API keys for the non-streaming upload method
+# crystallizeAccessKey="$(grep access ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
+# crystallizeSecretKey="$(grep secret ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
+# FIXME: May continue even when hashdeep is missing
+# pack files into stream | measure rate of stream's flow | compress the stream | encrypt the stream | send the input to a checksummer and to the output | send the stream to ia
+# For debugging the curl command, can add tee >(cat > "$crystalWorkdir/$CrystalID.local-coal5") to the pipeline to get a local copy of the coal5
+# For the streaming upload (broken atm), (also remove the TmpUploadFile and pipe directly) do: s3-streaming-upload s3.us.archive.org "$crystalCollection" "$CrystalID" "$CrystalFileName" "$crystalFilesSize" "$crystalTitle" "Crystal $CrystalID" "Uploaded using Crystallize $crystallizeVersion; 1EA21BD8-DB7E-11E5-9733-728C37852114; $crystalTitle; $CrystalID"
 CrystalTmpUploadFile="$crystalWorkdir/$CrystalID.coal5"
 export CrystalTmpUploadFile
 set +o pipefail

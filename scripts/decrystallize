@@ -2,12 +2,16 @@
 # shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
 
-# Usage: decrystallize <crystal-address>
-
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 shopt -s extglob
+
+decrystallizeHere="false"
+if [[ "$1" == "--here" ]]; then
+    decrystallizeHere="true"
+    shift
+fi
 
 #Remove URL
 CrystalAddress="${1#https://archive.org/@(details|download)/}"
@@ -46,11 +50,13 @@ crystalPath="$(< "$tempId.cwd")"
 
 wait
 
-echo "Moving primary files into place (relative to $crystalPath)..."
-(
-    shopt -s dotglob
-    mv -v "$tempId/$crystalPath/"* .
-)
+if [[ "$decrystallizeHere" == "true" ]]; then
+    echo "Moving primary files into place (relative to $crystalPath)..."
+    (
+        shopt -s dotglob
+        mv -vn "$tempId/$crystalPath/"* .
+    )
+fi
 echo "Done moving primary files into place (relative to $crystalPath)."
 rm -r "$tempId"
 

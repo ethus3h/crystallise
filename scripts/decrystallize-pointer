@@ -2,9 +2,13 @@
 # shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
 
-# Decrystallizes a .crystal pointer directory. (Does not handle single-file pointers; use sreg_read_stream instead.)
-
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
-decrystallize "$(cat "$(dirname "$1")"/."$(basename "$1")"-data/identifier)"
+decrystallizeHere=""
+if [[ "$1" == "--here" ]]; then
+    decrystallizeHere="--here"
+    shift
+fi
+
+decrystallize "$decrystallizeHere" "$(cat "$(dirname "$1")"/."$(basename "$1")"-data/identifier)"

@@ -74,7 +74,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$oldFilePath" ]] || [[ ! -d "${cacheEntr
     mkdir -p "$tempDirectoryName"
     (
         cd "$tempDirectoryName" || exit 1
-        decrystallize "$crystalIdentifier" &> /dev/null
+        decrystallize "$crystalIdentifier" --here &> /dev/null
         mv ./* "$dbFilePath"
     )
     if [[ -h "$dbLinkPath" ]]; then

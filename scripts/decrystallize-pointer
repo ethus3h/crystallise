@@ -6,9 +6,8 @@ source ember_bash_setup &> /dev/null
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 decrystallizeHere=""
-if [[ "$1" == "--here" ]]; then
+if [[ "$2" == "--here" ]]; then
     decrystallizeHere="--here"
-    shift
 fi
 
-decrystallize "$decrystallizeHere" "$(cat "$(dirname "$1")"/."$(basename "$1")"-data/identifier)"
+decrystallize "$(cat "$(dirname "$1")"/."$(basename "$1")"-data/identifier)" "$decrystallizeHere"

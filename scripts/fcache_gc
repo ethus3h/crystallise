@@ -24,7 +24,7 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
         largestLeastUsedItem="$(find "$leastUsedItemDirectory" -maxdepth 4 -type f -printf "%s\t%p\n" | sort -n | tail -1 | awk '{print $2;}')"
         leastUsedItemCount="$(basename "$leastUsedItemDirectory")"
         hashFull="$(basename "$largestLeastUsedItem")"
-        rm -f "$largestLeastUsedItem"
+        rm -rf "$largestLeastUsedItem"
         hashA="${hashFull:0:1}"
         hashB="${hashFull:1:1}"
         hashC="${hashFull:2:1}"

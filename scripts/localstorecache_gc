@@ -8,9 +8,8 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 dbDir="$1"
 
-# Clean up if there's an error to avoid leaving a broken cache entry
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; rm -rf "$dbLinkPath" "$(readlink -e "$dbLinkPath")"' ERR
-
+# Clean up empty directories
+find "$dbDir" -type d -empty -delete
 # Remove the least-used items from the cache until it fits within the alloted disk space
 diskUsageLimit="$(<"$dbDir"/.localstorecache.limit)"
 diskUsageLimitSub=$(( diskUsageLimit - 1000000000 ))
@@ -19,6 +18,7 @@ if [[ "$diskUsageLimitSub" -lt 0 ]]; then
 fi
 if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
     while [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimitSub" ]]; do
+        rm -f "$dbDir"/Failed\ Checksum/*
         # Remove the least-used item from the cache
         leastUsedItemDirectory="$(find "$dbDir/ByCount" -maxdepth 1 -type d | sort -n | head -n 2 | tail -n 1)"
         #FIXME: This won't accurately sort by size.

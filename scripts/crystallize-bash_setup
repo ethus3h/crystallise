@@ -29,4 +29,6 @@ function git-escape-path () {
     fi
 }
 
+alias sreg_fuse="sreg_fuse.py"
+
 EmberLibrary="$(crystallize-getconf EmberLibrary)"

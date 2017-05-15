@@ -14,6 +14,9 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; rm 
 # Remove the least-used items from the cache until it fits within the alloted disk space
 diskUsageLimit="$(<"$dbDir"/.localstorecache.limit)"
 diskUsageLimitSub=$(( diskUsageLimit - 1000000000 ))
+if [[ "$discUsageLimitSub" -lt 0 ]]; then
+    discUsageLimitSub=0
+fi
 if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
     while [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimitSub" ]]; do
         # Remove the least-used item from the cache
@@ -31,5 +34,6 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
         dbLinkPath="$hashDir/$hashFull"
         rm -f "$dbLinkPath"
         echo "$leastUsedItemCount" > "$dbLinkPath"
+        find "$dbDir" -type d -empty -delete
     done
 fi

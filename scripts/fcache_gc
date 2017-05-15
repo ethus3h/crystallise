@@ -4,6 +4,7 @@ source ember_bash_setup &> /dev/null
 
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+#set -x
 
 dbDir="$1"
 
@@ -12,6 +13,9 @@ find "$dbDir" -type d -empty -delete
 # Remove the least-used items from the cache until it fits within the alloted disk space
 diskUsageLimit="$(<"$dbDir"/.fcache.limit)"
 diskUsageLimitSub=$(( diskUsageLimit - 1000000000 ))
+if [[ "$discUsageLimitSub" -lt 0 ]]; then
+    discUsageLimitSub=0
+fi
 if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
     while [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimitSub" ]]; do
         rm -f "$dbDir"/Failed\ Checksum/*
@@ -29,5 +33,6 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
         dbLinkPath="$hashDir/$hashFull"
         rm -f "$dbLinkPath"
         echo "$leastUsedItemCount" > "$dbLinkPath"
+        find "$dbDir" -type d -empty -delete
     done
 fi

@@ -173,6 +173,9 @@ mkdir "$streamId"
         # Remove the least-used items from the cache until it fits within the alloted disk space
         diskUsageLimit="$(<"$cacheDbDir"/.scache.limit)"
         diskUsageLimitSub=$(( diskUsageLimit - 1000000000 ))
+        if [[ "$discUsageLimitSub" -lt 0 ]]; then
+            discUsageLimitSub=0
+        fi
         if [[ "$(du -sb "$cacheDbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
           while [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimitSub" ]]; do
                 rm -f "$cacheDbDir"/Failed\ Checksum/*
@@ -190,6 +193,7 @@ mkdir "$streamId"
                 dbLinkPath="$hashDir/$hashFull"
                 rm -f "$dbLinkPath"
                 echo "$leastUsedItemCount" > "$dbLinkPath"
+                find "$dbDir" -type d -empty -delete
             done
         fi
     fi

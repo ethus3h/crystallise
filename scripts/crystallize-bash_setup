@@ -29,6 +29,8 @@ function git-escape-path () {
     fi
 }
 
-alias sreg_fuse="sreg_fuse.py"
+function sreg_fuse () {
+    sreg_fuse.py "$@" "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"
+}
 
 EmberLibrary="$(crystallize-getconf EmberLibrary)"

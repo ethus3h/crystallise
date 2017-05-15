@@ -167,34 +167,7 @@ mkdir "$streamId"
     cat "$dbLinkPath"
     # Cache cleanup is expensive, so only do it occasionally
     if [[ "$RANDOM" -lt 250 ]]; then
-        # Clean up empty directories
-        find "$cacheDbDir" -type d -empty -delete
-        # Remove the least-used items from the cache until it fits within the alloted disk space
-        diskUsageLimit="$(<"$cacheDbDir"/.scache.limit)"
-        diskUsageLimitSub=$(( diskUsageLimit - 1000000000 ))
-        if [[ "$diskUsageLimitSub" -lt 0 ]]; then
-            diskUsageLimitSub=0
-        fi
-        if [[ "$(du -sb "$cacheDbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
-          while [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimitSub" ]]; do
-                rm -f "$cacheDbDir"/Failed\ Checksum/*
-                # Remove the least-used item from the cache
-                leastUsedItemDirectory="$(find "$cacheDbDir/ByCount" -maxdepth 1 -type d | sort -n | head -n 2 | tail -n 1)"
-                largestLeastUsedItem="$(find "$leastUsedItemDirectory" -maxdepth 4 -type f -printf "%s\t%p\n" | sort -n | tail -1 | awk '{print $2;}')"
-                leastUsedItemCount="$(basename "$leastUsedItemDirectory")"
-                hashFull="$(basename "$largestLeastUsedItem")"
-                rm -f "$largestLeastUsedItem"
-                hashA="${hashFull:0:1}"
-                hashB="${hashFull:1:1}"
-                hashC="${hashFull:2:1}"
-                hashSubdir="$hashA/$hashB/$hashC"
-                hashDir="$cacheDbDir/$hashSubdir"
-                dbLinkPath="$hashDir/$hashFull"
-                rm -f "$dbLinkPath"
-                echo "$leastUsedItemCount" > "$dbLinkPath"
-                find "$dbDir" -type d -empty -delete
-            done
-        fi
+      scache_gc "$dbDir"
     fi
 )
 finish

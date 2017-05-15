@@ -9,6 +9,7 @@ import subprocess
 import atexit
 import uuid
 import shutil
+import tempfile
 
 from fuse import FUSE, FuseOSError, Operations, fuse_get_context
 
@@ -30,6 +31,18 @@ class sreg_fuse(Operations):
             partial = partial[1:]
         path = os.path.join(self.root, partial)
         return path
+
+    def _sreg_copy_read(self, source, destination):
+        inputfile = os.open(source, 'r')
+        outputfile = tempfile.NamedTemporaryFile()
+        writtenfile = subprocess.call(["sreg_read_stream"], stdin=inputfile, stdout=outputfile)
+        shutil.copy2(tempfile, destination)
+
+    def _sreg_copy_write(self, source, destination):
+        inputfile = os.open(source, 'r')
+        outputfile = tempfile.NamedTemporaryFile()
+        writtenfile = subprocess.call(["sreg_store_stream"], stdin=inputfile, stdout=outputfile)
+        shutil.copy2(tempfile, destination)
 
     # Filesystem methods
     # ==================
@@ -118,9 +131,10 @@ class sreg_fuse(Operations):
         temppath = self.tempdir + "/" + full_path
         os.makedirs(os.path.dirname(temppath))
         if os.path.isfile(full_path):
-            shutil.copy2(full_path, temppath)
+            self._sreg_copy_read(full_path, temppath)
         else:
             subprocess.call(["touch", temppath], shell=False)
+            self._sreg_copy_write(temppath, full_path)
         fd = os.open(temppath, os.O_WRONLY | os.O_CREAT, mode)
         os.chown(temppath,uid,gid) #chown to context uid & gid
         return fd
@@ -135,8 +149,11 @@ class sreg_fuse(Operations):
 
     def truncate(self, path, length, fh=None):
         full_path = self._full_path(path)
-        with open(full_path, 'r+') as f:
+        temppath = self.tempdir + "/" + full_path
+        self._sreg_copy_read(full_path, temppath)
+        with open(temppath, 'r+') as f:
             f.truncate(length)
+        self._sreg_copy_write(temppath, full_path)
 
     def flush(self, path, fh):
         return os.fsync(fh)

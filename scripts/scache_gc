@@ -8,24 +8,23 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 dbDir="$1"
 
-# Clean up if there's an error to avoid leaving a broken cache entry
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; rm -rf "$dbLinkPath" "$(readlink -e "$dbLinkPath")"' ERR
-
+# Clean up empty directories
+find "$dbDir" -type d -empty -delete
 # Remove the least-used items from the cache until it fits within the alloted disk space
-diskUsageLimit="$(<"$dbDir"/.localstorecache.limit)"
+diskUsageLimit="$(<"$dbDir"/.scache.limit)"
 diskUsageLimitSub=$(( diskUsageLimit - 1000000000 ))
 if [[ "$diskUsageLimitSub" -lt 0 ]]; then
     diskUsageLimitSub=0
 fi
 if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
     while [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimitSub" ]]; do
+        rm -f "$dbDir"/Failed\ Checksum/*
         # Remove the least-used item from the cache
         leastUsedItemDirectory="$(find "$dbDir/ByCount" -maxdepth 1 -type d | sort -n | head -n 2 | tail -n 1)"
-        #FIXME: This won't accurately sort by size.
-        largestLeastUsedItem="$(find "$leastUsedItemDirectory" -mindepth 4 -maxdepth 4 -type d -printf "%s\t%p\n" | sort -n | tail -1 | awk '{print $2;}')"
+        largestLeastUsedItem="$(find "$leastUsedItemDirectory" -maxdepth 4 -type f -printf "%s\t%p\n" | sort -n | tail -1 | awk '{print $2;}')"
         leastUsedItemCount="$(basename "$leastUsedItemDirectory")"
         hashFull="$(basename "$largestLeastUsedItem")"
-        rm -rf "$largestLeastUsedItem"
+        rm -f "$largestLeastUsedItem"
         hashA="${hashFull:0:1}"
         hashB="${hashFull:1:1}"
         hashC="${hashFull:2:1}"

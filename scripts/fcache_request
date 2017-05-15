@@ -73,4 +73,4 @@ ln -s "$dbFilePath" "$dbLinkPath"
 # Return the data to the caller
 cat "$dbLinkPath"
 
-fcache_gc
+scache_gc "$dbDir" "f"

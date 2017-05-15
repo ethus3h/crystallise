@@ -22,7 +22,7 @@ hashSubdir="$hashA/$hashB/$hashC"
 # Clean up if there's an error to avoid leaving a broken cache entry
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; rm -rf "$dbLinkPath" "$(readlink -e "$dbLinkPath")"' ERR
 
-localstorecache_gc "$dbDir"
+scache_gc "$dbDir" "localstore"
 
 hashDir="$dbDir/$hashSubdir"
 mkdir -p "$hashDir"

@@ -2,9 +2,6 @@
 # shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
 
-# Get an item through the cache
-# Usage: localstorecache_request <cache directory> <crystal identifier>
-
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 #set -x
@@ -21,9 +18,6 @@ hashA="${hashFull:0:1}"
 hashB="${hashFull:1:1}"
 hashC="${hashFull:2:1}"
 hashSubdir="$hashA/$hashB/$hashC"
-hashDir="$dbDir/$hashSubdir"
-mkdir -p "$hashDir"
-dbLinkPath="$hashDir/$hashFull"
 
 # Clean up if there's an error to avoid leaving a broken cache entry
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; rm -rf "$dbLinkPath" "$(readlink -e "$dbLinkPath")"' ERR
@@ -50,6 +44,10 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
         echo "$leastUsedItemCount" > "$dbLinkPath"
     done
 fi
+
+hashDir="$dbDir/$hashSubdir"
+mkdir -p "$hashDir"
+dbLinkPath="$hashDir/$hashFull"
 trap - ERR
 oldFilePath="$(readlink "$dbLinkPath")"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; rm -rf "$dbLinkPath" "$(readlink -e "$dbLinkPath")"' ERR

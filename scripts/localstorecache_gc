@@ -1,0 +1,40 @@
+#!/bin/bash
+# shellcheck disable=SC1091
+source ember_bash_setup &> /dev/null
+
+((EUID)) && exec sudo -- "$0" "$@"
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+#set -x
+
+dbDir="$1"
+
+# Clean up if there's an error to avoid leaving a broken cache entry
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; rm -rf "$dbLinkPath" "$(readlink -e "$dbLinkPath")"' ERR
+
+# Remove the least-used items from the cache until it fits within the alloted disk space
+diskUsageLimit="$(<"$dbDir"/.localstorecache.limit)"
+diskUsageLimitSub=$(( diskUsageLimit - 1000000000 ))
+if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
+    while [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimitSub" ]]; do
+        # Remove the least-used item from the cache
+        leastUsedItemDirectory="$(find "$dbDir/ByCount" -maxdepth 1 -type d | sort -n | head -n 2 | tail -n 1)"
+        #FIXME: This won't accurately sort by size.
+        largestLeastUsedItem="$(find "$leastUsedItemDirectory" -mindepth 4 -maxdepth 4 -type d -printf "%s\t%p\n" | sort -n | tail -1 | awk '{print $2;}')"
+        leastUsedItemCount="$(basename "$leastUsedItemDirectory")"
+        hashFull="$(basename "$largestLeastUsedItem")"
+        rm -rf "$largestLeastUsedItem"
+        hashA="${hashFull:0:1}"
+        hashB="${hashFull:1:1}"
+        hashC="${hashFull:2:1}"
+        hashSubdir="$hashA/$hashB/$hashC"
+        hashDir="$dbDir/$hashSubdir"
+        dbLinkPath="$hashDir/$hashFull"
+        rm -f "$dbLinkPath"
+        echo "$leastUsedItemCount" > "$dbLinkPath"
+    done
+fi
+# Clean up empty directories
+find "$dbDir" -type d -empty -delete
+if [[ -d "$tempDirectoryName" ]]; then
+    rm -r "$tempDirectoryName"
+fi

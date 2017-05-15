@@ -8,6 +8,10 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 dbDir="$1"
 
+cacheType="s"
+if [[ -n "$2" ]]; then
+    cacheType="$2"
+fi
 # Clean up empty directories
 find "$dbDir" -type d -empty -delete
 # Remove the least-used items from the cache until it fits within the alloted disk space

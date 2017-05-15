@@ -5,6 +5,10 @@ from __future__ import with_statement
 import os
 import sys
 import errno
+import subprocess
+import atexit
+import uuid
+import shutil
 
 from fuse import FUSE, FuseOSError, Operations, fuse_get_context
 
@@ -12,6 +16,11 @@ from fuse import FUSE, FuseOSError, Operations, fuse_get_context
 class sreg_fuse(Operations):
     def __init__(self, root):
         self.root = root
+
+        out = subprocess.check_output(["crystallize-getconf", "WorkDirectory"], shell=False)
+        self.tempdir = out + os.makedirs("/.sreg_fuse.tmp/" + uuid.uuid4())
+        if not os.path.exists(self.tempdir):
+            os.makedirs(self.tempdir)
 
     # Helpers
     # =======
@@ -69,7 +78,10 @@ class sreg_fuse(Operations):
         return os.rmdir(full_path)
 
     def mkdir(self, path, mode):
-        return os.mkdir(self._full_path(path), mode)
+        directory = os.mkdir(self._full_path(path), mode)
+        keepfile = directory + '/.keep'
+        subprocess.call(["touch", keepfile], shell=False)
+        return directory
 
     def statfs(self, path):
         full_path = self._full_path(path)
@@ -103,8 +115,14 @@ class sreg_fuse(Operations):
     def create(self, path, mode, fi=None):
         uid, gid, pid = fuse_get_context()
         full_path = self._full_path(path)
-        fd = os.open(full_path, os.O_WRONLY | os.O_CREAT, mode)
-        os.chown(full_path,uid,gid) #chown to context uid & gid
+        temppath = self.tempdir + "/" + full_path
+        os.makedirs(os.path.dirname(temppath))
+        if os.path.isfile(full_path):
+            shutil.copy2(full_path, temppath)
+        else:
+            subprocess.call(["touch", temppath], shell=False)
+        fd = os.open(temppath, os.O_WRONLY | os.O_CREAT, mode)
+        os.chown(temppath,uid,gid) #chown to context uid & gid
         return fd
 
     def read(self, path, length, offset, fh):
@@ -129,10 +147,19 @@ class sreg_fuse(Operations):
     def fsync(self, path, fdatasync, fh):
         return self.flush(path, fh)
 
-
 def main(mountpoint, root):
     FUSE(sreg_fuse(root), mountpoint, nothreads=True, foreground=True, **{'allow_other': True})
 
 
 if __name__ == '__main__':
     main(sys.argv[2], sys.argv[1])
+
+def exit_handler():
+    # Clean up tempdir
+    out = subprocess.check_output(["crystallize-getconf", "WorkDirectory"], shell=False)
+    tempdir = out + os.makedirs("/.sreg_fuse.tmp/" + uuid.uuid4())
+    if not os.path.exists(tempdir):
+        os.makedirs(tempdir)
+    shutil.rmtree(tempdir)
+
+atexit.register(exit_handler)

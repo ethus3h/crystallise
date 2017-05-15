@@ -72,27 +72,5 @@ rm "$dbLinkPath"
 ln -s "$dbFilePath" "$dbLinkPath"
 # Return the data to the caller
 cat "$dbLinkPath"
-# Clean up empty directories
-find "$dbDir" -type d -empty -delete
-# Remove the least-used items from the cache until it fits within the alloted disk space
-diskUsageLimit="$(<"$dbDir"/.fcache.limit)"
-diskUsageLimitSub=$(( diskUsageLimit - 1000000000 ))
-if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
-    while [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimitSub" ]]; do
-        rm -f "$dbDir"/Failed\ Checksum/*
-        # Remove the least-used item from the cache
-        leastUsedItemDirectory="$(find "$dbDir/ByCount" -maxdepth 1 -type d | sort -n | head -n 2 | tail -n 1)"
-        largestLeastUsedItem="$(find "$leastUsedItemDirectory" -maxdepth 4 -type f -printf "%s\t%p\n" | sort -n | tail -1 | awk '{print $2;}')"
-        leastUsedItemCount="$(basename "$leastUsedItemDirectory")"
-        hashFull="$(basename "$largestLeastUsedItem")"
-        rm -f "$largestLeastUsedItem"
-        hashA="${hashFull:0:1}"
-        hashB="${hashFull:1:1}"
-        hashC="${hashFull:2:1}"
-        hashSubdir="$hashA/$hashB/$hashC"
-        hashDir="$dbDir/$hashSubdir"
-        dbLinkPath="$hashDir/$hashFull"
-        rm -f "$dbLinkPath"
-        echo "$leastUsedItemCount" > "$dbLinkPath"
-    done
-fi
+
+fcache_gc

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sreg_fuse.py "$@"
+exit "$?"

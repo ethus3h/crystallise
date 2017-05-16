@@ -2,8 +2,6 @@
 # shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
 
-# Make a clone of the stream database where the bodies of the streams are stored instead of the pointers.
-
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry

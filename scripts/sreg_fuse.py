@@ -170,7 +170,6 @@ def main(mountpoint, root):
     FUSE(srf, mountpoint, nothreads=True, foreground=True, **{'allow_other': True})
     def exit_handler():
         # Clean up tempdir
-        global tempdir
         if not os.path.exists(tempdir):
             os.makedirs(tempdir)
         shutil.rmtree(tempdir)

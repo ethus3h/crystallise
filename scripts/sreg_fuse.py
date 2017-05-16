@@ -164,18 +164,21 @@ class sreg_fuse(Operations):
     def fsync(self, path, fdatasync, fh):
         return self.flush(path, fh)
 
+global tempdir
 tempdir = ""
+
 def main(mountpoint, root):
+    global tempdir
     srf = sreg_fuse(root)
     tempdir = srf.tempdir
     FUSE(srf, mountpoint, nothreads=True, foreground=True, **{'allow_other': True})
-
 
 if __name__ == '__main__':
     main(sys.argv[2], sys.argv[1])
 
 def exit_handler():
     # Clean up tempdir
+    global tempdir
     if not os.path.exists(tempdir):
         os.makedirs(tempdir)
     shutil.rmtree(tempdir)

@@ -164,8 +164,11 @@ class sreg_fuse(Operations):
     def fsync(self, path, fdatasync, fh):
         return self.flush(path, fh)
 
+tempdir = ""
 def main(mountpoint, root):
-    FUSE(sreg_fuse(root), mountpoint, nothreads=True, foreground=True, **{'allow_other': True})
+    srf = sreg_fuse(root)
+    tempdir = srf.tempdir
+    FUSE(srf, mountpoint, nothreads=True, foreground=True, **{'allow_other': True})
 
 
 if __name__ == '__main__':
@@ -173,8 +176,6 @@ if __name__ == '__main__':
 
 def exit_handler():
     # Clean up tempdir
-    out = subprocess.check_output(["crystallize-getconf", "WorkDirectory"], shell=False)
-    tempdir = out + os.makedirs("/.sreg_fuse.tmp/" + uuid.uuid4())
     if not os.path.exists(tempdir):
         os.makedirs(tempdir)
     shutil.rmtree(tempdir)

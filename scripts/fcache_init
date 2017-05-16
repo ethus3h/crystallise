@@ -2,10 +2,6 @@
 # shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
 
-# Create a cache directory. This is a naive caching layer for non-changing URLs.
-# Usage: fcache_init <directory-name> <cache size limit in bytes>
-# If the cache directory already exists, the current size limit will override the one provided as an argument.
-
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 

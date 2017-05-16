@@ -35,13 +35,13 @@ class sreg_fuse(Operations):
     def _sreg_copy_read(self, source, destination):
         inputfile = os.open(source, 'r')
         outputfile = tempfile.NamedTemporaryFile()
-        writtenfile = subprocess.call(["sreg_read_stream"], stdin=inputfile, stdout=outputfile)
+        subprocess.call(["sreg_read_stream"], stdin=inputfile, stdout=outputfile)
         shutil.copy2(tempfile, destination)
 
     def _sreg_copy_write(self, source, destination):
         inputfile = os.open(source, 'r')
         outputfile = tempfile.NamedTemporaryFile()
-        writtenfile = subprocess.call(["sreg_store_stream"], stdin=inputfile, stdout=outputfile)
+        subprocess.call(["sreg_store_stream"], stdin=inputfile, stdout=outputfile)
         shutil.copy2(tempfile, destination)
 
     # Filesystem methods
@@ -123,7 +123,9 @@ class sreg_fuse(Operations):
 
     def open(self, path, flags):
         full_path = self._full_path(path)
-        return os.open(full_path, flags)
+        temppath = self.tempdir + "/" + full_path
+        self._sreg_copy_read(full_path, temppath)
+        return os.open(temppath, flags)
 
     def create(self, path, mode, fi=None):
         uid, gid, pid = fuse_get_context()
@@ -156,10 +158,18 @@ class sreg_fuse(Operations):
         self._sreg_copy_write(temppath, full_path)
 
     def flush(self, path, fh):
-        return os.fsync(fh)
+        temp = os.fsync(fh)
+        full_path = self._full_path(path)
+        self._sreg_copy_write(fh, full_path)
+        return temp
 
     def release(self, path, fh):
-        return os.close(fh)
+        os.fsync(fh)
+        full_path = self._full_path(path)
+        self._sreg_copy_write(fh, full_path)
+        temp = os.close(fh)
+        os.remove(fh)
+        return temp
 
     def fsync(self, path, fdatasync, fh):
         return self.flush(path, fh)

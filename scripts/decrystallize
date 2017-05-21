@@ -49,9 +49,9 @@ crystalPath="$(< "$tempId.cwd")"
 
 wait
 
-destination=""
+destination="$tempId in "
 if [[ "$decrystallizeHere" == "true" ]]; then
-    destination="$tempId in "
+    destination=""
     echo "Moving primary files into place (relative to $crystalPath)..."
     (
         shopt -s dotglob

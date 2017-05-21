@@ -49,15 +49,17 @@ crystalPath="$(< "$tempId.cwd")"
 
 wait
 
+destination=""
 if [[ "$decrystallizeHere" == "true" ]]; then
+    destination="$tempId in "
     echo "Moving primary files into place (relative to $crystalPath)..."
     (
         shopt -s dotglob
         mv -vn "$tempId/$crystalPath/"* .
+        echo "Done moving primary files into place (relative to $crystalPath)."
+        rm -r "$tempId"
     )
 fi
-echo "Done moving primary files into place (relative to $crystalPath)."
-rm -r "$tempId"
 
 printf "\033c"
-echo "Done! The crystal has been extracted to the current directory, $(pwd)."
+echo "Done! The crystal has been extracted to ""$destination""the current directory, $(pwd)."

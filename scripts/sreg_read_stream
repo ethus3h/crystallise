@@ -81,6 +81,7 @@ mkdir "$streamId"
                 cp scache-*.tmp "$streamId.out"
             elif [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
                 # LocalStore pointer
+                trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while attempting to read a LocalStore pointer. Giving up now: retrying would likely not help in this situation."; numRetries=0' ERR
                 unxz --stdout - < "$dbDir/LocalStore/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
             elif [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] || [[ "$pointerTypeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]]; then
                 # Remote pack pointer
@@ -95,6 +96,7 @@ mkdir "$streamId"
                 if ! [[ -e "$crystalWorkdir/.LocalStoreCache/" ]]; then
                   localstorecache_init "$crystalWorkdir/.LocalStoreCache/" 5000000000
                 fi
+                trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
                 crystalFilePattern=".*.crystal-data"
                 crystalFilePatternMatches=( $crystalFilePattern )
                 localStoreCrystalName="${crystalFilePatternMatches[0]}"

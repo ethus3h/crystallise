@@ -62,8 +62,7 @@ fi
 dbFilePath="$(readlink -e "$dbLinkPath")"
 # First, make sure the link is good and fix it up if it's not.
 if ! [[ -e "$dbFilePath" ]]; then
-    rm "$dbLinkPath"
-    find "$dbDir/ByCount" -maxdepth 2 -type d -name "$hashFull" -exec ln -s {} "$dbLinkPath" \;
+    find "$dbDir/ByCount" -maxdepth 2 -type d -name "$hashFull" -exec ln -sf {} "$dbLinkPath" \;
     dbFilePath="$(readlink -e "$dbLinkPath")"
 fi
 dbFileOldPath="$dbFilePath"

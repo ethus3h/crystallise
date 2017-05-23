@@ -50,8 +50,7 @@ if [[ "$itemChecksum" != "$knownChecksum" ]]; then
 fi
 # First, make sure the link is good and fix it up if it's not.
 if ! [[ -e "$dbFilePath" ]]; then
-    rm "$dbLinkPath"
-    find "$dbDir/ByCount" -maxdepth 2 -type f -name "$hashFull" -exec ln -s {} "$dbLinkPath" \;
+    find "$dbDir/ByCount" -maxdepth 2 -type f -name "$hashFull" -exec ln -sf {} "$dbLinkPath" \;
     dbFilePath="$(readlink -e "$dbLinkPath")"
 fi
 dbFileOldPath="$dbFilePath"

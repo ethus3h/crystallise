@@ -127,8 +127,7 @@ mkdir "$streamId"
         dbFilePath="$(readlink -e "$dbLinkPath")"
         # First, make sure the link is good and fix it up if it's not.
         if ! [[ -f "$dbFilePath" ]]; then
-            rm "$dbLinkPath"
-            find "$cacheDbDir/ByCount" -maxdepth 2 -type f -name "$hashFull" -exec ln -s {} "$dbLinkPath" \;
+            find "$cacheDbDir/ByCount" -maxdepth 2 -type f -name "$hashFull" -exec ln -sf {} "$dbLinkPath" \;
             dbFilePath="$(readlink -e "$dbLinkPath")"
         fi
         dbFileOldPath="$dbFilePath"

@@ -26,17 +26,19 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
         # Remove the least-used item from the cache
         leastUsedItemDirectory="$(find "$dbDir/ByCount" -maxdepth 1 -type d | sort -n | head -n 2 | tail -n 1)"
         largestLeastUsedItem="$(find "$leastUsedItemDirectory" -mindepth 4 -maxdepth 4 -type f -printf "%s\t%p\n" | sort -n | tail -1 | awk '{print $2;}')"
-        leastUsedItemCount="$(basename "$leastUsedItemDirectory")"
-        hashFull="$(basename "$largestLeastUsedItem")"
-        rm -rf "$largestLeastUsedItem"
-        hashA="${hashFull:0:1}"
-        hashB="${hashFull:1:1}"
-        hashC="${hashFull:2:1}"
-        hashSubdir="$hashA/$hashB/$hashC"
-        hashDir="$dbDir/$hashSubdir"
-        dbLinkPath="$hashDir/$hashFull"
-        rm -f "$dbLinkPath"
-        echo "$leastUsedItemCount" > "$dbLinkPath"
+        if [[ -n "$largestLeastUsedItem" ]]; then
+            leastUsedItemCount="$(basename "$leastUsedItemDirectory")"
+            hashFull="$(basename "$largestLeastUsedItem")"
+            rm -rf "$largestLeastUsedItem"
+            hashA="${hashFull:0:1}"
+            hashB="${hashFull:1:1}"
+            hashC="${hashFull:2:1}"
+            hashSubdir="$hashA/$hashB/$hashC"
+            hashDir="$dbDir/$hashSubdir"
+            dbLinkPath="$hashDir/$hashFull"
+            rm -f "$dbLinkPath"
+            echo "$leastUsedItemCount" > "$dbLinkPath"
+        fi
         find "$dbDir" -type d -empty -delete
     done
 fi

@@ -169,7 +169,7 @@ mkdir "$streamId"
     cat "$dbLinkPath"
     # Cache cleanup is expensive, so only do it occasionally
     if [[ "$RANDOM" -lt 250 ]]; then
-      scache_gc "$dbDir"
+        scache_gc "$cacheDbDir"
     fi
 )
 finish

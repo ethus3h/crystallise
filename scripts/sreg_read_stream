@@ -40,7 +40,6 @@ mkdir "$streamId"
     numRetries=5
     numTotalRetries=5
     successfulRetrieval="0"
-    trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
     # Get the hash of the stream
     hashFull="$(tail -c +38 "$streamId.xz" | head -c 129)"
     if [[ -n "$knownChecksum" ]]; then
@@ -54,6 +53,7 @@ mkdir "$streamId"
     hashDir="$cacheDbDir/$hashSubdir"
     mkdir -p "$hashDir"
     dbLinkPath="$hashDir/$hashFull"
+    trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
     while [[ "$numRetries" -gt 0 ]] && [[ "$successfulRetrieval" -eq 0 ]]; do
         if [[ "$numRetries" -lt "$numTotalRetries" ]]; then
             sleep 30

@@ -37,8 +37,8 @@ mkdir "$streamId"
     trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
     cd "$streamId" || exit 1
     sponge "$streamId.xz"
-    numRetries=40
-    numTotalRetries=40
+    numRetries=5
+    numTotalRetries=5
     successfulRetrieval="0"
     trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
     # Get the hash of the stream

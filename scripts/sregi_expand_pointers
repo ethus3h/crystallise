@@ -12,7 +12,7 @@ while [[ ! -z "$1" ]]; do
     echo "Begun resolving $fileToResolve."
     if [[ -f "$fileToResolve" ]]; then
         # FIXME: This shellcheck directive is only needed for outdated shellcheck versions. Once CodeClimate's shellcheck gets updated (which probably means when Debian stable updates shellcheck), it can be removed.
-        # shellcheck disable=SC2034
+        # shellcheck disable=SC2094
         sreg_read_stream < "$fileToResolve" | sponge "$fileToResolve" || echo "(Note: ignoring failed read of $fileToResolve)"
     else
         if [[ -d "$fileToResolve" ]]; then

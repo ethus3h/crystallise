@@ -418,7 +418,7 @@ stash)
         gapath="$(git rev-parse --show-toplevel)"/.gitattributes
         echo "$(git-escape-path "$(git-absolute-path "$fileToStash")") filter=sreg" >> "$gapath"
         # FIXME: This shellcheck directive is only needed for outdated shellcheck versions. Once CodeClimate's shellcheck gets updated (which probably means when Debian stable updates shellcheck), it can be removed.
-        # shellcheck disable=SC2034
+        # shellcheck disable=SC2094
         sort < "$gapath" | uniq | sponge "$gapath"
         echo "Done stashing $fileToStash."
         shift

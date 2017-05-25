@@ -7,8 +7,12 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 #set -x
 
 fsckStatusFile="$2"
-knownHash="$(tail -c +38 "$1" | head -c 129)"
+failedGetHash="true"
+if knownHash="$(tail -c +38 "$1" | head -c 129)"; then
+    failedGetHash="false"
+fi
 echo "Started verifying stream registry database entry $knownHash."
+if [[ failedGetHash == "false" ]]; then
 if sreg_read_stream --checksum "$knownHash" --disallow-hash-pointer < "$1" > /dev/null; then
     if [[ -n "$fsckStatusFile" ]]; then
         numberExpected="$(<"$fsckStatusFile")"

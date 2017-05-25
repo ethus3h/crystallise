@@ -28,8 +28,8 @@ if [[ -e "$CrystalID" ]]; then
     exit 1
 fi
 mkdir "$CrystalID"
-cd "$CrystalID"
 (
+    cd "$CrystalID" || die "Could not cd to newly created folder! This should never happen."
     crystallize-getconf 'Passphrase' > "$CrystalID.passphrase"
     wget "https://archive.org/download/$CrystalID/$CrystalID.coal5"
     wget "https://archive.org/download/$CrystalID/$CrystalID.coal5-cmd"

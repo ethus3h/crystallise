@@ -8,6 +8,8 @@ knownHash="$(basename "$1")"
 recoveredHash="$(sha512sum < "$1" | awk '{print $1;}')"
 if [[ "$knownHash" != "$recoveredHash" ]]; then
     echo "Begun backup operation for $1"
+    # FIXME: This shellcheck directive is only needed for outdated shellcheck versions. Once CodeClimate's shellcheck gets updated (which probably means when Debian stable updates shellcheck), it can be removed.
+    # shellcheck disable=SC2034
     sreg_read_stream < "$1" | sponge "$1"
     echo -n "Finished backup operation for $1 (backup occupies "
 else

@@ -36,6 +36,8 @@ fi
 # FIXME: This shellcheck directive is only needed for outdated shellcheck versions. Once CodeClimate's shellcheck gets updated (which probably means when Debian stable updates shellcheck), it can be removed.
 # shellcheck disable=SC2034
 destinationRootLength="$4"
+# FIXME: This shellcheck directive is only needed for outdated shellcheck versions. Once CodeClimate's shellcheck gets updated (which probably means when Debian stable updates shellcheck), it can be removed.
+# shellcheck disable=SC2034
 targetLength=${#1}
 #echo "$destinationRootLength - $targetLength"
 destinationName="$2/${1:destinationRootLength:targetLength}"

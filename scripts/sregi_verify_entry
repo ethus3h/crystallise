@@ -7,35 +7,36 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 #set -x
 
 fsckStatusFile="$2"
-failedGetHash="true"
+gotHash="false"
 if knownHash="$(tail -c +38 "$1" | head -c 129)"; then
-    failedGetHash="false"
+    gotHash="true"
 fi
 echo "Started verifying stream registry database entry $knownHash."
-if [[ failedGetHash == "false" ]]; then
-if sreg_read_stream --checksum "$knownHash" --disallow-hash-pointer < "$1" > /dev/null; then
-    if [[ -n "$fsckStatusFile" ]]; then
-        numberExpected="$(<"$fsckStatusFile")"
-        numberProcessedFile="$fsckStatusFile.done"
-        if ! [[ -f "$numberProcessedFile" ]]; then
-            numberProcessed="1"
+if [[ gotHash == "true" ]]; then
+    if sreg_read_stream --checksum "$knownHash" --disallow-hash-pointer < "$1" > /dev/null; then
+        if [[ -n "$fsckStatusFile" ]]; then
+            numberExpected="$(<"$fsckStatusFile")"
+            numberProcessedFile="$fsckStatusFile.done"
+            if ! [[ -f "$numberProcessedFile" ]]; then
+                numberProcessed="1"
+            else
+                numberProcessed="$(<"$numberProcessedFile")"
+                numberProcessed=$(( numberProcessed + 1 ))
+            fi
+            echo "$numberProcessed" > "$numberProcessedFile"
+            if [[ "$numberExpected" == "0" ]]; then
+                numberExpected="-1"
+            fi
+            numberProcessedPercentage="$(printf "%.3f\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
+            echo "Verified stream registry database entry $knownHash: finished #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
         else
-            numberProcessed="$(<"$numberProcessedFile")"
-            numberProcessed=$(( numberProcessed + 1 ))
+            echo "Verified stream registry database entry $knownHash."
         fi
-        echo "$numberProcessed" > "$numberProcessedFile"
-        if [[ "$numberExpected" == "0" ]]; then
-            numberExpected="-1"
-        fi
-        numberProcessedPercentage="$(printf "%.3f\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
-        echo "Verified stream registry database entry $knownHash: finished #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
+        exit
     else
-        echo "Verified stream registry database entry $knownHash."
+        dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
+        mkdir -p "$dbDir"
+        mv "$1" "$dbDir/"
+        die "Error verifying stream registry database entry $knownHash! Marking entry as corrupted."
     fi
-    exit
-else
-    dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
-    mkdir -p "$dbDir"
-    mv "$1" "$dbDir/"
-    die "Error verifying stream registry database entry $knownHash! Marking entry as corrupted."
 fi

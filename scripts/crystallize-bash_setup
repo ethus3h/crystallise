@@ -14,13 +14,13 @@ function rubberfs() {
     fi
 }
 
-function git-absolute-path () {
+function git-absolute-path() {
     fullpath="$(readlink -f "$1")"
     gitroot="$(git rev-parse --show-toplevel)" || return 1
     [[ $fullpath == *$(printf %q "$gitroot")* ]] && echo "${fullpath/$gitroot\//}"
 }
 
-function git-escape-path () {
+function git-escape-path() {
     # (doesn't handle the case of the bash variable containing exactly one newline and that newline not being at the end)
     if [[ "$(wc -l <<< "$1")" == "1" ]] || [[ "$(wc -l <<< "$1")" == "0" ]]; then
         sed 's/./&\\/g' <<< "$1" | awk '{print "\\"$1}' | sed 's/.$//'
@@ -29,7 +29,7 @@ function git-escape-path () {
     fi
 }
 
-function sreg_fuse () {
+function sreg_fuse() {
     sreg_fuse.py "$@" "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"
 }
 

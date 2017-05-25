@@ -12,6 +12,14 @@ if knownHash="$(tail -c +38 "$1" | head -c 129)"; then
     gotHash="true"
 fi
 echo "Started verifying stream registry database entry $knownHash."
+
+function fail() {
+    dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
+    mkdir -p "$dbDir"
+    mv "$1" "$dbDir/"
+    die "Error verifying stream registry database entry $knownHash! Marking entry as corrupted."
+}
+
 if [[ gotHash == "true" ]]; then
     if sreg_read_stream --checksum "$knownHash" --disallow-hash-pointer < "$1" > /dev/null; then
         if [[ -n "$fsckStatusFile" ]]; then
@@ -33,10 +41,6 @@ if [[ gotHash == "true" ]]; then
             echo "Verified stream registry database entry $knownHash."
         fi
         exit
-    else
-        dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
-        mkdir -p "$dbDir"
-        mv "$1" "$dbDir/"
-        die "Error verifying stream registry database entry $knownHash! Marking entry as corrupted."
     fi
+else
 fi

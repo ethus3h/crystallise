@@ -70,7 +70,7 @@ else
     printf "\n  ]\n}" >> "$chunkLocationName.json"
 
     (
-        cd "$(dirname "$chunkLocationName")"
+        cd "$(dirname "$chunkLocationName")" || die "Could not cd to directory of $chunkLocationName !"
         aws --endpoint-url "$hostName" s3api complete-multipart-upload --multipart-upload file://"$(basename "$chunkLocationName.json")" --bucket "$identifier" --key "$remoteFileName" --upload-id "$uploadId"
     )
 fi

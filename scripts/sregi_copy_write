@@ -33,6 +33,8 @@ if [[ -n "$fsckStatusFile" ]]; then
     numberProcessedPercentage="$(printf "%.3f\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
     echo "Copying item $1: #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
 fi
+# FIXME: This shellcheck directive is only needed for outdated shellcheck versions. Once CodeClimate's shellcheck gets updated (which probably means when Debian stable updates shellcheck), it can be removed.
+# shellcheck disable=SC2034
 destinationRootLength="$4"
 targetLength=${#1}
 #echo "$destinationRootLength - $targetLength"

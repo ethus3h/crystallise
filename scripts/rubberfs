@@ -133,7 +133,7 @@ attach)
     server="$2"
     prefix="$3"
     mountpoint="$4"
-    sshfs -o allow_other,defer_permissions "$username"@"$server":"/Wreathe/.Resources/RubberFS/$prefix/mount/" "$mountpoint"
+    sshfs -o allow_other,defer_permissions "$username@$server:/Wreathe/.Resources/RubberFS/$prefix/mount/" "$mountpoint"
     ;;
 check)
     zpool scrub "$name"
@@ -283,7 +283,7 @@ thaw)
     mkdir "$rubberfsThawId"
     cd "$rubberfsThawId"
     decrystallize "$freezeId" --here
-    zfs recv "$name" -F < *.zfsrepl || unxz *.zfsrepl.xz | zfs recv "$name" -F
+    zfs recv "$name" -F < *.zfsrepl || unxz ./*.zfsrepl.xz | zfs recv "$name" -F
     zpool scrub "$name"
     if [[ ! -z "$4" ]]; then
         echo "Passing off remaining work to rubberfs patch..."

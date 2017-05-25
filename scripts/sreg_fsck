@@ -6,9 +6,9 @@ source ember_bash_setup &> /dev/null
 
 ((EUID)) && exec sudo -- "$0" "$@"
 function finish() {
-  if [[ -e "$crystalWorkdir/$fsckId" ]]; then
-    rm -r "$crystalWorkdir/$fsckId"
-  fi
+    if [[ -e "${crystalWorkdir:?}/${fsckId:?}" ]]; then
+        rm -r "${crystalWorkdir:?}/${fsckId:?}"
+    fi
 }
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
@@ -18,7 +18,7 @@ fsckId="sreg_fsck-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 mkdir -p "$crystalWorkdir/$fsckId"
 fsckStatusFile="$crystalWorkdir/$fsckId/.sreg_fsck.status"
 dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
-echo "$(find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -printf '.' | wc -c)" > "$fsckStatusFile"
+find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -printf '.' | wc -c > "$fsckStatusFile"
 find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -exec sregi_verify_entry {} "$fsckStatusFile" \;
 echo "Done all items."
 finish

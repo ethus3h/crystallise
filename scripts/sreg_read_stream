@@ -106,6 +106,7 @@ mkdir "$streamId"
                 localStoreCrystalIdentifier="$(<"$localStoreCrystalName"/identifier)"
                 localstoreLocation="$(localstorecache_request "$crystalWorkdir/.LocalStoreCache/" "$localStoreCrystalIdentifier")"
                 unxz --stdout - < "$localstoreLocation/scache-"*".LocalStore/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
+                rm -r "$localstoreLocation"
             elif [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
                 # Hash pointer
                 if [[ "true" == "$disallowHashPointer" ]]; then

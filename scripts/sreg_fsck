@@ -11,6 +11,7 @@ function finish() {
     fi
 }
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+trap finish EXIT
 
 echo "Counting items..."
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
@@ -22,4 +23,3 @@ find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/Local
 find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -exec sregi_verify_entry {} "$fsckStatusFile" \;
 echo "Done all items."
 finish
-trap finish EXIT

@@ -11,7 +11,7 @@ function finish() {
     fi
 }
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR
-trap 'finish' EXIT
+trap finish EXIT
 
 if [[ "$1" == "--checksum" ]]; then
     shift

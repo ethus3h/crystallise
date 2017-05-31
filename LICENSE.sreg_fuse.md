@@ -1,4 +1,4 @@
-sreg_fuse.py is based on
+scripts/sreg_fuse.py is based on
 [python-fuse-sample](https://github.com/lwg-galuise/python-fuse-sample), which
 is used under the following license terms:
 

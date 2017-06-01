@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Create a local S3 host and run tests.

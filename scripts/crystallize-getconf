@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 configFileLocation="/usr/local/etc/crystallize.conf"
 

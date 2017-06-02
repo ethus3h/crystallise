@@ -181,6 +181,7 @@ CrystalTmpUploadFile="$crystalWorkdir/$CrystalID.coal5"
 export CrystalTmpUploadFile
 set +o pipefail
 tar -cv -P -S --format pax "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.time-env.warc.gz" | pv -tparbIfei 0.1 -s "$crystalFilesSize" | xz -k -C sha256 -T 0 --lzma2=preset=1 --memlimit-compress="$memlimit" --stdout - | gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - | tee >(hashdeep -c md5,sha1,sha256 -o fbcpsde > "$crystalWorkdir/$CrystalID.checksums") > "$CrystalTmpUploadFile" 2>&1 | tee -a "$logfile"
+exitcode="${PIPESTATUS[0]}"
 set -o pipefail
 
 unset opt
@@ -221,8 +222,6 @@ if [[ "$checksumLine" != "$knownChecksum" ]]; then
     echo "ERROR! Checksum known by Internet Archive does not match checksum known locally." >&2
     exit 1
 fi
-
-exitcode="${PIPESTATUS[0]}"
 
 #Ignore exit code 1 from tar on Linux, which indicates files changed while reading; see http://stackoverflow.com/questions/20318852/tar-file-changed-as-we-read-it
 if [[ "$exitcode" != "0" ]] && [[ $OSTYPE != *inux* ]]; then

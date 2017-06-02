@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1091
+source ember_bash_setup || exit 1
+
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+
 echo 1 "$1" 2 "$2" 3 "$3" 4 "$4" 5 "$5" 6 "$6" 7 "$7" 8 "$8" 9 "$9"
 crystallizeDestdir="$1"
 crystallizePrefix="$2"
@@ -42,22 +47,13 @@ if ! [[ -n "$crystallizeSharedstatedir" ]]; then
 fi
 echo "crystallizeSharedstatedir: $crystallizeSharedstatedir"
 
-export crystallizeSharedstatedir
-crystallizeSharedstatedirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeSharedstatedir}))')"
-echo "crystallizeSharedstatedirEsc: $crystallizeSharedstatedirEsc"
-perl -0777 -p -i -e "s/\/usr\/local\/var/$crystallizeSharedstatedirEsc/g" support/crystallize.conf
-
 crystallizeEmberdir="$crystallizePrefix"/Ember\ Library
-export crystallizeEmberdir
-crystallizeEmberdirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeEmberdir}))')"
-echo "crystallizeEmberdirEsc: $crystallizeEmberdirEsc"
-perl -0777 -p -i -e "s/\/Ember\\ Library\//$crystallizeEmberdirEsc/g" support/crystallize.conf
 
-export crystallizeSysconfdir
-crystallizeSysconfdirEsc="$(perl -0777 -e 'print(quotemeta($ENV{crystallizeSysconfdir}))')"
-echo "crystallizeSysconfdirEsc: $crystallizeSysconfdirEsc"
-perl -0777 -p -i -e "s/\/usr\/local\/etc/$crystallizeSysconfdirEsc/g" scripts/crystallize-getconf
-perl -0777 -p -i -e "s/\/usr\/local\/etc/$crystallizeSysconfdirEsc/g" scripts/crystallize-logsession
+ereplace "/usr/local/var" "$crystallizeNewInstallationUuid" support/crystallize.conf
+ereplace "/usr/local/var" "$crystallizeSharedstatedir" support/crystallize.conf
+ereplace "/Ember\ Library/" "$crystallizeEmberdir" support/crystallize.conf
+ereplace "/usr/local/etc" "$crystallizeSysconfdir" scripts/crystallize-getconf
+ereplace "/usr/local/etc" "$crystallizeSysconfdir" scripts/crystallize-logsession
 
 mkdir -p "$crystallizeBindir"
 chmod +x scripts/*

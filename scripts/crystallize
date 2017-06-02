@@ -68,8 +68,7 @@ if [[ -t 1 ]]; then
     warn-timeout "Be careful that you don't crystallize your current working directory, the crystallize temp dir, or the crystallize scripts themselves. Either could cause problems."
 fi
 
-CrystalID="$(date +%Y-%m-%d-%H-%M-%S-%N)_$(xxd -pu <<< "$(date +%z)")-$(python -c 'import uuid; print str(uuid.uuid4())')"
-CrystalID="C3-${CrystalID//-/}"
+CrystalID="C3-$(date-uuid)"
 export CrystalID
 
 crystallize-logsession "$crystalWorkdir/$CrystalID" "$CrystalID" "$@"

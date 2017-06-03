@@ -10,6 +10,7 @@ import atexit
 import uuid
 import shutil
 import tempfile
+import io
 
 from fuse import FUSE, FuseOSError, Operations, fuse_get_context
 
@@ -32,13 +33,13 @@ class sreg_fuse(Operations):
         return path
 
     def _sreg_copy_read(self, source, destination):
-        inputfile = os.open(source, 'r')
+        inputfile = io.open(source, 'r')
         outputfile = tempfile.NamedTemporaryFile()
         subprocess.call(["sreg_read_stream"], stdin=inputfile, stdout=outputfile)
         shutil.copy2(tempfile, destination)
 
     def _sreg_copy_write(self, source, destination):
-        inputfile = os.open(source, 'r')
+        inputfile = io.open(source, 'r')
         outputfile = tempfile.NamedTemporaryFile()
         subprocess.call(["sreg_store_stream"], stdin=inputfile, stdout=outputfile)
         shutil.copy2(tempfile, destination)
@@ -173,6 +174,7 @@ class sreg_fuse(Operations):
     def fsync(self, path, fdatasync, fh):
         return self.flush(path, fh)
 
+# Mountpoint may not be a subdirectory of root, apparently. When running from the command line, specify the arguments in the opposite order (root then mountpoint).
 def main(mountpoint, root):
     srf = sreg_fuse(root)
     tempdir = srf.tempdir

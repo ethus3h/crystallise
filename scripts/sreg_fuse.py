@@ -19,7 +19,7 @@ class sreg_fuse(Operations):
         self.root = root
 
         out = subprocess.check_output(["crystallize-getconf", "WorkDirectory"], shell=False)
-        self.tempdir = out + os.makedirs("/.sreg_fuse.tmp/" + str(uuid.uuid4()))
+        self.tempdir = out[:-1] + os.makedirs("/.sreg_fuse.tmp/" + str(uuid.uuid4()))
         if not os.path.exists(self.tempdir):
             os.makedirs(self.tempdir)
 

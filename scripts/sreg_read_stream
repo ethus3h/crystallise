@@ -117,7 +117,8 @@ mkdir "$streamId"
                 fi
                 sreg_read_stream < "$dbDir/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
             else
-                die "Unknown pointer type signature! Either the file is corrupted, or this is a pointer version this version of sreg_read_stream is not familiar with, or this is not a pointer. Aborting."
+                # The file isn't a stream pointer, so just return it
+                cp "$streamId.xz" "$streamId.out"
             fi
             mv "$streamId.out" "$dbFilePath"
             if [[ -h "$dbLinkPath" ]]; then

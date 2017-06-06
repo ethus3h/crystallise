@@ -117,8 +117,9 @@ mkdir "$streamId"
                 fi
                 sreg_read_stream < "$dbDir/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
             else
-                # The file isn't a stream pointer, so just return it
-                cp "$streamId.xz" "$streamId.out"
+                # The file isn't a stream pointer, so just return it and exit
+                cat "$streamId.xz"
+                exit 0
             fi
             mv "$streamId.out" "$dbFilePath"
             if [[ -h "$dbLinkPath" ]]; then

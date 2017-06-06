@@ -28,9 +28,9 @@ if [[ "--skip-cache" == "$1" ]]; then
     shift
 fi
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
+cd "$crystalWorkdir" || exit 1
 streamId="sreg_read_stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 dbDir="${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"
-cd "$crystalWorkdir" || exit 1
 # Set up cache directory
 cacheDbDir="$crystalWorkdir/.StreamCache/"
 if ! [[ -e "$cacheDbDir" ]]; then

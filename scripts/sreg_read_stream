@@ -22,9 +22,9 @@ if [[ "--disallow-hash-pointer" == "$1" ]]; then
     disallowHashPointer="true"
     shift
 fi
-useCache="true"
+skipCache="false"
 if [[ "--skip-cache" == "$1" ]]; then
-    useCache="false"
+    skipCache="true"
     shift
 fi
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
@@ -43,8 +43,8 @@ mkdir "$streamId"
     trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
     cd "$streamId" || exit 1
     sponge "$streamId.xz"
-    numRetries=5
-    numTotalRetries=5
+    numRetries=40
+    numTotalRetries="$numRetries"
     successfulRetrieval="0"
     # Get the hash of the stream
     hashFull="$(tail -c +38 "$streamId.xz" | head -c 129)"
@@ -66,14 +66,19 @@ mkdir "$streamId"
             echo "Beginning retry of reading stream. $numRetries retries remaining."
         fi
         numRetries=$(( numRetries - 1 ))
-        if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$(readlink "$dbLinkPath")" ]]; then
+        if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$(readlink "$dbLinkPath")" ]] || [[ "$skipCache" != "false" ]]; then
+            if [[ "$skipCache" == "false" ]]; then
             # Item is not in the cache, so add it
-            if ! [[ -f "$dbLinkPath" ]]; then
-                # Never seen this item before, so set the requestCount
-                requestCount=1
+                if ! [[ -f "$dbLinkPath" ]]; then
+                    # Never seen this item before, so set the requestCount
+                    requestCount=1
+                else
+                    requestCount="$(<"$dbLinkPath")"
+                    rm "$dbLinkPath"
+                fi
             else
-                requestCount="$(<"$dbLinkPath")"
-                rm "$dbLinkPath"
+                # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
+                requestCount="$(basename "$(dirname "$(dirname "$(dirname "$(dirname "$dbFilePath")")")")")"
             fi
             dbFileDir="$cacheDbDir/ByCount/$requestCount/$hashSubdir"
             dbFilePath="$dbFileDir/$hashFull"
@@ -157,8 +162,8 @@ mkdir "$streamId"
         # Done cache cleanup
         retrievedHash="$(sha512sum < "$dbLinkPath" | awk '{print $1;}')"
         if [[ "$retrievedHash" != "$hashFull" ]]; then
-            mkdir -p "$cacheDbDir/Failed Checksum"
-            mv "$dbFilePath" "$cacheDbDir/Failed Checksum/$(basename "$dbFilePath")"
+            # mkdir -p "$cacheDbDir/Failed Checksum"
+            # mv "$dbFilePath" "$cacheDbDir/Failed Checksum/$(basename "$dbFilePath")"
             warn "Checksum mismatch when retrieving the requested stream!"
             if [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
                 mkdir -p "$dbDir/LocalStore/Failed\ Fsck/"

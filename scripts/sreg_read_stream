@@ -22,6 +22,11 @@ if [[ "--disallow-hash-pointer" == "$1" ]]; then
     disallowHashPointer="true"
     shift
 fi
+useCache="true"
+if [[ "--skip-cache" == "$1" ]]; then
+    useCache="false"
+    shift
+fi
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
 streamId="sreg_read_stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 dbDir="${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"

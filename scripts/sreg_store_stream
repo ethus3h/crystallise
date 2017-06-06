@@ -72,6 +72,9 @@ dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
             xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout "$streamId.tmp" > "$localStoreFilePath"
         fi
         # Upload a pack of the LocalStore items if there are enough, and update the pointers accordingly.
+        if ! [[ -e "$crystalWorkdir/.LocalStoreCache/" ]]; then
+          localstorecache_init "$crystalWorkdir/.LocalStoreCache/" 5000000000
+        fi
         localStoreSize="$(du -sb "$dbDir"/LocalStore | awk '{print $1;}')"
         if [[ "$localStoreSize" -gt 100000000 ]]; then
             mv "$dbDir"/LocalStore "$streamId.LocalStore"

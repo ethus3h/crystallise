@@ -24,5 +24,5 @@ fi
 dateNowLiquify="$(date +%Y-%m-%d-%H-%M-%S-%N)"
 
 mkdir "$CrystalAddress-dequicklified-$dateNowLiquify"
-cd "$CrystalAddress-dequicklified-$dateNowLiquify"
+cd "$CrystalAddress-dequicklified-$dateNowLiquify" || die "Failed to cd!"
 wget --mirror --no-parent -e robots=off "https://archive.org/download/$CrystalAddress/";

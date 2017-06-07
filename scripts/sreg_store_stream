@@ -16,6 +16,7 @@ crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
 dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
 (
     cd "$crystalWorkdir" || exit 1
+    # Don't rename this to sreg. I think this name is needed for reading it
     streamId="scache-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
     sponge "$streamId.tmp"
     # Calculate hash

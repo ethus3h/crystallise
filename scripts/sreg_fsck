@@ -16,11 +16,11 @@ trap finish EXIT
 echo "Counting items..."
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
 fsckId="sreg_fsck-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
-mkdir -p "$crystalWorkdir/$fsckId"
+mkdir -p "$crystalWorkdir/${fsckId:?}"
 fsckStatusFile="$crystalWorkdir/$fsckId/.sreg_fsck.status"
 dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
 find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -printf '.' | wc -c > "$fsckStatusFile"
-rm "$fsckStatusFile.failed" || true
+rm -f "$fsckStatusFile.failed"
 find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -exec bash -c 'sregi_verify_entry "$1" "$2" || touch "$2.failed"' {} "$fsckStatusFile" \; -or -quit
 [[ -e "$fsckStatusFile.failed" ]] && die "Failed verifying entry! Aborted."
 echo "Done all items."

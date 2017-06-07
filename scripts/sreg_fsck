@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
-
-# Verify that all entries in the stream database can be read correctly
+#set -x
 
 ((EUID)) && exec sudo -- "$0" "$@"
 function finish() {
@@ -21,7 +20,7 @@ fsckStatusFile="$crystalWorkdir/$fsckId/.sreg_fsck.status"
 dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
 find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -printf '.' | wc -c > "$fsckStatusFile"
 rm -f "$fsckStatusFile.failed"
-find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -exec bash -c 'sregi_verify_entry "$1" "$2" || touch "$2.failed"' {} "$fsckStatusFile" \; -or -quit
+find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" \( -exec bash -c 'sregi_verify_entry "$1" "$2" || touch "$2.failed"' {} "$fsckStatusFile" \; -or -quit \)
 [[ -e "$fsckStatusFile.failed" ]] && die "Failed verifying entry! Aborted."
 echo "Done all items."
 finish

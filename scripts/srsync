@@ -39,10 +39,11 @@ if [[ "$destinationRoot" == "." ]]; then
 else
     destinationRootLength=${#destinationRoot}
 fi
+bpid="$$"
 if [[ "$sregNoVerify" == "true" ]]; then
-    find "$1" -type f -exec sregi_copy_write --no-verify {} "$2" "$fsckStatusFile" "$destinationRootLength" \;
+    find "$1" -type f \( -exec sregi_copy_write --no-verify {} "$2" "$fsckStatusFile" "$destinationRootLength" \; -or -exec kill "$bpid" \; \)
 else
-    find "$1" -type f -exec sregi_copy_write {} "$2" "$fsckStatusFile" "$destinationRootLength" \;
+    find "$1" -type f \( -exec sregi_copy_write {} "$2" "$fsckStatusFile" "$destinationRootLength" \; -or -exec kill "$bpid" \; \)
 fi
 # This NEEDS to skip regular files, because otherwise files that don't exist in the directory will be copied and take up space!
 # rsync -a --ignore-existing --no-i-r "$1" "$2/"

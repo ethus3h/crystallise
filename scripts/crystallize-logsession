@@ -214,7 +214,15 @@ until [[ $getChecksumRetries -ge 1000 ]]; do
     fi
 done
 
-checksumLine="$(wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -A 3 "<file name=\"$CrystalFileName\" source=\"original\">" | tail -n 1)"
+getChecksumRetries=0
+until [[ $getChecksumRetries -ge 1000 ]]; do
+    checksumLine="$(wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -A 3 "<file name=\"$CrystalFileName\" source=\"original\">" | tail -n 1)" && break
+    getChecksumRetries=$((getChecksumRetries+1))
+    sleep $retryDelayTime
+    if [[ $retryDelayTime -lt 30 ]]; then
+        retryDelayTime=$((retryDelayTime + 5))
+    fi
+done
 checksumLine="${checksumLine/    <md5>/}"
 checksumLine="${checksumLine/<\/md5>/}"
 knownChecksum="$(grep ",stdin" "$crystalWorkdir/$CrystalID.checksums" | awk -F',' '{print $2}')"

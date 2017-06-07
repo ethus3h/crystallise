@@ -20,6 +20,8 @@ mkdir -p "$crystalWorkdir/$fsckId"
 fsckStatusFile="$crystalWorkdir/$fsckId/.sreg_fsck.status"
 dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
 find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -printf '.' | wc -c > "$fsckStatusFile"
-find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -exec sregi_verify_entry {} "$fsckStatusFile" \;
+true > "$fsckStatusFile.pid"
+find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -exec bash -c 'while [[ -z "$pv" ]]; do pv="$(<"$2.pid")"; done; sregi_verify_entry "$1" "$2" || kill "$pv"' {} "$fsckStatusFile" \;
+echo "$?" > "$fsckStatusFile.pid"
 echo "Done all items."
 finish

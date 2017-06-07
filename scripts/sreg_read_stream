@@ -131,7 +131,8 @@ mkdir "$streamId"
                 cat "$streamId.xz"
                 exit 0
             fi
-            mv "$streamId.out" "$dbFilePath"
+            xz --stdout "$streamId.out" > "$dbFilePath"
+            rm "$streamId.out"
             if [[ -h "$dbLinkPath" ]]; then
                 rm "$dbLinkPath"
             fi
@@ -160,7 +161,9 @@ mkdir "$streamId"
         rm "$dbLinkPath"
         ln -s "$dbFilePath" "$dbLinkPath"
         # Done cache cleanup
-        retrievedHash="$(sha512sum < "$dbLinkPath" | awk '{print $1;}')"
+        decompressedCacheEntry="$streamId.dat"
+        unxz --stdout - < "$dbLinkPath" > "$decompressedCacheEntry"
+        retrievedHash="$(sha512sum < "$decompressedCacheEntry" | awk '{print $1;}')"
         if [[ "$retrievedHash" != "$hashFull" ]]; then
             # mkdir -p "$cacheDbDir/Failed Checksum"
             # mv "$dbFilePath" "$cacheDbDir/Failed Checksum/$(basename "$dbFilePath")"
@@ -178,7 +181,7 @@ mkdir "$streamId"
     if [[ "$successfulRetrieval" != "1" ]]; then
         die "Failed retrieving stream, and no retries left!"
     fi
-    cat "$dbLinkPath"
+    cat "$decompressedCacheEntry"
     # Cache cleanup is expensive, so only do it occasionally
     if [[ "$RANDOM" -lt 250 ]]; then
         scache_gc "$cacheDbDir"

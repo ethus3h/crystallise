@@ -34,6 +34,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$(readlink "$dbLinkPath")" ]]; then
     mkdir -p "$dbFileDir"
     wget -qO - "$requestUrl" > "$dbFilePath"
     sha512sum < "$dbFilePath" | awk '{print $1;}' > "$checksumName"
+    printf "%s" "$requestUrl" > "$dbLinkPath.url"
     if [[ -h "$dbLinkPath" ]]; then
         rm "$dbLinkPath"
     fi
@@ -44,9 +45,9 @@ dbFilePath="$(readlink -e "$dbLinkPath")"
 knownChecksum="$(<"$checksumName")"
 itemChecksum="$(sha512sum < "$dbLinkPath" | awk '{print $1;}')"
 if [[ "$itemChecksum" != "$knownChecksum" ]]; then
-  mkdir -p "$dbDir/Failed Checksum"
-  mv "$dbFilePath" "$dbDir/Failed Checksum/$(basename "$dbFilePath")"
-  die "File does not match what its checksum should be!"
+    mkdir -p "$dbDir/Failed Checksum"
+    mv "$dbFilePath" "$dbDir/Failed Checksum/$(basename "$dbFilePath")"
+    die "File does not match what its checksum should be!"
 fi
 # First, make sure the link is good and fix it up if it's not.
 if ! [[ -e "$dbFilePath" ]]; then

@@ -13,7 +13,7 @@ if [[ -n "$2" ]]; then
     cacheType="$2"
 fi
 # Clean up empty directories
-find "$dbDir" -type d -empty -delete
+find "$dbDir" -type d -not -name "ByCount" -empty -delete
 # Remove the least-used items from the cache until it fits within the alloted disk space
 diskUsageLimit="$(<"$dbDir/.$cacheType""cache.limit")"
 diskUsageLimitSub=$(( diskUsageLimit - 1000000000 ))
@@ -39,6 +39,6 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
             rm -f "$dbLinkPath"
             echo "$leastUsedItemCount" > "$dbLinkPath"
         fi
-        find "$dbDir" -type d -empty -delete
+        find "$dbDir" -type d -not -name "ByCount" -empty -delete
     done
 fi

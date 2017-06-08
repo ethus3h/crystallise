@@ -106,7 +106,7 @@ mkdir "$streamId"
                 fi
                 trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
                 if ! [[ -e "$crystalWorkdir/.LocalStoreCache/" ]]; then
-                  localstorecache_init "$crystalWorkdir/.LocalStoreCache/" 5000000000
+                    localstorecache_init "$crystalWorkdir/.LocalStoreCache/" 5000000000
                 fi
                 crystalFilePattern=".*.crystal-data"
                 crystalFilePatternMatches=( $crystalFilePattern )

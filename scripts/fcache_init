@@ -11,6 +11,6 @@ elif [[ -d "$1" ]]; then
     error-notify "Directory already exists and is not a cache directory."
     exit 1
 fi
-mkdir -p "$1"
+mkdir -p "$1/ByCount"
 echo "$2" > "$1"/.fcache.limit
 echo "Done creating cache directory."

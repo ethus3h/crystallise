@@ -104,10 +104,10 @@ mkdir "$streamId"
                     packName="$(tail -c +167 "$streamId.xz")"
                     unxz --stdout - < "$dbDir/Packs/$packName" | tar -xf -
                 fi
+                trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
                 if ! [[ -e "$crystalWorkdir/.LocalStoreCache/" ]]; then
                   localstorecache_init "$crystalWorkdir/.LocalStoreCache/" 5000000000
                 fi
-                trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
                 crystalFilePattern=".*.crystal-data"
                 crystalFilePatternMatches=( $crystalFilePattern )
                 localStoreCrystalName="${crystalFilePatternMatches[0]}"

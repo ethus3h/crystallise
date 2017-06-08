@@ -7,10 +7,11 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 #set -x
 
 function fail() {
-    dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
-    mkdir -p "$dbDir"
-    mv "$1" "$dbDir/"
-    die "Error verifying stream registry database entry $knownHash! Marking entry as corrupted."
+    #dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
+    #mkdir -p "$dbDir"
+    #mv "$1" "$dbDir/"
+    #die "Error verifying stream registry database entry $knownHash! Marking entry as corrupted."
+    die "Error verifying stream registry database entry $knownHash!"
 }
 
 fsckStatusFile="$2"

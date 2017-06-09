@@ -67,7 +67,7 @@ mkdir "$streamId"
         fi
         numRetries=$(( numRetries - 1 ))
         if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$(readlink "$dbLinkPath")" ]] || [[ "$skipCache" == "false" ]]; then
-            if [[ "$skipCache" == "false" ]]; then
+            if [[ "$skipCache" != "false" ]]; then
             # Item is not in the cache, so add it
                 if ! [[ -f "$dbLinkPath" ]]; then
                     # Never seen this item before, so set the requestCount

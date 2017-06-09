@@ -79,6 +79,9 @@ mkdir "$streamId"
             else
                 # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
                 requestCount="$(basename "$(dirname "$(dirname "$(dirname "$(dirname "$dbFilePath")")")")")"
+                if [[ -z "$requestCount" ]]; then
+                    requestCount="0"
+                fi
             fi
             dbFileDir="$cacheDbDir/ByCount/$requestCount/$hashSubdir"
             dbFilePath="$dbFileDir/$hashFull"

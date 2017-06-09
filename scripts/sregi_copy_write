@@ -65,9 +65,10 @@ if [[ -f "$destinationName" ]]; then
             echo "(Nothing done for $1.)"
             exit 0
         else
-            warn "(Destination pointer $destinationName could not be read or did not match source checksum; removing and recreating.)"
-            cat "$destinationName"
-            rm "$destinationName"
+            die "Destination pointer $destinationName could not be read or did not match source checksum."
+            # warn "(Destination pointer $destinationName could not be read or did not match source checksum; removing and recreating.)"
+            # cat "$destinationName"
+            # rm "$destinationName"
         fi
     fi
 fi

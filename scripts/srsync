@@ -6,13 +6,13 @@ source ember_bash_setup &> /dev/null
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 #set -x
 
-sregNoVerify=false
+sregNoVerify="false"
 if [[ "$1" == "--no-verify" ]]; then
-    sregNoVerify=true
+    sregNoVerify="true"
     shift
 fi
 if [[ "$1" == "--verify" ]]; then
-    sregNoVerify=false
+    sregNoVerify="false"
     shift
 fi
 if [[ "$sregNoVerify" == "true" ]]; then

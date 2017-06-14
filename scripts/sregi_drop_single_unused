@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
+source ember_bash_setup &> /dev/null
+
+((EUID)) && exec sudo -- "$0" "$@"
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+
+fsckIdList="$2"
+pointerId="$(basename "$1")"
+if [[ ! -e "$2" ]]; then
+    die "Could not read ID list!"
+fi
+pointerDir="${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/Unused Pointers"
+mkdir -p "$pointerDir"
+grep -Fxq "$pointerId" || mv "$1" "$pointerDir"

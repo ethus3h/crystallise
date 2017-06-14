@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
+source ember_bash_setup &> /dev/null
+
+((EUID)) && exec sudo -- "$0" "$@"
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+#set -x
+
+sregVerify=""
+if [[ "$1" == "--verify" ]]; then
+    sregVerify="--verify"
+    shift
+fi
+
+echo "Counting items..."
+crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
+fsckId="sreg_drop_unused-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+mkdir -p "$crystalWorkdir/$fsckId"
+fsckStatusFile="$crystalWorkdir/$fsckId/.sreg_drop_unused.status"
+fsckIdList="$crystalWorkdir/$fsckId/.sreg_drop_unused.idlist"
+find "$1" -type f -printf '.' | wc -c > "$fsckStatusFile"
+bpid="$$"
+find "$1" -type f \( -exec sregi_hashpointer_sane {} "$fsckIdList" "$fsckStatusFile" "$sregVerify" \; -or -exec kill "-$bpid" \; \)
+find "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" -type f \( -exec sregi_drop_single_unused {} "$fsckIdList" \; -or -exec kill "-$bpid" \; \)

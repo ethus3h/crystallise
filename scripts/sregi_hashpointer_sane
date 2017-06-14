@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
+source ember_bash_setup &> /dev/null
+
+((EUID)) && exec sudo -- "$0" "$@"
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+
+fsckIdList="$2"
+fsckStatusFile="$3"
+
+sregVerify="false"
+if [[ "$4" == "--verify" ]]; then
+    sregVerify="true"
+    shift
+fi
+
+pointerTypeSignature="$(head -c 36 "$1")"
+knownChecksum=""
+if [[ -n "$fsckStatusFile" ]]; then
+    numberExpected="$(<"$fsckStatusFile")"
+    numberProcessedFile="$fsckStatusFile.done"
+    if ! [[ -f "$numberProcessedFile" ]]; then
+        numberProcessed="1"
+    else
+        numberProcessed="$(<"$numberProcessedFile")"
+        numberProcessed=$(( numberProcessed + 1 ))
+    fi
+    echo "$numberProcessed" > "$numberProcessedFile"
+    if [[ "$numberExpected" == "0" ]]; then
+        numberExpected="-1"
+    fi
+    numberProcessedPercentage="$(printf "%.3f\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
+    echo "Checking item $1: #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
+fi
+if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
+    knownChecksum="$(tail -c +38 "$1")"
+    if [[ "$sregVerify" == "true" ]]; then
+        if ! sreg_read_stream --checksum "$knownChecksum" < "$1"; then
+            trap - ERR
+            mv "$2" "$2.CORRUPTED-HASHPOINTER"
+            trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+            die "Item $1 did not match the stored checksum!"
+        fi
+    else
+        hashA="${knownChecksum:0:1}"
+        hashB="${knownChecksum:1:1}"
+        hashC="${knownChecksum:2:1}"
+        if ! [[ -e "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/$hashA/$hashB/$hashC/$knownChecksum" ]]; then
+            die "Item does not have a corresponding stream registry entry!"
+        fi
+    fi
+    echo "$knownChecksum" >> "$fsckIdList"
+fi

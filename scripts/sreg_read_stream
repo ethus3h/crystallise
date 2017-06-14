@@ -134,7 +134,7 @@ mkdir "$streamId"
                 cat "$streamId.xz"
                 exit 0
             fi
-            xz --stdout "$streamId.out" > "$dbFilePath"
+            xz --stdout -0 "$streamId.out" > "$dbFilePath"
             rm "$streamId.out"
             if [[ -h "$dbLinkPath" ]]; then
                 rm "$dbLinkPath"

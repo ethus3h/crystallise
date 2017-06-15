@@ -79,6 +79,7 @@ mkdir "$streamId"
                 fi
             else
                 # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
+                dbFilePath="$(readlink -e "$dbLinkPath")"
                 requestCount="$(basename "$(dirname "$(dirname "$(dirname "$(dirname "$dbFilePath")")")")")"
                 if [[ -z "$requestCount" ]]; then
                     requestCount="0"

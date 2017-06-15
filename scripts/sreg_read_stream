@@ -61,7 +61,7 @@ mkdir "$streamId"
     dbLinkPath="$hashDir/$hashFull"
     trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
     while [[ "$numRetries" -gt 0 ]] && [[ "$successfulRetrieval" -eq 0 ]]; do
-        trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+        trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; continue' ERR
         if [[ "$numRetries" -lt "$numTotalRetries" ]]; then
             sleep 30
             echo "Beginning retry of reading stream. $numRetries retries remaining."
@@ -116,7 +116,7 @@ mkdir "$streamId"
                 crystalFilePatternMatches=( $crystalFilePattern )
                 localStoreCrystalName="${crystalFilePatternMatches[0]}"
                 if ! [[ -e "$localStoreCrystalName" ]]; then
-                    die "Crystal info could not be found in the pointer, so giving up immediately (retrying probably wouldn't help this)."
+                    error-notify "Crystal info could not be found in the pointer, so giving up immediately (retrying probably wouldn't help this)."
                 fi
                 localStoreCrystalIdentifier="$(<"$localStoreCrystalName"/identifier)"
                 localstoreLocation="$(localstorecache_request "$crystalWorkdir/.LocalStoreCache/" "$localStoreCrystalIdentifier")"
@@ -124,10 +124,10 @@ mkdir "$streamId"
             elif [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
                 # Hash pointer
                 if [[ "true" == "$disallowHashPointer" ]]; then
-                    die "The provided pointer is a hash pointer!"
+                    error-notify "The provided pointer is a hash pointer!"
                 fi
                 if ! [[ -e "$dbDir/$hashA/$hashB/$hashC/$hashFull" ]]; then
-                    die "The provided pointer is a hash pointer, but the corresponding hash is not registered in the database! ($dbDir/$hashA/$hashB/$hashC/$hashFull does not exist.)"
+                    error-notify "The provided pointer is a hash pointer, but the corresponding hash is not registered in the database! ($dbDir/$hashA/$hashB/$hashC/$hashFull does not exist.)"
                 fi
                 sreg_read_stream < "$dbDir/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
             else
@@ -172,7 +172,7 @@ mkdir "$streamId"
             # mkdir -p "$cacheDbDir/Failed Checksum"
             # mv "$dbFilePath" "$cacheDbDir/Failed Checksum/$(basename "$dbFilePath")"
             # warn "Checksum mismatch when retrieving the requested stream!"
-            die "Checksum mismatch when retrieving the requested stream!"
+            error-notify "Checksum mismatch when retrieving the requested stream!"
             # if [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
             #     mkdir -p "$dbDir/LocalStore/Failed\ Fsck/"
             #     mv "$dbDir/LocalStore/$hashA/$hashB/$hashC/$hashFull" "$dbDir/LocalStore/Failed\ Fsck/"

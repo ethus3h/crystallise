@@ -169,6 +169,7 @@ mkdir "$streamId"
         unxz --stdout - < "$dbLinkPath" > "$decompressedCacheEntry"
         retrievedHash="$(sha512sum < "$decompressedCacheEntry" | awk '{print $1;}')"
         if [[ "$retrievedHash" != "$hashFull" ]]; then
+            rm "$dbFilePath" "$dbLinkPath"
             # mkdir -p "$cacheDbDir/Failed Checksum"
             # mv "$dbFilePath" "$cacheDbDir/Failed Checksum/$(basename "$dbFilePath")"
             # warn "Checksum mismatch when retrieving the requested stream!"

@@ -166,10 +166,7 @@ mkdir "$streamId"
         dbFilePath="$dbFileDir/$hashFull"
         mkdir -p "$dbFileDir"
         mv "$dbFileOldPath" "$dbFilePath"
-        if [[ -e "$dbLinkPath" ]] || [[ -h "$dbLinkPath" ]]; then
-            rm "$dbLinkPath"
-        fi
-        ln -s "$dbFilePath" "$dbLinkPath"
+        ln -sf "$dbFilePath" "$dbLinkPath"
         # Done cache cleanup
         decompressedCacheEntry="$streamId.dat"
         unxz --stdout - < "$dbLinkPath" > "$decompressedCacheEntry"

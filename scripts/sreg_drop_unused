@@ -23,7 +23,6 @@ find "$1" -type f -printf '.' | wc -c > "$fsckStatusFile"
 bpid="$$"
 find "$1" -type f \( -exec sregi_hashpointer_sane {} "$fsckIdList" "$fsckStatusFile" "$sregVerify" \; -or -exec kill "-$bpid" \; \)
 
-fsckStatusFile="/tmp/$fsckId/.sreg_drop_unused_b.status"
-find "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" -type f -printf '.' | wc -c > "$fsckStatusFile"
+find "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" -not -path "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/Unused Pointers/*" -type f -printf '.' | wc -c > "$fsckStatusFile"
 
-find "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" -type f \( -exec sregi_drop_single_unused {} "$fsckIdList" "$fsckStatusFile" \; -or -exec kill "-$bpid" \; \)
+find "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" -not -path "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/Unused Pointers/*" -type f \( -exec sregi_drop_single_unused {} "$fsckIdList" "$fsckStatusFile" \; -or -exec kill "-$bpid" \; \)

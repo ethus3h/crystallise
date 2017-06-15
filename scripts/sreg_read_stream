@@ -67,22 +67,24 @@ mkdir "$streamId"
             echo "Beginning retry of reading stream. $numRetries retries remaining."
         fi
         numRetries=$(( numRetries - 1 ))
-        if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$(readlink "$dbLinkPath")" ]] || [[ "$skipCache" != "false" ]]; then
-            if [[ "$skipCache" != "false" ]]; then
-            # Item is not in the cache, so add it
+        if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$(readlink "$dbLinkPath")" ]] || [[ "$skipCache" == "true" ]]; then
+            if [[ "$skipCache" == "true" ]]; then
+                if [[ -h "$dbLinkPath" ]] && [[ -f "$(readlink "$dbLinkPath")" ]]; then
+                    # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
+                    dbFilePath="$(readlink -e "$dbLinkPath")"
+                    requestCount="$(basename "$(dirname "$(dirname "$(dirname "$(dirname "$dbFilePath")")")")")"
+                    if [[ -z "$requestCount" ]]; then
+                        requestCount="0"
+                    fi
+                fi
+            else
+                # Item is not in the cache, so add it
                 if ! [[ -f "$dbLinkPath" ]]; then
                     # Never seen this item before, so set the requestCount
                     requestCount=1
                 else
                     requestCount="$(<"$dbLinkPath")"
                     rm "$dbLinkPath"
-                fi
-            else
-                # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
-                dbFilePath="$(readlink -e "$dbLinkPath")"
-                requestCount="$(basename "$(dirname "$(dirname "$(dirname "$(dirname "$dbFilePath")")")")")"
-                if [[ -z "$requestCount" ]]; then
-                    requestCount="0"
                 fi
             fi
             dbFileDir="$cacheDbDir/ByCount/$requestCount/$hashSubdir"

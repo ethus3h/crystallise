@@ -31,4 +31,4 @@ if [[ ! -e "$2" ]]; then
 fi
 pointerDir="${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/Unused Pointers"
 mkdir -p "$pointerDir"
-grep -Fxq "$pointerId" "$fsckIdList" || { mv "$1" "$pointerDir"; echo "Dropped unused stream $pointerId" }
+grep -Fxq "$pointerId" "$fsckIdList" || { mv "$1" "$pointerDir"; echo "Dropped unused stream $pointerId"; }

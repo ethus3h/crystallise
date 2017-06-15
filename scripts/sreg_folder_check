@@ -12,16 +12,26 @@ if [[ "$1" == "--verify" ]]; then
     shift
 fi
 
+dropUnused="false"
+if [[ "$1" == "--drop-unused" ]]; then
+    dropUnused="true"
+    shift
+fi
+
 echo "Counting items..."
 crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
-fsckId="sreg_drop_unused-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+fsckId="sreg_folder_check-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 mkdir -p "$crystalWorkdir/${fsckId:?}"
 mkdir -p "/tmp/${fsckId:?}"
-fsckStatusFile="/tmp/$fsckId/.sreg_drop_unused.status"
-fsckIdList="/tmp/$fsckId/.sreg_drop_unused.idlist"
+fsckStatusFile="/tmp/$fsckId/.sreg_folder_check.status"
+fsckIdList="/tmp/$fsckId/.sreg_folder_check.idlist"
 find "$1" -type f -printf '.' | wc -c > "$fsckStatusFile"
 bpid="$$"
 find "$1" -type f \( -exec sregi_hashpointer_sane {} "$fsckIdList" "$fsckStatusFile" "$sregVerify" \; -or -exec kill "-$bpid" \; \)
+
+if [[ "$dropUnused" == "false" ]]; then
+    exit 0
+fi
 
 find "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" -not -path "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/Unused Pointers/*" -type f -printf '.' | wc -c > "$fsckStatusFile"
 echo "0" > "$fsckStatusFile.done"

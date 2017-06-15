@@ -138,11 +138,7 @@ mkdir "$streamId"
             xz --stdout -0 "$streamId.out" > "$dbFilePath"
             rm "$streamId.out"
             if [[ -e "$dbLinkPath" ]]; then
-                if [[ -h "$dbLinkPath" ]]; then
-                    rm "$dbLinkPath"
-                else
-                    die "The link is not "
-                fi
+                rm "$dbLinkPath"
             fi
             ln -s "$dbFilePath" "$dbLinkPath"
         fi
@@ -166,7 +162,9 @@ mkdir "$streamId"
         dbFilePath="$dbFileDir/$hashFull"
         mkdir -p "$dbFileDir"
         mv "$dbFileOldPath" "$dbFilePath"
-        rm "$dbLinkPath"
+        if [[ -e "$dbLinkPath" ]]; then
+            rm "$dbLinkPath"
+        fi
         ln -s "$dbFilePath" "$dbLinkPath"
         # Done cache cleanup
         decompressedCacheEntry="$streamId.dat"

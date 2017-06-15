@@ -61,7 +61,7 @@ mkdir "$streamId"
     dbLinkPath="$hashDir/$hashFull"
     trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
     while [[ "$numRetries" -gt 0 ]] && [[ "$successfulRetrieval" -eq 0 ]]; do
-        trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; continue' ERR
+        trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
         if [[ "$numRetries" -lt "$numTotalRetries" ]]; then
             sleep 30
             echo "Beginning retry of reading stream. $numRetries retries remaining."
@@ -170,6 +170,7 @@ mkdir "$streamId"
         retrievedHash="$(sha512sum < "$decompressedCacheEntry" | awk '{print $1;}')"
         if [[ "$retrievedHash" != "$hashFull" ]]; then
             rm "$dbFilePath" "$dbLinkPath"
+            echo "$oldCount" > "$dbLinkPath"
             # mkdir -p "$cacheDbDir/Failed Checksum"
             # mv "$dbFilePath" "$cacheDbDir/Failed Checksum/$(basename "$dbFilePath")"
             # warn "Checksum mismatch when retrieving the requested stream!"

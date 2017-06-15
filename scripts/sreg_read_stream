@@ -145,14 +145,15 @@ mkdir "$streamId"
         dbFilePath="$(readlink -e "$dbLinkPath")"
         # First, make sure the link is good and fix it up if it's not.
         if ! [[ -f "$dbFilePath" ]]; then
-            find "$cacheDbDir/ByCount" -maxdepth 2 -type f -name "$hashFull" -exec ln -sf {} "$dbLinkPath" \;
+            find "$cacheDbDir/ByCount" -mindepth 5 -maxdepth 5 -type f -name "$hashFull" -exec ln -sf {} "$dbLinkPath" \;
             dbFilePath="$(readlink -e "$dbLinkPath")"
         fi
         dbFileOldPath="$dbFilePath"
         dbFileDir="$(dirname "$dbFilePath")"
         # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
-        oldCount="$(basename "$(dirname "$(dirname "$dbFileDir")")")"
-        if [[ "$oldCount" == "." ]]; then
+        oldCount="$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")"
+        if ! [[ "$oldCount" =~ ^-?[0-9]+$ ]]; then
+            rm "$dbLinkPath"
             continue
         fi
         # Increment the item's requestCount.

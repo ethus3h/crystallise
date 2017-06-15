@@ -124,10 +124,10 @@ mkdir "$streamId"
             elif [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
                 # Hash pointer
                 if [[ "true" == "$disallowHashPointer" ]]; then
-                    error-notify "The provided pointer is a hash pointer!"
+                    die "The provided pointer is a hash pointer!"
                 fi
                 if ! [[ -e "$dbDir/$hashA/$hashB/$hashC/$hashFull" ]]; then
-                    error-notify "The provided pointer is a hash pointer, but the corresponding hash is not registered in the database! ($dbDir/$hashA/$hashB/$hashC/$hashFull does not exist.)"
+                    die "The provided pointer is a hash pointer, but the corresponding hash is not registered in the database! ($dbDir/$hashA/$hashB/$hashC/$hashFull does not exist.)"
                 fi
                 sreg_read_stream < "$dbDir/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
             else
@@ -137,8 +137,12 @@ mkdir "$streamId"
             fi
             xz --stdout -0 "$streamId.out" > "$dbFilePath"
             rm "$streamId.out"
-            if [[ -h "$dbLinkPath" ]]; then
-                rm "$dbLinkPath"
+            if [[ -e "$dbLinkPath" ]]; then
+                if [[ -h "$dbLinkPath" ]]; then
+                    rm "$dbLinkPath"
+                else
+                    die "The link is not "
+                fi
             fi
             ln -s "$dbFilePath" "$dbLinkPath"
         fi

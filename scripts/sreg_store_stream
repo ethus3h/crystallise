@@ -33,6 +33,7 @@ dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
     hashDir="$dbDir/$hashA/$hashB/$hashC"
     mkdir -p "$hashDir"
     dbFilePath="$hashDir/$hashFull"
+    tmpFilePath="$streamId.tmp.stored"
     streamSize="$(du -sb "$streamId.tmp" | awk '{print $1;}')"
     if [[ "$streamSize" -gt 10000000 ]]; then
         useLocalStore="false"
@@ -42,9 +43,9 @@ dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
         mkdir -p "$localStoreDir"
         localStoreFilePath="$localStoreDir/$hashFull"
     fi
-    if [[ -f "$dbFilePath" ]]; then
+    if [[ -f "$tmpFilePath" ]]; then
         # Item already has been stored, so check that the existing pointer can be restored
-        recoveredHash="$(sreg_read_stream --disallow-hash-pointer < "$dbFilePath" | sha512sum | awk '{print $1;}')"
+        recoveredHash="$(sreg_read_stream --disallow-hash-pointer < "$tmpFilePath" | sha512sum | awk '{print $1;}')"
         if [[ "$recoveredHash" != "$hashFull" ]]; then
             die "Could not read existing item."
             # if [[ "$1" == "--verbose" ]]; then
@@ -52,7 +53,7 @@ dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
             # fi
             # fsckDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
             # mkdir -p "$fsckDir"
-            # mv "$dbFilePath" "$fsckDir"
+            # mv "$tmpFilePath" "$fsckDir"
         fi
     else
         # Item not available in cache, so add it (c39... is the LocalStore pointer type signature; a5e... is the remote type signature)
@@ -66,10 +67,10 @@ dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
             fi
             pointerTypeSignature="a5e2f296-3085-49c0-8f48-24ea436b7a8b"
         fi
-        echo "$pointerTypeSignature" > "$dbFilePath"
-        echo "$hashFull" >> "$dbFilePath"
+        echo "$pointerTypeSignature" > "$tmpFilePath"
+        echo "$hashFull" >> "$tmpFilePath"
         if [[ "$useLocalStore" != "true" ]]; then
-            tar -c -P -S --format pax "$streamId.tmp.crystal" ".$streamId.tmp.crystal-data" "${logFiles[@]}" | xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - >> "$dbFilePath"
+            tar -c -P -S --format pax "$streamId.tmp.crystal" ".$streamId.tmp.crystal-data" "${logFiles[@]}" | xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - >> "$tmpFilePath"
         else
             xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout "$streamId.tmp" > "$localStoreFilePath"
         fi
@@ -97,17 +98,13 @@ dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
             rsync -q --checksum "$pointerName" "$dbDir/Packs/"
             find "$streamId.LocalStore" -type f -exec sregi_bundle_pointer "$pointerName" {} \;
         fi
-        # Check that the data can be restored
-        #if [[ "$1" == "--verbose" ]]; then
-            #sregi_verify_entry "$dbFilePath" || die "Failed saving stream: stored stream could not be read!"
-        #else
-            trap finish EXIT
-            sregi_verify_entry "$dbFilePath" &> /dev/null || die "Failed saving stream: stored stream could not be read!"
-            trap - EXIT
-        #fi
+        trap finish EXIT
+        sregi_verify_entry "$tmpFilePath" &> /dev/null || die "Failed saving stream: stored stream could not be read!"
+        trap - EXIT
+        mv "$tmpFilePath" "$dbFilePath" || die "Could not move pointer into place!"
     fi
     if [[ "$1" != "--verbose" ]]; then
-        cat "$dbFilePath"
+        cat "$tmpFilePath"
     fi
     if [[ -e "$streamId" ]]; then
         rm -r "$streamId"

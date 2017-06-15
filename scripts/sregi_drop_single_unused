@@ -7,9 +7,28 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 fsckIdList="$2"
 pointerId="$(basename "$1")"
+fsckStatusFile="$3"
+
+if [[ -n "$fsckStatusFile" ]]; then
+    numberExpected="$(<"$fsckStatusFile")"
+    numberProcessedFile="$fsckStatusFile.done"
+    if ! [[ -f "$numberProcessedFile" ]]; then
+        numberProcessed="1"
+    else
+        numberProcessed="$(<"$numberProcessedFile")"
+        numberProcessed=$(( numberProcessed + 1 ))
+    fi
+    echo "$numberProcessed" > "$numberProcessedFile"
+    if [[ "$numberExpected" == "0" ]]; then
+        numberExpected="-1"
+    fi
+    numberProcessedPercentage="$(printf "%.3f\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
+    echo "Considering item $pointerId: #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
+fi
+
 if [[ ! -e "$2" ]]; then
     die "Could not read ID list!"
 fi
 pointerDir="${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/Unused Pointers"
 mkdir -p "$pointerDir"
-grep -Fxq "$pointerId" || mv "$1" "$pointerDir"
+grep -Fxq "$pointerId" "$fsckIdList" || { mv "$1" "$pointerDir"; echo "Dropped unused stream $pointerId" }

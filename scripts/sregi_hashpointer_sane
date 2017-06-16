@@ -11,7 +11,6 @@ fsckStatusFile="$3"
 sregVerify="false"
 if [[ "$4" == "--verify" ]]; then
     sregVerify="true"
-    shift
 fi
 
 pointerTypeSignature="$(head -c 36 "$1")"

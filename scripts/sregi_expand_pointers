@@ -32,7 +32,7 @@ while [[ ! -z "$1" ]]; do
     if [[ -f "$fileToResolve" ]]; then
         # FIXME: This shellcheck directive is only needed for outdated shellcheck versions. Once CodeClimate's shellcheck gets updated (which probably means when Debian stable updates shellcheck), it can be removed.
         # shellcheck disable=SC2094
-        tempFileName="$(crystallize-getconf WorkDirectory)/$(basename "$fsckStatusFile").expand.tmp"
+        tempFileName="$(crystallize-getconf WorkDirectory)/.$(basename "$fsckStatusFile").expand.tmp"
         sreg_read_stream < "$fileToResolve" > "$tempFileName" || die "Reading $fileToResolve failed."
         mv "$tempFileName" "$fileToResolve" || die "Moving retrieved data for $fileToResolve into place failed."
     else

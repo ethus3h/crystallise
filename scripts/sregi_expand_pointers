@@ -8,28 +8,26 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 fsckStatusFile="$1"
 shift
 
-if [[ -n "$fsckStatusFile" ]]; then
-    numberExpected="$(<"$fsckStatusFile")"
-    numberProcessedFile="$fsckStatusFile.done"
-    if ! [[ -f "$numberProcessedFile" ]]; then
-        numberProcessed="1"
-    else
-        numberProcessed="$(<"$numberProcessedFile")"
-        numberProcessed=$(( numberProcessed + 1 ))
-    fi
-    echo "$numberProcessed" > "$numberProcessedFile"
-    if [[ "$numberExpected" == "0" ]]; then
-        numberExpected="-1"
-    fi
-    numberProcessedPercentage="$(printf "%.3f\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
-    echo "Resolving item $pointerId: #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
-fi
-
 while [[ ! -z "$1" ]]; do
-    echo "Items remaining to resolve: "
-    echo "$@"
     fileToResolve="$1"
-    echo "Begun resolving $fileToResolve."
+
+    if [[ -n "$fsckStatusFile" ]]; then
+        numberExpected="$(<"$fsckStatusFile")"
+        numberProcessedFile="$fsckStatusFile.done"
+        if ! [[ -f "$numberProcessedFile" ]]; then
+            numberProcessed="1"
+        else
+            numberProcessed="$(<"$numberProcessedFile")"
+            numberProcessed=$(( numberProcessed + 1 ))
+        fi
+        echo "$numberProcessed" > "$numberProcessedFile"
+        if [[ "$numberExpected" == "0" ]]; then
+            numberExpected="-1"
+        fi
+        numberProcessedPercentage="$(printf "%.3f\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
+        echo "Resolving item $fileToResolve: #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
+    fi
+
     if [[ -f "$fileToResolve" ]]; then
         # FIXME: This shellcheck directive is only needed for outdated shellcheck versions. Once CodeClimate's shellcheck gets updated (which probably means when Debian stable updates shellcheck), it can be removed.
         # shellcheck disable=SC2094

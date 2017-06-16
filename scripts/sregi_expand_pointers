@@ -4,6 +4,7 @@ source ember_bash_setup &> /dev/null
 
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+#set -x
 
 fsckStatusFile="$1"
 shift
@@ -34,7 +35,7 @@ while [[ ! -z "$1" ]]; do
         sreg_read_stream < "$fileToResolve" | sponge "$fileToResolve" || die "Reading $fileToResolve failed."
     else
         if [[ -d "$fileToResolve" ]]; then
-            find "$fileToResolve" -type f -exec sregi_expand_pointers {} \;
+            find "$fileToResolve" -type f -exec sregi_expand_pointers "$fsckStatusFile" {} \;
         else
             warn "Skipping item $fileToResolve: not a regular file or directory."
         fi

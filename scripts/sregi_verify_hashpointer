@@ -9,7 +9,7 @@ pointerTypeSignature="$(head -c 36 "$1")"
 knownChecksum=""
 if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
     knownChecksum="$(tail -c +38 "$1")"
-    if ! sreg_read_stream --checksum "$knownChecksum" < "$1"; then
+    if ! sreg_read_stream --checksum "$knownChecksum" < "$1" > /dev/null; then
         trap - ERR
         mv "$2" "$2.CORRUPTED-HASHPOINTER"
         trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR

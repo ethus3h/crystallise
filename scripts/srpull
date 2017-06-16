@@ -7,4 +7,10 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 rsync -av --checksum --progress --no-i-r --ignore-existing "$1" "$2/"
 rsync -av --checksum --progress --no-i-r --ignore-existing "$1" "$2/"
-sregi_expand_pointers "$2/$(basename "$1")"
+
+destinationFindTarget="$2/$(basename "$1")/"
+if [[ "$1" =~ '/'$ ]]; then
+    destinationFindTarget="$2/"
+fi
+
+sregi_expand_pointers "$destinationFindTarget"

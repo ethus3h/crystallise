@@ -43,6 +43,14 @@ mkdir "$streamId"
     trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
     cd "$streamId" || exit 1
     sponge "$streamId.xz"
+    if [[ "$(wc -c < "$streamId.xz")" -lt 166 ]]; then
+        # Too short to be a pointer, since it doesn't even have enough bytes for a pointer type signature and a checksum, so just return it and exit
+        if [[ -n "$knownChecksum" ]]; then
+            [[ "$(sha512sum < "$streamId.xz" | awk '{print $1;}')" == "$knownChecksum" ]] || die "Checksum of non-pointer file does not match provided checksum."
+        fi
+        cat "$streamId.xz"
+        exit 0
+    fi
     numRetries=40
     numTotalRetries="$numRetries"
     successfulRetrieval="0"
@@ -135,6 +143,9 @@ mkdir "$streamId"
                 sreg_read_stream < "$dbDir/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
             else
                 # The file isn't a stream pointer, so just return it and exit
+                if [[ -n "$knownChecksum" ]]; then
+                    [[ "$(sha512sum < "$streamId.xz" | awk '{print $1;}')" == "$knownChecksum" ]] || die "Checksum of non-pointer file does not match provided checksum."
+                fi
                 cat "$streamId.xz"
                 exit 0
             fi

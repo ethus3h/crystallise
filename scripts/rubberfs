@@ -172,7 +172,7 @@ freeze)
     #TODO: make sure this works. What it should do: Back up the complete current filesystem to IA (as a .crystal but don't keep local copy), put the .crystal in the .rubberfs/history/ folder, and remove old snapshots.
     cd /
     freezeId="rubberfs-freeze-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
-    crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
+    crystalWorkdir="$(crystallize-getconf WorkDirectory)"
     freezeUuid="$(python -c 'import uuid; print str(uuid.uuid4())')"
     zfs snapshot -r "$name@$freezeId"
     echo "Begun working on saving snapshot."
@@ -212,7 +212,7 @@ delta)
         echo "ERROR! There does not appear to be an existing freeze state. Please use rubberfs freeze instead." >&2
     fi
     freezeId="rubberfs-delta-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
-    crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
+    crystalWorkdir="$(crystallize-getconf WorkDirectory)"
     freezeUuid="$(python -c 'import uuid; print str(uuid.uuid4())')"
     zfs snapshot -r "$name@$freezeId"
     oldSnap="$(cat "$name/.rubberfs/lastFreeze")"
@@ -279,7 +279,7 @@ thaw)
     truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2"
     truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
     zpool create "$name" -O compression=gzip-9 -O relatime=on -O checksum=sha256 mirror "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
-    crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
+    crystalWorkdir="$(crystallize-getconf WorkDirectory)"
     rubberfsThawId="rubberfs-thaw-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)").$(python -c 'import uuid; print str(uuid.uuid4())').tmp"
     mkdir "$rubberfsThawId"
     cd "$rubberfsThawId"
@@ -296,7 +296,7 @@ thaw)
 patch)
     #opposite of delta
     #usage: rubberfs patch poolname deltaId
-    crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
+    crystalWorkdir="$(crystallize-getconf WorkDirectory)"
     cd "$crystalWorkdir"
     shift
     freezeId="$2"
@@ -392,7 +392,7 @@ destroy-no-upload)
     find "/$name" -maxdepth 1 ! -name '.rubberfs' ! -wholename "/$name" -exec rm -rfv {} +
     rubberfs save "$name"
     freezeId="rubberfs-freeze-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
-    crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
+    crystalWorkdir="$(crystallize-getconf WorkDirectory)"
     freezeUuid="$(python -c 'import uuid; print str(uuid.uuid4())')"
     zfs snapshot -r "$name@$freezeId"
     echo "Begun working on saving snapshot."

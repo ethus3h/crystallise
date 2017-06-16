@@ -6,7 +6,7 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; if [[ -n "${tempDirectoryName:?}" ]]; then if [[ -d "${tempDirectoryName:?}" ]]; then rm -r "${tempDirectoryName:?}"; fi; fi' ERR
 
-crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
+crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 dbDir="$1"
 crystalIdentifier="$2"
 if [[ -z "$crystalIdentifier" ]]; then

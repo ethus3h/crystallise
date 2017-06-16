@@ -72,7 +72,7 @@ if [[ -f "$destinationName" ]]; then
     fi
 fi
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
-crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
+crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 streamId="sreg-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 crystalSubdir="$crystalWorkdir/$streamId"
 mkdir -p "$crystalSubdir"

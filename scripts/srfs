@@ -7,12 +7,16 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 #set -x
 
 action="$1"
+mountpoint="$(crystallize-getconf SfrsMountpoint)"
 
 case $action in
 mount)
-    mkdir -p "/Wreathe/.Resources/RubberFS/$name/dev/"
+    mkdir -p "$mountpoint"
+    root="$(crystallize-getconf EmberLibrary)"
+    sreg_fuse.py "$root" "$mountpoint"
+    ;;
 unmount)
-    echo "foo"
+    umount "$mountpoint"
     ;;
 *)
     echo "Unknown action."

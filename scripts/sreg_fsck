@@ -13,7 +13,7 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 trap finish EXIT
 
 echo "Counting items..."
-crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
+crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 fsckId="sreg_fsck-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 mkdir -p "$crystalWorkdir/${fsckId:?}"
 mkdir -p "/tmp/${fsckId:?}"

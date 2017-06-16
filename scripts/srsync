@@ -22,7 +22,7 @@ if ! [[ -d "$2" ]]; then
     die "Destination is not a directory."
 fi
 echo "Counting items..."
-crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
+crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 fsckId="srsync-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 mkdir -p "$crystalWorkdir/$fsckId"
 fsckStatusFile="$crystalWorkdir/$fsckId/.srsync.status"

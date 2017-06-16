@@ -17,7 +17,7 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
     date +%Y-%m-%d-%H-%M-%S-%N
     xxd -pu <<< "$(date +%z)"
 
-    crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
+    crystalWorkdir=$(crystallize-getconf WorkDirectory)
     export crystalWorkdir
 
     echo "Time (log stage 1) from http://timeapi.org/: "
@@ -39,11 +39,11 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
 
     cat /usr/local/etc/crystallize.conf
 
-    crystalTitle=$(crystallize-getconf 'InstallationIdentifier')
+    crystalTitle=$(crystallize-getconf InstallationIdentifier)
     export crystalTitle
-    crystalCollection=$(crystallize-getconf 'Collection')
+    crystalCollection=$(crystallize-getconf Collection)
     export crystalCollection
-    crystallizePassphrase=$(crystallize-getconf 'Passphrase')
+    crystallizePassphrase=$(crystallize-getconf Passphrase)
     export crystallizePassphrase
 
     export CrystalID="$1"

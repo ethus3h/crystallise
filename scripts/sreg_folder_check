@@ -19,7 +19,7 @@ if [[ "$1" == "--drop-unused" ]]; then
 fi
 
 echo "Counting items..."
-crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
+crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 fsckId="sreg_folder_check-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 mkdir -p "$crystalWorkdir/${fsckId:?}"
 mkdir -p "/tmp/${fsckId:?}"

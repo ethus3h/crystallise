@@ -12,7 +12,7 @@ function finish() {
 }
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR
 
-crystalWorkdir="$(crystallize-getconf 'WorkDirectory')"
+crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
 (
     cd "$crystalWorkdir" || exit 1
@@ -91,7 +91,7 @@ dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
             # (2fa... is the remote bundle pointer type signature)
             mv "$streamId.LocalStore.tmp" "$streamId.LocalStore"
             tar -c -P -S --format pax "$streamId.LocalStore.crystal" ".$streamId.LocalStore.crystal-data" "${storeLogFiles[@]}" > "$streamId.bundle.pointer.tar"
-            [[ "$(xxd "$streamId.bundle.pointer.tar" | head -c 12)" == "00000000: 00" ]] || { mkdir -p "$(crystallize-getconf 'WorkDirectory')/.CorruptSregTarFileInfo/"; rsync -a "$streamId.LocalStore.crystal" ".$streamId.LocalStore.crystal-data" "${storeLogFiles[@]}" "$streamId.bundle.pointer.tar" "$(crystallize-getconf 'WorkDirectory')/.CorruptSregTarFileInfo/"; die "Pointer pax was corrupt!"; }
+            [[ "$(xxd "$streamId.bundle.pointer.tar" | head -c 12)" == "00000000: 00" ]] || { mkdir -p "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/"; rsync -a "$streamId.LocalStore.crystal" ".$streamId.LocalStore.crystal-data" "${storeLogFiles[@]}" "$streamId.bundle.pointer.tar" "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/"; die "Pointer pax was corrupt!"; }
             xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout < "$streamId.bundle.pointer.tar" > "$streamId.bundle.pointer"
             pointerName="$(readlink -f "$streamId.bundle.pointer")"
             mkdir -p "$dbDir/Packs/"

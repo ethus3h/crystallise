@@ -3,7 +3,7 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
-export crystallizeVersion='3.1.2.5_pre49'
+export crystallizeVersion='3.1.2.5_pre50'
 
 # ( sudo echo; cd "/Ember Library/Ember satellite projects/crystallize"; git add -A .; git commit -m "version"; git tag -a v3.1.0.29 -m "version"; egup-single .; sudo emerge crystallize )
 
@@ -36,7 +36,7 @@ if [[ "$1" == "" ]] || [[ "$1" == "." ]] || [[ "$1" == ".." ]] || [[ "$1" == "./
     exit 1
 fi
 
-crystalWorkdir=$(crystallize-getconf 'WorkDirectory')
+crystalWorkdir=$(crystallize-getconf WorkDirectory)
 export crystalWorkdir
 mkdir -p "$crystalWorkdir"
 

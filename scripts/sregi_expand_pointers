@@ -5,6 +5,26 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
+fsckStatusFile="$1"
+shift
+
+if [[ -n "$fsckStatusFile" ]]; then
+    numberExpected="$(<"$fsckStatusFile")"
+    numberProcessedFile="$fsckStatusFile.done"
+    if ! [[ -f "$numberProcessedFile" ]]; then
+        numberProcessed="1"
+    else
+        numberProcessed="$(<"$numberProcessedFile")"
+        numberProcessed=$(( numberProcessed + 1 ))
+    fi
+    echo "$numberProcessed" > "$numberProcessedFile"
+    if [[ "$numberExpected" == "0" ]]; then
+        numberExpected="-1"
+    fi
+    numberProcessedPercentage="$(printf "%.3f\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
+    echo "Resolving item $pointerId: #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
+fi
+
 while [[ ! -z "$1" ]]; do
     echo "Items remaining to resolve: "
     echo "$@"
@@ -13,7 +33,7 @@ while [[ ! -z "$1" ]]; do
     if [[ -f "$fileToResolve" ]]; then
         # FIXME: This shellcheck directive is only needed for outdated shellcheck versions. Once CodeClimate's shellcheck gets updated (which probably means when Debian stable updates shellcheck), it can be removed.
         # shellcheck disable=SC2094
-        sreg_read_stream < "$fileToResolve" | sponge "$fileToResolve" || echo "(Note: ignoring failed read of $fileToResolve)"
+        sreg_read_stream < "$fileToResolve" | sponge "$fileToResolve" || die "Reading $fileToResolve failed."
     else
         if [[ -d "$fileToResolve" ]]; then
             find "$fileToResolve" -type f -exec sregi_expand_pointers {} \;
@@ -21,8 +41,5 @@ while [[ ! -z "$1" ]]; do
             warn "Skipping item $fileToResolve: not a regular file or directory."
         fi
     fi
-    echo "Done resolving $fileToResolve." || warn "Failed resolving $fileToResolve!"
     shift
 done
-#printf "\033c"
-echo "Done resolving all items."

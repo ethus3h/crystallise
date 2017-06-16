@@ -7,7 +7,7 @@ source ember_bash_setup &> /dev/null
 
 function finish() {
     if [[ -e "${streamId:?}" ]]; then
-        rm -r "${streamId:?}"
+        rm -r "${streamId:?}" "/tmp/${fsckId:?}"
     fi
 }
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR
@@ -44,3 +44,5 @@ find "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" -not -path "
 echo "0" > "$fsckStatusFile.done"
 
 find "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" -not -path "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/Unused Pointers/*" -type f \( -exec sregi_drop_single_unused {} "$fsckIdList" "$fsckStatusFile" \; -or -exec kill "-$bpid" \; \)
+
+finish

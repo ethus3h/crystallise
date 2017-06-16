@@ -3,14 +3,39 @@
 source ember_bash_setup &> /dev/null
 
 ((EUID)) && exec sudo -- "$0" "$@"
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+#set -x
 
-rsync -av --checksum --progress --no-i-r --ignore-existing "$1" "$2/"
-rsync -av --checksum --progress --no-i-r --ignore-existing "$1" "$2/"
+function finish() {
+    if [[ -e "${streamId:?}" ]]; then
+        rm -r "${streamId:?}" "/tmp/${fsckId:?}.status"
+    fi
+}
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR
+
+srpullReplace="false"
+if [[ "$1" == "--replace" ]]; then
+    srpullReplace="true"
+    shift
+fi
+
+if [[ "$srpullReplace" == "true" ]]; then
+    rsync -av --checksum --progress --no-i-r "$1" "$2/"
+    rsync -av --checksum --progress --no-i-r "$1" "$2/"
+else
+    rsync -av --checksum --progress --no-i-r --ignore-existing "$1" "$2/"
+    rsync -av --checksum --progress --no-i-r --ignore-existing "$1" "$2/"
+fi
 
 destinationFindTarget="$2/$(basename "$1")/"
 if [[ "$1" =~ '/'$ ]]; then
     destinationFindTarget="$2/"
 fi
 
-sregi_expand_pointers "$destinationFindTarget"
+fsckId="srpull-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+fsckStatusFile="/tmp/$fsckId.status"
+
+find "$destinationFindTarget" -printf '.' | wc -c > "$fsckStatusFile"
+
+sregi_expand_pointers "$fsckStatusFile" "$destinationFindTarget"
+
+finish

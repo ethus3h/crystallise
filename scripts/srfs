@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
+source ember_bash_setup &> /dev/null
+
+((EUID)) && exec sudo -- "$0" "$@"
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+#set -x
+
+action="$1"
+
+case $action in
+mount)
+    mkdir -p "/Wreathe/.Resources/RubberFS/$name/dev/"
+unmount)
+    echo "foo"
+    ;;
+*)
+    echo "Unknown action."
+    exit 1
+    ;;
+esac

@@ -6,8 +6,8 @@ source ember_bash_setup &> /dev/null
 #set -x
 
 function finish() {
-    if [[ -e "$streamId" ]]; then
-        rm -r "$streamId"
+    if [[ -e "${streamId:?}" ]]; then
+        rm -r "${streamId:?}"
     fi
 }
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR
@@ -106,8 +106,8 @@ dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
     if [[ "$1" != "--verbose" ]]; then
         cat "$tmpFilePath"
     fi
-    if [[ -e "$streamId" ]]; then
-        rm -r "$streamId"
+    if [[ -e "${streamId:?}" ]]; then
+        rm -r "${streamId:?}"
     fi
     if [[ -e "$streamId.tmp" ]]; then
         rm "$streamId.tmp"

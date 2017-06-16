@@ -91,6 +91,6 @@ mkdir -p "$(dirname "$destinationName")"
 rsync -a --checksum --no-i-r "$fileToStash" "$destinationName"
 chmod a+r "$destinationName"
 rm -r "$crystalSubdir"
-if [[ -e "$streamId" ]]; then
-    rm -r "$streamId"
+if [[ -e "${streamId:?}" ]]; then
+    rm -r "${streamId:?}"
 fi

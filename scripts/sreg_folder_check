@@ -3,8 +3,14 @@
 source ember_bash_setup &> /dev/null
 
 ((EUID)) && exec sudo -- "$0" "$@"
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 #set -x
+
+function finish() {
+    if [[ -e "${streamId:?}" ]]; then
+        rm -r "${streamId:?}"
+    fi
+}
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR
 
 sregVerify=""
 if [[ "$1" == "--verify" ]]; then
@@ -30,6 +36,7 @@ bpid="$$"
 find "$1" -type f \( -exec sregi_hashpointer_sane {} "$fsckIdList" "$fsckStatusFile" "$sregVerify" \; -or -exec kill "-$bpid" \; \)
 
 if [[ "$dropUnused" == "false" ]]; then
+    finish
     exit 0
 fi
 

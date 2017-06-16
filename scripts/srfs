@@ -12,7 +12,13 @@ mountpoint="$(crystallize-getconf SfrsMountpoint)"
 case $action in
 mount)
     mkdir -p "$mountpoint"
-    root="$(crystallize-getconf EmberLibrary)"
+    root="$2"
+    if [[ -z "$root" ]]; then
+        root="$(crystallize-getconf SfrsDefaultRoot)"
+        if [[ -z "$root" ]]; then
+            root="$(crystallize-getconf EmberLibrary)"
+        fi
+    fi
     sreg_fuse.py "$root" "$mountpoint"
     ;;
 unmount)

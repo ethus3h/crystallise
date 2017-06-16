@@ -106,13 +106,11 @@ dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
     if [[ "$1" != "--verbose" ]]; then
         cat "$tmpFilePath"
     fi
-    if [[ -e "${streamId:?}" ]]; then
-        rm -r "${streamId:?}"
+    finish
+    if [[ -e "${streamId:?}.tmp" ]]; then
+        rm "${streamId:?}.tmp"
     fi
-    if [[ -e "$streamId.tmp" ]]; then
-        rm "$streamId.tmp"
-    fi
-    if [[ -e "$streamId.tmp.crystal" ]]; then
-        rm "$streamId.tmp.crystal"
+    if [[ -e "${streamId:?}.tmp.crystal" ]]; then
+        rm "${streamId:?}.tmp.crystal"
     fi
 )

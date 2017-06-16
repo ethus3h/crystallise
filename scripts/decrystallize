@@ -57,7 +57,7 @@ if [[ "$decrystallizeHere" == "true" ]]; then
         shopt -s dotglob
         mv -vn "$tempId/$crystalPath/"* .
         echo "Done moving primary files into place (relative to $crystalPath)."
-        rm -r "$tempId"
+        rm -r "${tempId:?}"
     )
 fi
 

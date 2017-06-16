@@ -28,7 +28,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$(readlink "$dbLinkPath")" ]]; then
         requestCount=1
     else
         requestCount="$(<"$dbLinkPath")"
-        rm "$dbLinkPath"
+        rm "${dbLinkPath:?}"
     fi
     dbFileDir="$dbDir/ByCount/$requestCount/$hashSubdir"
     dbFilePath="$dbFileDir/$hashFull"
@@ -37,7 +37,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$(readlink "$dbLinkPath")" ]]; then
     sha512sum < "$dbFilePath" | awk '{print $1;}' > "$checksumName"
     printf "%s" "$requestUrl" > "$dbLinkPath.url"
     if [[ -h "$dbLinkPath" ]]; then
-        rm "$dbLinkPath"
+        rm "${dbLinkPath:?}"
     fi
     ln -s "$dbFilePath" "$dbLinkPath"
 fi
@@ -66,7 +66,7 @@ dbFileDir="$dbDir/ByCount/$requestCount/$hashSubdir"
 dbFilePath="$dbFileDir/$hashFull"
 mkdir -p "$dbFileDir"
 mv "$dbFileOldPath" "$dbFilePath"
-rm "$dbLinkPath"
+rm "${dbLinkPath:?}"
 ln -s "$dbFilePath" "$dbLinkPath"
 # Return the data to the caller
 cat "$dbLinkPath"

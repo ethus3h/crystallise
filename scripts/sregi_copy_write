@@ -67,7 +67,7 @@ if [[ -f "$destinationName" ]]; then
         else
             warn "(Destination pointer $destinationName did not match source checksum: the source file has probably been changed. Removing and recreating.)"
             # cat "$destinationName"
-            rm "$destinationName"
+            rm "${destinationName:?}"
         fi
     fi
 fi
@@ -90,7 +90,7 @@ echo "Done storing $fileToStash."
 mkdir -p "$(dirname "$destinationName")"
 rsync -a --checksum --no-i-r "$fileToStash" "$destinationName"
 chmod a+r "$destinationName"
-rm -r "$crystalSubdir"
+rm -r "${crystalSubdir:?}"
 if [[ -e "${streamId:?}" ]]; then
     rm -r "${streamId:?}"
 fi

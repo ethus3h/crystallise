@@ -29,7 +29,7 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
         if [[ -n "$largestLeastUsedItem" ]]; then
             leastUsedItemCount="$(basename "$leastUsedItemDirectory")"
             hashFull="$(basename "$largestLeastUsedItem")"
-            rm -rf "$largestLeastUsedItem"
+            rm -rf "${largestLeastUsedItem:?}"
             hashA="${hashFull:0:1}"
             hashB="${hashFull:1:1}"
             hashC="${hashFull:2:1}"

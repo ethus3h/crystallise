@@ -41,7 +41,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$oldFilePath" ]] || [[ ! -d "${cacheEntr
         requestCount=1
     else
         requestCount="$(<"$dbLinkPath")"
-        rm "${dbLinkPath:?}"
+        rm "$dbLinkPath"
     fi
     dbFileDir="$dbDir/ByCount/$requestCount/$hashSubdir"
     dbFilePath="$dbFileDir/$hashFull"
@@ -55,7 +55,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$oldFilePath" ]] || [[ ! -d "${cacheEntr
         mv ./* "$dbFilePath"
     )
     if [[ -h "$dbLinkPath" ]]; then
-        rm "${dbLinkPath:?}"
+        rm "$dbLinkPath"
     fi
     ln -s "$dbFilePath" "$dbLinkPath"
 fi
@@ -77,7 +77,7 @@ dbFilePath="$dbFileDir/$hashFull"
 mkdir -p "$dbFileDir"
 rm -rf "${dbFilePath:?}"
 mv "$dbFileOldPath" "$dbFilePath"
-rm "${dbLinkPath:?}"
+rm "$dbLinkPath"
 ln -s "$dbFilePath" "$dbLinkPath"
 # Return the data to the caller
 echo "$dbLinkPath"

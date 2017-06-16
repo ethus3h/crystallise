@@ -63,7 +63,7 @@ else
         uploadEtag="$(aws --endpoint-url "$hostName" --output text --query "ETag" s3api upload-part --bucket "$identifier" --key "$remoteFileName" --part-number "$partNumber" --upload-id "$uploadId" --body "$chunkLocationName")"
         printf "    {\n      \"ETag\": \"%s\",\n      \"PartNumber\": %s\n    },\n" "$uploadEtag" "$partNumber" >> "$chunkLocationName.json"
         partNumber=$((partNumber + 1))
-        rm "${chunkLocationName:?}"
+        rm "$chunkLocationName"
     done
     #Remove last comma and newline, and finish the file
     truncate -s-2 "$chunkLocationName.json"

@@ -7,14 +7,14 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 #set -x
 
 action="$1"
-mountpoint="$(crystallize-getconf SfrsMountpoint)"
+mountpoint="$(crystallize-getconf SrfsMountpoint)"
 
 case $action in
 mount)
     mkdir -p "$mountpoint"
     root="$2"
     if [[ -z "$root" ]]; then
-        root="$(crystallize-getconf SfrsDefaultRoot)"
+        root="$(crystallize-getconf SrfsDefaultRoot)"
         if [[ -z "$root" ]]; then
             root="$(crystallize-getconf EmberLibrary)"
         fi

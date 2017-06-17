@@ -35,14 +35,14 @@ class sreg_fuse(Operations):
     def _sreg_copy_read(self, source, destination):
         inputfile = io.open(source, 'r')
         outputfile = tempfile.NamedTemporaryFile()
-        subprocess.call(["sreg_read_stream"], stdin=inputfile, stdout=outputfile.name)
-        shutil.copy2(inputfile, outputfile.name)
+        subprocess.call(["sreg_read_stream"], stdin=inputfile, stdout=outputfile)
+        shutil.copy2(inputfile, outputfile)
 
     def _sreg_copy_write(self, source, destination):
         inputfile = io.open(source, 'r')
         outputfile = tempfile.NamedTemporaryFile()
-        subprocess.call(["sreg_store_stream"], stdin=inputfile, stdout=outputfile.name)
-        shutil.copy2(inputfile, outputfile.name)
+        subprocess.call(["sreg_store_stream"], stdin=inputfile, stdout=outputfile)
+        shutil.copy2(inputfile, outputfile)
 
     # Filesystem methods
     # ==================

@@ -103,9 +103,6 @@ dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
         trap - EXIT
         mv "$tmpFilePath" "$dbFilePath" || die "Could not move pointer into place!"
     fi
-    if [[ "$1" != "--verbose" ]]; then
-        cat "$tmpFilePath"
-    fi
     finish
     if [[ -e "${streamId:?}.tmp" ]]; then
         rm "${streamId:?}.tmp"

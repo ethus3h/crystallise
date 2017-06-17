@@ -34,7 +34,7 @@ fi
 fsckId="srpull-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 fsckStatusFile="/tmp/$fsckId.status"
 
-find "$destinationFindTarget" -printf '.' | wc -c > "$fsckStatusFile"
+find "$destinationFindTarget" -type f -printf '.' | wc -c > "$fsckStatusFile"
 
 sregi_expand_pointers "$fsckStatusFile" "$destinationFindTarget"
 

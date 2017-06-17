@@ -163,13 +163,15 @@ class sreg_fuse(Operations):
     def flush(self, path, fh):
         temp = os.fsync(fh)
         full_path = self._full_path(path)
-        self._sreg_copy_write(fh.name, full_path)
+        print(fh)
+        self._sreg_copy_write(fh, full_path)
         return temp
 
     def release(self, path, fh):
         os.fsync(fh)
         full_path = self._full_path(path)
-        self._sreg_copy_write(fh.name, full_path)
+        print(fh)
+        self._sreg_copy_write(fh, full_path)
         temp = os.close(fh)
         os.remove(fh)
         return temp

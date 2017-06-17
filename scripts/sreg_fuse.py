@@ -36,13 +36,13 @@ class sreg_fuse(Operations):
         inputfile = io.open(source, 'r')
         outputfile = io.open(destination, 'w')
         subprocess.call(["sreg_read_stream"], stdin=inputfile, stdout=outputfile)
-        shutil.copy2(inputfile.name, outputfile.name)
+        shutil.copy2(source, outputfile.name)
 
     def _sreg_copy_write(self, source, destination):
         inputfile = io.open(source, 'r')
         outputfile = io.open(destination, 'w')
         subprocess.call(["sreg_store_stream"], stdin=inputfile, stdout=outputfile)
-        shutil.copy2(inputfile.name, outputfile.name)
+        shutil.copy2(source, outputfile.name)
 
     # Filesystem methods
     # ==================

@@ -123,15 +123,14 @@ class sreg_fuse(Operations):
 
     def open(self, path, flags):
         full_path = self._full_path(path)
-        temppath = self.tempdir + "/" + full_path
+        temppath = self.tempdir + "/" + str(uuid.uuid4())
         self._sreg_copy_read(full_path, temppath)
         return os.open(temppath, flags)
 
     def create(self, path, mode, fi=None):
         uid, gid, pid = fuse_get_context()
         full_path = self._full_path(path)
-        temppath = self.tempdir + "/" + full_path
-        os.makedirs(os.path.dirname(temppath))
+        temppath = self.tempdir + "/" + str(uuid.uuid4())
         if os.path.isfile(full_path):
             self._sreg_copy_read(full_path, temppath)
         else:
@@ -151,7 +150,7 @@ class sreg_fuse(Operations):
 
     def truncate(self, path, length, fh=None):
         full_path = self._full_path(path)
-        temppath = self.tempdir + "/" + full_path
+        temppath = self.tempdir + "/" + str(uuid.uuid4())
         self._sreg_copy_read(full_path, temppath)
         with open(temppath, 'r+') as f:
             f.truncate(length)

@@ -4,7 +4,14 @@ source ember_bash_setup &> /dev/null
 #set -x
 
 ((EUID)) && exec sudo -- "$0" "$@"
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+streamId="703b3f58-57de-4b8d-b0a9-b5931b37458a"
+function finish() {
+    if [[ -e "/tmp/${streamId:?}" ]]; then
+        rm "/tmp/${streamId:?}"
+    fi
+}
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR
+trap finish EXIT
 
 action="$1"
 
@@ -14,10 +21,21 @@ fi
 
 case $action in
 save)
-    hashdeep -c md5,sha1,sha256,tiger,whirlpool -e -o fbsd -r .
+    setVariableToCommandOutput currentworkingdir pwd -P
+    currentworkingdir="${currentworkingdir:?}"
+    currentworkingdir="${currentworkingdir//$'\n'/'\n'}"
+    printf "%s\n" "${currentworkingdir//$'\r'/'\r'}"
+    hashdeep -c md5,sha1,sha256,tiger,whirlpool -e -o fbsd -r -l .
     ;;
 check)
-    hashdeep -k "$2" -e -o fbsd -r -a -v -v .
+    streamId="sreg_read_stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    if [[ -n "$2" ]]; then
+        sponge "/tmp/$streamId"
+    else
+        cp "$2" "/tmp/$streamId"
+    fi
+    hashdeep -k "/tmp/$streamId" -e -o fbsd -r -l -a -v -v .
+    finish
     ;;
 *)
     echo "Unknown action."

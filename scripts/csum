@@ -29,7 +29,7 @@ save)
     ;;
 check)
     streamId="sreg_read_stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
-    if [[ -n "$2" ]]; then
+    if [[ -z "$2" ]]; then
         sponge "/tmp/$streamId"
     else
         tail -n +2 "$2" > "/tmp/$streamId"

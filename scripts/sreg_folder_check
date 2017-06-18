@@ -26,7 +26,7 @@ fi
 
 folderToCheck="$1"
 if [[ -z "$folderToCheck" ]]; then
-    action="."
+    folderToCheck="."
 fi
 
 echo "Counting items..."

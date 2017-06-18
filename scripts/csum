@@ -24,8 +24,13 @@ save)
     setVariableToCommandOutput currentworkingdir pwd -P
     currentworkingdir="${currentworkingdir:?}"
     currentworkingdir="${currentworkingdir//$'\n'/'\n'}"
-    printf "%s\n" "${currentworkingdir//$'\r'/'\r'}"
-    hashdeep -c md5,sha1,sha256,tiger,whirlpool -e -o fbsd -r -l .
+    if [[ -z "$2" ]]; then
+        printf "%s\n" "${currentworkingdir//$'\r'/'\r'}"
+        hashdeep -c md5,sha1,sha256,tiger,whirlpool -e -o fbsd -r -l .
+    else
+        printf "%s\n" "${currentworkingdir//$'\r'/'\r'}" > "$2"
+        hashdeep -c md5,sha1,sha256,tiger,whirlpool -e -o fbsd -r -l . >> "$2"
+    fi
     ;;
 check)
     streamId="sreg_read_stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"

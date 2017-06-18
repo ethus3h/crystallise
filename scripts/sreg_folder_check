@@ -24,6 +24,11 @@ if [[ "$1" == "--drop-unused" ]]; then
     shift
 fi
 
+folderToCheck="$1"
+if [[ -z "$folderToCheck" ]]; then
+    action="."
+fi
+
 echo "Counting items..."
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 fsckId="sreg_folder_check-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
@@ -31,9 +36,9 @@ mkdir -p "$crystalWorkdir/${fsckId:?}"
 mkdir -p "/tmp/${fsckId:?}"
 fsckStatusFile="/tmp/$fsckId/.sreg_folder_check.status"
 fsckIdList="/tmp/$fsckId/.sreg_folder_check.idlist"
-find "$1" -type f -printf '.' | wc -c > "$fsckStatusFile"
+find "$folderToCheck" -type f -printf '.' | wc -c > "$fsckStatusFile"
 bpid="$$"
-find "$1" -type f \( -exec sregi_hashpointer_sane {} "$fsckIdList" "$fsckStatusFile" "$sregVerify" \; -or -exec kill "-$bpid" \; \)
+find "$folderToCheck" -type f \( -exec sregi_hashpointer_sane {} "$fsckIdList" "$fsckStatusFile" "$sregVerify" \; -or -exec kill "-$bpid" \; \)
 
 if [[ "$dropUnused" == "false" ]]; then
     finish

@@ -6,8 +6,8 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 
 function finish() {
-    if [[ -e "${streamId:?}" ]]; then
-        rm -r "${streamId:?}" "/tmp/${fsckId:?}"
+    if [[ -e "${fsckId:?}" ]]; then
+        rm -r "${fsckId:?}" "/tmp/${fsckId:?}"
     fi
 }
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR

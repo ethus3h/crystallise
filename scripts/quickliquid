@@ -3,6 +3,7 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
+((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 crystallizeVersion="$(crystallize-getconf crystallizeVersion)"
@@ -13,4 +14,8 @@ crystalTitle="$(crystallize-getconf InstallationIdentifier)"
 
 ia upload "$IUIDENTIFIER" --verify --metadata="subject:Uploaded using quickliquid for Crystallize $crystallizeVersion" --metadata="subject:9F227910-A541-11E5-8BD3-7B584224FF49" --metadata="subject:$crystalTitle" "$@"
 
+tail=""
+if [[ -z "$2" ]]; then
+    tail="$(urlencode "$(basename "$1")")"
+fi
 echo "https://archive.org/download/$IUIDENTIFIER/"

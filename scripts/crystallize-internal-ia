@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
+#set -x
 
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
-#set -x
 
 ia upload "${CrystalID:?}" --verify --retries=100 --metadata="subject:Uploaded using Crystallize ${crystallizeVersion:?}" --metadata="subject:1EA21BD8-DB7E-11E5-9733-728C37852114" --metadata=subject:"${crystalTitle:?}" --metadata=subject:"${CrystalID:?}" --metadata="collection:${crystalCollection:?}" --delete "${CrystalTmpUploadFile:?}"

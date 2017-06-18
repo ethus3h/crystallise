@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
+source ember_bash_setup &> /dev/null
+#set -x
+
+((EUID)) && exec sudo -- "$0" "$@"
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+
+action="$1"
+
+case $action in
+save)
+    hashdeep -c md5,sha1,sha256,tiger,whirlpool -e -o fbsd -r .
+    ;;
+check)
+    hashdeep -k "$2" -e -o fbsd -r -a -v -v .
+    ;;
+*)
+    echo "Unknown action."
+    exit 1
+    ;;
+esac

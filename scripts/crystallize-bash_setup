@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-
-set -o pipefail
+#set -x
 
 function rubberfs() {
     if [[ "$1" == "cd" ]]; then

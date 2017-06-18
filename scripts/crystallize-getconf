@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 #set -x
 
-set -o pipefail
-
 configFileLocation="/usr/local/etc/crystallize.conf"
 
 if [[ "$1" == "ConfigLocation" ]]; then

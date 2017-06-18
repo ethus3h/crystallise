@@ -58,7 +58,7 @@ if [[ -f "$destinationName" ]]; then
             fi
         else
             destinationChecksum="$(tail -c +38 "$destinationName" | head -c 129)"
-            sreg_read_stream < "$destinationName" > /dev/null || die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."
+            sreg_read_stream < "$destinationName" > /dev/null || hasEncounteredError="1"
         fi
         if [[ "$destinationChecksum" == "$sourceChecksum" && "$hasEncounteredError" == "0" && "$assumePointerDbEntryFileExists" == "true" ]]; then
             # The file is already present, pointerized, and readable, so exit without doing anything.

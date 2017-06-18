@@ -6,7 +6,7 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
-sregNoVerify="false"
+sregNoVerify="true"
 if [[ "$1" == "--no-verify" ]]; then
     sregNoVerify="true"
     shift

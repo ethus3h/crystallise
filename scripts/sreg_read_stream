@@ -56,13 +56,16 @@ mkdir "$streamId"
     successfulRetrieval="0"
     # Get the hash of the stream
     function pipecheck() {
-        if [[ "${PIPESTATUS[0]}" != "141" ]] || [[ "${PIPESTATUS[0]}" != "0" ]]; then
+        (
+        pipeCheckTemp=("${PIPESTATUS[@]}")
+        if [[ "${pipeCheckTemp[0]}" != "141" ]] && [[ "${pipeCheckTemp[0]}" != "0" ]]; then
             # Ignore status 141, which just means the input stream was terminated by head before all the data were consumed
             die "Failed reading temporary stream file"
         fi
-        if [[ "${PIPESTATUS[1]}" != "0" ]]; then
+        if [[ "${pipeCheckTemp[1]}" != "0" ]]; then
             die "Failed executing head on temporary stream file"
         fi
+        )
     }
     set +o pipefail
     hashFull="$(

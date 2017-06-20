@@ -32,7 +32,9 @@ cd "$crystalWorkdir" || exit 1
 streamId="sreg_read_stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 dbDir="${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"
 # Basic sanity check to make sure it bombs out if the pointer is cached but is missing a necessary LocalStore entry
-sregi_available_by_hash
+if [[ -n "$knownChecksum" ]]; then
+    sregi_available_by_hash
+fi
 # Set up cache directory
 cacheDbDir="$crystalWorkdir/.StreamCache/"
 if ! [[ -e "$cacheDbDir" ]]; then
@@ -61,6 +63,11 @@ mkdir "$streamId"
     hashFull="$(sregi_hash_from_file "$streamId.xz")"
     if [[ -n "$knownChecksum" ]]; then
         [[ "$knownChecksum" == "$hashFull" ]] || die "The checksum provided by the pointer does not match the provided checksum."
+        (
+            # Basic sanity check to make sure it bombs out if the pointer is cached but is missing a necessary LocalStore entry
+            knownChecksum="$hashFull"
+            sregi_available_by_hash
+        )
     fi
     hashA="${hashFull:0:1}"
     hashB="${hashFull:1:1}"

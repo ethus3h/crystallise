@@ -25,7 +25,7 @@ echo "Counting items..."
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 fsckId="srsync-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 mkdir -p "$crystalWorkdir/$fsckId"
-fsckStatusFile="$crystalWorkdir/$fsckId/.srsync.status"
+fsckStatusFile="/tmp/$fsckId.srsync.status"
 find "$1" -type f -printf '.' | wc -c > "$fsckStatusFile"
 destinationSuffix=""
 if [[ -d "$1" ]]; then

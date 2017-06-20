@@ -44,11 +44,11 @@ mkdir -p "$crystalWorkdir/$streamId"
         mkdir -p "$localStoreDir"
         localStoreFilePath="$localStoreDir/$hashFull"
     fi
-    if [[ -f "$tmpFilePath" ]]; then
+    if [[ -f "$dbFilePath" ]]; then
         knownChecksum="$hashFull"
         if sregi_available_by_hash; then
             # Item already has been stored and passes a basic sanity check, so check that the existing pointer can be restored
-            recoveredHash="$(sreg_read_stream --disallow-hash-pointer < "$tmpFilePath" | sha512sum | awk '{print $1;}')"
+            recoveredHash="$(sreg_read_stream --disallow-hash-pointer < "$dbFilePath" | sha512sum | awk '{print $1;}')"
             if [[ "$recoveredHash" != "$hashFull" ]]; then
                 die "Could not read existing item."
                 # if [[ "$1" == "--verbose" ]]; then

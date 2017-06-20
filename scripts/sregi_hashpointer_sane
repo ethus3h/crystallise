@@ -42,19 +42,7 @@ if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
             die "Item $1 did not match the stored checksum!"
         fi
     else
-        hashA="${knownChecksum:0:1}"
-        hashB="${knownChecksum:1:1}"
-        hashC="${knownChecksum:2:1}"
-        pointerFile="${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/$hashA/$hashB/$hashC/$knownChecksum"
-        if ! [[ -e "$pointerFile" ]]; then
-            die "Item does not have the corresponding stream registry entry $pointerFile!"
-        fi
-        innerPointerTypeSignature="$(head -c 36 "$pointerFile")"
-        if [[ "$innerPointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
-            if ! [[ -e "$dbDir/LocalStore/$hashA/$hashB/$hashC/$knownChecksum" ]]; then
-                die "Item does not have the corresponding LocalStore entry $dbDir/LocalStore/$hashA/$hashB/$hashC/$knownChecksum!"
-            fi
-        fi
+        sregi_available_by_hash
     fi
     echo "$knownChecksum" >> "$fsckIdList"
 fi

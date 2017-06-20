@@ -32,4 +32,20 @@ function sreg_fuse() {
     sreg_fuse.py "$@" "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"
 }
 
+function sregi_available_by_hash() {
+    hashA="${knownChecksum:0:1}"
+    hashB="${knownChecksum:1:1}"
+    hashC="${knownChecksum:2:1}"
+    local availByHashPointerFile="${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/$hashA/$hashB/$hashC/$knownChecksum"
+    if ! [[ -e "$availByHashPointerFile" ]]; then
+        die "Item does not have the corresponding stream registry entry $availByHashPointerFile!"
+    fi
+    local innerPointerTypeSignature="$(head -c 36 "$availByHashPointerFile")"
+    if [[ "$innerPointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
+        if ! [[ -e "$dbDir/LocalStore/$hashA/$hashB/$hashC/$knownChecksum" ]]; then
+            die "Item does not have the corresponding LocalStore entry $dbDir/LocalStore/$hashA/$hashB/$hashC/$knownChecksum!"
+        fi
+    fi
+}
+
 EmberLibrary="$(crystallize-getconf EmberLibrary)"

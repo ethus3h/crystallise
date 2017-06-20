@@ -31,6 +31,8 @@ crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 cd "$crystalWorkdir" || exit 1
 streamId="sreg_read_stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 dbDir="${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"
+# Basic sanity check to make sure it bombs out if the pointer is cached but is missing a necessary LocalStore entry
+sregi_available_by_hash
 # Set up cache directory
 cacheDbDir="$crystalWorkdir/.StreamCache/"
 if ! [[ -e "$cacheDbDir" ]]; then

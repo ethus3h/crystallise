@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
+source ember_bash_setup &> /dev/null
+#set -x
+
+((EUID)) && exec sudo -- "$0" "$@"
+
+function finish() {
+    if [[ -e "${streamId:?}" ]]; then
+        rm -r "${streamId:?}"
+    fi
+}
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; rm "$dbDir"/.LocalStore.lock; finish; exit 1' ERR
+
+dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
+crystalWorkdir="$(crystallize-getconf WorkDirectory)"
+streamId="sreg_flush_localstore-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+mkdir -p "$crystalWorkdir/$streamId"
+(
+    cd "$crystalWorkdir/$streamId" || exit 1
+    if ! [[ -e "$dbDir"/.LocalStore.lock ]]; then
+        touch "$dbDir"/.LocalStore.lock
+        rsync -aq --checksum --no-i-r "$dbDir"/LocalStore "$streamId.LocalStore"
+        rsync -aq --checksum --no-i-r "$streamId.LocalStore" "$streamId.LocalStore.tmp"
+        if [[ "$1" == "--verbose" ]]; then
+            crystallize --leave-pointer "$streamId.LocalStore" | cat
+        else
+            crystallize --leave-pointer "$streamId.LocalStore" > "$streamId.LocalStore.sstream-stdout" 2> "$streamId.LocalStore.sstream-stderr"
+            storeLogFiles=("$streamId.LocalStore.sstream-stdout" "$streamId.LocalStore.sstream-stderr")
+        fi
+        # (2fa... is the remote bundle pointer type signature)
+        mv "$streamId.LocalStore.tmp" "$streamId.LocalStore"
+        tar -c -P -S --format pax "$streamId.LocalStore.crystal" ".$streamId.LocalStore.crystal-data" "${storeLogFiles[@]}" > "$streamId.bundle.pointer.tar"
+        [[ "$(xxd "$streamId.bundle.pointer.tar" | head -c 12)" == "00000000: 00" ]] && { mkdir -p "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/"; rsync -a "$streamId.LocalStore.crystal" ".$streamId.LocalStore.crystal-data" "${storeLogFiles[@]}" "$streamId.bundle.pointer.tar" "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/"; die "Pointer pax was corrupt!"; }
+        xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - < "$streamId.bundle.pointer.tar" > "$streamId.bundle.pointer"
+        pointerName="$(readlink -f "$streamId.bundle.pointer")"
+        mkdir -p "$dbDir/Packs/"
+        rsync -q --checksum "$pointerName" "$dbDir/Packs/"
+        find "$streamId.LocalStore" -type f -exec sregi_bundle_pointer "$pointerName" {} \;
+        rm -r "$dbDir"/LocalStore
+        rm "$dbDir"/.LocalStore.lock
+    fi
+    finish
+)

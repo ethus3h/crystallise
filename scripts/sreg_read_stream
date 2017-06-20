@@ -51,7 +51,8 @@ mkdir "$streamId"
         cat "$streamId.xz"
         exit 0
     fi
-    numRetries=40
+    # 120 retries * 30 seconds = 1 hour
+    numRetries=120
     numTotalRetries="$numRetries"
     successfulRetrieval="0"
     # Get the hash of the stream

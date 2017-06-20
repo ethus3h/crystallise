@@ -75,7 +75,9 @@ dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
         echo "$pointerTypeSignature" > "$tmpFilePath"
         echo "$hashFull" >> "$tmpFilePath"
         if [[ "$useLocalStore" != "true" ]]; then
-            tar -c -P -S --format pax "$streamId.tmp.crystal" ".$streamId.tmp.crystal-data" "${logFiles[@]}" | xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - >> "$tmpFilePath"
+            tar -c -P -S --format pax "$streamId.tmp.crystal" ".$streamId.tmp.crystal-data" "${logFiles[@]}" > "$streamId.nonbundle.pointer.tar"
+            [[ "$(xxd "$streamId.nonbundle.pointer.tar" | head -c 12)" == "00000000: 00" ]] || { mkdir -p "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/$streamId/"; rsync -a "$streamId.LocalStore.crystal" ".$streamId.LocalStore.crystal-data" "${storeLogFiles[@]}" "$streamId.nonbundle.pointer.tar" "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/$streamId/"; die "Pointer pax was corrupt!"; }
+            xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - < "$streamId.nonbundle.pointer.tar" >> "$tmpFilePath"
         else
             xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout "$streamId.tmp" > "$localStoreFilePath"
         fi
@@ -99,7 +101,7 @@ dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
                 mv "$streamId.LocalStore.tmp" "$streamId.LocalStore"
                 tar -c -P -S --format pax "$streamId.LocalStore.crystal" ".$streamId.LocalStore.crystal-data" "${storeLogFiles[@]}" > "$streamId.bundle.pointer.tar"
                 [[ "$(xxd "$streamId.bundle.pointer.tar" | head -c 12)" == "00000000: 00" ]] || { mkdir -p "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/"; rsync -a "$streamId.LocalStore.crystal" ".$streamId.LocalStore.crystal-data" "${storeLogFiles[@]}" "$streamId.bundle.pointer.tar" "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/"; die "Pointer pax was corrupt!"; }
-                xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout < "$streamId.bundle.pointer.tar" > "$streamId.bundle.pointer"
+                xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - < "$streamId.bundle.pointer.tar" > "$streamId.bundle.pointer"
                 pointerName="$(readlink -f "$streamId.bundle.pointer")"
                 mkdir -p "$dbDir/Packs/"
                 rsync -q --checksum "$pointerName" "$dbDir/Packs/"

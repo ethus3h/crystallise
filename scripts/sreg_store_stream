@@ -10,7 +10,7 @@ function finish() {
         rm -r "${streamId:?}"
     fi
 }
-trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; rm "$dbDir"/.LocalStore.lock; finish; exit 1' ERR
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR
 
 dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"

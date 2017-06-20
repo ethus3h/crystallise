@@ -58,25 +58,7 @@ mkdir "$streamId"
     numTotalRetries="$numRetries"
     successfulRetrieval="0"
     # Get the hash of the stream
-    function pipecheck() {
-        (
-        pipeCheckTemp=("${PIPESTATUS[@]}")
-        if [[ "${pipeCheckTemp[0]}" != "141" ]] && [[ "${pipeCheckTemp[0]}" != "0" ]]; then
-            # Ignore status 141, which just means the input stream was terminated by head before all the data were consumed
-            die "Failed reading temporary stream file"
-        fi
-        if [[ "${pipeCheckTemp[1]}" != "0" ]]; then
-            die "Failed executing head on temporary stream file"
-        fi
-        )
-    }
-    set +o pipefail
-    hashFull="$(
-            tail -c +38 "$streamId.xz" | head -c 129
-            pipecheck
-        )"
-    set -o pipefail
-    unset -f pipecheck
+    hashFull="$(sregi_hash_from_file "$streamId.xz")"
     if [[ -n "$knownChecksum" ]]; then
         [[ "$knownChecksum" == "$hashFull" ]] || die "The checksum provided by the pointer does not match the provided checksum."
     fi

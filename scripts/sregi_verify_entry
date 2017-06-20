@@ -21,7 +21,7 @@ fi
 
 fsckStatusFile="$2"
 knownHash="(Failed to retrieve entry hash!)"
-knownHashTemp="$(tail -c +38 "$1" | head -c 129)" || fail "$1"
+knownHashTemp="$(sregi_hash_from_file "$1")" || fail "$1"
 if [[ -n "$knownHashTemp" ]]; then
     knownHash="$knownHashTemp"
 fi

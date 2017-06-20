@@ -56,6 +56,12 @@ if [[ -f "$destinationName" ]]; then
             if ! [[ -e "$pointerDbEntryFile" ]]; then
                 assumePointerDbEntryFileExists="false"
             fi
+            local innerPointerTypeSignature="$(head -c 36 "$pointerDbEntryFile")"
+            if [[ "$innerPointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
+                if ! [[ -e "$dbDir/LocalStore/$hashA/$hashB/$hashC/$knownChecksum" ]]; then
+                    assumePointerDbEntryFileExists="false"
+                fi
+            fi
         else
             destinationChecksum="$(tail -c +38 "$destinationName" | head -c 129)"
             sreg_read_stream < "$destinationName" > /dev/null || hasEncounteredError="1"

@@ -16,7 +16,7 @@ if [[ "$1" == "--verify" ]]; then
     shift
 fi
 if [[ "$sregNoVerify" == "true" ]]; then
-    echo "(Not verifying pointers: use sreg_fsck to test the entire stream registry.)"
+    warn "(Not verifying pointers: use sreg_fsck to test the entire stream registry.)"
 fi
 if ! [[ -d "$2" ]]; then
     die "Destination is not a directory."

@@ -13,6 +13,14 @@ function finish() {
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 trap finish EXIT
 
+skipCache=""
+if [[ "--skip-cache" == "$1" ]]; then
+    skipCache="--skip-cache"
+    shift
+else
+    warn "Using cache entries. Specify --skip-cache for more thorough checking."
+fi
+
 echo "Counting items..."
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 fsckId="sreg_fsck-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
@@ -23,7 +31,7 @@ dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
 find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -printf '.' | wc -c > "$fsckStatusFile"
 rm -f "$fsckStatusFile.failed"
 bpid="$$"
-find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" \( -exec sregi_verify_entry {} "$fsckStatusFile" \; -or -exec kill "-$bpid" \; \)
+find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" \( -exec sregi_verify_entry {} "$fsckStatusFile" "$skipCache" \; -or -exec kill "-$bpid" \; \)
 [[ -e "$fsckStatusFile.failed" ]] && die "Failed verifying entry! Aborted."
 echo "Done all items."
 finish

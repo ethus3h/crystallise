@@ -35,7 +35,7 @@ fi
 if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
     knownChecksum="$(tail -c +38 "$1")"
     if [[ "$sregVerify" == "true" ]]; then
-        if ! sreg_read_stream --checksum "$knownChecksum" < "$1" > /dev/null; then
+        if ! sreg_read_stream --checksum "$knownChecksum" --skip-cache < "$1" > /dev/null; then
             trap - ERR
             mv "$2" "$2.CORRUPTED-HASHPOINTER"
             trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
@@ -45,8 +45,15 @@ if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
         hashA="${knownChecksum:0:1}"
         hashB="${knownChecksum:1:1}"
         hashC="${knownChecksum:2:1}"
-        if ! [[ -e "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/$hashA/$hashB/$hashC/$knownChecksum" ]]; then
-            die "Item does not have a corresponding stream registry entry!"
+        pointerFile="${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/$hashA/$hashB/$hashC/$knownChecksum"
+        if ! [[ -e "$pointerFile" ]]; then
+            die "Item does not have the corresponding stream registry entry $pointerFile!"
+        fi
+        innerPointerTypeSignature="$(head -c 36 "$pointerFile")"
+        if [[ "$innerPointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
+            if ! [[ -e "$dbDir/LocalStore/$hashA/$hashB/$hashC/$knownChecksum" ]]; then
+                die "Item does not have the corresponding LocalStore entry $dbDir/LocalStore/$hashA/$hashB/$hashC/$knownChecksum!"
+            fi
         fi
     fi
     echo "$knownChecksum" >> "$fsckIdList"

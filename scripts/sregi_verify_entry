@@ -14,6 +14,11 @@ function fail() {
     die "Error verifying stream registry database entry $knownHash!"
 }
 
+skipCache=""
+if [[ "--skip-cache" == "$3" ]]; then
+    skipCache="--skip-cache"
+fi
+
 fsckStatusFile="$2"
 knownHash="(Failed to retrieve entry hash!)"
 knownHashTemp="$(tail -c +38 "$1" | head -c 129)" || fail "$1"
@@ -22,7 +27,7 @@ if [[ -n "$knownHashTemp" ]]; then
 fi
 echo "Started verifying stream registry database entry $knownHash."
 
-if sreg_read_stream --checksum "$knownHash" --disallow-hash-pointer < "$1" > /dev/null; then
+if sreg_read_stream --checksum "$knownHash" --disallow-hash-pointer "$skipCache" < "$1" > /dev/null; then
     if [[ -n "$fsckStatusFile" ]]; then
         numberExpected="$(<"$fsckStatusFile")"
         numberProcessedFile="$fsckStatusFile.done"

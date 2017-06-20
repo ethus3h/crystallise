@@ -27,12 +27,16 @@ fsckId="srsync-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 mkdir -p "$crystalWorkdir/$fsckId"
 fsckStatusFile="$crystalWorkdir/$fsckId/.srsync.status"
 find "$1" -type f -printf '.' | wc -c > "$fsckStatusFile"
+destinationSuffix=""
+if [[ -d "$1" ]]; then
+    destinationSuffix="/"
+fi
 if [[ "$1" =~ '/'$ ]]; then
     destinationRoot="$1"
-    destinationFindTarget="$2/"
+    destinationFindTarget="$2$destinationSuffix"
 else
     destinationRoot="$(dirname "$1")"
-    destinationFindTarget="$2/$(basename "$1")/"
+    destinationFindTarget="$2/$(basename "$1")$destinationSuffix"
 fi
 if [[ "$destinationRoot" == "." ]]; then
     destinationRootLength="0"

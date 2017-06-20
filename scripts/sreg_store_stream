@@ -44,16 +44,23 @@ dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
         localStoreFilePath="$localStoreDir/$hashFull"
     fi
     if [[ -f "$tmpFilePath" ]]; then
-        # Item already has been stored, so check that the existing pointer can be restored
-        recoveredHash="$(sreg_read_stream --disallow-hash-pointer < "$tmpFilePath" | sha512sum | awk '{print $1;}')"
-        if [[ "$recoveredHash" != "$hashFull" ]]; then
-            die "Could not read existing item."
-            # if [[ "$1" == "--verbose" ]]; then
-            #     warn "Could not read existing item."
-            # fi
-            # fsckDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
-            # mkdir -p "$fsckDir"
-            # mv "$tmpFilePath" "$fsckDir"
+        # shellcheck disable=SC1091
+        source sreg_functions &> /dev/null
+        knownChecksum="$hashFull"
+        if sregi_available_by_hash; then
+            # Item already has been stored and passes a basic sanity check, so check that the existing pointer can be restored
+            recoveredHash="$(sreg_read_stream --disallow-hash-pointer < "$tmpFilePath" | sha512sum | awk '{print $1;}')"
+            if [[ "$recoveredHash" != "$hashFull" ]]; then
+                die "Could not read existing item."
+                # if [[ "$1" == "--verbose" ]]; then
+                #     warn "Could not read existing item."
+                # fi
+                # fsckDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
+                # mkdir -p "$fsckDir"
+                # mv "$tmpFilePath" "$fsckDir"
+            fi
+        else
+            rm "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/$hashA/$hashB/$hashC/$knownChecksum"
         fi
     else
         # Item not available in cache, so add it (c39... is the LocalStore pointer type signature; a5e... is the remote type signature)

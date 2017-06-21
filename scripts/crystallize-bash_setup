@@ -37,7 +37,11 @@ function sregi_available_by_hash() {
     hashA="${knownChecksum:0:1}"
     hashB="${knownChecksum:1:1}"
     hashC="${knownChecksum:2:1}"
-    local availByHashPointerFile="${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/$hashA/$hashB/$hashC/$knownChecksum"
+    if [[ -n "$1" ]]; then
+        local availByHashPointerFile="$1"
+    else
+        local availByHashPointerFile="${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/$hashA/$hashB/$hashC/$knownChecksum"
+    fi
     if ! [[ -e "$availByHashPointerFile" ]]; then
         die "Item does not have the corresponding stream registry entry $availByHashPointerFile!"
     fi

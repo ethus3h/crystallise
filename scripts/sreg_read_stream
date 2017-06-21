@@ -13,6 +13,11 @@ function finish() {
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR
 trap finish EXIT
 
+if [[ "$1" == "--entry-path" ]]; then
+    shift
+    overrideEntryPath="$1"
+    shift
+fi
 if [[ "$1" == "--checksum" ]]; then
     shift
     knownChecksum="$1"
@@ -32,8 +37,10 @@ cd "$crystalWorkdir" || exit 1
 streamId="sreg_read_stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 dbDir="${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"
 # Basic sanity check to make sure it bombs out if the pointer is cached but is missing a necessary LocalStore entry
-if [[ -n "$knownChecksum" ]]; then
-    sregi_available_by_hash
+if [[ -z "$overrideEntryPath" ]]; then
+    if [[ -n "$knownChecksum" ]]; then
+        sregi_available_by_hash
+    fi
 fi
 # Set up cache directory
 cacheDbDir="$crystalWorkdir/.StreamCache/"
@@ -66,7 +73,7 @@ mkdir "$streamId"
         (
             # Basic sanity check to make sure it bombs out if the pointer is cached but is missing a necessary LocalStore entry
             knownChecksum="$hashFull"
-            sregi_available_by_hash
+            sregi_available_by_hash "$streamId.xz"
         )
     fi
     hashA="${hashFull:0:1}"

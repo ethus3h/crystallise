@@ -5,7 +5,7 @@ source ember_bash_setup &> /dev/null
 
 ((EUID)) && exec sudo -- "$0" "$@"
 
-function finish() {
+finish() {
     if [[ -e "${streamId:?}" ]]; then
         rm -r "${streamId:?}"
     fi

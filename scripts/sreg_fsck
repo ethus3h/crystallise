@@ -4,7 +4,7 @@ source ember_bash_setup &> /dev/null
 #set -x
 
 ((EUID)) && exec sudo -- "$0" "$@"
-function finish() {
+finish() {
     if [[ -e "${crystalWorkdir:?}/${fsckId:?}" ]]; then
         rm -r "${crystalWorkdir:?}/${fsckId:?}"
     fi

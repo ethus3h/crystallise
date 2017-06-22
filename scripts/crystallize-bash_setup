@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #set -x
 
-function rubberfs() {
+rubberfs() {
     if [[ "$1" == "cd" ]]; then
         name="$2"
         if [[ ! -n "$name" ]]; then
@@ -13,13 +13,13 @@ function rubberfs() {
     fi
 }
 
-function git-absolute-path() {
+git-absolute-path() {
     fullpath="$(readlink -f "$1")"
     gitroot="$(git rev-parse --show-toplevel)" || return 1
     [[ $fullpath == *$(printf %q "$gitroot")* ]] && echo "${fullpath/$gitroot\//}"
 }
 
-function git-escape-path() {
+git-escape-path() {
     # (doesn't handle the case of the bash variable containing exactly one newline and that newline not being at the end)
     if [[ "$(wc -l <<< "$1")" == "1" ]] || [[ "$(wc -l <<< "$1")" == "0" ]]; then
         sed 's/./&\\/g' <<< "$1" | awk '{print "\\"$1}' | sed 's/.$//'
@@ -28,11 +28,11 @@ function git-escape-path() {
     fi
 }
 
-function sreg_fuse() {
+sreg_fuse() {
     sreg_fuse.py "$@" "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"
 }
 
-function sregi_available_by_hash() {
+sregi_available_by_hash() {
     knownChecksum="${knownChecksum:?}"
     hashA="${knownChecksum:0:1}"
     hashB="${knownChecksum:1:1}"
@@ -53,10 +53,10 @@ function sregi_available_by_hash() {
     fi
 }
 
-function sregi_hash_from_file() (
+sregi_hash_from_file() (
     # Function is defined with parentheses to make it run in a subshell to prevent the definition of pipecheck clobbering other functions named that in the calling script
     file="$1"
-    function pipecheck() {
+    pipecheck() {
         (
         pipeCheckTemp=("${PIPESTATUS[@]}")
         if [[ "${pipeCheckTemp[0]}" != "141" ]] && [[ "${pipeCheckTemp[0]}" != "0" ]]; then

@@ -70,8 +70,8 @@ function sregi_hash_from_file() (
     }
     set +o pipefail
     tail -c +38 "$file" | head -c 129
-    set -o pipefail
     pipecheck
+    set -o pipefail
     unset -f pipecheck
 )
 

@@ -415,7 +415,7 @@ stash)
         echo "$@"
         fileToStash="$2"
         echo "Begun stashing $fileToStash."
-        sreg_store_stream --verbose < "$fileToStash"
+        sreg_store_stream --verbose < "$fileToStash" > /dev/null
         gapath="$(git rev-parse --show-toplevel)"/.gitattributes
         echo "$(git-escape-path "$(git-absolute-path "$fileToStash")") filter=sreg" >> "$gapath"
         # FIXME: This shellcheck directive is only needed for outdated shellcheck versions. Once CodeClimate's shellcheck gets updated (which probably means when Debian stable updates shellcheck), it can be removed.

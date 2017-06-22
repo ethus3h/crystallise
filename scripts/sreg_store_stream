@@ -66,7 +66,8 @@ mkdir -p "$crystalWorkdir/$streamId"
         pointerTypeSignature="c39f8657-384b-438b-a5a2-eece17147589"
         if [[ "$useLocalStore" != "true" ]]; then
             if [[ "$1" == "--verbose" ]]; then
-                crystallize --leave-pointer "$streamId.tmp" | cat
+                # Pass output through cat so crystallize doesn't think it's writing to a terminal, and hopefully then doesn't bother drawing too much junk
+                crystallize --leave-pointer "$streamId.tmp" | cat | 1&>2
             else
                 crystallize --leave-pointer "$streamId.tmp" > "$streamId.tmp.sstream-stdout" 2> "$streamId.tmp.sstream-stderr"
                 logFiles=("$streamId.tmp.sstream-stdout" "$streamId.tmp.sstream-stderr")
@@ -95,6 +96,8 @@ mkdir -p "$crystalWorkdir/$streamId"
         trap - EXIT
         mv "$tmpFilePath" "$dbFilePath" || die "Could not move pointer into place!"
     fi
+    # Output the finished hashpointer
+    printf '%s\n%s\n' "760fa662-89cf-4ebd-9664-150b7637ddd4" "$hashFull"
     finish
     if [[ -e "${streamId:?}.tmp" ]]; then
         rm "${streamId:?}.tmp"

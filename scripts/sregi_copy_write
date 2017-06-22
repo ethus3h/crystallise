@@ -87,8 +87,7 @@ setVariableToCommandOutput "basename" "embasename" "$1"
 fileToStash="$crystalSubdir/${basename:?}"
 echo "Begun storing $fileToStash."
 if [[ -f "$fileToStash" ]]; then
-    sreg_store_stream --assume-checksum "$sourceChecksum" --verbose < "$fileToStash"
-    printf '%s\n%s\n' "760fa662-89cf-4ebd-9664-150b7637ddd4" "$sourceChecksum" > "$fileToStash"
+    sreg_store_stream --assume-checksum "$sourceChecksum" < "$fileToStash" | sponge "$fileToStash"
 else
     die "Skipping item $fileToStash: not a regular file."
 fi

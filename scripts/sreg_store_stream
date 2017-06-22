@@ -66,8 +66,7 @@ mkdir -p "$crystalWorkdir/$streamId"
         pointerTypeSignature="c39f8657-384b-438b-a5a2-eece17147589"
         if [[ "$useLocalStore" != "true" ]]; then
             if [[ "$1" == "--verbose" ]]; then
-                # Pass output through cat so crystallize doesn't think it's writing to a terminal, and hopefully then doesn't bother drawing too much junk
-                crystallize --leave-pointer "$streamId.tmp" | cat | 1&>2
+                crystallize --leave-pointer "$streamId.tmp" | 1&>2
             else
                 crystallize --leave-pointer "$streamId.tmp" > "$streamId.tmp.sstream-stdout" 2> "$streamId.tmp.sstream-stderr"
                 logFiles=("$streamId.tmp.sstream-stdout" "$streamId.tmp.sstream-stderr")

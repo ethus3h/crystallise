@@ -84,12 +84,12 @@ mkdir "$streamId"
     hashDir="$cacheDbDir/$hashSubdir"
     mkdir -p "$hashDir"
     dbLinkPath="$hashDir/$hashFull"
-    trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+    trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while reading $hashFull."' ERR
     while [[ "$numRetries" -gt 0 ]] && [[ "$successfulRetrieval" -eq 0 ]]; do
-        trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; continue' ERR
+        trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while reading $hashFull."; continue' ERR
         if [[ "$numRetries" -lt "$numTotalRetries" ]]; then
             sleep 30
-            echo "Beginning retry of reading stream. $numRetries retries remaining."
+            echo "Beginning retry of reading stream $hashFull. $numRetries retries remaining."
         fi
         numRetries=$(( numRetries - 1 ))
         if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$(readlink "$dbLinkPath")" ]] || [[ "$skipCache" == "true" ]]; then
@@ -124,7 +124,7 @@ mkdir "$streamId"
                 cp scache-*.tmp "$streamId.out"
             elif [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
                 # LocalStore pointer
-                trap 'warn "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while attempting to read a LocalStore pointer. Giving up now: retrying would likely not help in this situation."; numRetries=0; continue' ERR
+                trap 'warn "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while attempting to read the LocalStore pointer $hashFull. Giving up now: retrying would likely not help in this situation."; numRetries=0; continue' ERR
                 unxz --stdout - < "$dbDir/LocalStore/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
             elif [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] || [[ "$pointerTypeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]]; then
                 # Remote pack pointer
@@ -136,7 +136,7 @@ mkdir "$streamId"
                     packName="$(tail -c +167 "$streamId.xz")"
                     unxz --stdout - < "$dbDir/Packs/$packName" | tar -xf -
                 fi
-                trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+                trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while reading $hashFull."' ERR
                 if ! [[ -e "$crystalWorkdir/.LocalStoreCache/" ]]; then
                     localstorecache_init "$crystalWorkdir/.LocalStoreCache/" 5000000000
                 fi
@@ -144,20 +144,20 @@ mkdir "$streamId"
                 crystalFilePatternMatches=( $crystalFilePattern )
                 localStoreCrystalName="${crystalFilePatternMatches[0]}"
                 if ! [[ -e "$localStoreCrystalName" ]]; then
-                    error-notify "Crystal info could not be found in the pointer, so giving up immediately (retrying probably wouldn't help this)."
+                    error-notify "Crystal info could not be found in the pointer $hashFull, so giving up immediately (retrying probably wouldn't help this)."
                 fi
                 localStoreCrystalIdentifier="$(<"$localStoreCrystalName"/identifier)"
                 localstoreLocation="$(localstorecache_request "$crystalWorkdir/.LocalStoreCache/" "$localStoreCrystalIdentifier")"
-                trap 'warn "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while attempting to read a remote pack pointer (stream was not in the pack given). Giving up now: retrying would likely not help in this situation."; numRetries=0; continue' ERR
+                trap 'warn "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while attempting to read a remote pack pointer $hashFull (stream was not in the pack given). Giving up now: retrying would likely not help in this situation."; numRetries=0; continue' ERR
                 unxz --stdout - < "$localstoreLocation/scache-"*".LocalStore/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
-                trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+                trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while reading $hashFull."' ERR
             elif [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
                 # Hash pointer
                 if [[ "true" == "$disallowHashPointer" ]]; then
-                    die "The provided pointer is a hash pointer!"
+                    die "The provided pointer $hashFull is a hash pointer, and --disallow-hash-pointer was specified!"
                 fi
                 if ! [[ -e "$dbDir/$hashA/$hashB/$hashC/$hashFull" ]]; then
-                    die "The provided pointer is a hash pointer, but the corresponding hash is not registered in the database! ($dbDir/$hashA/$hashB/$hashC/$hashFull does not exist.)"
+                    die "The provided pointer $hashFull is a hash pointer, but the corresponding hash is not registered in the database! ($dbDir/$hashA/$hashB/$hashC/$hashFull does not exist.)"
                 fi
                 sreg_read_stream < "$dbDir/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
             else
@@ -217,7 +217,7 @@ mkdir "$streamId"
             successfulRetrieval="1"
         fi
     done
-    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while reading $hashFull."' ERR
     if [[ "$successfulRetrieval" != "1" ]]; then
         die "Failed retrieving stream, and no retries left!"
     fi

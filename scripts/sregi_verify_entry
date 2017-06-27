@@ -7,16 +7,26 @@ source ember_bash_setup &> /dev/null
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 fail() {
-    #dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
-    #mkdir -p "$dbDir"
-    #mv "$1" "$dbDir/"
-    #die "Error verifying stream registry database entry $knownHash! Marking entry as corrupted."
+    if [[ "$dropFailed" == "true" ]]; then
+        dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
+        mkdir -p "$dbDir"
+        mv "$1" "$dbDir/"
+        die "Error verifying stream registry database entry $knownHash! Marking entry as corrupted."
+    fi
     die "Error verifying stream registry database entry $knownHash!"
 }
 
 skipCache=""
+dropFailed="false"
 if [[ "--skip-cache" == "$3" ]]; then
     skipCache="--skip-cache"
+fi
+if [[ "--skip-drop-failed" == "$3" ]]; then
+    skipCache="--skip-cache"
+    dropFailed="true"
+fi
+if [[ "--drop-failed" == "$3" ]]; then
+    dropFailed="true"
 fi
 
 fsckStatusFile="$2"

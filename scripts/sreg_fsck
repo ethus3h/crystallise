@@ -17,8 +17,16 @@ skipCache=""
 if [[ "--skip-cache" == "$1" ]]; then
     skipCache="--skip-cache"
     shift
+    if [[ "--drop-failed" == "$1" ]]; then
+        skipCache="--skip-drop-failed"
+        shift
+    fi
 else
     warn "Using cache entries. Specify --skip-cache for more thorough checking."
+    if [[ "--drop-failed" == "$1" ]]; then
+        skipCache="--drop-failed"
+        shift
+    fi
 fi
 
 echo "Counting items..."

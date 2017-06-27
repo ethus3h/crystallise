@@ -8,7 +8,9 @@ finish() {
     if [[ -e "${crystalWorkdir:?}/${fsckId:?}" ]]; then
         rm -r "${crystalWorkdir:?}/${fsckId:?}"
     fi
-    rm -r "/tmp/${fsckId:?}"
+    if [[ -e "/tmp/${fsckId:?}" ]]; then
+        rm -r "/tmp/${fsckId:?}"
+    fi
 }
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 trap finish EXIT

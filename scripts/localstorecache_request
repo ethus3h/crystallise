@@ -30,7 +30,11 @@ dbLinkPath="$hashDir/$hashFull"
 trap - ERR
 oldFilePath="$(readlink "$dbLinkPath")"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; rm -rf "${dbLinkPath:?}" "$(readlink -e "$dbLinkPath")"' ERR
-cacheEntryFileList=("$oldFilePath"/scache-*.LocalStore)
+if [[ -e "$oldFilePath/sreg_flush_localstore-"*".LocalStore" ]]; then
+    cacheEntryFileList=("$oldFilePath"/sreg_flush_localstore-*.LocalStore)
+else
+    cacheEntryFileList=("$oldFilePath"/scache-*.LocalStore)
+fi
 if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$oldFilePath" ]] || [[ ! -d "${cacheEntryFileList[0]}" ]]; then
     # Item is not in the cache, so add it
 

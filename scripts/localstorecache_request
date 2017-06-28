@@ -31,15 +31,7 @@ trap - ERR
 oldFilePath="$(readlink "$dbLinkPath")"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; rm -rf "${dbLinkPath:?}" "$(readlink -e "$dbLinkPath")"' ERR
 
-localStoreMatchArray=("$oldFilePath"/sreg_flush_localstore-*.LocalStore)
-if { ! [[ -e "${localStoreMatchArray[0]}" ]] } || [[ -z "${localStoreMatchArray[0]}" ]]; then
-    localStoreMatchArray=("$oldFilePath"/scache-*.LocalStore)
-    localStoreMatchedFolder="${localStoreMatchArray[0]}"
-else
-    localStoreMatchedFolder="${localStoreMatchArray[0]}/LocalStore"
-fi
-cacheEntryFileList="${localStoreMatchArray[0]}"
-
+cacheEntryFileList=("$oldFilePath"/sreg_flush_localstore-*.LocalStore/LocalStore)
 if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$oldFilePath" ]] || [[ ! -d "${cacheEntryFileList[0]}" ]]; then
     # Item is not in the cache, so add it
 

@@ -70,12 +70,13 @@ mkdir "$streamId"
     hashFull="$(sregi_hash_from_file "$streamId.xz")"
     if [[ -n "$knownChecksum" ]]; then
         [[ "$knownChecksum" == "$hashFull" ]] || die "The checksum provided by the pointer does not match the provided checksum."
-        (
-            # Basic sanity check to make sure it bombs out if the pointer is cached but is missing a necessary LocalStore entry
-            knownChecksum="$hashFull"
-            sregi_available_by_hash "$streamId.xz"
-        )
+    else 
+        knownChecksum="$hashFull"
     fi
+    (
+        # Basic sanity check to make sure it bombs out if the pointer is cached but is missing a necessary LocalStore entry
+        sregi_available_by_hash "$streamId.xz" || die "sregi_available_by_hash failed on ${BASH_SOURCE[0]} line ${LINENO} while reading $knownChecksum."
+    ) || die "sregi_available_by_hash failed on ${BASH_SOURCE[0]} line ${LINENO} while reading $knownChecksum."
     hashA="${hashFull:0:1}"
     hashB="${hashFull:1:1}"
     hashC="${hashFull:2:1}"
@@ -181,7 +182,7 @@ mkdir "$streamId"
             else
                 # The file isn't a stream pointer, so just return it and exit
                 if [[ -n "$knownChecksum" ]]; then
-                    [[ "$(sha512sum < "$streamId.xz" | awk '{print $1;}')" == "$knownChecksum" ]] || die "Checksum of non-pointer file does not match provided checksum."
+                    [[ "$(sha512sum < "$streamId.xz" | awk '{print $1;}')" == "$knownChecksum" ]] || die "Checksum of non-pointer file does not match provided or known checksum."
                 fi
                 cat "$streamId.xz"
                 exit 0

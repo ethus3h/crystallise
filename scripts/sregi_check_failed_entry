@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
+source ember_bash_setup &> /dev/null
+#set -x
+
+((EUID)) && exec sudo -- "$0" "$@"
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+
+fsckStatusFile="$2"
+knownHash="(Failed to retrieve entry hash!)"
+knownHashTemp="$(sregi_hash_from_file "$1")" || die "$1"
+if [[ -n "$knownHashTemp" ]]; then
+    knownHash="$knownHashTemp"
+fi
+echo "Started verifying stream registry database entry $knownHash."
+
+skipCache=""
+if [[ "--skip-cache" == "$3" ]]; then
+    skipCache="--skip-cache"
+fi
+
+if sreg_read_stream --entry-path "$1" --checksum "$knownHash" --disallow-hash-pointer "$skipCache" < "$1" > /dev/null; then
+    if [[ -n "$fsckStatusFile" ]]; then
+        numberExpected="$(<"$fsckStatusFile")"
+        numberProcessedFile="$fsckStatusFile.done"
+        if ! [[ -f "$numberProcessedFile" ]]; then
+            numberProcessed="1"
+        else
+            numberProcessed="$(<"$numberProcessedFile")"
+            numberProcessed=$(( numberProcessed + 1 ))
+        fi
+        echo "$numberProcessed" > "$numberProcessedFile"
+        if [[ "$numberExpected" == "0" ]]; then
+            numberExpected="-1"
+        fi
+        numberProcessedPercentage="$(printf "%.3f\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
+        echo "Verified stream registry database entry $knownHash: finished #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
+    else
+        echo "Verified stream registry database entry $knownHash."
+    fi
+    exit
+else
+    dirname
+fi

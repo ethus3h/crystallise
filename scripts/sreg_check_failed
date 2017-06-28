@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
+source ember_bash_setup &> /dev/null
+#set -x
+
+((EUID)) && exec sudo -- "$0" "$@"
+finish() {
+    if [[ -e "${crystalWorkdir:?}/${fsckId:?}" ]]; then
+        rm -r "${crystalWorkdir:?}/${fsckId:?}"
+    fi
+    if [[ -e "/tmp/${fsckId:?}" ]]; then
+        rm -r "/tmp/${fsckId:?}"
+    fi
+}
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+trap finish EXIT
+
+echo "Counting items..."
+crystalWorkdir="$(crystallize-getconf WorkDirectory)"
+fsckId="sreg_check_failed-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+mkdir -p "$crystalWorkdir/${fsckId:?}"
+mkdir -p "/tmp/${fsckId:?}"
+fsckStatusFile="/tmp/$fsckId/.sreg_check_failed.status"
+dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck
+find "$dbDir" -type f -printf '.' | wc -c > "$fsckStatusFile"
+rm -f "$fsckStatusFile.failed"
+bpid="$$"
+find "$dbDir" -type f \( -exec sregi_check_failed_entry {} "$fsckStatusFile" \; -or -exec kill "-$bpid" \; \)
+[[ -e "$fsckStatusFile.failed" ]] && die "Failed verifying entry! Aborted."
+echo "Done all items."
+finish

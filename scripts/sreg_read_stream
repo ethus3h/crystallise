@@ -149,7 +149,14 @@ mkdir "$streamId"
                 localStoreCrystalIdentifier="$(<"$localStoreCrystalName"/identifier)"
                 localstoreLocation="$(localstorecache_request "$crystalWorkdir/.LocalStoreCache/" "$localStoreCrystalIdentifier")"
                 trap 'warn "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while attempting to read a remote pack pointer $hashFull (stream was not in the pack given). Giving up now: retrying would likely not help in this situation."; numRetries=0; break' ERR
-                unxz --stdout - < "$localstoreLocation/sreg_flush_localstore-"*".LocalStore/LocalStore/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
+                localStoreMatchArray=("$localstoreLocation"/sreg_flush_localstore-*.LocalStore)
+                if ( ! [[ -e "${localStoreMatchArray[0]}" ]] ) || [[ -z "${localStoreMatchArray[0]}" ]]; then
+                    localStoreMatchArray=("$localstoreLocation"/scache-*.LocalStore)
+                    localStoreMatchedFolder="${localStoreMatchArray[0]}"
+                else
+                    localStoreMatchedFolder="${localStoreMatchArray[0]}/LocalStore"
+                fi
+                unxz --stdout - < "$localStoreMatchedFolder/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
                 trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while reading $hashFull."' ERR
             elif [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
                 # Hash pointer

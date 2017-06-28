@@ -159,7 +159,18 @@ mkdir "$streamId"
                 if ! [[ -e "$dbDir/$hashA/$hashB/$hashC/$hashFull" ]]; then
                     die "The provided pointer $hashFull is a hash pointer, but the corresponding hash is not registered in the database! ($dbDir/$hashA/$hashB/$hashC/$hashFull does not exist.)"
                 fi
-                sreg_read_stream < "$dbDir/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
+                readStreamArgs=()
+                if [[ -n "$overrideEntryPath" ]]; then
+                    readStreamArgs+=("--entry-path" "$overrideEntryPath")
+                fi
+                readStreamArgs+=("--checksum" "$knownChecksum")
+                if [[ "$disallowHashPointer" == "true" ]]; then
+                    readStreamArgs+=("--disallow-hash-pointer")
+                fi
+                if [[ "$skipCache" == "true" ]]; then
+                    readStreamArgs+=("--skip-cache")
+                fi
+                sreg_read_stream "${readStreamArgs[@]}" < "$dbDir/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
             else
                 # The file isn't a stream pointer, so just return it and exit
                 if [[ -n "$knownChecksum" ]]; then

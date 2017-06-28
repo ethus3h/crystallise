@@ -20,6 +20,11 @@ if [[ "--skip-cache" == "$3" ]]; then
 fi
 
 if sreg_read_stream --entry-path "$1" --checksum "$knownHash" --disallow-hash-pointer "$skipCache" < "$1" > /dev/null; then
+    dbDir="${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"
+    hashA="${knownHash:0:1}"
+    hashB="${knownHash:1:1}"
+    hashC="${knownHash:2:1}"
+    mv "$1" "$dbDir/$hashSubdir/$hashA/$hashB/$hashC/$knownHash"
     if [[ -n "$fsckStatusFile" ]]; then
         numberExpected="$(<"$fsckStatusFile")"
         numberProcessedFile="$fsckStatusFile.done"
@@ -40,5 +45,5 @@ if sreg_read_stream --entry-path "$1" --checksum "$knownHash" --disallow-hash-po
     fi
     exit
 else
-    dirname
+    die
 fi

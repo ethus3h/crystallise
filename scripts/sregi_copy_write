@@ -72,7 +72,7 @@ if [[ -f "$destinationName" ]]; then
             echo "(Nothing done for $1.)"
             exit 0
         else
-            warn "(Destination pointer $destinationName did not match source checksum or could not be read: the source file has probably been changed. Removing and recreating.)"
+            warn "(Note: Destination pointer $destinationName did not match source checksum or could not be read: the source file has probably been changed. Removing and recreating.)"
             # cat "$destinationName"
             rm "${destinationName:?}"
         fi

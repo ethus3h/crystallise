@@ -58,7 +58,7 @@ if [[ -f "$destinationName" ]]; then
             fi
             innerPointerTypeSignature="$(head -c 36 "$pointerDbEntryFile")"
             if [[ "$innerPointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
-                if ! [[ -e "$dbDir/LocalStore/${destinationChecksum:0:1}/${destinationChecksum:1:1}/${destinationChecksum:2:1}/$destinationChecksum" ]]; then
+                if ! [[ -e "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/LocalStore/${destinationChecksum:0:1}/${destinationChecksum:1:1}/${destinationChecksum:2:1}/$destinationChecksum" ]]; then
                     assumePointerDbEntryFileExists="false"
                 fi
             fi

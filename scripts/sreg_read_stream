@@ -6,12 +6,14 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 
 finish() {
+    trap - ERR
     if [[ -e "${streamId:?}" ]]; then
         rm -r "${streamId:?}"
     fi
-    if [[ -e "${localstoreLocation:?}" ]]; then
+    if [[ -e "$localstoreLocation" ]]; then
         rm -r "${localstoreLocation:?}"
     fi
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while finishing $hashFull."' ERR
 }
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR
 trap finish EXIT

@@ -192,7 +192,7 @@ mkdir "$streamId"
                 # The link exists but isn't a link?!
                 die "Stream cache link file exists but is not actually a link!"
             fi
-            if [[ -e "$dbFilePath" ]] && [[ "$(unxz --stdout - < "$dbFilePath" sha512sum | awk '{print $1;}')" != "$knownChecksum" ]]; then
+            if [[ -e "$dbFilePath" ]] && [[ "$(unxz --stdout - < "$dbFilePath" | sha512sum | awk '{print $1;}')" != "$knownChecksum" ]]; then
                 # This condition will happen only if --skip-cache were specified, because this entire block of code is conditional on dbFilePath existing (unless --skip-cache is specified or dbLinkPath isn't a link)
                 die "Checksum of existing cache file does not match known checksum of stream being retrieved! This should not happen. Is the cache file corrupted?"
             fi

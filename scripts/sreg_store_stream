@@ -6,9 +6,12 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 
 finish() {
-    if [[ -e "${streamId:?}" ]]; then
-        rm -r "${streamId:?}"
-    fi
+    (
+        cd "/${crystalWorkdir:?}/" || die
+        if [[ -e "${streamId:?}" ]]; then
+            rm -r "${streamId:?}"
+        fi
+    )
 }
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR
 
@@ -18,7 +21,7 @@ crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 streamId="scache-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 mkdir -p "$crystalWorkdir/$streamId"
 (
-    cd "$crystalWorkdir/$streamId" || exit 1
+    cd "$crystalWorkdir/$streamId" || die
     sponge "$streamId.tmp"
     # Calculate hash
     if [[ "$1" == "--assume-checksum" ]]; then

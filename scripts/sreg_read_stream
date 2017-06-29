@@ -7,12 +7,15 @@ source ember_bash_setup &> /dev/null
 
 finish() {
     trap - ERR
-    if [[ -e "${streamId:?}" ]]; then
-        rm -r "${streamId:?}"
-    fi
+    (
     if [[ -e "$localstoreLocation" ]]; then
         rm -r "${localstoreLocation:?}"
     fi
+    cd "/${crystalWorkdir:?}/" || die
+    if [[ -e "/$crystalWorkdir/${streamId:?}" ]]; then
+        rm -r "/$crystalWorkdir/${streamId:?}"
+    fi
+    )
     trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while finishing $hashFull."' ERR
 }
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR

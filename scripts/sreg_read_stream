@@ -105,10 +105,11 @@ mkdir "$streamId"
                 fi
             else
                 # Item is not in the cache, so add it
-                if ! [[ -f "$dbLinkPath" ]]; then
+                if ! [[ -h "$dbLinkPath" ]]; then
                     # Never seen this item before, so set the requestCount
                     requestCount=1
                 else
+                    [[ -f "$dbLinkPath" ]] || die "Cache entry is not a normal file!"
                     requestCount="$(<"$dbLinkPath")"
                     rm "$dbLinkPath"
                 fi
@@ -187,7 +188,12 @@ mkdir "$streamId"
                 cat "$streamId.xz"
                 exit 0
             fi
+            if [[ -e "$dbLinkPath"]] && ( ! [[ -h "$dbLinkPath" ]] ); then
+                # The link exists but isn't a link?!
+                die "Stream cache link file exists but is not actually a link!"
+            fi
             if [[ -e "$dbFilePath" ]] && [[ "$(unxz --stdout - < "$dbFilePath" sha512sum | awk '{print $1;}')" != "$knownChecksum" ]]; then
+                # This condition will happen only if --skip-cache were specified, because this entire block of code is conditional on dbFilePath existing (unless --skip-cache is specified or dbLinkPath isn't a link)
                 die "Checksum of existing cache file does not match known checksum of stream being retrieved! This should not happen. Is the cache file corrupted?"
             fi
             [[ -e "$dbFilePath" ]] || xz --stdout -0 "$streamId.out" > "$dbFilePath"

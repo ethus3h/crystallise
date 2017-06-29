@@ -190,9 +190,7 @@ mkdir "$streamId"
             if [[ -e "$dbFilePath" ]] && [[ "$(unxz --stdout - < "$dbFilePath" sha512sum | awk '{print $1;}')" != "$knownChecksum" ]]; then
                 die "Checksum of existing cache file does not match known checksum of stream being retrieved! This should not happen. Is the cache file corrupted?"
             fi
-            if ! [[ -e "$dbFilePath" ]]; then
-                xz --stdout -0 "$streamId.out" > "$dbFilePath"
-            fi
+            [[ -e "$dbFilePath" ]] || xz --stdout -0 "$streamId.out" > "$dbFilePath"
             rm "$streamId.out"
             if [[ -e "$dbLinkPath" ]]; then
                 rm "$dbLinkPath"

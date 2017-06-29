@@ -208,6 +208,7 @@ freeze)
     ;;
 delta)
     cd /
+    keepSnapshots="false"
     if [[ "$3" == "--keep" ]]; then
         keepSnapshots="true"
     else

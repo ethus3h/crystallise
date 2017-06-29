@@ -187,6 +187,11 @@ mkdir "$streamId"
                 cat "$streamId.xz"
                 exit 0
             fi
+            if [[ -e "$dbFilePath" ]]; then
+                cacheEntryCsum="$(unxz --stdout - < "$dbFilePath" sha512sum | awk '{print $1;}')"
+            fi
+            if [[ ]]
+            [[ "$(sha512sum < "$streamId.xz" | awk '{print $1;}')" == "$knownChecksum" ]] || die "Checksum of non-pointer file does not match provided checksum."
             xz --stdout -0 "$streamId.out" > "$dbFilePath"
             rm "$streamId.out"
             if [[ -e "$dbLinkPath" ]]; then

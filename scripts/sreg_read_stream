@@ -188,7 +188,7 @@ mkdir "$streamId"
                 cat "$streamId.xz"
                 exit 0
             fi
-            if [[ -e "$dbLinkPath"]] && ( ! [[ -h "$dbLinkPath" ]] ); then
+            if [[ -e "$dbLinkPath" ]] && ( ! [[ -h "$dbLinkPath" ]] ); then
                 # The link exists but isn't a link?!
                 die "Stream cache link file exists but is not actually a link!"
             fi

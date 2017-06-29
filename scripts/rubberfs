@@ -207,6 +207,9 @@ freeze)
     #echo "To restore, first make a new zpool, then run zfs recv (new-zpool-name) -F < /foo/bar.zfsrepl"
     ;;
 delta)
+    if [[ "$3" == "--keep" ]]; then
+        keepSnapshots="true"
+    fi
     cd /
     if [[ ! -f "$name/.rubberfs/lastFreeze" ]]; then
         echo "ERROR! There does not appear to be an existing freeze state. Please use rubberfs freeze instead." >&2
@@ -231,14 +234,18 @@ delta)
     echo "$freezeUuid" > "$name/.rubberfs/lastFreezeUuid"
     echo "$freezeCrystal" > "$name/.rubberfs/lastFreezeCrystal"
     rubberfs save "$name"
-    printf "\033c"
-    echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
-    echo "The following snapshots will be DELETED. Continuing in 1 minute;"
-    echo "press Ctrl+C to cancel."
-    echo "### WARNING! ^^^ WARNING! ### WARNING! ### WARNING! ^^^ WARNING! ###"
-    zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3
-    sleep 60
-    zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3 | xargs -n 1 zfs destroy -vr
+    if [[ "$keepSnapshots" == "true" ]]; then
+        echo "(not removing snapshots)"
+    else
+        printf "\033c"
+        echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
+        echo "The following snapshots will be DELETED. Continuing in 1 minute;"
+        echo "press Ctrl+C to cancel."
+        echo "### WARNING! ^^^ WARNING! ### WARNING! ### WARNING! ^^^ WARNING! ###"
+        zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3
+        sleep 60
+        zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3 | xargs -n 1 zfs destroy -vr
+    fi
     rubberfs soft-remount "$name"
     printf "\033c"
     echo "A frozen incremental snapshot $freezeCrystal of RubberFS named $name has been created, and the obsolete local snapshots removed."

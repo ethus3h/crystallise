@@ -207,12 +207,13 @@ freeze)
     #echo "To restore, first make a new zpool, then run zfs recv (new-zpool-name) -F < /foo/bar.zfsrepl"
     ;;
 delta)
+    cd /
     if [[ "$3" == "--keep" ]]; then
         keepSnapshots="true"
-    fi
-    cd /
-    if [[ ! -f "$name/.rubberfs/lastFreeze" ]]; then
-        echo "ERROR! There does not appear to be an existing freeze state. Please use rubberfs freeze instead." >&2
+    else
+        if [[ ! -f "$name/.rubberfs/lastFreeze" ]]; then
+            echo "ERROR! There does not appear to be an existing freeze state. Please use rubberfs freeze instead." >&2
+        fi
     fi
     freezeId="rubberfs-delta-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
     crystalWorkdir="$(crystallize-getconf WorkDirectory)"

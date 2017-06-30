@@ -10,8 +10,10 @@ finish() {
     (
     crystalWorkdir="$(crystallize-getconf WorkDirectory)"
     cd "/${crystalWorkdir:?}/" || die
-    if [[ -e "/$crystalWorkdir/${streamId:?}" ]]; then
-        rm -r "/$crystalWorkdir/${streamId:?}"
+    if [[ -n "$streamId" ]]; then
+        if [[ -e "/$crystalWorkdir/${streamId:?}" ]]; then
+            rm -r "/$crystalWorkdir/${streamId:?}"
+        fi
     fi
     )
     trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while finishing sregi_copy_write."' ERR

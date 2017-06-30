@@ -8,6 +8,7 @@ source ember_bash_setup &> /dev/null
 finish() {
     trap - ERR
     (
+    crystalWorkdir="$(crystallize-getconf WorkDirectory)"
     cd "/${crystalWorkdir:?}/" || die
     if [[ -e "/$crystalWorkdir/${streamId:?}" ]]; then
         rm -r "/$crystalWorkdir/${streamId:?}"

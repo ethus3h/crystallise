@@ -46,6 +46,7 @@ sregi_available_by_hash() {
         die "Item does not have the corresponding stream registry entry $availByHashPointerFile!"
     fi
     local innerPointerTypeSignature="$(head -c 36 "$availByHashPointerFile")"
+    local dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
     if [[ "$innerPointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
         if ! [[ -f "$dbDir/LocalStore/$hashA/$hashB/$hashC/$knownChecksum" ]]; then
             die "Item does not have the corresponding LocalStore entry $dbDir/LocalStore/$hashA/$hashB/$hashC/$knownChecksum!"

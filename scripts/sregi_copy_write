@@ -47,6 +47,8 @@ if [[ -n "$fsckStatusFile" ]]; then
     fi
     numberProcessedPercentage="$(printf "%.3f\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
     echo "Copying item $1: #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
+else
+    echo "Copying item $1."
 fi
 # FIXME: This shellcheck directive is only needed for outdated shellcheck versions. Once CodeClimate's shellcheck gets updated (which probably means when Debian stable updates shellcheck), it can be removed.
 # shellcheck disable=SC2034
@@ -101,13 +103,11 @@ mkdir -p "$crystalSubdir"
 rsync -a --checksum --no-i-r "$1" "$crystalSubdir/"
 setVariableToCommandOutput "basename" "embasename" "$1"
 fileToStash="$crystalSubdir/${basename:?}"
-echo "Begun storing $fileToStash."
 if [[ -f "$fileToStash" ]]; then
     sreg_store_stream --assume-checksum "$sourceChecksum" < "$fileToStash" | sponge "$fileToStash"
 else
     die "Skipping item $fileToStash: not a regular file."
 fi
-echo "Done storing $fileToStash."
 mkdir -p "$(dirname "$destinationName")"
 rsync -a --checksum --no-i-r "$fileToStash" "$destinationName"
 chmod a+r "$destinationName"

@@ -95,7 +95,7 @@ mkdir "$streamId"
     dbLinkPath="$hashDir/$hashFull"
     trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while reading $hashFull."' ERR
     while [[ "$numRetries" -gt 0 ]] && [[ "$successfulRetrieval" -eq 0 ]]; do
-        trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while reading $hashFull."; break' ERR
+        trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while reading $hashFull."; continue' ERR
         if [[ "$numRetries" -lt "$numTotalRetries" ]]; then
             sleep 30
             echo "Beginning retry of reading stream $hashFull. $numRetries retries remaining."

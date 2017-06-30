@@ -4,7 +4,19 @@ source ember_bash_setup &> /dev/null
 #set -x
 
 ((EUID)) && exec sudo -- "$0" "$@"
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+
+finish() {
+    trap - ERR
+    (
+    cd "/${crystalWorkdir:?}/" || die
+    if [[ -e "/$crystalWorkdir/${streamId:?}" ]]; then
+        rm -r "/$crystalWorkdir/${streamId:?}"
+    fi
+    )
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while finishing sregi_copy_write."' ERR
+}
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR
+trap finish EXIT
 
 if [[ "$1" == "--no-verify" ]]; then
     #echo "(Not verifying pointers.)"
@@ -100,3 +112,5 @@ rm -r "${crystalSubdir:?}"
 if [[ -e "${streamId:?}" ]]; then
     rm -r "${streamId:?}"
 fi
+
+finish

@@ -6,11 +6,17 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 
 finish() {
-    if [[ -e "${fsckId:?}" ]]; then
-        rm -r "${fsckId:?}" "/tmp/${fsckId:?}"
+    trap - ERR
+    if [[ -e "$crystalWorkdir/${fsckId:?}" ]]; then
+        rm -r "$crystalWorkdir/${fsckId:?}"
     fi
+    if [[ -e "/tmp/${fsckId:?}" ]]; then
+        rm -r "/tmp/${fsckId:?}"
+    fi
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while finishing sreg_folder_check."' ERR
 }
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR
+trap finish EXIT
 
 sregVerify=""
 if [[ "$1" == "--verify" ]]; then

@@ -30,7 +30,10 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$(readlink "$dbLinkPath")" ]]; then
         requestCount="$(<"$dbLinkPath")"
         rm "$dbLinkPath"
     fi
-    dbFileDir="$dbDir/ByCount/$requestCount/$hashSubdir"
+    if [[ -n "$requestCount" ]]; then
+        requestCount=1
+    fi
+    dbFileDir="$dbDir/ByCount/${requestCount:?}/$hashSubdir"
     dbFilePath="$dbFileDir/$hashFull"
     mkdir -p "$dbFileDir"
     wget -qO - "$requestUrl" > "$dbFilePath"
@@ -52,7 +55,7 @@ if [[ "$itemChecksum" != "$knownChecksum" ]]; then
 fi
 # First, make sure the link is good and fix it up if it's not.
 if ! [[ -e "$dbFilePath" ]]; then
-    find "$dbDir/ByCount" -mindepth 5 -maxdepth 5 -type f -name "$hashFull" -exec ln -sf {} "$dbLinkPath" \;
+    find "$dbDir/ByCount" -mindepth 4 -maxdepth 4 -type d -name "$hashFull" -exec ln -sf {} "$dbLinkPath" \;
     dbFilePath="$(readlink -e "$dbLinkPath")"
 fi
 dbFileOldPath="$dbFilePath"
@@ -61,8 +64,11 @@ dbFileDir="$(dirname "$dbFilePath")"
 oldCount="$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")"
 # Increment the item's requestCount.
 requestCount=$(( oldCount + 1 ))
+if [[ -n "$requestCount" ]]; then
+    requestCount=1
+fi
 # First, get the names of where the file should go.
-dbFileDir="$dbDir/ByCount/$requestCount/$hashSubdir"
+dbFileDir="$dbDir/ByCount/${requestCount:?}/$hashSubdir"
 dbFilePath="$dbFileDir/$hashFull"
 mkdir -p "$dbFileDir"
 mv "$dbFileOldPath" "$dbFilePath"

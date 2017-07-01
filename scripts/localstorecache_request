@@ -51,7 +51,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$oldFilePath" ]] || [[ ! -d "$cacheEntry
         requestCount="$(<"$dbLinkPath")"
         rm "$dbLinkPath"
     fi
-    if [[ -n "$requestCount" ]]; then
+    if [[ -z "$requestCount" ]]; then
         requestCount=1
     fi
     dbFileDir="$dbDir/ByCount/${requestCount:?}/$hashSubdir"
@@ -86,7 +86,7 @@ if ! [[ "$oldCount" =~ ^-?[0-9]+$ ]]; then
 fi
 # Increment the item's requestCount.
 requestCount=$(( oldCount + 1 ))
-if [[ -n "$requestCount" ]]; then
+if [[ -z "$requestCount" ]]; then
     requestCount=1
 fi
 # First, get the names of where the file should go.

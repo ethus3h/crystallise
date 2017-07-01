@@ -80,6 +80,10 @@ dbFileOldPath="$dbFilePath"
 dbFileDir="$(dirname "$dbFilePath")"
 # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
 oldCount="$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")"
+if ! [[ "$oldCount" =~ ^-?[0-9]+$ ]]; then
+    rm "$dbLinkPath"
+    oldCount="1"
+fi
 # Increment the item's requestCount.
 requestCount=$(( oldCount + 1 ))
 if [[ -n "$requestCount" ]]; then

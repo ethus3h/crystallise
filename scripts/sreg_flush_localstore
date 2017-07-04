@@ -39,6 +39,7 @@ mkdir -p "$crystalWorkdir/$streamId"
         find "$streamId.LocalStore" -type f -exec sregi_bundle_pointer "$pointerName" {} \; || die "Failed running sreg_flush_localstore!"
         rm -r "$dbDir"/LocalStore
         rm "$dbDir"/.LocalStore.lock
+        mkdir -p "$dbDir"/LocalStore
     fi
     finish
 )

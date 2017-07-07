@@ -6,22 +6,22 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 echo 1 "$1" 2 "$2" 3 "$3" 4 "$4" 5 "$5" 6 "$6" 7 "$7" 8 "$8" 9 "$9"
 crystallizeDestdir="$1"
-crystallizePrefix="$2"
-crystallizeCapPrefix="$3"
-crystallizeExecPrefix="$4"
-crystallizeBindir="$5"
-crystallizeDatarootdir="$6"
-crystallizeDatadir="$7"
-crystallizeSysconfdir="$8"
-crystallizeSharedstatedir="$9"
 shift
+crystallizePrefix="$1"
 shift
+crystallizeCapPrefix="$1"
 shift
+crystallizeExecPrefix="$1"
 shift
+crystallizeBindir="$1"
 shift
+crystallizeDatarootdir="$1"
 shift
+crystallizeDatadir="$1"
 shift
+crystallizeSysconfdir="$1"
 shift
+crystallizeSharedstatedir="$1"
 shift
 if ! [[ -n "$crystallizePrefix" ]]; then
     if ! [[ -n "$crystallizeCapPrefix" ]]; then

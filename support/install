@@ -7,22 +7,38 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 echo 1 "$1" 2 "$2" 3 "$3" 4 "$4" 5 "$5" 6 "$6" 7 "$7" 8 "$8" 9 "$9"
 crystallizeDestdir="$1"
 shift
-crystallizePrefix="$1"
-shift
-crystallizeCapPrefix="$1"
-shift
-crystallizeExecPrefix="$1"
-shift
-crystallizeBindir="$1"
-shift
-crystallizeDatarootdir="$1"
-shift
-crystallizeDatadir="$1"
-shift
-crystallizeSysconfdir="$1"
-shift
-crystallizeSharedstatedir="$1"
-shift
+if [[ -n "$1" ]]; then
+    crystallizePrefix="$1"
+    shift
+fi
+if [[ -n "$1" ]]; then
+    crystallizeCapPrefix="$1"
+    shift
+fi
+if [[ -n "$1" ]]; then
+    crystallizeExecPrefix="$1"
+    shift
+fi
+if [[ -n "$1" ]]; then
+    crystallizeBindir="$1"
+    shift
+fi
+if [[ -n "$1" ]]; then
+    crystallizeDatarootdir="$1"
+    shift
+fi
+if [[ -n "$1" ]]; then
+    crystallizeDatadir="$1"
+    shift
+fi
+if [[ -n "$1" ]]; then
+    crystallizeSysconfdir="$1"
+    shift
+fi
+if [[ -n "$1" ]]; then
+    crystallizeSharedstatedir="$1"
+    shift
+fi
 if ! [[ -n "$crystallizePrefix" ]]; then
     if ! [[ -n "$crystallizeCapPrefix" ]]; then
         crystallizePrefix="$crystallizeDestdir"/usr/local

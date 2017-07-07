@@ -43,12 +43,20 @@ crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 if ! [[ -e "$crystalWorkdir/.CrystalCache/" ]]; then
     fcache_init "$crystalWorkdir/.CrystalCache/" 5000000000
 fi
+# This should be set, but set it again just in case
+set -o pipefail
+
+# Try to catch the case of the pipeline fails and exits before wait gets called
+set -e
+
 fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - | tar -xvf - -C "$tempId/" &
 
 wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5-cwd" | gpg --yes --batch --passphrase-file "$tempId.tmp" - > "$tempId.cwd"
 crystalPath="$(< "$tempId.cwd")"
 
-wait
+wait || die "wait returned nonzero exit status"
+
+set +e
 
 destination="$tempId in "
 if [[ "$decrystallizeHere" == "true" ]]; then

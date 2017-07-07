@@ -20,8 +20,14 @@ hashSubdir="$hashA/$hashB/$hashC"
 hashDir="$dbDir/$hashSubdir"
 mkdir -p "$hashDir"
 dbLinkPath="$hashDir/$hashFull"
-checksumName="$dbLinkPath.checksum"
-if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$(readlink "$dbLinkPath")" ]]; then
+checksumName="${dbLinkPath:?}.checksum"
+csAvail="false"
+[[ -e "$checksumName" ]] && csAvail="true"
+tempResolvedFileName="$(readlink "$dbLinkPath")"
+if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvail" == "false" ]]; then
+    if [[ -f "$tempResolvedFileName" ]]; then
+        rm "$tempResolvedFileName"
+    fi
     # Item is not in the cache, so add it
     if ! [[ -f "$dbLinkPath" ]]; then
         # Never seen this item before, so set the requestCount
@@ -46,6 +52,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$(readlink "$dbLinkPath")" ]]; then
 fi
 dbFilePath="$(readlink -e "$dbLinkPath")"
 # Check that the data were retrieved successfully
+[[ -e "$checksumName" ]] || die "Checksum file for requested item is missing!"
 knownChecksum="$(<"$checksumName")"
 itemChecksum="$(sha512sum < "$dbLinkPath" | awk '{print $1;}')"
 if [[ "$itemChecksum" != "$knownChecksum" ]]; then

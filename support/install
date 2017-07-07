@@ -14,6 +14,15 @@ crystallizeDatarootdir="$6"
 crystallizeDatadir="$7"
 crystallizeSysconfdir="$8"
 crystallizeSharedstatedir="$9"
+shift
+shift
+shift
+shift
+shift
+shift
+shift
+shift
+shift
 if ! [[ -n "$crystallizePrefix" ]]; then
     if ! [[ -n "$crystallizeCapPrefix" ]]; then
         crystallizePrefix="$crystallizeDestdir"/usr/local
@@ -58,6 +67,8 @@ ereplace "/usr/local/etc" "$crystallizeSysconfdir" scripts/crystallize-logsessio
 mkdir -p "$crystallizeBindir"
 chmod +x scripts/*
 cp scripts/* "$crystallizeBindir/"
-mkdir -p "$crystallizeSysconfdir"
-cp -v support/crystallize.conf "$crystallizeSysconfdir/"
+if [[ "$1" != "--skip-config-file" ]]; then
+    mkdir -p "$crystallizeSysconfdir"
+    cp -v support/crystallize.conf "$crystallizeSysconfdir/"
+fi
 mkdir -p "$crystallizeSharedstatedir"/crystallize

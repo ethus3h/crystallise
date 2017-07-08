@@ -70,5 +70,5 @@ if [[ "$decrystallizeHere" == "true" ]]; then
     )
 fi
 
-printf "\033c"
+printf "\\033c"
 echo "Done! The crystal has been extracted to ""$destination""the current directory, $(pwd)."

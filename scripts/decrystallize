@@ -13,9 +13,9 @@ if [[ "$2" == "--here" ]]; then
     decrystallizeHere="true"
 fi
 
-#Remove URL
+# Remove URL
 CrystalAddress="${1#https://archive.org/@(details|download)/}"
-#Remove trailing path(s) from identifier
+# Remove trailing path(s) from identifier
 CrystalAddress="${CrystalAddress%%/*}"
 CrystalAddress="${CrystalAddress%\.coal5*}"
 

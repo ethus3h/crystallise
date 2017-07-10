@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1091
-source ember_bash_setup || exit 1
+source ember_bash_setup &> /dev/null
 
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+# set -x
 
 skipConfigFile="false"
 if [[ "$1" == "--skip-config-file" ]]; then

@@ -41,6 +41,8 @@ create)
     (
         cd "/$name"
         touch README.md
+        chmod --reference="/$name" README.md
+        chown --reference="/$name" README.md
     )
     #sudo -u "$rubberfsUser" git init
     chown "$rubberfsUser:$rubberfsUser" "/$name"
@@ -148,6 +150,8 @@ save)
         exit 1
     fi
     touch README.md
+    chmod --reference="/$name" README.md
+    chown --reference="/$name" README.md
     #sudo -u "$rubberfsUser" git add -A .
     #set +e
     #sudo -u "$rubberfsUser" git commit -a -m "RubberFS: make snapshot"

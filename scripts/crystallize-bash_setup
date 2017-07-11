@@ -32,7 +32,8 @@ sreg_fuse() {
     sreg_fuse.py "$@" "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"
 }
 
-sregi_available_by_hash() {
+# Function is defined with parentheses to make it run in a subshell to prevent the "die" affecting the calling script (the calling script should be responsible for trapping/handling nonzero exit codes itself)
+sregi_available_by_hash() (
     knownChecksum="${knownChecksum:?}"
     hashA="${knownChecksum:0:1}"
     hashB="${knownChecksum:1:1}"
@@ -52,7 +53,7 @@ sregi_available_by_hash() {
             die "Item does not have the corresponding LocalStore entry $dbDir/LocalStore/$hashA/$hashB/$hashC/$knownChecksum!"
         fi
     fi
-}
+)
 
 sregi_hash_from_file() (
     # Function is defined with parentheses to make it run in a subshell to prevent the definition of pipecheck clobbering other functions named that in the calling script

@@ -40,4 +40,6 @@ echo "$((itemCount + 1))" > "$fsckStatusFile"
 
 sregi_expand_pointers "$fsckStatusFile" "$destinationFindTarget"
 
+find "$destinationFindTarget" -name ".git.686fc528-0e8e-4724-91bb-c103cdcdd592" -exec mv -v {} {} \;
+
 finish

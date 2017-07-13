@@ -6,8 +6,10 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 
 finish() {
-    if [[ -e "${streamId:?}" ]]; then
-        rm -r "${streamId:?}"
+    if cd "$crystalWorkdir"; then
+        if [[ -e "${streamId:?}" ]]; then
+            rm -r "${streamId:?}"
+        fi
     fi
 }
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; rm "$dbDir"/.LocalStore.lock; finish; exit 1' ERR

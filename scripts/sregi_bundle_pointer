@@ -23,6 +23,8 @@ if [[ -f "$dbFilePath" ]]; then
     if [[ "$(head -c 36 "$dbFilePath")" != "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
         die "The item $dbFilePath does not appear to be a LocalStore pointer! This is most likely a bug in sreg. Aborting to avoid messing things up."
     fi
+else
+    die "The item $dbFilePath does not appear to exist, even though sregi_bundle_pointer has been requested for it! This situation should be investigated."
 fi
 # 2fa... is the remote bundle pointer type signature
 printf "2fae2004-94bb-4aa8-a01a-fc44298efc2c\\n%s\\n%s" "$hashFull" "$(basename "$packPointerName")" > "$dbFilePath"

@@ -45,7 +45,7 @@ if [[ -n "$fsckStatusFile" ]]; then
     if [[ "$numberExpected" == "0" ]]; then
         numberExpected="-1"
     fi
-    numberProcessedPercentage="$(printf "%.3f\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
+    numberProcessedPercentage="$(printf "%.3f\\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
     echo "Copying item $1: #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
 else
     echo "Copying item $1."
@@ -55,9 +55,10 @@ fi
 destinationRootLength="$4"
 # FIXME: This shellcheck directive is only needed for outdated shellcheck versions. Once CodeClimate's shellcheck gets updated (which probably means when Debian stable updates shellcheck), it can be removed.
 # shellcheck disable=SC2034
-targetLength=${#1}
+sourceNameReplaced="${1/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"
+targetLength=${#sourceNameReplaced}
 #echo "$destinationRootLength - $targetLength"
-destinationName="$2/${1:destinationRootLength:targetLength}"
+destinationName="$2/${sourceNameReplaced:destinationRootLength:targetLength}"
 #echo "$destinationName"
 sourceChecksum="$(sha512sum < "$1" | awk '{print $1;}')"
 if [[ -f "$destinationName" ]]; then

@@ -40,30 +40,33 @@ fsckId="srsync-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 mkdir -p "$crystalWorkdir/$fsckId"
 fsckStatusFile="/tmp/$fsckId.srsync.status"
 find "$1" -type f -printf '.' | wc -c > "$fsckStatusFile"
+sourceReplaced="${1/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"
+sourceReplaced="${1/%.git\//.git.686fc528-0e8e-4724-91bb-c103cdcdd592\/}"
+destinationReplaced="${2/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"
+destinationReplaced="${destinationReplaced//\/.git\//\/.git.686fc528-0e8e-4724-91bb-c103cdcdd592\/}"
 destinationSuffix=""
 if [[ -d "$1" ]]; then
     destinationSuffix="/"
 fi
 if [[ "$1" =~ '/'$ ]]; then
-    destinationRoot="$1"
-    destinationFindTarget="$2$destinationSuffix"
+    destinationRoot="$sourceReplaced"
+    destinationFindTarget="$destinationReplaced$destinationSuffix"
 else
-    destinationRoot="$(dirname "$1")"
-    destinationFindTarget="$2/$(basename "$1")$destinationSuffix"
+    destinationRoot="$(dirname "$sourceReplaced")"
+    destinationFindTarget="$destinationReplaced/$(basename "$sourceReplaced")$destinationSuffix"
 fi
 if [[ "$destinationRoot" == "." ]]; then
     destinationRootLength="0"
 else
     destinationRootLength=${#destinationRoot}
 fi
-find "$destinationFindTarget" -name ".git" -exec mv -v {} {}.686fc528-0e8e-4724-91bb-c103cdcdd592 \;
 bpid="$$"
+# Use $1 in find commands rather than sourceReplaced because sourceReplaced is used for the target computation and post-processing (post-processing with find, that is).
 if [[ "$sregNoVerify" == "true" ]]; then
-    find "$1" -type f \( -exec sregi_copy_write --no-verify {} "$2" "$fsckStatusFile" "$destinationRootLength" \; -or -exec kill "-$bpid" \; \)
+    find "$1" -type f \( -exec sregi_copy_write --no-verify {} "$destinationReplaced" "$fsckStatusFile" "$destinationRootLength" \; -or -exec kill "-$bpid" \; \)
 else
-    find "$1" -type f \( -exec sregi_copy_write {} "$2" "$fsckStatusFile" "$destinationRootLength" \; -or -exec kill "-$bpid" \; \)
+    find "$1" -type f \( -exec sregi_copy_write {} "$destinationReplaced" "$fsckStatusFile" "$destinationRootLength" \; -or -exec kill "-$bpid" \; \)
 fi
-find "$destinationFindTarget" -name ".git" -exec mv -v {} {}.686fc528-0e8e-4724-91bb-c103cdcdd592 \;
 # This NEEDS to skip regular files, because otherwise files that don't exist in the directory will be copied and take up space!
 # rsync -a --ignore-existing --no-i-r "$1" "$2/"
 find "$destinationFindTarget" -type d -empty -exec touch {}/.keep \;

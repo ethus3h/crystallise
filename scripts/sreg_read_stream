@@ -108,7 +108,7 @@ mkdir "$streamId"
                     dbFilePath="$(readlink -e "$dbLinkPath")"
                     requestCount="$(basename "$(dirname "$(dirname "$(dirname "$(dirname "$dbFilePath")")")")")"
                     if [[ -z "$requestCount" ]]; then
-                        requestCount="0"
+                        requestCount="1"
                     fi
                 fi
             else
@@ -123,7 +123,7 @@ mkdir "$streamId"
                 fi
             fi
             if [[ -z "$requestCount" ]]; then
-                requestCount=1
+                requestCount="1"
             fi
             dbFileDir="$cacheDbDir/ByCount/${requestCount:?}/$hashSubdir"
             dbFilePath="$dbFileDir/$hashFull"

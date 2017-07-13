@@ -8,6 +8,7 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 packPointerName="$1"
 dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
 hashFull="$(basename "$2")"
+crystalWorkdir="$3"
 # can't use \d in POSIX regex
 hashPatternMatch='^[0-9a-f]{128}$'
 # $hashPatternMatch not quoted because that makes it "match literally rather than as a regex" (—SC2076)
@@ -29,3 +30,34 @@ else
 fi
 # 2fa... is the remote bundle pointer type signature
 printf "2fae2004-94bb-4aa8-a01a-fc44298efc2c\\n%s\\n%s" "$hashFull" "$(basename "$packPointerName")" > "$dbFilePath"
+
+# Switch over to variable values for cache editing
+cacheDbDir="$crystalWorkdir/.StreamCache/"
+dbLinkPath="$cacheDbDir/$hashA/$hashB/$hashC/$hashFull"
+cacheDbFilePath="$(readlink -e "$dbLinkPath")"
+
+# Remove cache entry to allow re-testing
+# First, make sure the link is good and fix it up if it's not.
+if ! [[ -f "$cacheDbFilePath" ]]; then
+    find "$cacheDbDir/ByCount" -mindepth 5 -maxdepth 5 -type f -name "$hashFull" -exec ln -sf {} "$dbLinkPath" \;
+    cacheDbFilePath="$(readlink -e "$dbLinkPath")"
+fi
+
+requestCount="1"
+if [[ -f "$cacheDbFilePath" ]]; then
+    dbFileDir="$(dirname "$cacheDbFilePath")"
+    rm "${cacheDbFilePath:?}"
+    # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
+    oldCount="$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")"
+    if [[ -n "$oldCount" ]]; then
+        requestCount="$oldCount"
+    fi
+fi
+rm "$dbLinkPath"
+echo "$requestCount" > "$dbLinkPath"
+
+# Clean up empty directories
+find "$cacheDbDir" -type d -not -name "ByCount" -empty -delete
+
+# Done editing the cache: now, test the new pointer
+sregi_verify_entry "$dbFilePath"

@@ -38,7 +38,7 @@ mkdir -p "$crystalWorkdir/$streamId"
         pointerName="$(readlink -f "$streamId.bundle.pointer")"
         mkdir -p "$dbDir/Packs/"
         rsync -q --checksum "$pointerName" "$dbDir/Packs/"
-        find "$streamId.LocalStore" -type f -exec sregi_bundle_pointer "$pointerName" {} \; || die "Failed running sreg_flush_localstore!"
+        find "$streamId.LocalStore" -type f -exec sregi_bundle_pointer "$pointerName" {} "$crystalWorkdir" \; || die "Failed running sreg_flush_localstore!"
         rm -r "$dbDir"/LocalStore
         rm "$dbDir"/.LocalStore.lock
         mkdir -p "$dbDir"/LocalStore

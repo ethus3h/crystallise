@@ -8,7 +8,8 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 packPointerName="$1"
 dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
 hashFull="$(basename "$2")"
-hashPatternMatch='^[\da-f]{128}$'
+# can't use \d in POSIX regex
+hashPatternMatch='^[0-9a-f]{128}$'
 # $hashPatternMatch not quoted because that makes it "match literally rather than as a regex" (—SC2076)
 if ! [[ "$hashFull" =~ $hashPatternMatch ]]; then
     # Ignore stray files in the LocalStore directory (e.g. .keep files)

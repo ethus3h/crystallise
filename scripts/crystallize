@@ -3,7 +3,7 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
-export crystallizeVersion='3.1.2.5_pre168'
+export crystallizeVersion='3.1.2.5_pre169'
 
 # ( sudo true; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a v3.1.2.5_pre108 -m "version"; egup-single .; sudo emerge crystallize; sudo dispatch-conf )
 
@@ -125,13 +125,15 @@ postUploadCheckFailHandler() {
     else
         postUploadCheckSuccess=0
     fi
-    break
 }
 
 getChecksumRetries=0
 retryDelayTime=5
 until [[ $getChecksumRetries -ge 1000 ]]; do
-    wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F "<file name=\"$CrystalID.coal5\" source=\"original\">" > /dev/null && postUploadCheckFailHandler
+    if wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F "<file name=\"$CrystalID.coal5\" source=\"original\">" > /dev/null; then
+        postUploadCheckFailHandler
+        break
+    fi
     getChecksumRetries=$((getChecksumRetries+1))
     sleep $retryDelayTime
     if [[ $retryDelayTime -lt 30 ]]; then
@@ -142,7 +144,10 @@ done
 getChecksumRetries=0
 retryDelayTime=5
 until [[ $getChecksumRetries -ge 1000 ]]; do
-    checksumLine="$(wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F -A 3 "<file name=\"$CrystalID.coal5\" source=\"original\">" | tail -n 1)" && postUploadCheckFailHandler
+    if checksumLine="$(wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F -A 3 "<file name=\"$CrystalID.coal5\" source=\"original\">" | tail -n 1)"; then
+        postUploadCheckFailHandler
+        break
+    fi
     getChecksumRetries=$((getChecksumRetries+1))
     sleep $retryDelayTime
     if [[ $retryDelayTime -lt 30 ]]; then
@@ -159,7 +164,10 @@ fi
 getChecksumRetries=0
 retryDelayTime=5
 until [[ $getChecksumRetries -ge 1000 ]]; do
-    wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F "<file name=\"$CrystalID.coal5-timestamp\" source=\"original\">" > /dev/null && postUploadCheckFailHandler
+    if wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F "<file name=\"$CrystalID.coal5-timestamp\" source=\"original\">" > /dev/null; then
+        postUploadCheckFailHandler
+        break
+    fi
     getChecksumRetries=$((getChecksumRetries+1))
     sleep $retryDelayTime
     if [[ $retryDelayTime -lt 30 ]]; then

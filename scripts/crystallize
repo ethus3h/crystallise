@@ -113,9 +113,8 @@ ia upload "$CrystalID" --retries=100 --verify --delete "$crystalWorkdir/$Crystal
 ia upload "$CrystalID" --retries=100 --verify "$crystalWorkdir/$CrystalID.coal5-timestamp"
 
 # Check that things were correctly uploaded
+
 knownChecksum="$(<"$crystalWorkdir/$CrystalID.knownChecksum")"
-CrystalFileName="$(<"$crystalWorkdir/$CrystalID.CrystalFileName")"
-CrystalTsFileName="$(basename "$crystalWorkdir/$CrystalID".coal5-timestamp)"
 
 sleep 2
 
@@ -143,7 +142,7 @@ done
 getChecksumRetries=0
 retryDelayTime=5
 until [[ $getChecksumRetries -ge 1000 ]]; do
-    checksumLine="$(wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F -A 3 "<file name=\"$CrystalFileName\" source=\"original\">" | tail -n 1)" && postUploadCheckFailHandler
+    checksumLine="$(wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F -A 3 "<file name=\"$CrystalID.coal5\" source=\"original\">" | tail -n 1)" && postUploadCheckFailHandler
     getChecksumRetries=$((getChecksumRetries+1))
     sleep $retryDelayTime
     if [[ $retryDelayTime -lt 30 ]]; then
@@ -186,7 +185,7 @@ done
 set +o pipefail
 trap - ERR
 if [[ "$keepFiles" != "true" ]]; then
-    yes | rm -rf "${CrystallizePaths[@]}"
+    rm -rf "${CrystallizePaths[@]}"
 fi
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 set -o pipefail
@@ -209,13 +208,13 @@ fi
 
 if rm -v "$crystalWorkdir/$CrystalID.coal5-timestamp"; then
     #Clear the screen
-    printf "\033c"
+    printf "\\033c"
 
     echo "Done! The new crystal's address is:"
     echo "$CrystalID"
 else
     #Clear the screen
-    printf "\033c"
+    printf "\\033c"
 
     echo "Crystallisation failed! This is bad!"
     exit 1

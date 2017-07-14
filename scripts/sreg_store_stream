@@ -58,7 +58,9 @@ mkdir -p "$crystalWorkdir/$streamId"
         mkdir -p "$localStoreDir"
         localStoreFilePath="$localStoreDir/$hashFull"
     fi
+    sanityCheckPassed=""
     if [[ -f "$dbFilePath" ]]; then
+        sanityCheckPassed="0"
         knownChecksum="$hashFull"
         if sregi_available_by_hash &> /dev/null; then
             # Item already has been stored and passes a basic sanity check, so check that the existing pointer can be restored
@@ -72,10 +74,13 @@ mkdir -p "$crystalWorkdir/$streamId"
                 # mkdir -p "$fsckDir"
                 # mv "$tmpFilePath" "$fsckDir"
             fi
+            sanityCheckPassed="1"
         else
-            rm "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/$hashA/$hashB/$hashC/$knownChecksum"
+            rm "$dbFilePath"
         fi
-    else
+    fi
+    if [[ ! -f "$dbFilePath" ]] || ( [[ -f "$dbFilePath" ]] && [[ "$sanityCheckPassed" != "1" ]] ); then
+        rm -f "${dbFilePath:?}" # This should not be necessary, and the right side of the "or" statement should never be true
         # Item not available in cache, so add it (c39... is the LocalStore pointer type signature; a5e... is the remote type signature)
         pointerTypeSignature="c39f8657-384b-438b-a5a2-eece17147589"
         if [[ "$useLocalStore" != "true" ]]; then

@@ -111,6 +111,7 @@ else
 fi
 mkdir -p "$(dirname "$destinationName")"
 rsync -a --checksum --no-i-r "$fileToStash" "$destinationName"
+# a+r gives (a)ll users (r)ead permission
 chmod a+r "$destinationName"
 rm -r "${crystalSubdir:?}"
 if [[ -e "${streamId:?}" ]]; then

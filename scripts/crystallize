@@ -112,6 +112,52 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 ia upload "$CrystalID" --retries=100 --verify --delete "$crystalWorkdir/$CrystalID.coal5-log" "$crystalWorkdir/$CrystalID.coal5-idx-l" "$crystalWorkdir/$CrystalID.coal5-idx-d" "$crystalWorkdir/$CrystalID.coal5-cmd" "$crystalWorkdir/$CrystalID.coal5-cwd"
 ia upload "$CrystalID" --retries=100 --verify "$crystalWorkdir/$CrystalID.coal5-timestamp"
 
+# Check that things were correctly uploaded
+knownChecksum="$(<"$crystalWorkdir/$CrystalID.knownChecksum")"
+CrystalFileName="$(<"$crystalWorkdir/$CrystalID.CrystalFileName")"
+CrystalTsFileName="$(basename "$crystalWorkdir/$CrystalID".coal5-timestamp)"
+
+getChecksumRetries=0
+retryDelayTime=5
+sleep 2
+until [[ $getChecksumRetries -ge 1000 ]]; do
+    wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep "<file name=\"$CrystalFileName\" source=\"original\">" > /dev/null && break
+    getChecksumRetries=$((getChecksumRetries+1))
+    sleep $retryDelayTime
+    if [[ $retryDelayTime -lt 30 ]]; then
+        retryDelayTime=$((retryDelayTime + 5))
+    fi
+done
+
+getChecksumRetries=0
+retryDelayTime=5
+until [[ $getChecksumRetries -ge 1000 ]]; do
+    checksumLine="$(wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -A 3 "<file name=\"$CrystalFileName\" source=\"original\">" | tail -n 1)" && break
+    getChecksumRetries=$((getChecksumRetries+1))
+    sleep $retryDelayTime
+    if [[ $retryDelayTime -lt 30 ]]; then
+        retryDelayTime=$((retryDelayTime + 5))
+    fi
+done
+checksumLine="${checksumLine/    <md5>/}"
+checksumLine="${checksumLine/<\/md5>/}"
+knownChecksum="$(grep ",stdin" "$crystalWorkdir/$CrystalID.checksums" | awk -F',' '{print $2}')"
+if [[ "$checksumLine" != "$knownChecksum" ]]; then
+    echo "ERROR! Checksum known by Internet Archive does not match checksum known locally." >&2
+    exit 1
+fi
+
+getChecksumRetries=0
+retryDelayTime=5
+until [[ $getChecksumRetries -ge 1000 ]]; do
+    wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep "<file name=\"$CrystalTsFileName\" source=\"original\">" > /dev/null && break
+    getChecksumRetries=$((getChecksumRetries+1))
+    sleep $retryDelayTime
+    if [[ $retryDelayTime -lt 30 ]]; then
+        retryDelayTime=$((retryDelayTime + 5))
+    fi
+done
+
 #Build this again for the rm command
 CrystallizePaths=( "$@" )
 for i in "${!CrystallizePaths[@]}"; do

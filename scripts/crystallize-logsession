@@ -202,34 +202,8 @@ script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/
 #    sleep 30
 #done
 
-getChecksumRetries=0
-retryDelayTime=5
-sleep 2
-until [[ $getChecksumRetries -ge 1000 ]]; do
-    wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep "<file name=\"$CrystalFileName\" source=\"original\">" > /dev/null && break
-    getChecksumRetries=$((getChecksumRetries+1))
-    sleep $retryDelayTime
-    if [[ $retryDelayTime -lt 30 ]]; then
-        retryDelayTime=$((retryDelayTime + 5))
-    fi
-done
-
-getChecksumRetries=0
-until [[ $getChecksumRetries -ge 1000 ]]; do
-    checksumLine="$(wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -A 3 "<file name=\"$CrystalFileName\" source=\"original\">" | tail -n 1)" && break
-    getChecksumRetries=$((getChecksumRetries+1))
-    sleep $retryDelayTime
-    if [[ $retryDelayTime -lt 30 ]]; then
-        retryDelayTime=$((retryDelayTime + 5))
-    fi
-done
-checksumLine="${checksumLine/    <md5>/}"
-checksumLine="${checksumLine/<\/md5>/}"
-knownChecksum="$(grep ",stdin" "$crystalWorkdir/$CrystalID.checksums" | awk -F',' '{print $2}')"
-if [[ "$checksumLine" != "$knownChecksum" ]]; then
-    echo "ERROR! Checksum known by Internet Archive does not match checksum known locally." >&2
-    exit 1
-fi
+printf "%s" "$knownChecksum" > "$crystalWorkdir/$CrystalID.knownChecksum"
+printf "%s" "$CrystalFileName" > "$crystalWorkdir/$CrystalID.CrystalFileName"
 
 #Ignore exit code 1 from tar on Linux, which indicates files changed while reading; see http://stackoverflow.com/questions/20318852/tar-file-changed-as-we-read-it
 if [[ "$exitcode" != "0" ]] && [[ $OSTYPE != *inux* ]]; then
@@ -250,7 +224,9 @@ fi
 
     echo "Copying indices..."
 
-    rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.checksums" "$crystalWorkdir/$CrystalID.json.xz" "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
+    cp "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.passphrase"
+
+    rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.checksums" "$crystalWorkdir/$CrystalID.json.xz" "$crystalWorkdir/$CrystalID.passphrase" "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
 
     echo "rsynced..."
 

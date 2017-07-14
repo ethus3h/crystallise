@@ -38,7 +38,8 @@ if [[ -t 1 ]]; then
     crystalXzFileSize="${crystalXzFileSize::-2}"
 fi
 
-crystallize-getconf Passphrase > "$tempId.tmp"
+crystallizePassphrase="$(crystallize-getconf Passphrase)"
+printf "%s" "$crystallizePassphrase" > "$tempId.tmp"
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 if ! [[ -e "$crystalWorkdir/.CrystalCache/" ]]; then
     fcache_init "$crystalWorkdir/.CrystalCache/" 5000000000

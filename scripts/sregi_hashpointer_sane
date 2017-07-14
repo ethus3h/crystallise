@@ -59,7 +59,9 @@ then
         else
             sregi_available_by_hash
         fi
-        echo "$knownChecksum" >> "$fsckIdList"
+        if [[ -n "$fsckIdList" ]]; then
+            echo "$knownChecksum" >> "$fsckIdList"
+        fi
     else
         printf '%s\n%s\n' "760fa662-89cf-4ebd-9664-150b7637ddd4" "$knownChecksum" | sregi_hashpointer_sane - "${@:2}"
     fi

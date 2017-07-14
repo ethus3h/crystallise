@@ -74,7 +74,6 @@ sregi_hash_from_file() (
     tail -c +38 "$file" | head -c 129
     pipecheck
     set -o pipefail
-    unset -f pipecheck
 )
 
 EmberLibrary="$(crystallize-getconf EmberLibrary)"

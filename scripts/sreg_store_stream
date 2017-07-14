@@ -66,6 +66,7 @@ mkdir -p "$crystalWorkdir/$streamId"
             # Item already has been stored and passes a basic sanity check, so check that the existing pointer can be restored
             recoveredHash="$(sreg_read_stream --disallow-hash-pointer < "$dbFilePath" | sha512sum | awk '{print $1;}')"
             if [[ "$recoveredHash" != "$hashFull" ]]; then
+                # This is a fatal error because this condition could go undetected a long time (since the pointer passed the basic sanity check), and should perhaps have human attention.
                 die "Could not read existing item."
                 # if [[ "$1" == "--verbose" ]]; then
                 #     warn "Could not read existing item."
@@ -76,11 +77,14 @@ mkdir -p "$crystalWorkdir/$streamId"
             fi
             sanityCheckPassed="1"
         else
+            # Item failed a basic sanity check, so it can pretty safely be removed and recreated, because it would presumably be found failed by that same basic sanity check in the course of general maintenance.
             rm "$dbFilePath"
         fi
     fi
-    if [[ ! -f "$dbFilePath" ]] || ( [[ -f "$dbFilePath" ]] && [[ "$sanityCheckPassed" != "1" ]] ); then
-        rm -f "${dbFilePath:?}" # This should not be necessary, and the right side of the "or" statement should never be true
+    if [[ -f "$dbFilePath" ]] && [[ "$sanityCheckPassed" != "1" ]]; then
+        die "Database entry did not pass sanity check, but still exists! This should never happen."
+    fi
+    if [[ ! -f "$dbFilePath" ]]; then
         # Item not available in cache, so add it (c39... is the LocalStore pointer type signature; a5e... is the remote type signature)
         pointerTypeSignature="c39f8657-384b-438b-a5a2-eece17147589"
         if [[ "$useLocalStore" != "true" ]]; then

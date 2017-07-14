@@ -31,10 +31,6 @@ fi
 # 2fa... is the remote bundle pointer type signature
 printf "2fae2004-94bb-4aa8-a01a-fc44298efc2c\\n%s\\n%s" "$hashFull" "$(basename "$packPointerName")" > "$dbFilePath"
 
-if ! [[ -f "$dbFilePath" ]]; then
-    die "$dbFilePath vanished unexpectedly immediately after creation!!"
-fi
-
 # Switch over to variable values for cache editing
 cacheDbDir="$crystalWorkdir/.StreamCache/"
 dbLinkPath="$cacheDbDir/$hashA/$hashB/$hashC/$hashFull"
@@ -60,12 +56,8 @@ fi
 rm "$dbLinkPath"
 echo "$requestCount" > "$dbLinkPath"
 
-# Clean up empty directories
-find "$cacheDbDir" -type d -not -name "ByCount" -empty -delete
-
-if ! [[ -f "$dbFilePath" ]]; then
-    die "$dbFilePath vanished unexpectedly sometime before verifying!!"
-fi
+# Clean up empty directories. Kind of expensive, so commented out here. This will be taken care of by scache_gc when it's run, anyway.
+# find "$cacheDbDir" -type d -not -name "ByCount" -empty -delete
 
 # Done editing the cache: now, test the new pointer
 failCleanup() {

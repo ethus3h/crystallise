@@ -6,6 +6,14 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
+inputFile="$1"
+if [[ "$1" == "-" ]]; then
+    # read from stdin
+    streamId="sregi_hashpointer_sane-$(date-uuid)"
+    inputFile="/tmp/$streamId.tmp"
+    sponge "$inputFile"
+fi
+
 fsckIdList="$2"
 fsckStatusFile="$3"
 
@@ -14,7 +22,7 @@ if [[ "$4" == "--verify" ]]; then
     sregVerify="true"
 fi
 
-pointerTypeSignature="$(head -c 36 "$1")"
+pointerTypeSignature="$(head -c 36 "$inputFile")"
 knownChecksum=""
 if [[ -n "$fsckStatusFile" ]]; then
     numberExpected="$(<"$fsckStatusFile")"
@@ -29,20 +37,30 @@ if [[ -n "$fsckStatusFile" ]]; then
     if [[ "$numberExpected" == "0" ]]; then
         numberExpected="-1"
     fi
-    numberProcessedPercentage="$(printf "%.3f\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
-    echo "Checking item $1: #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
+    numberProcessedPercentage="$(printf "%.3f\\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
+    echo "Checking item $inputFile: #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
 fi
-if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
-    knownChecksum="$(tail -c +38 "$1")"
-    if [[ "$sregVerify" == "true" ]]; then
-        if ! sreg_read_stream --checksum "$knownChecksum" --skip-cache < "$1" > /dev/null; then
-            trap - ERR
-            mv "$2" "$2.CORRUPTED-HASHPOINTER"
-            trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
-            die "Item $1 did not match the stored checksum!"
+if [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]] || # Standard remote pointer
+    [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]] || # LocalStore pointer
+    [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] || # Remote pack pointer
+    [[ "$pointerTypeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]] || # Also remote pack pointer
+    [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] || # Pack pointer data is in the pointer
+    [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]] # Hash pointer
+then
+    knownChecksum="$(tail -c +38 "$inputFile")"
+    if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
+        if [[ "$sregVerify" == "true" ]]; then
+            if ! sreg_read_stream --checksum "$knownChecksum" --skip-cache < "$inputFile" > /dev/null; then
+                trap - ERR
+                mv "$2" "$2.CORRUPTED-HASHPOINTER"
+                trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+                die "Item $inputFile did not match the stored checksum!"
+            fi
+        else
+            sregi_available_by_hash
         fi
+        echo "$knownChecksum" >> "$fsckIdList"
     else
-        sregi_available_by_hash
+        printf '%s\n%s\n' "760fa662-89cf-4ebd-9664-150b7637ddd4" "$knownChecksum" | sregi_hashpointer_sane - "${@:2}"
     fi
-    echo "$knownChecksum" >> "$fsckIdList"
 fi

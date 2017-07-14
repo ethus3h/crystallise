@@ -23,7 +23,7 @@ if [[ -n "$fsckStatusFile" ]]; then
     if [[ "$numberExpected" == "0" ]]; then
         numberExpected="-1"
     fi
-    numberProcessedPercentage="$(printf "%.3f\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
+    numberProcessedPercentage="$(printf "%.3f\\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
     echo "Considering item $pointerId: #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
 fi
 

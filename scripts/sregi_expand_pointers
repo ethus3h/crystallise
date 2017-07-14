@@ -25,7 +25,7 @@ while [[ ! -z "$1" ]]; do
         if [[ "$numberExpected" == "0" ]]; then
             numberExpected="-1"
         fi
-        numberProcessedPercentage="$(printf "%.3f\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
+        numberProcessedPercentage="$(printf "%.3f\\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
         echo "Resolving item $fileToResolve: #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
     fi
 

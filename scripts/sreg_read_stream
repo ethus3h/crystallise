@@ -158,10 +158,11 @@ mkdir "$streamId"
                 localStoreCrystalName="${crystalFilePatternMatches[0]}"
                 if ! [[ -e "$localStoreCrystalName" ]]; then
                     error-notify "Crystal info could not be found in the pointer $hashFull, so giving up immediately (retrying probably wouldn't help this)."
+                    numRetries="0"
                     break
                 fi
                 localstoreErrorBreak() {
-                    error-notify "localstorecache_request failed for the pointer $hashFull, so giving up immediately (retrying probably wouldn't help this)."
+                    warn "localstorecache_request failed for the pointer $hashFull, so stopping this attempt."
                     break
                 }
                 localStoreCrystalIdentifier="$(<"$localStoreCrystalName"/identifier)"

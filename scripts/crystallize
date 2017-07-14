@@ -117,11 +117,22 @@ knownChecksum="$(<"$crystalWorkdir/$CrystalID.knownChecksum")"
 CrystalFileName="$(<"$crystalWorkdir/$CrystalID.CrystalFileName")"
 CrystalTsFileName="$(basename "$crystalWorkdir/$CrystalID".coal5-timestamp)"
 
+sleep 2
+
+postUploadCheckSuccess=""
+postUploadCheckFailHandler() {
+    if [[ -z "$postUploadCheckSuccess" ]]; then
+        postUploadCheckSuccess=1
+    else
+        postUploadCheckSuccess=0
+    fi
+    break
+}
+
 getChecksumRetries=0
 retryDelayTime=5
-sleep 2
 until [[ $getChecksumRetries -ge 1000 ]]; do
-    wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep "<file name=\"$CrystalFileName\" source=\"original\">" > /dev/null && break
+    wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F "<file name=\"$CrystalID.coal5\" source=\"original\">" > /dev/null && postUploadCheckFailHandler
     getChecksumRetries=$((getChecksumRetries+1))
     sleep $retryDelayTime
     if [[ $retryDelayTime -lt 30 ]]; then
@@ -132,7 +143,7 @@ done
 getChecksumRetries=0
 retryDelayTime=5
 until [[ $getChecksumRetries -ge 1000 ]]; do
-    checksumLine="$(wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -A 3 "<file name=\"$CrystalFileName\" source=\"original\">" | tail -n 1)" && break
+    checksumLine="$(wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F -A 3 "<file name=\"$CrystalFileName\" source=\"original\">" | tail -n 1)" && postUploadCheckFailHandler
     getChecksumRetries=$((getChecksumRetries+1))
     sleep $retryDelayTime
     if [[ $retryDelayTime -lt 30 ]]; then
@@ -143,20 +154,23 @@ checksumLine="${checksumLine/    <md5>/}"
 checksumLine="${checksumLine/<\/md5>/}"
 knownChecksum="$(grep ",stdin" "$crystalWorkdir/$CrystalID.checksums" | awk -F',' '{print $2}')"
 if [[ "$checksumLine" != "$knownChecksum" ]]; then
-    echo "ERROR! Checksum known by Internet Archive does not match checksum known locally." >&2
-    exit 1
+    die "ERROR! Checksum known by Internet Archive does not match checksum known locally."
 fi
 
 getChecksumRetries=0
 retryDelayTime=5
 until [[ $getChecksumRetries -ge 1000 ]]; do
-    wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep "<file name=\"$CrystalTsFileName\" source=\"original\">" > /dev/null && break
+    wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F "<file name=\"$CrystalID.coal5-timestamp\" source=\"original\">" > /dev/null && postUploadCheckFailHandler
     getChecksumRetries=$((getChecksumRetries+1))
     sleep $retryDelayTime
     if [[ $retryDelayTime -lt 30 ]]; then
         retryDelayTime=$((retryDelayTime + 5))
     fi
 done
+
+if [[ "$postUploadCheckSuccess" != "1" ]]; then
+    die "ERROR! Post-upload check failed: data appear to not have been transferred successfully!"
+fi
 
 #Build this again for the rm command
 CrystallizePaths=( "$@" )

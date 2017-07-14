@@ -96,7 +96,7 @@ ereplace "/usr/local/etc" "$crystallizeSysconfdir" scripts/crystallize-logsessio
 mkdir -p "$crystallizeBindir"
 chmod +x scripts/*
 cp scripts/* "$crystallizeBindir/"
-if [[ "skipConfigFile" == "false" ]]; then
+if [[ "$skipConfigFile" == "false" ]]; then
     mkdir -p "$crystallizeSysconfdir"
     cp -v support/crystallize.conf "$crystallizeSysconfdir/"
 fi

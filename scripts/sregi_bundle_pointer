@@ -31,6 +31,10 @@ fi
 # 2fa... is the remote bundle pointer type signature
 printf "2fae2004-94bb-4aa8-a01a-fc44298efc2c\\n%s\\n%s" "$hashFull" "$(basename "$packPointerName")" > "$dbFilePath"
 
+if ! [[ -f "$dbFilePath" ]]; then
+    die "$dbFilePath vanished unexpectedly immediately after creation!!"
+fi
+
 # Switch over to variable values for cache editing
 cacheDbDir="$crystalWorkdir/.StreamCache/"
 dbLinkPath="$cacheDbDir/$hashA/$hashB/$hashC/$hashFull"
@@ -59,5 +63,19 @@ echo "$requestCount" > "$dbLinkPath"
 # Clean up empty directories
 find "$cacheDbDir" -type d -not -name "ByCount" -empty -delete
 
+if ! [[ -f "$dbFilePath" ]]; then
+    die "$dbFilePath vanished unexpectedly sometime before verifying!!"
+fi
+
 # Done editing the cache: now, test the new pointer
-sregi_verify_entry "$dbFilePath"
+failCleanup() {
+    local failedBundleDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Bundling
+    mkdir -p "$failedBundleDir"
+    local noteAppend=" It couldn't be found, so isn't available for inspection!"
+    if [[ -e "$dbFilePath" ]]; then
+        mv "$dbFilePath" "$failedBundleDir/$hashFull"
+        noteAppend=" It's been moved to $failedBundleDir/$hashFull so you can inspect it."
+    fi
+    die "Failed to read pointer after bundling it!$noteAppend"
+}
+sregi_verify_entry "$dbFilePath" || failCleanup

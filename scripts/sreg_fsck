@@ -32,7 +32,7 @@ else
 fi
 
 if [[ "$skipCache" == "--skip-cache" || "$skipCache" == "--skip-drop-failed" ]]; then
-    echo "Disabling cache..."
+    echo "Disabling caches..."
     mv "$crystalWorkdir/.StreamCache" "$crystalWorkdir/.StreamCache.disabled"
     mv "$crystalWorkdir/.LocalStoreCache" "$crystalWorkdir/.LocalStoreCache.disabled"
     mv "$crystalWorkdir/.CrystalCache" "$crystalWorkdir/.CrystalCache.disabled"
@@ -54,9 +54,9 @@ find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/Local
 [[ -e "$fsckStatusFile.failed" ]] && die "Failed verifying entry! Aborted."
 echo "Done all items."
 if [[ "$restoreCache" == "true" ]]; then
-  echo "Restoring cache..."
-  mv "$crystalWorkdir/.StreamCache" "$crystalWorkdir/.StreamCache.disabled"
-  mv "$crystalWorkdir/.LocalStoreCache" "$crystalWorkdir/.LocalStoreCache.disabled"
-  mv "$crystalWorkdir/.CrystalCache" "$crystalWorkdir/.CrystalCache.disabled"
-
+  echo "Restoring caches..."
+  mv "$crystalWorkdir/.StreamCache.disabled" "$crystalWorkdir/.StreamCache"
+  mv "$crystalWorkdir/.LocalStoreCache.disabled" "$crystalWorkdir/.LocalStoreCache"
+  mv "$crystalWorkdir/.CrystalCache.disabled" "$crystalWorkdir/.CrystalCache"
+fi
 finish

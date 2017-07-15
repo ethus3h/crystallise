@@ -73,6 +73,7 @@ failCleanup() {
         noteAppend=" It's been moved to $failedBundleDir/$hashFull so you can inspect it."
     fi
     # Put the LocalStore pointer back
+    # FIXME: Also fetch the LocalStore entry from the LocalStore folder in crystalWorkdir and put it back into the main LocalStore cache
     mv "$dbTempFileDir/$hashFull" "$dbFilePath"
     die "Failed to read pointer after bundling it!$noteAppend"
 }

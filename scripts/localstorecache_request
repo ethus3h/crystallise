@@ -39,7 +39,7 @@ else
     cacheEntryFile="${localStoreMatchArray[0]}/LocalStore"
 fi
 
-if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$oldFilePath" ]] || [[ ! -d "$cacheEntryFile" ]] || [[ -z "$cacheEntryFile" ]]; then
+if [[ ! -h "$dbLinkPath" ]] || [[ ! -d "$oldFilePath" ]] || [[ ! -d "$cacheEntryFile" ]] || [[ -z "$cacheEntryFile" ]]; then
     # Item is not in the cache, so add it
 
     # Make sure there isn't a dangling LocalStore content folder with no associated link

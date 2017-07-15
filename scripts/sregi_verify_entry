@@ -16,6 +16,11 @@ fail() {
     die "Error verifying stream registry database entry $knownHash!"
 }
 
+if [[ "--quick" == "$3" ]]; then
+    quick="true"
+    shift
+fi
+
 skipCache=""
 dropFailed="false"
 if [[ "--skip-cache" == "$3" ]]; then
@@ -37,7 +42,16 @@ if [[ -n "$knownHashTemp" ]]; then
 fi
 echo "Started verifying stream registry database entry $knownHash."
 
-if sreg_read_stream --entry-path "$1" --checksum "$knownHash" --disallow-hash-pointer "$skipCache" < "$1" > /dev/null; then
+exitCode=""
+if [[ "$quick" == "true" ]]; then
+    sregi_verify_entry "$1"
+    exitCode="$?"
+else
+    sreg_read_stream --entry-path "$1" --checksum "$knownHash" --disallow-hash-pointer "$skipCache" < "$1" > /dev/null
+    exitCode="$?"
+fi
+
+if [[ "$exitCode" == "0" ]]; then
     if [[ -n "$fsckStatusFile" ]]; then
         numberExpected="$(<"$fsckStatusFile")"
         numberProcessedFile="$fsckStatusFile.done"

@@ -31,6 +31,15 @@ else
     fi
 fi
 
+if [[ "$skipCache" == "--skip-cache" || "$skipCache" == "--skip-drop-failed" ]]; then
+    echo "Disabling cache..."
+    mv "$crystalWorkdir/.StreamCache" "$crystalWorkdir/.StreamCache.disabled"
+    mv "$crystalWorkdir/.LocalStoreCache" "$crystalWorkdir/.LocalStoreCache.disabled"
+    mv "$crystalWorkdir/.CrystalCache" "$crystalWorkdir/.CrystalCache.disabled"
+    restoreCache="true"
+    skipCache=""
+fi
+
 echo "Counting items..."
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 fsckId="sreg_fsck-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
@@ -44,4 +53,10 @@ bpid="$$"
 find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" \( -exec sregi_verify_entry {} "$fsckStatusFile" "$skipCache" \; -or -exec kill "-$bpid" \; \)
 [[ -e "$fsckStatusFile.failed" ]] && die "Failed verifying entry! Aborted."
 echo "Done all items."
+if [[ "$restoreCache" == "true" ]]; then
+  echo "Restoring cache..."
+  mv "$crystalWorkdir/.StreamCache" "$crystalWorkdir/.StreamCache.disabled"
+  mv "$crystalWorkdir/.LocalStoreCache" "$crystalWorkdir/.LocalStoreCache.disabled"
+  mv "$crystalWorkdir/.CrystalCache" "$crystalWorkdir/.CrystalCache.disabled"
+
 finish

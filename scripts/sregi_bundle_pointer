@@ -78,3 +78,4 @@ failCleanup() {
     die "Failed to read pointer after bundling it!$noteAppend"
 }
 sregi_verify_entry "$dbFilePath" --quick || failCleanup
+rm "$dbTempFileDir/$hashFull"

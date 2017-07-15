@@ -20,10 +20,14 @@ hashA="${hashFull:0:1}"
 hashB="${hashFull:1:1}"
 hashC="${hashFull:2:1}"
 hashDir="$dbDir/$hashA/$hashB/$hashC"
+dbTempFileDir="$dbDir/.BundlePointerTemp"
 dbFilePath="$hashDir/$hashFull"
+mkdir -p "$dbTempFileDir"
 if [[ -f "$dbFilePath" ]]; then
     if [[ "$(head -c 36 "$dbFilePath")" != "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
         die "The item $dbFilePath does not appear to be a LocalStore pointer! This is most likely a bug in sreg. Aborting to avoid messing things up."
+    else
+        mv "$dbFilePath" "$dbTempFileDir/$hashFull"
     fi
 else
     die "The item $dbFilePath does not appear to exist, even though sregi_bundle_pointer has been requested for it! This situation should be investigated."
@@ -68,6 +72,8 @@ failCleanup() {
         mv "$dbFilePath" "$failedBundleDir/$hashFull"
         noteAppend=" It's been moved to $failedBundleDir/$hashFull so you can inspect it."
     fi
+    # Put the LocalStore pointer back
+    mv "$dbTempFileDir/$hashFull" "$dbFilePath"
     die "Failed to read pointer after bundling it!$noteAppend"
 }
 sregi_verify_entry "$dbFilePath" || failCleanup

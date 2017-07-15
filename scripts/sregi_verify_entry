@@ -21,24 +21,22 @@ fsckStatusFile="$2"
 if [[ "--quick" == "$2" ]]; then
     quick="true"
     fsckStatusFile=""
-    shift
 fi
 
 if [[ "--quick" == "$3" ]]; then
     quick="true"
-    shift
 fi
 
 skipCache=""
 dropFailed="false"
-if [[ "--skip-cache" == "$3" ]]; then
+if [[ "--skip-cache" == "$3" || "--skip-cache" == "$4" ]]; then
     skipCache="--skip-cache"
 fi
-if [[ "--skip-drop-failed" == "$3" ]]; then
+if [[ "--skip-drop-failed" == "$3" || "--skip-drop-failed" == "$4" ]]; then
     skipCache="--skip-cache"
     dropFailed="true"
 fi
-if [[ "--drop-failed" == "$3" ]]; then
+if [[ "--drop-failed" == "$3" || "--drop-failed" == "$4" ]]; then
     dropFailed="true"
 fi
 

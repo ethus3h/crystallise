@@ -16,6 +16,14 @@ fail() {
     die "Error verifying stream registry database entry $knownHash!"
 }
 
+fsckStatusFile="$2"
+
+if [[ "--quick" == "$2" ]]; then
+    quick="true"
+    fsckStatusFile=""
+    shift
+fi
+
 if [[ "--quick" == "$3" ]]; then
     quick="true"
     shift
@@ -34,7 +42,6 @@ if [[ "--drop-failed" == "$3" ]]; then
     dropFailed="true"
 fi
 
-fsckStatusFile="$2"
 knownHash="(Failed to retrieve entry hash!)"
 knownHashTemp="$(sregi_hash_from_file "$1")" || fail "$1"
 if [[ -n "$knownHashTemp" ]]; then

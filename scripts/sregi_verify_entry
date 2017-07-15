@@ -40,13 +40,14 @@ knownHashTemp="$(sregi_hash_from_file "$1")" || fail "$1"
 if [[ -n "$knownHashTemp" ]]; then
     knownHash="$knownHashTemp"
 fi
-echo "Started verifying stream registry database entry $knownHash."
 
 exitCode=""
 if [[ "$quick" == "true" ]]; then
+    echo "Started quick-checking stream registry database entry $knownHash."
     sregi_verify_entry "$1"
     exitCode="$?"
 else
+    #echo "Started verifying stream registry database entry $knownHash."
     sreg_read_stream --entry-path "$1" --checksum "$knownHash" --disallow-hash-pointer "$skipCache" < "$1" > /dev/null
     exitCode="$?"
 fi
@@ -68,7 +69,7 @@ if [[ "$exitCode" == "0" ]]; then
         numberProcessedPercentage="$(printf "%.3f\\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
         echo "Verified stream registry database entry $knownHash: finished #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
     else
-        echo "Verified stream registry database entry $knownHash."
+        #echo "Verified stream registry database entry $knownHash."
     fi
     exit
 else

@@ -40,7 +40,7 @@ mkdir -p "$crystalWorkdir/$streamId"
     fi
     localStoreSize="$(du -sb "$dbDir"/LocalStore | awk '{print $1;}')"
     if [[ "$localStoreSize" -gt 100000000 ]]; then
-        sreg_flush_localstore
+        sreg_flush_localstore > /dev/null
     fi
     hashA="${hashFull:0:1}"
     hashB="${hashFull:1:1}"

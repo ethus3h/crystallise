@@ -103,7 +103,7 @@ if [[ -f "$destinationName" ]]; then
             [[ "$pointerTypeSignature" != "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] && # Pack pointer data is in the pointer
             [[ "$pointerTypeSignature" != "760fa662-89cf-4ebd-9664-150b7637ddd4" ]] # Hash pointer
         then
-            if [[ "$sourceChecksum" == "$(sha512sum < "$destinationName" | awk '{print $1;}')" ]]
+            if [[ "$sourceChecksum" == "$(sha512sum < "$destinationName" | awk '{print $1;}')" ]]; then
                 echo "(Skipping matching normal file $destinationName)"
             fi
         fi

@@ -105,6 +105,7 @@ if [[ -f "$destinationName" ]]; then
         then
             if [[ "$sourceChecksum" == "$(sha512sum < "$destinationName" | awk '{print $1;}')" ]]; then
                 echo "(Skipping matching normal file $destinationName)"
+                exit 0
             fi
         fi
     fi

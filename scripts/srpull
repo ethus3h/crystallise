@@ -32,12 +32,12 @@ if [[ -z "$2" ]]; then
 fi
 
 if [[ -d "$1" ]]; then
-    destinationFindTarget="$2/$(basename "$1")/"
+    destinationFindTarget="$destinationArgument/$(basename "$1")/"
     if [[ "$1" =~ '/'$ ]]; then
-        destinationFindTarget="$2/"
+        destinationFindTarget="$destinationArgument/"
     fi
 else
-    destinationFindTarget="$(dirname "$1")"
+    destinationFindTarget="$destinationArgument/$(dirname "$1")"
 fi
 
 fsckId="srpull-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"

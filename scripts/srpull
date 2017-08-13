@@ -26,9 +26,18 @@ else
     rsync -av --checksum --progress --no-i-r --ignore-existing "$1" "$2/"
 fi
 
-destinationFindTarget="$2/$(basename "$1")/"
-if [[ "$1" =~ '/'$ ]]; then
-    destinationFindTarget="$2/"
+destinationArgument="$2"
+if [[ -z "$2" ]]; then
+    destinationArgument="."
+fi
+
+if [[ -d "$1" ]]; then
+    destinationFindTarget="$2/$(basename "$1")/"
+    if [[ "$1" =~ '/'$ ]]; then
+        destinationFindTarget="$2/"
+    fi
+else
+    destinationFindTarget="$(dirname "$1")"
 fi
 
 fsckId="srpull-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"

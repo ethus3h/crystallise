@@ -44,8 +44,12 @@ fsckId="srpull-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 fsckStatusFile="/tmp/$fsckId.status"
 
 itemCount="$(find "$destinationFindTarget" -type f -printf '.' | wc -c)"
-# Add 1 to the item count to account for the target folder itself
-echo "$((itemCount + 1))" > "$fsckStatusFile"
+if [[ -d "$1" ]]; then
+    # Add 1 to the item count to account for the target folder itself
+    echo "$((itemCount + 1))" > "$fsckStatusFile"
+else
+    echo "$itemCount" > "$fsckStatusFile"
+fi
 
 sregi_expand_pointers "$fsckStatusFile" "$destinationFindTarget"
 

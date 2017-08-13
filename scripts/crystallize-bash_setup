@@ -70,10 +70,22 @@ sregi_hash_from_file() (
         fi
         )
     }
-    set +o pipefail
-    tail -c +38 "$file" | head -c 129
-    pipecheck
-    set -o pipefail
+    if [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]] || # Standard remote pointer
+        [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]] || # LocalStore pointer
+        [[ "$pointerTypeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]] || # Remote pack pointer
+        [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] || # Remote pack pointer, with pointer data in the pointer
+        [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]] # Hash pointer
+    then
+        set +o pipefail
+        tail -c +38 "$file" | head -c 129
+        pipecheck
+        set -o pipefail
+    else
+        # Should this have pipefail? Should a generalized version of pipecheck be used for it? What about other pipes in crystallize, and in bash scripts in general?
+        set +o pipefail
+        sha512sum < "$file" | awk '{print $1;}'
+        set -o pipefail
+    fi
 )
 
 EmberLibrary="$(crystallize-getconf EmberLibrary)"

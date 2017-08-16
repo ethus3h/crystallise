@@ -45,6 +45,7 @@ allElementsEqual() {
 }
 
 join_by() {
+    # from https://stackoverflow.com/questions/1527049/join-elements-of-an-array
     local d="$1"
     shift
     echo -n "$1"

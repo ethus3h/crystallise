@@ -29,7 +29,7 @@ git-escape-path() {
 }
 
 sreg_fuse() {
-    sreg_fuse.py "$@" "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"
+    sreg_fuse.py "$@" "$(sregi_find_dir)"
 }
 
 # Function is defined with parentheses to make it run in a subshell to prevent the "die" affecting the calling script (the calling script should be responsible for trapping/handling nonzero exit codes itself)
@@ -41,7 +41,7 @@ sregi_available_by_hash() (
     if [[ -n "$1" ]]; then
         local availByHashPointerFile="$1"
     else
-        local availByHashPointerFile="${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/$hashA/$hashB/$hashC/$knownChecksum"
+        local availByHashPointerFile="$(sregi_find_dir "$1")/$hashA/$hashB/$hashC/$knownChecksum"
     fi
     if ! [[ -e "$availByHashPointerFile" ]]; then
         die "Item does not have the corresponding stream registry entry $availByHashPointerFile!"

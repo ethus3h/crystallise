@@ -34,7 +34,7 @@ sreg_fuse() {
 
 # Function is defined with parentheses to make it run in a subshell to prevent the "die" affecting the calling script (the calling script should be responsible for trapping/handling nonzero exit codes itself)
 sregi_available_by_hash() (
-    if [[ -z "${knownChecksum+x}" ]]; then
+    if [[ -z "${knownChecksum+x}" ]] || [[ -n "$2" ]]; then
         knownChecksum="$1"
         shift
     fi

@@ -8,7 +8,7 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 useCustomPassphrase="$1"
 shift
-customPassphrase="$1"
+crystallizePassphrase="$1" # Custom passphrase only. Empty at this point if using configured passphrase
 shift
 logfile="$1"
 shift
@@ -47,7 +47,7 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
     export crystalTitle
     crystalCollection="$(crystallize-getconf Collection)"
     export crystalCollection
-    crystallizePassphrase="$(crystallize-getconf Passphrase)"
+    [[ useCustomPassphrase != "true" ]] && crystallizePassphrase="$(crystallize-getconf Passphrase)"
     export crystallizePassphrase
 
     export CrystalID="$1"

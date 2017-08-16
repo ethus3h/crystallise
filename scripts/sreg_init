@@ -17,3 +17,7 @@ fi
 
 directory="."
 [[ -n "$1" ]] && directory="$1"
+
+mkdir -p "$directory/.sreg"
+touch "$directory/.sreg/.sreg.conf"
+[[ useCustomPassphrase == "true" ]] && print "$customPassphrase" > "$directory/.sreg/.sreg.conf"

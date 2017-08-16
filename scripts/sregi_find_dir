@@ -5,7 +5,13 @@ source ember_bash_setup &> /dev/null
 
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
-[[ -n "$1" ]] && cd "$1"
+if [[ -n "$1" ]]; then
+    if [[ -d "$1" ]]; then
+        cd "$1"
+    else
+        cd "$(dirname "$1")"
+    fi
+fi
 
 reportResult() {
     print "$1"

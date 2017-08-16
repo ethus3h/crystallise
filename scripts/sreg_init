@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
+source ember_bash_setup &> /dev/null
+#set -x
+
+((EUID)) && exec sudo -- "$0" "$@"
+
+useCustomPassphrase="false"
+customPassphrase=""
+if [[ "$1" == "--passphrase" ]]; then
+    useCustomPassphrase="true"
+    shift
+    customPassphrase="$1"
+    shift
+fi

@@ -26,8 +26,8 @@ if [[ "--skip-cache" == "$3" ]]; then
     skipCache="--skip-cache"
 fi
 
-if sreg_read_stream --entry-path "$1" --checksum "$knownHash" --disallow-hash-pointer "$skipCache" < "$1" > /dev/null; then
-    dbDir="${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"
+if sreg_read_stream --sreg-dir "$sregDir" --entry-path "$1" --checksum "$knownHash" --disallow-hash-pointer "$skipCache" < "$1" > /dev/null; then
+    dbDir="$(sregi_find_dir --sreg-dir "$sregDir")"
     hashA="${knownHash:0:1}"
     hashB="${knownHash:1:1}"
     hashC="${knownHash:2:1}"

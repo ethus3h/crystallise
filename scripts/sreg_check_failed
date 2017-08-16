@@ -31,7 +31,8 @@ dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ F
 find "$dbDir" -type f -printf '.' | wc -c > "$fsckStatusFile"
 rm -f "$fsckStatusFile.failed"
 bpid="$$"
-find "$dbDir" -type f \( -exec sregi_check_failed_entry {} "$fsckStatusFile" "$skipCache" \; -or -exec kill "-$bpid" \; \)
+sregDir="$(sregi_find_dir)"
+find "$dbDir" -type f \( -exec sregi_check_failed_entry --sreg-dir "$sregDir" {} "$fsckStatusFile" "$skipCache" \; -or -exec kill "-$bpid" \; \)
 [[ -e "$fsckStatusFile.failed" ]] && die "Failed verifying entry! Aborted."
 echo "Done all items."
 finish

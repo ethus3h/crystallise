@@ -51,9 +51,10 @@ if [[ "$dropUnused" == "false" ]]; then
     exit 0
 fi
 
-find "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" -not -path "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/Unused Pointers/*" -type f -printf '.' | wc -c > "$fsckStatusFile"
+sregDir="$(sregi_find_dir)"
+find "$sregDir" -not -path "$sregDir/Unused Pointers/*" -type f -printf '.' | wc -c > "$fsckStatusFile"
 echo "0" > "$fsckStatusFile.done"
 
-find "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" -not -path "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/Unused Pointers/*" -type f \( -exec sregi_drop_single_unused {} "$fsckIdList" "$fsckStatusFile" \; -or -exec kill "-$bpid" \; \)
+find "$sregDir" -not -path "$sregDir/Unused Pointers/*" -type f \( -exec sregi_drop_single_unused {} "$fsckIdList" "$fsckStatusFile" \; -or -exec kill "-$bpid" \; \)
 
 finish

@@ -5,16 +5,10 @@ source ember_bash_setup &> /dev/null
 
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
-knownHash="$(basename "$1")"
-recoveredHash="$(sha512sum < "$1" | awk '{print $1;}')"
-if [[ "$knownHash" != "$recoveredHash" ]]; then
-    echo "Begun backup operation for $1"
-    # FIXME: This shellcheck directive is only needed for outdated shellcheck versions. Once CodeClimate's shellcheck gets updated (which probably means when Debian stable updates shellcheck), it can be removed.
-    # shellcheck disable=SC2094
-    sreg_read_stream < "$1" | sponge "$1"
-    echo -n "Finished backup operation for $1 (backup occupies "
-else
-    echo -n "(Backup for $1 already completed, occupying "
-fi
-echo -n "$(du -bsh "$1" | awk '{print $1;}')"
-echo ")"
+directory="."
+[[ -n "$1" ]] && directory="$1"
+
+cd "$directory"
+[[ -e ".sreg/.sreg.conf"]]
+
+print "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"

@@ -28,35 +28,6 @@ git-escape-path() {
     fi
 }
 
-contains() {
-    # from https://stackoverflow.com/questions/3685970/check-if-a-bash-array-contains-a-value
-    local elem match="$1"
-    shift
-    for elem; do [[ "$elem" == "$match" ]] && return 0; done
-    return 1
-}
-
-allElementsEqual() {
-    # from https://stackoverflow.com/questions/3685970/check-if-a-bash-array-contains-a-value
-    local elem match="$1"
-    shift
-    for elem; do [[ "$elem" == "$match" ]] || return 1; done
-    return 0
-}
-
-join_by() {
-    # from https://stackoverflow.com/questions/1527049/join-elements-of-an-array
-    local d="$1"
-    shift
-    echo -n "$1"
-    shift
-    printf "%s" "${@/#/$d}"
-}
-
-pipecheck() {
-    allElementsEqual "0" "$@" || die "A failure status was reported by a call to pipecheck, with the reported exit statuses $(join_by  "$@")"
-}
-
 sreg_fuse() {
     sreg_fuse.py "$@" "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"
 }

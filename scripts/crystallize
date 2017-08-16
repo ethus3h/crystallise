@@ -31,6 +31,15 @@ if [[ "$1" == "--keep" ]]; then
     shift
 fi
 
+useCustomPassphrase="false"
+customPassphrase=""
+if [[ "$1" == "--passphrase" ]]; then
+    useCustomPassphrase="true"
+    shift
+    customPassphrase="$1"
+    shift
+fi
+
 #Remove first argument if it's the end-of-options delimiter
 if [[ "$1" == "--" ]]; then
     shift

@@ -9,9 +9,12 @@ directory="."
 [[ -n "$1" ]] && directory="$1"
 
 reportResult() {
-    
+    print "$1"
+    exit 0
 }
-cd "$directory"
-[[ -d ".sreg" ]] && 
 
-print "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"
+cd "$directory"
+
+[[ -d ".sreg" ]] && reportResult "$(readlink -e .sreg)"
+
+reportResult "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"

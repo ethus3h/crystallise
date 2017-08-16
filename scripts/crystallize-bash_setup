@@ -28,6 +28,27 @@ git-escape-path() {
     fi
 }
 
+contains() {
+    # from https://stackoverflow.com/questions/3685970/check-if-a-bash-array-contains-a-value
+    local elem match="$1"
+    shift
+    for elem; do [[ "$elem" == "$match" ]] && return 0; done
+    return 1
+}
+
+pipecheck() {
+    (
+        pipeCheckTemp=("${PIPESTATUS[@]}")
+        if [[ "${pipeCheckTemp[0]}" != "141" ]] && [[ "${pipeCheckTemp[0]}" != "0" ]]; then
+            # Ignore status 141, which just means the input stream was terminated by head before all the data were consumed
+            die "Failed reading temporary stream file"
+        fi
+        if [[ "${pipeCheckTemp[1]}" != "0" ]]; then
+            die "Failed executing head on temporary stream file"
+        fi
+    )
+}
+
 sreg_fuse() {
     sreg_fuse.py "$@" "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"
 }
@@ -60,14 +81,14 @@ sregi_hash_from_file() (
     file="$1"
     pipecheck() {
         (
-        pipeCheckTemp=("${PIPESTATUS[@]}")
-        if [[ "${pipeCheckTemp[0]}" != "141" ]] && [[ "${pipeCheckTemp[0]}" != "0" ]]; then
-            # Ignore status 141, which just means the input stream was terminated by head before all the data were consumed
-            die "Failed reading temporary stream file"
-        fi
-        if [[ "${pipeCheckTemp[1]}" != "0" ]]; then
-            die "Failed executing head on temporary stream file"
-        fi
+            pipeCheckTemp=("${PIPESTATUS[@]}")
+            if [[ "${pipeCheckTemp[0]}" != "141" ]] && [[ "${pipeCheckTemp[0]}" != "0" ]]; then
+                # Ignore status 141, which just means the input stream was terminated by head before all the data were consumed
+                die "Failed reading temporary stream file"
+            fi
+            if [[ "${pipeCheckTemp[1]}" != "0" ]]; then
+                die "Failed executing head on temporary stream file"
+            fi
         )
     }
     if [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]] || # Standard remote pointer

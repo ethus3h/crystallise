@@ -6,15 +6,13 @@ source ember_bash_setup &> /dev/null
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 reportResult() {
+    [[ -d "$1" ]] || die "Result is not a directory!"
     print "$1"
     exit 0
 }
 
-if [[ "$1" == "--passphrase" ]]; then
-    useCustomPassphrase="true"
-    shift
-    customPassphrase="$1"
-    shift
+if [[ "$1" == "--use-dir" ]]; then
+    reportResult "$2"
 fi
 
 if [[ -n "$1" ]]; then

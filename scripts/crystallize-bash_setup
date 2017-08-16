@@ -56,7 +56,8 @@ sregi_available_by_hash() (
     fi
 )
 
-sregi_hash_from_file() {
+# Function is defined with parentheses to avoid dumping the enclosed function definition into the calling script
+sregi_hash_from_file() (
     file="$1"
     sregi_hash_from_file_pipecheck() {
         (
@@ -88,6 +89,6 @@ sregi_hash_from_file() {
         sha512sum < "$file" | awk '{print $1;}'
         set -o pipefail
     fi
-}
+)
 
 EmberLibrary="$(crystallize-getconf EmberLibrary)"

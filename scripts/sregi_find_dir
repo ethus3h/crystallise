@@ -8,7 +8,10 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 directory="."
 [[ -n "$1" ]] && directory="$1"
 
+reportResult() {
+    
+}
 cd "$directory"
-[[ -e ".sreg/.sreg.conf"]]
+[[ -d ".sreg" ]] && 
 
 print "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"

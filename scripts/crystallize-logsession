@@ -47,7 +47,7 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
     export crystalTitle
     crystalCollection="$(crystallize-getconf Collection)"
     export crystalCollection
-    [[ useCustomPassphrase != "true" ]] && crystallizePassphrase="$(crystallize-getconf Passphrase)"
+    [[ "$useCustomPassphrase" != "true" ]] && crystallizePassphrase="$(crystallize-getconf Passphrase)"
     export crystallizePassphrase
 
     export CrystalID="$1"

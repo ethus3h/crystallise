@@ -85,7 +85,7 @@ fi
 CrystalID="C3-$(date-uuid)"
 export CrystalID
 
-crystallize-logsession "$crystalWorkdir/$CrystalID" "$CrystalID" "$@"
+crystallize-logsession "$useCustomPassphrase" "$customPassphrase" "$crystalWorkdir/$CrystalID" "$CrystalID" "$@"
 
 #echo "Working..."
 echo "$0 $*" > "$crystalWorkdir/$CrystalID.cmd"

@@ -96,7 +96,7 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
         #resolve path
         echo "Trying to resolve ${CrystallizePaths[$i]}..."
         setVariableToCommandOutput "abspath" "emreadlink" "${CrystallizePaths[$i]}"
-        [[ -e "${abspath:?}" ]] || die "The file ${abspath:?} requested to be crystallized does not exist."
+        [[ -h "${abspath:?}" ]] || [[ -e "${abspath:?}" ]] || die "The file ${abspath:?} requested to be crystallized does not exist."
         CrystallizePaths[$i]="${abspath:?}"
     done
 

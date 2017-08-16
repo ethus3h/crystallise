@@ -41,7 +41,7 @@ sregi_available_by_hash() (
     if [[ -n "$1" ]]; then
         local availByHashPointerFile="$1"
     else
-        local availByHashPointerFile="$(sregi_find_dir "$1")/$hashA/$hashB/$hashC/$knownChecksum"
+        local availByHashPointerFile="$(sregi_find_dir)/$hashA/$hashB/$hashC/$knownChecksum"
     fi
     if ! [[ -e "$availByHashPointerFile" ]]; then
         die "Item does not have the corresponding stream registry entry $availByHashPointerFile!"

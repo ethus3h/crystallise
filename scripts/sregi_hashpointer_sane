@@ -56,7 +56,7 @@ then
                 die "Item $inputFile did not match the stored checksum!"
             fi
         else
-            sregi_available_by_hash
+            sregi_available_by_hash "$knownChecksum"
         fi
         if [[ -n "$fsckIdList" ]]; then
             echo "$knownChecksum" >> "$fsckIdList"

@@ -5,15 +5,12 @@ source ember_bash_setup &> /dev/null
 
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
-directory="."
-[[ -n "$1" ]] && directory="$1"
+[[ -n "$1" ]] && cd "$1"
 
 reportResult() {
     print "$1"
     exit 0
 }
-
-cd "$directory"
 
 [[ -d ".sreg" ]] && reportResult "$(readlink -e .sreg)"
 

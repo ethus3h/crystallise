@@ -75,7 +75,8 @@ sregi_available_by_hash() (
     if ! [[ -e "$availByHashPointerFile" ]]; then
         die "Item does not have the corresponding stream registry entry $availByHashPointerFile!"
     fi
-    local innerPointerTypeSignature="$(head -c 36 "$availByHashPointerFile")"
+    local innerPointerTypeSignature
+    innerPointerTypeSignature="$(head -c 36 "$availByHashPointerFile")"
     local dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
     if [[ "$innerPointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
         if ! [[ -f "$dbDir/LocalStore/$hashA/$hashB/$hashC/$knownChecksum" ]]; then
@@ -99,6 +100,8 @@ sregi_hash_from_file() (
             fi
         )
     }
+    local pointerTypeSignature
+    pointerTypeSignature="$(head -c 36 "$1")"
     if [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]] || # Standard remote pointer
         [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]] || # LocalStore pointer
         [[ "$pointerTypeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]] || # Remote pack pointer

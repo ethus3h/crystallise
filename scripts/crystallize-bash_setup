@@ -36,17 +36,24 @@ contains() {
     return 1
 }
 
+allElementsEqual() {
+    # from https://stackoverflow.com/questions/3685970/check-if-a-bash-array-contains-a-value
+    local elem match="$1"
+    shift
+    for elem; do [[ "$elem" == "$match" ]] || return 1; done
+    return 0
+}
+
+join_by() {
+    local d="$1"
+    shift
+    echo -n "$1"
+    shift
+    printf "%s" "${@/#/$d}"
+}
+
 pipecheck() {
-    (
-        pipeCheckTemp=("${PIPESTATUS[@]}")
-        if [[ "${pipeCheckTemp[0]}" != "141" ]] && [[ "${pipeCheckTemp[0]}" != "0" ]]; then
-            # Ignore status 141, which just means the input stream was terminated by head before all the data were consumed
-            die "Failed reading temporary stream file"
-        fi
-        if [[ "${pipeCheckTemp[1]}" != "0" ]]; then
-            die "Failed executing head on temporary stream file"
-        fi
-    )
+    allElementsEqual "0" "$@" || die "A failure status was reported by a call to pipecheck, with the reported exit statuses $(join_by  "$@")"
 }
 
 sreg_fuse() {

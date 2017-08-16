@@ -8,6 +8,15 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 shopt -s extglob
 
+useCustomPassphrase="false"
+customPassphrase=""
+if [[ "$1" == "--passphrase" ]]; then
+    useCustomPassphrase="true"
+    shift
+    customPassphrase="$1"
+    shift
+fi
+
 #Remove URL
 CrystalAddress="${1#https://archive.org/@(details|download)/}"
 #Remove trailing path(s) from identifier

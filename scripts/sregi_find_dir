@@ -15,6 +15,7 @@ reportResult() {
 [[ -d ".sreg" ]] && reportResult "$(readlink -e .sreg)"
 
 while [[ "$(readlink -e .)" != "/" ]]; do
-    
+    cd ..
+    [[ -d ".sreg" ]] && reportResult "$(readlink -e .sreg)"
 
 reportResult "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"

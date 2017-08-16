@@ -11,8 +11,16 @@ reportResult() {
     exit 0
 }
 
-if [[ "$1" == "--sreg-dir" ]] && [[ -n "$2" ]]; then
-    reportResult "$2"
+reportDefault() {
+    reportResult "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"
+}
+
+if [[ "$1" == "--sreg-dir" ]]; then
+    if [[ -n "$2" ]]; then
+        reportResult "$2"
+    else
+        reportDefault
+    fi
 fi
 
 if [[ -n "$1" ]]; then
@@ -28,4 +36,4 @@ while [[ "$(readlink -e .)" != "/" ]]; do
     cd .. || die "Could not cd to enclosing directory!"
 done
 
-reportResult "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"
+reportDefault

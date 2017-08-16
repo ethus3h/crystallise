@@ -21,6 +21,12 @@ finish() {
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR
 trap finish EXIT
 
+overrideSregDirPath=""
+if [[ "$1" == "--sreg-dir" ]]; then
+    shift
+    overrideSregDirPath="$1"
+    shift
+fi
 if [[ "$1" == "--entry-path" ]]; then
     shift
     overrideEntryPath="$1"

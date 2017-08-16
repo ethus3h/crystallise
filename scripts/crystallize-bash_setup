@@ -56,10 +56,9 @@ sregi_available_by_hash() (
     fi
 )
 
-sregi_hash_from_file() (
-    # Function is defined with parentheses to make it run in a subshell to prevent the definition of pipecheck clobbering other functions named that in the calling script
+sregi_hash_from_file() {
     file="$1"
-    pipecheck() {
+    sregi_hash_from_file_pipecheck() {
         (
             pipeCheckTemp=("${PIPESTATUS[@]}")
             if [[ "${pipeCheckTemp[0]}" != "141" ]] && [[ "${pipeCheckTemp[0]}" != "0" ]]; then
@@ -81,14 +80,14 @@ sregi_hash_from_file() (
     then
         set +o pipefail
         tail -c +38 "$file" | head -c 129
-        pipecheck
+        sregi_hash_from_file_pipecheck
         set -o pipefail
     else
-        # Should this have pipefail? Should a generalized version of pipecheck be used for it? What about other pipes in crystallize, and in bash scripts in general?
+        # Should this have pipefail? Should the general pipecheck be used for it? What about other pipes in crystallize, and in bash scripts in general?
         set +o pipefail
         sha512sum < "$file" | awk '{print $1;}'
         set -o pipefail
     fi
-)
+}
 
 EmberLibrary="$(crystallize-getconf EmberLibrary)"

@@ -7,9 +7,9 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 if [[ -n "$1" ]]; then
     if [[ -d "$1" ]]; then
-        cd "$1"
+        cd "$1" || die "Could not cd to specified directory!"
     else
-        cd "$(dirname "$1")"
+        cd "$(dirname "$1")" || die "Could not cd to directory of specified path!"
     fi
 fi
 
@@ -20,7 +20,7 @@ reportResult() {
 
 while [[ "$(readlink -e .)" != "/" ]]; do
     [[ -d ".sreg" ]] && reportResult "$(readlink -e .sreg)"
-    cd ..
+    cd .. || die "Could not cd to enclosing directory!"
 done
 
 reportResult "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"

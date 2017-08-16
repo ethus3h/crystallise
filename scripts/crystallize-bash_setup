@@ -34,16 +34,12 @@ sreg_fuse() {
 
 # Function is defined with parentheses to make it run in a subshell to prevent the "die" affecting the calling script (the calling script should be responsible for trapping/handling nonzero exit codes itself)
 sregi_available_by_hash() (
-    if [[ -z "${knownChecksum+x}" ]] || [[ -n "$2" ]]; then
-        knownChecksum="$1"
-        shift
-    fi
-    knownChecksum="${knownChecksum:?}"
-    hashA="${knownChecksum:0:1}"
-    hashB="${knownChecksum:1:1}"
-    hashC="${knownChecksum:2:1}"
-    if [[ -n "$1" ]]; then
-        local availByHashPointerFile="$1"
+    local knownChecksum="$1"
+    local hashA="${knownChecksum:0:1}"
+    local hashB="${knownChecksum:1:1}"
+    local hashC="${knownChecksum:2:1}"
+    if [[ -n "$2" ]]; then
+        local availByHashPointerFile="$2"
     else
         local availByHashPointerFile="$(sregi_find_dir)/$hashA/$hashB/$hashC/$knownChecksum"
     fi

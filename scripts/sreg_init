@@ -13,3 +13,60 @@ if [[ "$1" == "--passphrase" ]]; then
     customPassphrase="$1"
     shift
 fi
+
+finish() {
+    if [[ -e "${crystalWorkdir:?}/${fsckId:?}" ]]; then
+        rm -r "${crystalWorkdir:?}/${fsckId:?}"
+    fi
+    if [[ -e "/tmp/${fsckId:?}" ]]; then
+        rm -r "/tmp/${fsckId:?}"
+    fi
+}
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+trap finish EXIT
+
+skipCache=""
+if [[ "--skip-cache" == "$1" ]]; then
+    skipCache="--skip-cache"
+    shift
+    if [[ "--drop-failed" == "$1" ]]; then
+        skipCache="--skip-drop-failed"
+        shift
+    fi
+else
+    warn "Using cache entries. Specify --skip-cache for more thorough checking."
+    if [[ "--drop-failed" == "$1" ]]; then
+        skipCache="--drop-failed"
+        shift
+    fi
+fi
+
+if [[ "$skipCache" == "--skip-cache" || "$skipCache" == "--skip-drop-failed" ]]; then
+    echo "Disabling caches..."
+    mv "$crystalWorkdir/.StreamCache" "$crystalWorkdir/.StreamCache.disabled"
+    mv "$crystalWorkdir/.LocalStoreCache" "$crystalWorkdir/.LocalStoreCache.disabled"
+    mv "$crystalWorkdir/.CrystalCache" "$crystalWorkdir/.CrystalCache.disabled"
+    restoreCache="true"
+    skipCache=""
+fi
+
+echo "Counting items..."
+crystalWorkdir="$(crystallize-getconf WorkDirectory)"
+fsckId="sreg_fsck-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+mkdir -p "$crystalWorkdir/${fsckId:?}"
+mkdir -p "/tmp/${fsckId:?}"
+fsckStatusFile="/tmp/$fsckId/.sreg_fsck.status"
+dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
+find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -printf '.' | wc -c > "$fsckStatusFile"
+rm -f "$fsckStatusFile.failed"
+bpid="$$"
+find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" \( -exec sregi_verify_entry {} "$fsckStatusFile" "$skipCache" \; -or -exec kill "-$bpid" \; \)
+[[ -e "$fsckStatusFile.failed" ]] && die "Failed verifying entry! Aborted."
+echo "Done all items."
+if [[ "$restoreCache" == "true" ]]; then
+  echo "Restoring caches..."
+  mv "$crystalWorkdir/.StreamCache.disabled" "$crystalWorkdir/.StreamCache"
+  mv "$crystalWorkdir/.LocalStoreCache.disabled" "$crystalWorkdir/.LocalStoreCache"
+  mv "$crystalWorkdir/.CrystalCache.disabled" "$crystalWorkdir/.CrystalCache"
+fi
+finish

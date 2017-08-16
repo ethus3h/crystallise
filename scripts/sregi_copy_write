@@ -21,6 +21,13 @@ finish() {
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR
 trap finish EXIT
 
+sregDir=""
+if [[ "$1" == "--sreg-dir" ]]; then
+    shift
+    sregDir="$1"
+    shift
+fi
+
 if [[ "$1" == "--no-verify" ]]; then
     #echo "(Not verifying pointers.)"
     sregNoVerify=true

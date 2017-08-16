@@ -49,7 +49,7 @@ fi
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 cd "$crystalWorkdir" || exit 1
 streamId="sreg_read_stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
-dbDir="${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry/"
+dbDir="$(sregi_find_dir --sreg-dir "$overrideSregDirPath")"
 # Basic sanity check to make sure it bombs out if the pointer is cached but is missing a necessary LocalStore entry
 if [[ -z "$overrideEntryPath" ]]; then
     if [[ -n "$knownChecksum" ]]; then

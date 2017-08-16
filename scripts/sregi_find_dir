@@ -5,6 +5,18 @@ source ember_bash_setup &> /dev/null
 
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
+reportResult() {
+    print "$1"
+    exit 0
+}
+
+if [[ "$1" == "--passphrase" ]]; then
+    useCustomPassphrase="true"
+    shift
+    customPassphrase="$1"
+    shift
+fi
+
 if [[ -n "$1" ]]; then
     if [[ -d "$1" ]]; then
         cd "$1" || die "Could not cd to specified directory!"
@@ -12,11 +24,6 @@ if [[ -n "$1" ]]; then
         cd "$(dirname "$1")" || die "Could not cd to directory of specified path!"
     fi
 fi
-
-reportResult() {
-    print "$1"
-    exit 0
-}
 
 while [[ "$(readlink -e .)" != "/" ]]; do
     [[ -d ".sreg" ]] && reportResult "$(readlink -e .sreg)"

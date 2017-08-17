@@ -51,7 +51,7 @@ mkdir -p "$crystalWorkdir/$streamId"
         if [[ "$localStoreSize" -gt 300000000 ]] && [[ -e "$dbDir"/.LocalStore.lock ]]; then
             die "LocalStore is larger than expected, and lock file is present. Has a previous invocation of sreg_flush_localstore crashed? If so, manually remove $dbDir/.LocalStore.lock and re-run sreg_flush_localstore... (It's possible that sreg_flush_localstore is still running, though.)"
         fi
-        sreg_flush_localstore > /dev/null
+        sreg_flush_localstore --sreg-dir "$sregDir" > /dev/null
     fi
     hashA="${hashFull:0:1}"
     hashB="${hashFull:1:1}"

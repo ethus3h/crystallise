@@ -5,6 +5,14 @@ source ember_bash_setup &> /dev/null
 
 ((EUID)) && exec sudo -- "$0" "$@"
 
+sregDir=""
+if [[ "$1" == "--sreg-dir" ]]; then
+    shift
+    sregDir="$1"
+    shift
+fi
+sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
+
 finish() {
     (
         cd "/${crystalWorkdir:?}/" || die
@@ -67,7 +75,7 @@ mkdir -p "$crystalWorkdir/$streamId"
         knownChecksum="$hashFull"
         if sregi_available_by_hash "$knownChecksum" &> /dev/null; then
             # Item already has been stored and passes a basic sanity check, so check that the existing pointer can be restored
-            recoveredHash="$(sreg_read_stream --disallow-hash-pointer < "$dbFilePath" | sha512sum | awk '{print $1;}')"
+            recoveredHash="$(sreg_read_stream --sreg-dir "$sregDir" --disallow-hash-pointer < "$dbFilePath" | sha512sum | awk '{print $1;}')"
             if [[ "$recoveredHash" != "$hashFull" ]]; then
                 # This is a fatal error because this condition could go undetected a long time (since the pointer passed the basic sanity check), and should perhaps have human attention.
                 die "Could not read existing item."

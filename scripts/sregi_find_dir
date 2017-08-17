@@ -19,7 +19,9 @@ if [[ "$1" == "--sreg-dir" ]]; then
     if [[ -n "$2" ]]; then
         reportResult "$2"
     else
-        reportDefault
+        if [[ "$3" != "--full-check" ]]; then
+            reportDefault
+        fi
     fi
 fi
 

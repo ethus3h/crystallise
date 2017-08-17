@@ -5,13 +5,6 @@ source ember_bash_setup &> /dev/null
 
 ((EUID)) && exec sudo -- "$0" "$@"
 
-sregDir=""
-if [[ "$1" == "--sreg-dir" ]]; then
-    shift
-    sregDir="$1"
-    shift
-fi
-
 finish() {
     if [[ -e "${crystalWorkdir:?}/${fsckId:?}" ]]; then
         rm -r "${crystalWorkdir:?}/${fsckId:?}"
@@ -40,7 +33,15 @@ else
 fi
 
 folderToCheck=""
-[[ -n "$1" ]] && folderToCheck="$1"
+if [[ -n "$1" ]] && folderToCheck="$1"
+
+sregDir=""
+if [[ "$1" == "--sreg-dir" ]]; then
+    shift
+    sregDir="$1"
+    shift
+fi
+
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check "$folderToCheck")"
 
 if [[ "$skipCache" == "--skip-cache" || "$skipCache" == "--skip-drop-failed" ]]; then

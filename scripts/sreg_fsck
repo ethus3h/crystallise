@@ -32,9 +32,7 @@ else
     fi
 fi
 
-sregDir="$1"
-
-sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
+sregDir="$(sregi_find_dir --sreg-dir "$1" --full-check)"
 
 if [[ "$skipCache" == "--skip-cache" || "$skipCache" == "--skip-drop-failed" ]]; then
     echo "Disabling caches..."

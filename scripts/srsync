@@ -39,7 +39,8 @@ fi
 if [[ "$sregNoVerify" == "true" ]]; then
     warn "(Not verifying pointers: use sreg_fsck to test the entire stream registry.)"
 fi
-if ! [[ -d "$2" ]]; then
+destinationParameter="${!#}"
+if ! [[ -d "$destinationParameter" ]]; then
     die "Destination is not a directory."
 fi
 echo "Counting items..."
@@ -47,36 +48,42 @@ crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 fsckId="srsync-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 mkdir -p "$crystalWorkdir/$fsckId"
 fsckStatusFile="/tmp/$fsckId.srsync.status"
-find "$1" -type f -printf '.' | wc -c > "$fsckStatusFile"
-sourceReplaced="${1/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"
-sourceReplaced="${1/%.git\//.git.686fc528-0e8e-4724-91bb-c103cdcdd592\/}"
+
+pathsToCopy=("${@:1:$(($#-1))}") # all but last argument
+
+find "${pathsToCopy[@]}" -type f -printf '.' | wc -c > "$fsckStatusFile"
 destinationReplaced="${2/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"
 destinationReplaced="${destinationReplaced//\/.git\//\/.git.686fc528-0e8e-4724-91bb-c103cdcdd592\/}"
 destinationSuffix=""
-if [[ -d "$1" ]]; then
-    destinationSuffix="/"
-fi
-if [[ "$1" =~ '/'$ ]]; then
-    destinationRoot="$sourceReplaced"
-    destinationFindTarget="$destinationReplaced$destinationSuffix"
-else
-    destinationRoot="$(dirname "$sourceReplaced")"
-    destinationFindTarget="$destinationReplaced/$(basename "$sourceReplaced")$destinationSuffix"
-fi
-if [[ "$destinationRoot" == "." ]]; then
-    destinationRootLength="0"
-else
-    destinationRootLength=${#destinationRoot}
-fi
-bpid="$$"
-# Use $1 in find commands rather than sourceReplaced because sourceReplaced is used for the target computation and post-processing (post-processing with find, that is).
-if [[ "$sregNoVerify" == "true" ]]; then
-    find "$1" -type f \( -exec sregi_copy_write --sreg-dir "$sregDir" --no-verify {} "$destinationReplaced" "$fsckStatusFile" "$destinationRootLength" \; -or -exec kill "-$bpid" \; \)
-else
-    find "$1" -type f \( -exec sregi_copy_write --sreg-dir "$sregDir" {} "$destinationReplaced" "$fsckStatusFile" "$destinationRootLength" \; -or -exec kill "-$bpid" \; \)
-fi
-# This NEEDS to skip regular files, because otherwise files that don't exist in the directory will be copied and take up space!
-# rsync -a --ignore-existing --no-i-r "$1" "$2/"
-find "$destinationFindTarget" -type d -empty -exec touch {}/.keep \;
+
+for path in "${pathsToCopy[@]}"; do
+    sourceReplaced="${1/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"
+    sourceReplaced="${1/%.git\//.git.686fc528-0e8e-4724-91bb-c103cdcdd592\/}"
+    if [[ -d "$1" ]]; then
+        destinationSuffix="/"
+    fi
+    if [[ "$1" =~ '/'$ ]]; then
+        destinationRoot="$sourceReplaced"
+        destinationFindTarget="$destinationReplaced$destinationSuffix"
+    else
+        destinationRoot="$(dirname "$sourceReplaced")"
+        destinationFindTarget="$destinationReplaced/$(basename "$sourceReplaced")$destinationSuffix"
+    fi
+    if [[ "$destinationRoot" == "." ]]; then
+        destinationRootLength="0"
+    else
+        destinationRootLength=${#destinationRoot}
+    fi
+    bpid="$$"
+    # Use $1 in find commands rather than sourceReplaced because sourceReplaced is used for the target computation and post-processing (post-processing with find, that is).
+    if [[ "$sregNoVerify" == "true" ]]; then
+        find "$1" -type f \( -exec sregi_copy_write --sreg-dir "$sregDir" --no-verify {} "$destinationReplaced" "$fsckStatusFile" "$destinationRootLength" \; -or -exec kill "-$bpid" \; \)
+    else
+        find "$1" -type f \( -exec sregi_copy_write --sreg-dir "$sregDir" {} "$destinationReplaced" "$fsckStatusFile" "$destinationRootLength" \; -or -exec kill "-$bpid" \; \)
+    fi
+    # This NEEDS to skip regular files, because otherwise files that don't exist in the directory will be copied and take up space!
+    # rsync -a --ignore-existing --no-i-r "$1" "$2/"
+    find "$destinationFindTarget" -type d -empty -exec touch {}/.keep \;
+done
 
 finish

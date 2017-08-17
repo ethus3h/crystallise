@@ -5,8 +5,16 @@ source ember_bash_setup &> /dev/null
 
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
+sregDir=""
+if [[ "$1" == "--sreg-dir" ]]; then
+    shift
+    sregDir="$1"
+    shift
+fi
+sregDir="$(sregi_find_dir --sreg-dir "$sregDir")"
+
 packPointerName="$1"
-dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
+dbDir="$sregDir"
 hashFull="$(basename "$2")"
 crystalWorkdir="$3"
 # can't use \d in POSIX regex
@@ -65,7 +73,7 @@ echo "$requestCount" > "$dbLinkPath"
 
 # Done editing the cache: now, test the new pointer
 failCleanup() {
-    local failedBundleDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Bundling
+    local failedBundleDir="$sregDir/Failed Bundling"
     mkdir -p "$failedBundleDir"
     local noteAppend=" It couldn't be found, so isn't available for inspection!"
     if [[ -e "$dbFilePath" ]]; then
@@ -77,5 +85,5 @@ failCleanup() {
     mv "$dbTempFileDir/$hashFull" "$dbFilePath"
     die "Failed to read pointer after bundling it!$noteAppend"
 }
-sregi_verify_entry "$dbFilePath" --quick || failCleanup
+sregi_verify_entry --sregDir "$sregDir" "$dbFilePath" --quick || failCleanup
 rm "$dbTempFileDir/$hashFull"

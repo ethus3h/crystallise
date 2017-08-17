@@ -9,8 +9,14 @@ knownHash="$(basename "$1")"
 recoveredHash="$(sha512sum < "$1" | awk '{print $1;}')"
 if [[ "$knownHash" != "$recoveredHash" ]]; then
     pointerTypeSignature="$(head -c 36 "$1")"
-    if [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]] || [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]] || [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]]; then
-        warn "File failed backup verification!: $1"
-        crystallize "$1"
+    if [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]] || # Standard remote pointer
+        [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]] || # LocalStore pointer
+        [[ "$pointerTypeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]] || # Remote pack pointer
+        [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] || # Remote pack pointer, with pointer data in the pointer
+        [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]] # Hash pointer
+    then
+        die "File is supposedly a backup, but is actually a pointer!: $1"
+    else
+        die "File failed backup verification!: $1"
     fi
 fi

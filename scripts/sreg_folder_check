@@ -11,7 +11,7 @@ if [[ "$1" == "--sreg-dir" ]]; then
     sregDir="$1"
     shift
 fi
-sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
+sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check "$1")"
 
 finish() {
     trap - ERR
@@ -59,10 +59,9 @@ if [[ "$dropUnused" == "false" ]]; then
     exit 0
 fi
 
-sregDir="$(sregi_find_dir)"
 find "$sregDir" -not -path "$sregDir/Unused Pointers/*" -type f -printf '.' | wc -c > "$fsckStatusFile"
 echo "0" > "$fsckStatusFile.done"
 
-find "$sregDir" -not -path "$sregDir/Unused Pointers/*" -type f \( -exec sregi_drop_single_unused {} "$fsckIdList" "$fsckStatusFile" \; -or -exec kill "-$bpid" \; \)
+find "$sregDir" -not -path "$sregDir/Unused Pointers/*" -type f \( -exec sregi_drop_single_unused --sreg-dir "$sregDir" {} "$fsckIdList" "$fsckStatusFile" \; -or -exec kill "-$bpid" \; \)
 
 finish

@@ -33,7 +33,7 @@ save)
     fi
     ;;
 check)
-    streamId="sreg_read_stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    streamId="csum-$(date-uuid)"
     if [[ -z "$2" ]]; then
         sponge "/tmp/$streamId"
     else

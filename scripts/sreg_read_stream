@@ -50,6 +50,7 @@ crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 cd "$crystalWorkdir" || exit 1
 streamId="sreg_read_stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 dbDir="$(sregi_find_dir --sreg-dir "$sregDir")"
+sregDir="$dbDir"
 # Basic sanity check to make sure it bombs out if the pointer is cached but is missing a necessary LocalStore entry
 if [[ -z "$overrideEntryPath" ]]; then
     if [[ -n "$knownChecksum" ]]; then
@@ -192,6 +193,8 @@ mkdir "$streamId"
                     die "The provided pointer $hashFull is a hash pointer, but the corresponding hash is not registered in the database! ($dbDir/$hashA/$hashB/$hashC/$hashFull does not exist.)"
                 fi
                 readStreamArgs=()
+                readStreamArgs+=("--sreg-dir")
+                readStreamArgs+=("$sregDir")
                 if [[ -n "$overrideEntryPath" ]]; then
                     readStreamArgs+=("--entry-path" "$overrideEntryPath")
                 fi

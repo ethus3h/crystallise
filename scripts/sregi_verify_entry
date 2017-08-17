@@ -57,7 +57,7 @@ fi
 exitCode=""
 if [[ "$quick" == "true" ]]; then
     echo "Started quick-checking stream registry database entry $knownHash."
-    sregi_hashpointer_sane "$1"
+    sregi_hashpointer_sane --sreg-dir "$sregDir" "$1"
     exitCode="$?"
 else
     #echo "Started verifying stream registry database entry $knownHash."

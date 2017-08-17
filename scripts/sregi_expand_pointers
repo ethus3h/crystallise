@@ -45,7 +45,7 @@ while [[ ! -z "$1" ]]; do
         mv "$tempFileName" "$fileToResolve" || die "Moving retrieved data for $fileToResolve into place failed."
     else
         if [[ -d "$fileToResolve" ]]; then
-            find "$fileToResolve" -type f -exec sregi_expand_pointers "$fsckStatusFile" {} \;
+            find "$fileToResolve" -type f -exec sregi_expand_pointers --sreg-dir "$sregDir" "$fsckStatusFile" {} \;
         else
             warn "Skipping item $fileToResolve: not a regular file or directory."
         fi

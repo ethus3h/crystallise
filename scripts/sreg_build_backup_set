@@ -5,9 +5,17 @@ source ember_bash_setup &> /dev/null
 
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
+sregDir=""
+if [[ "$1" == "--sreg-dir" ]]; then
+    shift
+    sregDir="$1"
+    shift
+fi
+sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
+
 dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
 backupDir="$1"
 rsync -av --checksum --progress --no-i-r --ignore-existing "$dbDir"/ "$backupDir"
-find "$backupDir" -type f -exec sregi_file_backup {} \;
+find "$backupDir" -type f -exec sregi_file_backup --sreg-dir "$sregDir" {} \;
 rsync -av --checksum --progress --no-i-r --ignore-existing "$dbDir"/ "$backupDir"
 find "$backupDir" -type f -exec sregi_verify_backup {} \;

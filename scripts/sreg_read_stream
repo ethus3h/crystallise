@@ -5,6 +5,14 @@ source ember_bash_setup &> /dev/null
 
 ((EUID)) && exec sudo -- "$0" "$@"
 
+sregDir=""
+if [[ "$1" == "--sreg-dir" ]]; then
+    shift
+    sregDir="$1"
+    shift
+fi
+sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
+
 finish() {
     trap - ERR
     (
@@ -20,14 +28,6 @@ finish() {
 }
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR
 trap finish EXIT
-
-sregDir=""
-if [[ "$1" == "--sreg-dir" ]]; then
-    shift
-    sregDir="$1"
-    shift
-fi
-sregDir="$(sregi_find_dir --sreg-dir "$sregDir")"
 
 if [[ "$1" == "--entry-path" ]]; then
     shift

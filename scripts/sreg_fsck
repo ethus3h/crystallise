@@ -32,10 +32,7 @@ else
     fi
 fi
 
-sregDir=""
-if [[ -n "$1" ]]; then
-    sregDir="$1"
-fi
+sregDir="$1"
 
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 

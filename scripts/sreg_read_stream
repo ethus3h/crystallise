@@ -27,6 +27,8 @@ if [[ "$1" == "--sreg-dir" ]]; then
     sregDir="$1"
     shift
 fi
+sregDir="$(sregi_find_dir --sreg-dir "$sregDir")"
+
 if [[ "$1" == "--entry-path" ]]; then
     shift
     overrideEntryPath="$1"
@@ -49,8 +51,7 @@ fi
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 cd "$crystalWorkdir" || exit 1
 streamId="sreg_read_stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
-dbDir="$(sregi_find_dir --sreg-dir "$sregDir")"
-sregDir="$dbDir"
+dbDir="$sregDir"
 # Basic sanity check to make sure it bombs out if the pointer is cached but is missing a necessary LocalStore entry
 if [[ -z "$overrideEntryPath" ]]; then
     if [[ -n "$knownChecksum" ]]; then

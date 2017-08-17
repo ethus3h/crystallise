@@ -12,6 +12,7 @@ if [[ "$1" == "--sreg-dir" ]]; then
     sregDir="$1"
     shift
 fi
+sregDir="$(sregi_find_dir --sreg-dir "$sregDir")"
 
 fsckStatusFile="$1"
 shift

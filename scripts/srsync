@@ -12,7 +12,7 @@ if [[ "$1" == "--sreg-dir" ]]; then
     sregDir="$1"
     shift
 fi
-sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
+sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check "$2")"
 
 finish() {
     trap - ERR
@@ -71,9 +71,9 @@ fi
 bpid="$$"
 # Use $1 in find commands rather than sourceReplaced because sourceReplaced is used for the target computation and post-processing (post-processing with find, that is).
 if [[ "$sregNoVerify" == "true" ]]; then
-    find "$1" -type f \( -exec sregi_copy_write --no-verify {} "$destinationReplaced" "$fsckStatusFile" "$destinationRootLength" \; -or -exec kill "-$bpid" \; \)
+    find "$1" -type f \( -exec sregi_copy_write --sreg-dir "$sregDir" --no-verify {} "$destinationReplaced" "$fsckStatusFile" "$destinationRootLength" \; -or -exec kill "-$bpid" \; \)
 else
-    find "$1" -type f \( -exec sregi_copy_write {} "$destinationReplaced" "$fsckStatusFile" "$destinationRootLength" \; -or -exec kill "-$bpid" \; \)
+    find "$1" -type f \( -exec sregi_copy_write --sreg-dir "$sregDir" {} "$destinationReplaced" "$fsckStatusFile" "$destinationRootLength" \; -or -exec kill "-$bpid" \; \)
 fi
 # This NEEDS to skip regular files, because otherwise files that don't exist in the directory will be copied and take up space!
 # rsync -a --ignore-existing --no-i-r "$1" "$2/"

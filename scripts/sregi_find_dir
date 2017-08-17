@@ -22,6 +22,9 @@ if [[ "$1" == "--sreg-dir" ]]; then
     else
         if [[ "$2" != "--full-check" ]]; then
             reportDefault
+        else
+            shift
+            shift
         fi
     fi
 fi

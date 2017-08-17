@@ -195,7 +195,7 @@ fi
 if [[ "$exitcode" != "1" ]] && [[ "$exitcode" != "0" ]]; then
     exit "$exitcode"
 fi
-pipecheck "${exitCodes:2}"
+pipecheck "${exitCodes[@]:1}"
 set -o pipefail
 
 unset opt

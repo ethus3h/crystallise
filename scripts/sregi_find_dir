@@ -16,10 +16,11 @@ reportDefault() {
 }
 
 if [[ "$1" == "--sreg-dir" ]]; then
-    if [[ -n "$2" ]]; then
-        reportResult "$2"
+    shift
+    if [[ -n "$1" ]]; then
+        reportResult "$1"
     else
-        if [[ "$3" != "--full-check" ]]; then
+        if [[ "$2" != "--full-check" ]]; then
             reportDefault
         fi
     fi

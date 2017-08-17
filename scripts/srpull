@@ -43,20 +43,20 @@ if [[ -z "$destinationArgument" ]]; then
 fi
 
 for path in "${pathsToCopy[@]}"; do
-    if [[ -d "$1" ]]; then
-        destinationFindTarget="$destinationArgument/$(basename "$1")/"
-        if [[ "$1" =~ '/'$ ]]; then
+    if [[ -d "$path" ]]; then
+        destinationFindTarget="$destinationArgument/$(basename "$path")/"
+        if [[ "$path" =~ '/'$ ]]; then
             destinationFindTarget="$destinationArgument/"
         fi
     else
-        destinationFindTarget="$destinationArgument/$(basename "$1")"
+        destinationFindTarget="$destinationArgument/$(basename "$path")"
     fi
 
-    fsckId="srpull-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    fsckId="srpull-$(date-uuid)"
     fsckStatusFile="/tmp/$fsckId.status"
 
     itemCount="$(find "$destinationFindTarget" -type f -printf '.' | wc -c)"
-    if [[ -d "$1" ]]; then
+    if [[ -d "$path" ]]; then
         # Add 1 to the item count to account for the target folder itself
         echo "$((itemCount + 1))" > "$fsckStatusFile"
     else

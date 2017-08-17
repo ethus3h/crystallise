@@ -184,6 +184,7 @@ memlimit="$((memlimit - 1073741824))"
 # For the streaming upload (broken atm), (also remove the TmpUploadFile and pipe directly) do: s3-streaming-upload s3.us.archive.org "$crystalCollection" "$CrystalID" "$CrystalFileName" "$crystalFilesSize" "$crystalTitle" "Crystal $CrystalID" "Uploaded using Crystallize $crystallizeVersion; 1EA21BD8-DB7E-11E5-9733-728C37852114; $crystalTitle; $CrystalID"
 CrystalTmpUploadFile="$crystalWorkdir/$CrystalID.coal5"
 export CrystalTmpUploadFile
+# tar requires backslashes to be escaped in file names
 tarCrystallizePaths=("${crystallizePaths[@]//\\/\\\\}")
 set +o pipefail
 tar -cv -P -S --format pax "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.time-env.warc.gz" | pv -tparbIfei 0.1 -s "$crystalFilesSize" | xz -k -C sha256 -T 0 --lzma2=preset=1 --memlimit-compress="$memlimit" --stdout - | gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - | tee >(hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -o fbcpsde > "$crystalWorkdir/$CrystalID.checksums") > "$CrystalTmpUploadFile" 2>&1 | tee -a "$logfile"

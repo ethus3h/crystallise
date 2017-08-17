@@ -8,6 +8,15 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 shopt -s extglob
 
+useCustomPassphrase="false"
+customPassphrase=""
+if [[ "$1" == "--passphrase" ]]; then
+    useCustomPassphrase="true"
+    shift
+    customPassphrase="$1"
+    shift
+fi
+
 decrystallizeHere="false"
 if [[ "$2" == "--here" ]]; then
     decrystallizeHere="true"
@@ -38,7 +47,9 @@ if [[ -t 1 ]]; then
     crystalXzFileSize="${crystalXzFileSize::-2}"
 fi
 
-crystallizePassphrase="$(crystallize-getconf Passphrase)"
+if [[ "$useCustomPassphrase" != "true" ]]; then
+    crystallizePassphrase="$(crystallize-getconf Passphrase)"
+fi
 printf "%s" "$crystallizePassphrase" > "$tempId.tmp"
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 if ! [[ -e "$crystalWorkdir/.CrystalCache/" ]]; then

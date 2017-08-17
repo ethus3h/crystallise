@@ -28,16 +28,16 @@ fi
 
 pathsToCopy=("${@:1:$(($#-1))}") # all but last argument
 
+destinationArgument="${!#}"
+
 if [[ "$srpullReplace" == "true" ]]; then
-    rsync -av --checksum --progress --no-i-r "${pathsToCopy[@]}" "$2/"
-    rsync -av --checksum --progress --no-i-r "${pathsToCopy[@]}" "$2/"
+    rsync -av --checksum --progress --no-i-r "${pathsToCopy[@]}" "$destinationArgument/"
+    rsync -av --checksum --progress --no-i-r "${pathsToCopy[@]}" "$destinationArgument/"
 else
-    rsync -av --checksum --progress --no-i-r --ignore-existing "${pathsToCopy[@]}" "$2/"
-    rsync -av --checksum --progress --no-i-r --ignore-existing "${pathsToCopy[@]}" "$2/"
+    rsync -av --checksum --progress --no-i-r --ignore-existing "${pathsToCopy[@]}" "$destinationArgument/"
+    rsync -av --checksum --progress --no-i-r --ignore-existing "${pathsToCopy[@]}" "$destinationArgument/"
 fi
 
-
-destinationArgument="${!#}"
 if [[ -z "$destinationArgument" ]]; then
     destinationArgument="."
 fi

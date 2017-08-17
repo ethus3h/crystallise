@@ -12,7 +12,7 @@ if [[ "$1" == "--sreg-dir" ]]; then
     sregDir="$1"
     shift
 fi
-sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check "$2")"
+sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check "${!#}")"
 
 finish() {
     trap - ERR

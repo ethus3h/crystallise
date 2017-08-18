@@ -33,9 +33,9 @@ mkdir -p "$crystalWorkdir/$streamId"
         rsync -aq --checksum --no-i-r "$dbDir"/LocalStore "$streamId.LocalStore"
         rsync -aq --checksum --no-i-r "$streamId.LocalStore" "$streamId.LocalStore.tmp"
         if [[ "$1" == "--verbose" ]]; then
-            crystallize --leave-pointer "$streamId.LocalStore" | cat
+            crystallize --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.LocalStore" | cat
         else
-            crystallize --leave-pointer "$streamId.LocalStore" > "$streamId.LocalStore.sstream-stdout" 2> "$streamId.LocalStore.sstream-stderr"
+            crystallize --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.LocalStore" > "$streamId.LocalStore.sstream-stdout" 2> "$streamId.LocalStore.sstream-stderr"
             storeLogFiles=("$streamId.LocalStore.sstream-stdout" "$streamId.LocalStore.sstream-stderr")
         fi
         # (2fa... is the remote bundle pointer type signature)

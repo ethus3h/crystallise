@@ -6,9 +6,24 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
+useCustomPassphrase="false"
+customPassphrase=""
+if [[ "$1" == "--passphrase" ]]; then
+    useCustomPassphrase="true"
+    shift
+    customPassphrase="$1"
+    shift
+fi
+
 decrystallizeHere=""
 if [[ "$2" == "--here" ]]; then
     decrystallizeHere="--here"
 fi
 
-decrystallize "$(cat "$(dirname "$1")"/."$(basename "$1")"-data/identifier)" "$decrystallizeHere"
+identifier="$(cat "$(dirname "$1")"/."$(basename "$1")"-data/identifier)"
+
+if [[ "$useCustomPassphrase" != "true" ]]; then
+    decrystallize "$identifier" "$decrystallizeHere"
+else
+    decrystallize --passphrase "$customPassphrase" "$identifier" "$decrystallizeHere"
+fi

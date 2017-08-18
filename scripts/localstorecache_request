@@ -62,7 +62,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -d "$oldFilePath" ]] || [[ ! -d "$cacheEntry
     mkdir -p "$tempDirectoryName"
     (
         cd "$tempDirectoryName" || exit 1
-        decrystallize "$crystalIdentifier" --here &> /dev/null
+        decrystallize --passphrase "$(sregi_get_passphrase "$sregDir")" "$crystalIdentifier" --here &> /dev/null
         mv ./* "$dbFilePath"
     )
     if [[ -h "$dbLinkPath" ]]; then

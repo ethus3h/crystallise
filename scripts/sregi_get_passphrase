@@ -12,7 +12,7 @@ reportResult() {
 }
 
 reportDefault() {
-    reportResult "$(crystallize-getconf Passphrase)"
+    crystallize-getconf Passphrase
 }
 
 if [[ "$1" == "--sreg-dir" ]]; then

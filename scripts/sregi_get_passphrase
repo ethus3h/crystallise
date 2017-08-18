@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
+source ember_bash_setup &> /dev/null
+#set -x
+
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+
+reportResult() {
+    [[ -d "$1" ]] || die "Result is not a directory!"
+    print "$1"
+    exit 0
+}
+
+reportDefault() {
+    reportResult "$(crystallize-getconf Passphrase)"
+}
+
+if [[ "$1" == "--sreg-dir" ]]; then
+    shift
+    if [[ -n "$1" ]]; then
+        reportResult "$1"
+    else
+        if [[ "$2" != "--full-check" ]]; then
+            reportDefault
+        else
+            shift
+            shift
+        fi
+    fi
+fi
+
+if [[ -n "$1" ]]; then
+    if [[ -d "$1" ]]; then
+        cd "$1" || die "Could not cd to specified directory!"
+    else
+        cd "$(dirname "$1")" || die "Could not cd to directory of specified path!"
+    fi
+fi
+
+while [[ "$(readlink -e .)" != "/" ]]; do
+    [[ -d ".sreg" ]] && reportResult "$(readlink -e .sreg)"
+    cd .. || die "Could not cd to enclosing directory!"
+done
+
+reportDefault

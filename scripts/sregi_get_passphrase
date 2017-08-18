@@ -5,14 +5,10 @@ source ember_bash_setup &> /dev/null
 
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
-reportDefault() {
-    crystallize-getconf Passphrase
-}
-
 sregDir="$1"
 
 if [[ -e "$sregDir"/.sreg/passphrase ]]; then
     cat "$sregDir"/.sreg/passphrase
 else
-    
+    crystallize-getconf Passphrase
 fi

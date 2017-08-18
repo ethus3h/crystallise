@@ -6,6 +6,14 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; if [[ -n "${tempDirectoryName:?}" ]]; then if [[ -d "${tempDirectoryName:?}" ]]; then rm -r "${tempDirectoryName:?}"; fi; fi' ERR
 
+sregDir=""
+if [[ "$1" == "--sreg-dir" ]]; then
+    shift
+    sregDir="$1"
+    shift
+fi
+sregDir="$(sregi_find_dir --sreg-dir "$sregDir")"
+
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 dbDir="$1"
 crystalIdentifier="$2"

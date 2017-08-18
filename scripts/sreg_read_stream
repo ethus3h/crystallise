@@ -174,7 +174,7 @@ mkdir "$streamId"
                     break
                 }
                 localStoreCrystalIdentifier="$(<"$localStoreCrystalName"/identifier)"
-                localstoreLocation="$(localstorecache_request "$crystalWorkdir/.LocalStoreCache/" "$localStoreCrystalIdentifier")" || localstoreErrorBreak
+                localstoreLocation="$(localstorecache_request --sreg-dir "$sregDir" "$crystalWorkdir/.LocalStoreCache/" "$localStoreCrystalIdentifier")" || localstoreErrorBreak
                 trap 'warn "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while attempting to read a remote pack pointer $hashFull (stream was not in the pack given). Giving up now: retrying would likely not help in this situation."; numRetries=0; break' ERR
                 localStoreMatchArray=("$localstoreLocation"/sreg_flush_localstore-*.LocalStore)
                 if ( ! [[ -e "${localStoreMatchArray[0]}" ]] ) || [[ -z "${localStoreMatchArray[0]}" ]]; then

@@ -7,7 +7,7 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 sregDir="$1"
 
-if [[ -e "$sregDir"/.sreg/passphrase ]]; then
+if [[ -e "$sregDir"/.sreg/passphrase ]] && [[ -n "$sregDir" ]]; then
     cat "$sregDir"/.sreg/passphrase
 else
     crystallize-getconf Passphrase

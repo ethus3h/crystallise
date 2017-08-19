@@ -3,9 +3,9 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
-export crystallizeVersion='3.1.2.5_pre203'
+export crystallizeVersion='3.1.2.5_pre204'
 
-# ( sudo true; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a v3.1.2.5_pre203 -m "version"; egup-single .; sudo emerge crystallize; sudo dispatch-conf )
+# ( sudo true; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a v3.1.2.5_pre204 -m "version"; egup-single .; sudo emerge crystallize; sudo dispatch-conf )
 
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
@@ -77,6 +77,8 @@ if [[ "$1" == "--leave-pointer" ]]; then
     echo "Pointer directory: $crystallizePointerDir"
     echo "Pointer name: $crystallizePointerName"
 fi
+
+echo "The crystal will have the following address when it is ready: $CrystalID"
 
 # -t 1 checks if file descriptor 1 "is opened on a terminal" (—GNU coreutils 8.25 manpage for test)
 if [[ -t 1 ]]; then

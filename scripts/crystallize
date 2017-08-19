@@ -78,6 +78,7 @@ if [[ "$1" == "--leave-pointer" ]]; then
     echo "Pointer name: $crystallizePointerName"
 fi
 
+# -t 1 checks if file descriptor 1 "is opened on a terminal" (—GNU coreutils 8.25 manpage for test)
 if [[ -t 1 ]]; then
     warn-timeout "Be careful that you don't crystallize your current working directory, the crystallize temp dir, or the crystallize scripts themselves. Either could cause problems."
 fi

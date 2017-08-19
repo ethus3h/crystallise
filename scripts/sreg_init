@@ -19,5 +19,6 @@ directory="."
 [[ -n "$1" ]] && directory="$1"
 
 mkdir -p "$directory/.sreg"
-touch "$directory/.sreg/.sreg.passphrase"
-[[ "$useCustomPassphrase" == "true" ]] && print "$customPassphrase" > "$directory/.sreg/.sreg.passphrase"
+if [[ "$useCustomPassphrase" == "true" ]]; then
+    && print "$customPassphrase" > "$directory/.sreg/.sreg.passphrase"
+fi

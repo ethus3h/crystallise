@@ -102,16 +102,15 @@ mkdir -p "$crystalWorkdir/$streamId"
             if [[ "$1" == "--verbose" ]]; then
                 crystallize --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.tmp" | 1&>2
             else
-                crystallize --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.tmp" > "$streamId.tmp.sstream-stdout" 2> "$streamId.tmp.sstream-stderr"
-                logFiles=("$streamId.tmp.sstream-stdout" "$streamId.tmp.sstream-stderr")
+                crystallize --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.tmp"
             fi
             pointerTypeSignature="a5e2f296-3085-49c0-8f48-24ea436b7a8b"
         fi
         echo "$pointerTypeSignature" > "$tmpFilePath"
         echo "$hashFull" >> "$tmpFilePath"
         if [[ "$useLocalStore" != "true" ]]; then
-            tar -c -P -S --format pax "$streamId.tmp.crystal" ".$streamId.tmp.crystal-data" "${logFiles[@]}" > "$streamId.nonbundle.pointer.tar"
-            [[ "$(xxd "$streamId.nonbundle.pointer.tar" | head -c 12)" == "00000000: 00" ]] && { mkdir -p "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/$streamId/"; rsync -a "$streamId.LocalStore.crystal" ".$streamId.LocalStore.crystal-data" "${storeLogFiles[@]}" "$streamId.nonbundle.pointer.tar" "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/$streamId/"; die "Pointer pax was corrupt!"; }
+            tar -c -P -S --format pax "$streamId.tmp.crystal" ".$streamId.tmp.crystal-data" > "$streamId.nonbundle.pointer.tar"
+            [[ "$(xxd "$streamId.nonbundle.pointer.tar" | head -c 12)" == "00000000: 00" ]] && { mkdir -p "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/$streamId/"; rsync -a "$streamId.LocalStore.crystal" ".$streamId.LocalStore.crystal-data" "$streamId.nonbundle.pointer.tar" "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/$streamId/"; die "Pointer pax was corrupt!"; }
             xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - < "$streamId.nonbundle.pointer.tar" >> "$tmpFilePath"
         else
             xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout "$streamId.tmp" > "$localStoreFilePath"

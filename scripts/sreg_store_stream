@@ -111,9 +111,9 @@ mkdir -p "$crystalWorkdir/$streamId"
         if [[ "$useLocalStore" != "true" ]]; then
             tar -c -P -S --format pax "$streamId.tmp.crystal" ".$streamId.tmp.crystal-data" > "$streamId.nonbundle.pointer.tar"
             [[ "$(xxd "$streamId.nonbundle.pointer.tar" | head -c 12)" == "00000000: 00" ]] && { mkdir -p "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/$streamId/"; rsync -a "$streamId.LocalStore.crystal" ".$streamId.LocalStore.crystal-data" "$streamId.nonbundle.pointer.tar" "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/$streamId/"; die "Pointer pax was corrupt!"; }
-            xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout - < "$streamId.nonbundle.pointer.tar" >> "$tmpFilePath"
+            xz -k -C sha256 -T 0 -9 -e --stdout - < "$streamId.nonbundle.pointer.tar" >> "$tmpFilePath"
         else
-            xz -k -C sha256 -T 0 --lzma2=preset=1 --stdout "$streamId.tmp" > "$localStoreFilePath"
+            xz -k -C sha256 -T 0 -9 -e --stdout "$streamId.tmp" > "$localStoreFilePath"
         fi
         trap finish EXIT
         sregi_verify_entry --sreg-dir "$sregDir" "$tmpFilePath" &> /dev/null || die "Failed saving stream: stored stream could not be read!"

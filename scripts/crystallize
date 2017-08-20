@@ -102,7 +102,7 @@ if [[ $crystallizeLeavePointer == true ]]; then
 fi
 trap - ERR
 xz -C sha256 -v -9 -e "$crystalWorkdir/$CrystalID"
-xz -C sha256 -9 -e -k "$crystalWorkdir/$CrystalID.time-done.warc.gz"
+xz -C sha256 -v -9 -e "$crystalWorkdir/$CrystalID.time-done.warc.gz"
 xz -C sha256 -v -9 -e "$crystalWorkdir/$CrystalID.local.idx"
 xz -C sha256 -v -9 -e "$crystalWorkdir/$CrystalID.deep.idx"
 rsync -a --checksum "$crystalWorkdir/$CrystalID".xz "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/"$CrystalID".log.xz

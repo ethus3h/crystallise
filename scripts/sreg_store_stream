@@ -102,7 +102,7 @@ mkdir -p "$crystalWorkdir/$streamId"
             if [[ "$1" == "--verbose" ]]; then
                 crystallize --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.tmp" | 1&>2
             else
-                crystallize --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.tmp"
+                crystallize --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.tmp" &> /dev/null
             fi
             pointerTypeSignature="a5e2f296-3085-49c0-8f48-24ea436b7a8b"
         fi

@@ -56,10 +56,9 @@ sregi_available_by_hash() (
     fi
     local innerPointerTypeSignature
     innerPointerTypeSignature="$(head -c 36 "$availByHashPointerFile")"
-    local dbDir="$sregDir"
     if [[ "$innerPointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
-        if ! [[ -f "$dbDir/LocalStore/$hashA/$hashB/$hashC/$knownChecksum" ]]; then
-            die "Item does not have the corresponding LocalStore entry $dbDir/LocalStore/$hashA/$hashB/$hashC/$knownChecksum!"
+        if ! [[ -f "$sregDir/LocalStore/$hashA/$hashB/$hashC/$knownChecksum" ]]; then
+            die "Item does not have the corresponding LocalStore entry $sregDir/LocalStore/$hashA/$hashB/$hashC/$knownChecksum!"
         fi
     fi
 )

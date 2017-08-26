@@ -9,11 +9,11 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 shopt -s extglob
 
 useCustomPassphrase="false"
-customPassphrase=""
+crystallizePassphrase=""
 if [[ "$1" == "--passphrase" ]]; then
     useCustomPassphrase="true"
     shift
-    customPassphrase="$1"
+    crystallizePassphrase="$1"
     shift
 fi
 
@@ -44,7 +44,7 @@ mkdir "$tempId"
 crystalXzFileSize=1
 if [[ -t 1 ]]; then
     crystalXzFileSize="$(curl -sIL "https://archive.org/download/$CrystalID/$CrystalID.coal5" | grep Content-Length | awk '{print $2}')"
-    crystalXzFileSize="${crystalXzFileSize::-2}"
+    crystalXzFileSize="${crystalXzFileSize::-1}"
 fi
 
 if [[ "$useCustomPassphrase" != "true" ]]; then

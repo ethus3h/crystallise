@@ -39,7 +39,17 @@ fi
 if [[ "$sregNoVerify" == "true" ]]; then
     warn "(Not verifying pointers: use sreg_fsck to test the entire stream registry.)"
 fi
-destinationParameter="${!#}"
+
+if [[ "$#" == "1" ]]; then
+    # There's only one path specified, so use the current directory as the destination
+    destinationParameter="."
+    pathsToCopy=("${@}") # all arguments
+else
+    # Multiple paths are specified, so use the last one as the destination
+    destinationParameter="${!#}" # last argument
+    pathsToCopy=("${@:1:$(($#-1))}") # all but last argument
+fi
+
 if ! [[ -d "$destinationParameter" ]]; then
     die "Destination is not a directory."
 fi
@@ -48,8 +58,6 @@ crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 fsckId="srsync-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
 mkdir -p "$crystalWorkdir/$fsckId"
 fsckStatusFile="/tmp/$fsckId.srsync.status"
-
-pathsToCopy=("${@:1:$(($#-1))}") # all but last argument
 
 find "${pathsToCopy[@]}" -type f -printf '.' | wc -c > "$fsckStatusFile"
 destinationReplaced="${destinationParameter/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"

@@ -15,12 +15,20 @@ if [[ "$1" == "--passphrase" ]]; then
     shift
 fi
 
+addToGitignore="true"
+if [[ "$1" == "--no-gitignore" ]]; then
+    addToGitignore="false"
+    shift
+fi
+
 directory="."
 [[ -n "$1" ]] && directory="$1"
 
 mkdir -p "$directory/.sreg"
 touch "$directory/.sreg/.keep"
-echo ".sreg/LocalStore" >> "$directory/.gitignore"
+if [[ "$addToGitignore" == "true" ]]; then
+    echo ".sreg/LocalStore" >> "$directory/.gitignore"
+fi
 if [[ "$useCustomPassphrase" == "true" ]]; then
     print "$customPassphrase" > "$directory/.sreg/.sreg.passphrase"
 fi

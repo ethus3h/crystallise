@@ -34,6 +34,14 @@ sreg_fuse() {
 
 # Function is defined with parentheses to make it run in a subshell to prevent the "die" affecting the calling script (the calling script should be responsible for trapping/handling nonzero exit codes itself)
 sregi_available_by_hash() (
+    local sregDir=""
+    if [[ "$1" == "--sreg-dir" ]]; then
+        shift
+        sregDir="$1"
+        shift
+    fi
+    sregDir="$(sregi_find_dir --sreg-dir "$sregDir")"
+
     local knownChecksum="$1"
     local hashA="${knownChecksum:0:1}"
     local hashB="${knownChecksum:1:1}"
@@ -41,14 +49,14 @@ sregi_available_by_hash() (
     if [[ -n "$2" ]]; then
         local availByHashPointerFile="$2"
     else
-        local availByHashPointerFile="$(sregi_find_dir)/$hashA/$hashB/$hashC/$knownChecksum"
+        local availByHashPointerFile="$sregDir/$hashA/$hashB/$hashC/$knownChecksum"
     fi
     if ! [[ -e "$availByHashPointerFile" ]]; then
         die "Item does not have the corresponding stream registry entry $availByHashPointerFile!"
     fi
     local innerPointerTypeSignature
     innerPointerTypeSignature="$(head -c 36 "$availByHashPointerFile")"
-    local dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
+    local dbDir="$sregDir"
     if [[ "$innerPointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
         if ! [[ -f "$dbDir/LocalStore/$hashA/$hashB/$hashC/$knownChecksum" ]]; then
             die "Item does not have the corresponding LocalStore entry $dbDir/LocalStore/$hashA/$hashB/$hashC/$knownChecksum!"

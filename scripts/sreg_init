@@ -20,6 +20,7 @@ directory="."
 
 mkdir -p "$directory/.sreg"
 touch "$directory/.sreg/.keep"
+echo ".sreg/LocalStore" >> "$directory/.gitignore"
 if [[ "$useCustomPassphrase" == "true" ]]; then
     print "$customPassphrase" > "$directory/.sreg/.sreg.passphrase"
 fi

@@ -13,7 +13,7 @@ if [[ "$1" == "--sreg-dir" ]]; then
 fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 
-dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
+dbDir="$sregDir"
 backupDir="$1"
 rsync -av --checksum --progress --no-i-r --ignore-existing "$dbDir"/ "$backupDir"
 find "$backupDir" -type f -exec sregi_file_backup --sreg-dir "$sregDir" {} \;

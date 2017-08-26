@@ -23,7 +23,7 @@ finish() {
 }
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR
 
-dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry
+dbDir="$sregDir"
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 # Don't rename this to sreg. I think this name is needed for reading it
 streamId="scache-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
@@ -73,7 +73,7 @@ mkdir -p "$crystalWorkdir/$streamId"
     if [[ -f "$dbFilePath" ]]; then
         sanityCheckPassed="0"
         knownChecksum="$hashFull"
-        if sregi_available_by_hash "$knownChecksum" &> /dev/null; then
+        if sregi_available_by_hash --sreg-dir "$sregDir" "$knownChecksum" &> /dev/null; then
             # Item already has been stored and passes a basic sanity check, so check that the existing pointer can be restored
             recoveredHash="$(sreg_read_stream --sreg-dir "$sregDir" --disallow-hash-pointer < "$dbFilePath" | sha512sum | awk '{print $1;}')"
             if [[ "$recoveredHash" != "$hashFull" ]]; then
@@ -82,7 +82,7 @@ mkdir -p "$crystalWorkdir/$streamId"
                 # if [[ "$1" == "--verbose" ]]; then
                 #     warn "Could not read existing item."
                 # fi
-                # fsckDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
+                # fsckDir="$sregDir"/Failed\ Fsck/
                 # mkdir -p "$fsckDir"
                 # mv "$tmpFilePath" "$fsckDir"
             fi

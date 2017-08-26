@@ -55,7 +55,7 @@ dbDir="$sregDir"
 # Basic sanity check to make sure it bombs out if the pointer is cached but is missing a necessary LocalStore entry
 if [[ -z "$overrideEntryPath" ]]; then
     if [[ -n "$knownChecksum" ]]; then
-        sregi_available_by_hash "$knownChecksum" || die "sregi_available_by_hash failed on ${BASH_SOURCE[0]} line ${LINENO} while reading $knownChecksum."
+        sregi_available_by_hash --sreg-dir "$sregDir" "$knownChecksum" || die "sregi_available_by_hash failed on ${BASH_SOURCE[0]} line ${LINENO} while reading $knownChecksum."
     fi
 fi
 # Set up cache directory
@@ -91,7 +91,7 @@ mkdir "$streamId"
     fi
     (
         # Basic sanity check to make sure it bombs out if the pointer is cached but is missing a necessary LocalStore entry
-        sregi_available_by_hash "$knownChecksum" "$streamId.xz" || die "sregi_available_by_hash failed on ${BASH_SOURCE[0]} line ${LINENO} while reading $knownChecksum."
+        sregi_available_by_hash --sreg-dir "$sregDir" "$knownChecksum" "$streamId.xz" || die "sregi_available_by_hash failed on ${BASH_SOURCE[0]} line ${LINENO} while reading $knownChecksum."
     ) || die "sregi_available_by_hash failed on ${BASH_SOURCE[0]} line ${LINENO} while reading $knownChecksum."
     hashA="${hashFull:0:1}"
     hashB="${hashFull:1:1}"

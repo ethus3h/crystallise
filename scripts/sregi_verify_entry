@@ -16,7 +16,7 @@ sregDir="$(sregi_find_dir --sreg-dir "$sregDir")"
 
 fail() {
     if [[ "$dropFailed" == "true" ]]; then
-        dbDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Stream\ Registry/Failed\ Fsck/
+        dbDir="$sregDir"/Failed\ Fsck/
         mkdir -p "$dbDir"
         mv "$1" "$dbDir/"
         die "Error verifying stream registry database entry $knownHash! Marking entry as corrupted."

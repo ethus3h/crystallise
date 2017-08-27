@@ -141,7 +141,7 @@ mkdir "$streamId"
             if [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then
                 # Standard remote pointer
                 tail -c +167 "$streamId.xz" | unxz --stdout - | tar -xf -
-                decrystallize-pointer ./*.crystal --here &> /dev/null
+                decrystallize-pointer --passphrase "$(sregi_get_passphrase "$sregDir")" ./*.crystal --here &> /dev/null
                 cp scache-*.tmp "$streamId.out"
             elif [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
                 # LocalStore pointer

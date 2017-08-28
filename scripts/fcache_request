@@ -38,13 +38,16 @@ if [[ -e "$dbLinkPath.locked" ]]; then
         die "This URL cache entry has been in use for 30 minutes so giving up. If the process using it has crashed, remove $dbFilePath.locked manually."
     fi
 fi
-touch "$dbLinkPath.locked"
 
 checksumName="${dbLinkPath:?}.checksum"
 csAvail="false"
 [[ -e "$checksumName" ]] && csAvail="true"
 tempResolvedFileName="$(readlink "$dbLinkPath")" || true # It's totally ok if this fails.
 if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvail" == "false" ]]; then
+
+    # Only lock the cache entry while we're editing it
+    touch "$dbLinkPath.locked"
+
     if [[ -f "$tempResolvedFileName" ]]; then
         rm "$tempResolvedFileName"
     fi
@@ -69,6 +72,9 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvai
         rm "$dbLinkPath"
     fi
     ln -s "$dbFilePath" "$dbLinkPath"
+
+    # Done editing the cache entry, so release the lock
+    rm "$dbLinkPath.locked"
 fi
 dbFilePath="$(readlink -e "$dbLinkPath")"
 # Check that the data were retrieved successfully
@@ -106,7 +112,5 @@ rm "$dbLinkPath"
 ln -s "$dbFilePath" "$dbLinkPath"
 # Return the data to the caller
 cat "$dbLinkPath"
-
-rm "$dbLinkPath.locked"
 
 scache_gc "$dbDir" "f"

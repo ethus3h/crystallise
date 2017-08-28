@@ -22,22 +22,18 @@ mkdir -p "$hashDir"
 dbLinkPath="$hashDir/$hashFull"
 
 if [[ -e "$dbLinkPath.locked" ]]; then
-    waitForLockTries=0
-    retryDelayTime=5
-    until [[ "$waitForLockTries" -ge 1000 ]]; do
-        if checksumLine="$(wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F -A 3 "<file name=\"$CrystalID.coal5\" source=\"original\">" | tail -n 1)"; then
-            postUploadCheckFailHandler
-            break
-        fi
-        getChecksumRetries=$((getChecksumRetries+1))
-        sleep $retryDelayTime
-        if [[ $retryDelayTime -lt 30 ]]; then
-            retryDelayTime=$((retryDelayTime + 5))
-        fi
-    done
     warn "This URL cache entry is already in use. If the process using it has crashed, remove $dbFilePath.locked manually."
     warn "Waiting 30 minutes for process using it to finish..."
-    sleep 1800
+
+    waitForLockTries=0
+    until [[ "$waitForLockTries" -ge 360 ]]; do
+        if [[ -e "$dbLinkPath.locked" ]]; then
+            die "Still waiting..."
+        fi
+        getChecksumRetries=$((getChecksumRetries+1))
+        sleep 5
+    done
+
     if [[ -e "$dbLinkPath.locked" ]]; then
         die "This URL cache entry has been in use for 30 minutes so giving up. If the process using it has crashed, remove $dbFilePath.locked manually."
     fi

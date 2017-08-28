@@ -110,6 +110,7 @@ mkdir -p "$dbFileDir"
 mv "$dbFileOldPath" "$dbFilePath"
 rm "$dbLinkPath"
 ln -s "$dbFilePath" "$dbLinkPath"
+
 # Return the data to the caller
 cat "$dbLinkPath"
 

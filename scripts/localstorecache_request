@@ -131,7 +131,7 @@ mv "$dbFileOldPath" "$dbFilePath"
 rm "$dbLinkPath"
 ln -s "$dbFilePath" "$dbLinkPath"
 
-# Return the data to the caller. The caller is responsible for removing "$dbLinkPath.locked".
+# Return the data to the caller
 echo "$dbLinkPath"
 
 # Clean up empty directories

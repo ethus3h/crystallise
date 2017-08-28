@@ -141,28 +141,28 @@ postUploadCheckFailHandler() {
 
 getChecksumRetries=0
 retryDelayTime=5
-until [[ $getChecksumRetries -ge 1000 ]]; do
+until [[ "$getChecksumRetries" -ge 1000 ]]; do
     if wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F "<file name=\"$CrystalID.coal5\" source=\"original\">" > /dev/null; then
         postUploadCheckFailHandler
         break
     fi
     getChecksumRetries=$((getChecksumRetries+1))
-    sleep $retryDelayTime
-    if [[ $retryDelayTime -lt 30 ]]; then
+    sleep "$retryDelayTime"
+    if [[ "$retryDelayTime" -lt 30 ]]; then
         retryDelayTime=$((retryDelayTime + 5))
     fi
 done
 
 getChecksumRetries=0
 retryDelayTime=5
-until [[ $getChecksumRetries -ge 1000 ]]; do
+until [[ "$getChecksumRetries" -ge 1000 ]]; do
     if checksumLine="$(wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F -A 3 "<file name=\"$CrystalID.coal5\" source=\"original\">" | tail -n 1)"; then
         postUploadCheckFailHandler
         break
     fi
     getChecksumRetries=$((getChecksumRetries+1))
-    sleep $retryDelayTime
-    if [[ $retryDelayTime -lt 30 ]]; then
+    sleep "$retryDelayTime"
+    if [[ "$retryDelayTime" -lt 30 ]]; then
         retryDelayTime=$((retryDelayTime + 5))
     fi
 done

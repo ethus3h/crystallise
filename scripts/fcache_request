@@ -22,6 +22,8 @@ mkdir -p "$hashDir"
 dbLinkPath="$hashDir/$hashFull"
 
 if [[ -e "$dbLinkPath.locked" ]]; then
+    waitForLockTries=0
+    retryDelayTime=5
     warn "This URL cache entry is already in use. If the process using it has crashed, remove $dbFilePath.locked manually."
     warn "Waiting 30 minutes for process using it to finish..."
     sleep 1800

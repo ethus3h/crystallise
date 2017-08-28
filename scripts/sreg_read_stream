@@ -106,23 +106,19 @@ mkdir "$streamId"
         warn "This stream cache entry is already in use. If the process using it has crashed, remove $dbFilePath.locked manually."
         warn "Waiting 30 minutes for process using it to finish..."
 
-        if [[ -e "$dbLinkPath.locked" ]]; then
-            warn "This URL cache entry is already in use. If the process using it has crashed, remove $dbFilePath.locked manually."
-            warn "Waiting 30 minutes for process using it to finish..."
-
-            waitForLockTries=0
-            until [[ "$waitForLockTries" -ge 360 ]]; do
-                if [[ -e "$dbLinkPath.locked" ]]; then
-                    die "Still waiting..."
-                fi
-                getChecksumRetries=$((getChecksumRetries+1))
-                sleep 5
-            done
-
+        waitForLockTries=0
+        until [[ "$waitForLockTries" -ge 360 ]]; do
             if [[ -e "$dbLinkPath.locked" ]]; then
-                die "This URL cache entry has been in use for 30 minutes so giving up. If the process using it has crashed, remove $dbFilePath.locked manually."
+                die "Still waiting..."
             fi
+            getChecksumRetries=$((getChecksumRetries+1))
+            sleep 5
+        done
+
+        if [[ -e "$dbLinkPath.locked" ]]; then
+            die "This stream cache entry has been in use for 30 minutes so giving up. If the process using it has crashed, remove $dbFilePath.locked manually."
         fi
+    fi
 
     trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while reading $hashFull."' ERR
     while [[ "$numRetries" -gt 0 ]] && [[ "$successfulRetrieval" -eq 0 ]]; do
@@ -133,6 +129,10 @@ mkdir "$streamId"
         fi
         numRetries=$(( numRetries - 1 ))
         if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$(readlink "$dbLinkPath")" ]] || [[ "$skipCache" == "true" ]]; then
+
+            # Only lock the cache entry while we're editing it
+            touch "$dbLinkPath.locked"
+
             if [[ "$skipCache" == "true" ]]; then
                 if [[ -h "$dbLinkPath" ]] && [[ -f "$(readlink "$dbLinkPath")" ]]; then
                     # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
@@ -254,6 +254,9 @@ mkdir "$streamId"
                 rm "$dbLinkPath"
             fi
             ln -s "$dbFilePath" "$dbLinkPath"
+
+            # Done editing the cache entry, so release the lock
+            rm "$dbLinkPath.locked"
         fi
         dbFilePath="$(readlink -e "$dbLinkPath")"
         # First, make sure the link is good and fix it up if it's not.
@@ -304,7 +307,10 @@ mkdir "$streamId"
     if [[ "$successfulRetrieval" != "1" ]]; then
         die "Failed retrieving stream, and no retries left!"
     fi
+
+    # Return the data to the caller
     cat "$decompressedCacheEntry"
+
     # Cache cleanup is expensive, so only do it occasionally
     if [[ "$RANDOM" -lt 250 ]]; then
         scache_gc "$cacheDbDir"

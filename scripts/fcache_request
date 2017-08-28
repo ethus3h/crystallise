@@ -42,7 +42,11 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvai
     dbFileDir="$dbDir/ByCount/${requestCount:?}/$hashSubdir"
     dbFilePath="$dbFileDir/$hashFull"
     mkdir -p "$dbFileDir"
-    wget -qO - "$requestUrl" > "$dbFilePath"
+    if [[ -e "$dbFilePath.locked" ]]; then
+        die "This URL is already in use. If the process using it has crashed, remove $dbFilePath.locked manually."
+    fi
+    wget -t 150 -qcO "$dbFilePath.locked" "$requestUrl"
+    mv "$dbFilePath.locked" "$dbFilePath"
     sha512sum < "$dbFilePath" | awk '{print $1;}' > "$checksumName"
     printf "%s" "$requestUrl" > "$dbLinkPath.url"
     if [[ -h "$dbLinkPath" ]]; then
@@ -57,7 +61,7 @@ knownChecksum="$(<"$checksumName")"
 itemChecksum="$(sha512sum < "$dbLinkPath" | awk '{print $1;}')"
 if [[ "$itemChecksum" != "$knownChecksum" ]]; then
     mkdir -p "$dbDir/Failed Checksum"
-    mv "$dbFilePath" "$dbDir/Failed Checksum/$(basename "$dbFilePath")"
+    rm "$dbFilePath"
     die "File does not match what its checksum should be!"
 fi
 # First, make sure the link is good and fix it up if it's not.

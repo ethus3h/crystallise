@@ -44,7 +44,6 @@ csAvail="false"
 [[ -e "$checksumName" ]] && csAvail="true"
 tempResolvedFileName="$(readlink "$dbLinkPath")" || true # It's totally ok if this fails.
 if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvail" == "false" ]]; then
-
     # Only lock the cache entry while we're editing it
     touch "$dbLinkPath.locked"
 
@@ -65,10 +64,14 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvai
     dbFileDir="$dbDir/ByCount/${requestCount:?}/$hashSubdir"
     dbFilePath="$dbFileDir/$hashFull"
     mkdir -p "$dbFileDir"
-    wget -t 150 -qcO "$dbFilePath" "$requestUrl"
+    if [[ -e "$dbFilePath" ]]; then
+        warn "$dbFilePath already seems to exist. Huh? Removing it."
+        rm "$dbFilePath"
+    fi
+    wget -t 150 -qO "$dbFilePath" "$requestUrl"
     sha512sum < "$dbFilePath" | awk '{print $1;}' > "$checksumName"
     printf "%s" "$requestUrl" > "$dbLinkPath.url"
-    if [[ -h "$dbLinkPath" ]]; then
+    if [[ -e "$dbLinkPath" ]] || [[ -h "$dbLinkPath" ]]; then
         rm "$dbLinkPath"
     fi
     ln -s "$dbFilePath" "$dbLinkPath"
@@ -86,9 +89,12 @@ if [[ "$itemChecksum" != "$knownChecksum" ]]; then
     die "File did not match what its checksum should be!"
 fi
 # First, make sure the link is good and fix it up if it's not.
-if ! [[ -e "$dbFilePath" ]]; then
+if ! [[ -f "$dbFilePath" ]]; then
     find "$dbDir/ByCount" -mindepth 4 -maxdepth 4 -type d -name "$hashFull" -exec ln -sf {} "$dbLinkPath" \;
     dbFilePath="$(readlink -e "$dbLinkPath")"
+fi
+if ! [[ -f "$dbFilePath" ]]; then
+    die "Could not find the cache file, despite there being a link to it!"
 fi
 dbFileOldPath="$dbFilePath"
 dbFileDir="$(dirname "$dbFilePath")"

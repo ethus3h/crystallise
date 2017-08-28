@@ -129,7 +129,6 @@ mkdir "$streamId"
         fi
         numRetries=$(( numRetries - 1 ))
         if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$(readlink "$dbLinkPath")" ]] || [[ "$skipCache" == "true" ]]; then
-
             # Only lock the cache entry while we're editing it
             touch "$dbLinkPath.locked"
 
@@ -250,7 +249,7 @@ mkdir "$streamId"
             fi
             [[ -e "$dbFilePath" ]] || xz --stdout -0 "$streamId.out" > "$dbFilePath"
             rm "$streamId.out"
-            if [[ -e "$dbLinkPath" ]]; then
+            if [[ -e "$dbLinkPath" ]] || [[ -h "$dbLinkPath" ]]; then
                 rm "$dbLinkPath"
             fi
             ln -s "$dbFilePath" "$dbLinkPath"
@@ -263,6 +262,9 @@ mkdir "$streamId"
         if ! [[ -f "$dbFilePath" ]]; then
             find "$cacheDbDir/ByCount" -mindepth 5 -maxdepth 5 -type f -name "$hashFull" -exec ln -sf {} "$dbLinkPath" \;
             dbFilePath="$(readlink -e "$dbLinkPath")"
+        fi
+        if ! [[ -e "$dbFilePath" ]]; then
+            die "Could not find the cache file, despite there being a link to it!"
         fi
         dbFileOldPath="$dbFilePath"
         dbFileDir="$(dirname "$dbFilePath")"

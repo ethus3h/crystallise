@@ -20,6 +20,12 @@ hashSubdir="$hashA/$hashB/$hashC"
 hashDir="$dbDir/$hashSubdir"
 mkdir -p "$hashDir"
 dbLinkPath="$hashDir/$hashFull"
+
+if [[ -e "$dbLinkPath.locked" ]]; then
+    die "This URL is already in use. If the process using it has crashed, remove $dbFilePath.locked manually."
+fi
+touch "$dbLinkPath.locked"
+
 checksumName="${dbLinkPath:?}.checksum"
 csAvail="false"
 [[ -e "$checksumName" ]] && csAvail="true"
@@ -42,11 +48,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvai
     dbFileDir="$dbDir/ByCount/${requestCount:?}/$hashSubdir"
     dbFilePath="$dbFileDir/$hashFull"
     mkdir -p "$dbFileDir"
-    if [[ -e "$dbFilePath.locked" ]]; then
-        die "This URL is already in use. If the process using it has crashed, remove $dbFilePath.locked manually."
-    fi
-    wget -t 150 -qcO "$dbFilePath.locked" "$requestUrl"
-    mv "$dbFilePath.locked" "$dbFilePath"
+    wget -t 150 -qcO "$dbFilePath" "$requestUrl"
     sha512sum < "$dbFilePath" | awk '{print $1;}' > "$checksumName"
     printf "%s" "$requestUrl" > "$dbLinkPath.url"
     if [[ -h "$dbLinkPath" ]]; then
@@ -91,5 +93,7 @@ rm "$dbLinkPath"
 ln -s "$dbFilePath" "$dbLinkPath"
 # Return the data to the caller
 cat "$dbLinkPath"
+
+rm "$dbLinkPath.locked"
 
 scache_gc "$dbDir" "f"

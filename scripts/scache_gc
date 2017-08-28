@@ -29,13 +29,17 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
         if [[ -n "$largestLeastUsedItem" ]]; then
             leastUsedItemCount="$(basename "$leastUsedItemDirectory")"
             hashFull="$(basename "$largestLeastUsedItem")"
-            rm -rf "${largestLeastUsedItem:?}"
             hashA="${hashFull:0:1}"
             hashB="${hashFull:1:1}"
             hashC="${hashFull:2:1}"
             hashSubdir="$hashA/$hashB/$hashC"
             hashDir="$dbDir/$hashSubdir"
             dbLinkPath="$hashDir/$hashFull"
+            if [[ -e "$dbLinkPath.locked" ]]; then
+                # File is in use, so leave it alone
+                continue
+            fi
+            rm -rf "${largestLeastUsedItem:?}"
             rm -f "$dbLinkPath"
             echo "$leastUsedItemCount" > "$dbLinkPath"
         fi

@@ -8,6 +8,12 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 dbDir="$1"
 
+if [[ -e "$dbDir/.locked" ]]; then
+    warn "This database is already in use. If the scache_gc instance using it has crashed, remove $dbDir/.locked manually."
+    exit 0
+fi
+touch "$dbDir.locked"
+
 cacheType="s"
 if [[ -n "$2" ]]; then
     cacheType="$2"
@@ -46,3 +52,5 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
         find "$dbDir" -type d -not -name "ByCount" -empty -delete
     done
 fi
+
+rm "$dbDir".locked

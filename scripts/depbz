@@ -23,7 +23,7 @@ finish() {
             rm -r "/$crystalWorkdir/${streamId:?}"
         fi
     )
-    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while finishing $hashFull."' ERR
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while finishing depbz execution."' ERR
 }
 trap finish EXIT
 

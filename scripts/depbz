@@ -75,8 +75,9 @@ if [[ "$encrypted" == "true" ]]; then
     mv -v "$streamDir/.tmp-pdx-$date" "$streamDir/Packed-$date.pdx.bz2"
     mv -v "$streamDir/.tmp-pmbz-$date" "$streamDir/.tmp-$date.pmb.tbz2"
 else
+    cp "./Packed-$date.pbz" "$streamDir/Packed-$date.pbz.bz2"
     cp "./Packed-$date.pdx" "$streamDir/Packed-$date.pdx.bz2"
-    os.system('mv -v ./Packed-'+date+'.pdx ./Packed-'+date+'.pdx.bz2')
+    cp "./Packed-$date.pmbz" "$streamDir/Packed-$date.pmbz.bz2"
     try:
         ak = open('./Packed-'+date+'.pdx','rb')
         ak.close()

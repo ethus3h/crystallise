@@ -73,9 +73,6 @@ if [[ "$encrypted" == "true" ]]; then
     gpg --yes --batch --passphrase-file "$passphraseFile" "$streamDir/.tmp-pmbz-$date.gpg"
     os.system('mv -v ./.tmp-'+date+' ./.tmp-'+date+'.tbz2')
     os.system('mv -v ./.tmp-pdx-'+date+' ./Packed-'+date+'.pdx.bz2')
-    os.system('mv -v ./Packed-'+date+'.pmbze .tmp-pmbz-'+date+'.gpg')
-    os.system('gpg --yes --batch --passphrase-file ~/.pbz ./.tmp-pmbz-'+date+'.gpg')
-    os.system('rm -v ./.tmp-pmbz-'+date+'.gpg')
     os.system('mv -v ./.tmp-pmbz-'+date+' ./.tmp-'+date+'.pmb.tbz2')
 else:
     print 'pbz extract'

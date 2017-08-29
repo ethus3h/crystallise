@@ -9,3 +9,6 @@ sregi_bundle_pointer            sreg_flush_localstore
 sregi_hashpointer_sane          sreg_folder_check
 sregi_drop_single_unused        sreg_folder_check
 sregi_verify_entry              sreg_fsck
+sregi_copy_write                srsync
+
+sregi_expand_pointers           sregi_expand_pointers

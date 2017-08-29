@@ -3,9 +3,17 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
-whoami > /tmp/depbzUser
+[[ -e "/tmp/depbzUser" ]] && die "depbz is already running! Only one depbz instance can be running at a time."
+
+whoami > "/tmp/depbzUser"
 ((EUID)) && exec sudo -- "$0" "$@"
 depbzUser="$(cat /tmp/depbzUser)"
+
+finish() {
+    [[ -e "/tmp/depbzUser" ]] && rm "/tmp/depbzUser"
+}
+trap finish EXIT
+
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 shopt -s extglob

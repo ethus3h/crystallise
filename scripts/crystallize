@@ -191,6 +191,24 @@ if [[ "$postUploadCheckSuccess" != "1" ]]; then
     die "ERROR! Post-upload check failed: data appear to not have been transferred successfully!"
 fi
 
+echo "Retrieving remote index..."
+
+wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" | tee "$crystalWorkdir/$CrystalID.json"
+
+requestUrl="$2"
+if [[ -z "$requestUrl" ]]; then
+    echo "Please specify a directory and a request URL."
+    exit 1
+fi
+hashFull="$(sha512sum <<< "$requestUrl" | awk '{print $1;}')"
+hashA="${hashFull:0:1}"
+hashB="${hashFull:1:1}"
+hashC="${hashFull:2:1}"
+hashSubdir="$hashA/$hashB/$hashC"
+hashDir="$dbDir/$hashSubdir"
+mkdir -p "$hashDir"
+dbLinkPath="$hashDir/$hashFull"
+
 #Build this again for the rm command
 CrystallizePaths=( "$@" )
 for i in "${!CrystallizePaths[@]}"; do

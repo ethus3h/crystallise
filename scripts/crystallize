@@ -214,6 +214,7 @@ hashDir="$dbDir/$hashSubdir"
 mkdir -p "$hashDir"
 dbLinkPath="$hashDir/$hashFull"
 checksumName="$dbLinkPath.checksum"
+
 scache_gc "$dbDir" "f"
 
 finish() {

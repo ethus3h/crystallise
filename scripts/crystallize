@@ -203,6 +203,7 @@ if ! [[ -e "$crystalWorkdir/.CrystalCache/" ]]; then
     fcache_init "$crystalWorkdir/.CrystalCache/" 5000000000
 fi
 
+dbDir="$crystalWorkdir/.CrystalCache/"
 requestUrl="https://archive.org/download/$CrystalID/$CrystalID.coal5"
 hashFull="$(sha512sum <<< "$requestUrl" | awk '{print $1;}')"
 hashA="${hashFull:0:1}"

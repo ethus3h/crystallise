@@ -218,7 +218,6 @@ script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/
 #    sleep 30
 #done
 
-printf "%s" "$knownChecksum" > "$crystalWorkdir/$CrystalID.knownChecksum"
 printf "%s" "$CrystalFileName" > "$crystalWorkdir/$CrystalID.CrystalFileName"
 
 {

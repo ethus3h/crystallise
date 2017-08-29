@@ -166,19 +166,17 @@ until [[ "$getChecksumRetries" -ge 1000 ]]; do
         retryDelayTime=$((retryDelayTime + 5))
     fi
 done
-checksumLine="${checksumLine/    <md5>/}"
-checksumLine="${checksumLine/<\/md5>/}"
+checksumLine="${checksumLine/    <sha1>/}"
+checksumLine="${checksumLine/<\/sha1>/}"
 
+# First, check against the stored checksum
+knownChecksum="$(grep ",stdin" "$crystalWorkdir/$CrystalID.checksums" | awk -F',' '{print $3}')"
 if [[ "$checksumLine" != "$knownChecksum" ]]; then
     die "ERROR! Checksum known by Internet Archive does not match checksum known locally."
 fi
 
-knownChecksum="$(grep ",stdin" "$crystalWorkdir/$CrystalID.checksums" | awk -F',' '{print $2}')"
-if [[ "$checksumLine" != "$knownChecksum" ]]; then
-    die "ERROR! Checksum known by Internet Archive does not match checksum known locally."
-fi
-
-knownChecksum=
+# Now, check the local file's checksum again in case it's gotten screwed up in the mean time somehow
+knownChecksum="$(hashdeep -c sha1 -j0 -o fbcpsde < "$crystalWorkdir/$CrystalID.coal5")"
 
 getChecksumRetries=0
 retryDelayTime=5

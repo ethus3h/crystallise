@@ -177,6 +177,9 @@ fi
 
 # Now, check the local file's checksum again in case it's gotten screwed up in the mean time somehow
 knownChecksum="$(hashdeep -c sha1 -j0 -o fbcpsde < "$crystalWorkdir/$CrystalID.coal5")"
+if [[ "$checksumLine" != "$knownChecksum" ]]; then
+    die "ERROR! Checksum known by Internet Archive does not match checksum known locally."
+fi
 
 getChecksumRetries=0
 retryDelayTime=5

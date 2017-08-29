@@ -3,7 +3,7 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
-if [[ "$(whoami)" == "$root" ]]; then
+if [[ "$(whoami)" == "root" ]]; then
     [[ -e "/tmp/depbz.lock" ]] && die "depbz is already running! Only one depbz instance can be running at a time."
 fi
 
@@ -38,10 +38,11 @@ shopt -s extglob
 
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 cd "$crystalWorkdir" || exit 1
-streamId="depbz-$(date-uuid)"
-mkdir -p "$streamId"
 
+streamId="depbz-$(date-uuid)"
+mkdir -p "$crystalWorkdir/$streamId"
 streamDir="$crystalWorkdir/$streamId"
+
 mkdir "./$streamId"
 
 useCustomPassphrase="false"
@@ -98,7 +99,7 @@ fi
 bunzip2 "$streamDir/Packed-$date.pdx.bz2"
 cp "$streamDir/Packed-$date.pdx" "$destDir/"
 # FIXME: On some tars (not GNU), this can overwrite important files if the files in the tar archive are stored with absolute paths. Eek!
-cd "$destDir"
+cd "$destDir" || die "Could not cd to the destination directory $destDir!"
 tar -xvf "$streamDir/.tmp-$date.tbz2"
 tar -xvf "$streamDir/.tmp-$date.pmb.tbz2"
 mv "./.tmp.Packed-$date.pmb" "./Packed-$date.pmb"

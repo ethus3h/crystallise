@@ -45,7 +45,8 @@ fi
 
 echo "Counting items..."
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
-fsckId="sreg_fsck-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+fsckId="sreg_fsck-$(date-uuid)"
+failCheckFile="/tmp/$fsckId.srsync.running"
 mkdir -p "$crystalWorkdir/${fsckId:?}"
 mkdir -p "/tmp/${fsckId:?}"
 fsckStatusFile="/tmp/$fsckId/.sreg_fsck.status"
@@ -53,7 +54,7 @@ dbDir="$sregDir"
 find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -printf '.' | wc -c > "$fsckStatusFile"
 rm -f "$fsckStatusFile.failed"
 bpid="$$"
-find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" \( -exec sregi_verify_entry --sreg-dir "$sregDir" {} "$fsckStatusFile" "$skipCache" \; -or -exec kill "-$bpid" \; \)
+find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" \( -exec sregi_verify_entry "$failCheckFile" --sreg-dir "$sregDir" {} "$fsckStatusFile" "$skipCache" \; -or -exec kill "-$bpid" \; \)
 
 if [[ -e "$failCheckFile" ]]; then
     die "An invocation of sregi_verify_entry (called from $0) failed with the message \"$(<"$failCheckFile")\"!"

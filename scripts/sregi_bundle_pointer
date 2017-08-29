@@ -34,7 +34,7 @@ hashPatternMatch='^[0-9a-f]{128}$'
 # $hashPatternMatch not quoted because that makes it "match literally rather than as a regex" (—SC2076)
 if ! [[ "$hashFull" =~ $hashPatternMatch ]]; then
     # Ignore stray files in the LocalStore directory (e.g. .keep files)
-    exit 0
+    success
 fi
 hashA="${hashFull:0:1}"
 hashB="${hashFull:1:1}"

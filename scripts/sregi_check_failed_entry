@@ -62,7 +62,7 @@ if sreg_read_stream --sreg-dir "$sregDir" --entry-path "$1" --checksum "$knownHa
     else
         echo "Verified and restored to stream registry database formerly failed entry $knownHash."
     fi
-    exit 0
+    success
 else
     exit 1
 fi

@@ -97,7 +97,7 @@ if [[ "$exitCode" == "0" ]]; then
         #echo "Verified stream registry database entry $knownHash."
         true
     fi
-    exit 0
+    success
 else
     fail "$1"
 fi

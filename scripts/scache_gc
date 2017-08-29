@@ -15,7 +15,7 @@ fi
 touch "$dbDir.locked"
 
 finish() {
-    [[ -e "${dbDir:?}/.locked" ]] && rm "${dbDir:?}/.locked"
+    rm -f "${dbDir:?}/.locked"
 }
 trap finish EXIT
 
@@ -36,7 +36,7 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
         rm -f "$dbDir"/Failed\ Checksum/*
         # Remove the least-used item from the cache
         leastUsedItemDirectory="$(find "$dbDir/ByCount" -maxdepth 1 -type d | sort -n | head -n 2 | tail -n 1)"
-        largestLeastUsedItem="$(find "$leastUsedItemDirectory" -mindepth 4 -maxdepth 4 -type f -printf "%s\t%p\n" | sort -n | tail -1 | awk '{print $2;}')"
+        largestLeastUsedItem="$(find "$leastUsedItemDirectory" -mindepth 4 -maxdepth 4 -type f -printf "%s\\t%p\\n" | sort -n | tail -1 | awk '{print $2;}')"
         if [[ -n "$largestLeastUsedItem" ]]; then
             leastUsedItemCount="$(basename "$leastUsedItemDirectory")"
             hashFull="$(basename "$largestLeastUsedItem")"

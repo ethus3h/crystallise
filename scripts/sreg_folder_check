@@ -13,6 +13,7 @@ if [[ "$1" == "--sreg-dir" ]]; then
 fi
 
 finish() {
+    trap - ERR
     rm -f "${failCheckFile:?}"
 
     trap - ERR

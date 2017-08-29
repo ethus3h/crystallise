@@ -47,12 +47,13 @@ sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check "$folderToCheck")"
 echo "Counting items..."
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 fsckId="sreg_folder_check-$(date-uuid)"
+failCheckFile="/tmp/$fsckId.running"
 mkdir -p "$crystalWorkdir/${fsckId:?}"
 mkdir -p "/tmp/${fsckId:?}"
 fsckStatusFile="/tmp/$fsckId/.sreg_folder_check.status"
 fsckIdList="/tmp/$fsckId/.sreg_folder_check.idlist"
 find "$folderToCheck" -type f -printf '.' | wc -c > "$fsckStatusFile"
-find "$folderToCheck" -type f -exec sregi_hashpointer_sane --sreg-dir "$sregDir" {} "$fsckIdList" "$fsckStatusFile" "$sregVerify" \;
+find "$folderToCheck" -type f -exec sregi_hashpointer_sane "$failCheckFile" --sreg-dir "$sregDir" {} "$fsckIdList" "$fsckStatusFile" "$sregVerify" \;
 
 
 if [[ -e "$failCheckFile" ]]; then
@@ -67,7 +68,7 @@ fi
 find "$sregDir" -not -path "$sregDir/Unused Pointers/*" -type f -printf '.' | wc -c > "$fsckStatusFile"
 echo "0" > "$fsckStatusFile.done"
 
-find "$sregDir" -not -path "$sregDir/Unused Pointers/*" -type f \( -exec sregi_drop_single_unused --sreg-dir "$sregDir" {} "$fsckIdList" "$fsckStatusFile" \; -or -exec kill "-$bpid" \; \)
+find "$sregDir" -not -path "$sregDir/Unused Pointers/*" -type f \( -exec sregi_drop_single_unused "$failCheckFile" --sreg-dir "$sregDir" {} "$fsckIdList" "$fsckStatusFile" \; -or -exec kill "-$bpid" \; \)
 
 if [[ -e "$failCheckFile" ]]; then
     die "An invocation of sregi_drop_single_unused (called from $0) failed with the message \"$(<"$failCheckFile")\"!"

@@ -79,7 +79,10 @@ else
     cp "./Packed-$date.pdx" "$streamDir/Packed-$date.pdx.bz2"
     cp "./Packed-$date.pmbz" "$streamDir/.tmp-$date.pmb.tbz2"
 fi
-os.system('bunzip2 ./Packed-'+date+'.pdx.bz2')
+bunzip2 "$streamDir/Packed-$date.pdx.bz2"
+cp "$streamDir/Packed-$date.pdx" "$destDir/"
+# FIXME: On some tars, (not GNU), this will overwrite files if they are stored with absolute paths in the tar archive. Eek!
+cd 
 os.system('tar -xvf ./.tmp-'+date+'.tbz2')
 os.system('tar -xvf ./.tmp-'+date+'.pmb.tbz2')
 time.sleep(1)

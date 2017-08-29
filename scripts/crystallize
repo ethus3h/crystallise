@@ -193,7 +193,8 @@ fi
 
 echo "Retrieving remote index..."
 
-wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" | tee "$crystalWorkdir/$CrystalID.json"
+wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" > "$crystalWorkdir/$CrystalID.json"
+xz -C sha256 -9 -e -v "$crystalWorkdir/$CrystalID".json
 
 requestUrl="$2"
 if [[ -z "$requestUrl" ]]; then

@@ -13,8 +13,10 @@ if [[ "$1" == "--sreg-dir" ]]; then
 fi
 
 finish() {
+    save_traps="$(trap)"
     trap - ERR
     rm -f "${failCheckFile:?}"
+    eval "$save_traps"
 
     trap - ERR
     if [[ -e "$crystalWorkdir/${fsckId:?}" ]]; then

@@ -3,14 +3,14 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
-[[ -e "/tmp/depbzUser" ]] && die "depbz is already running! Only one depbz instance can be running at a time."
+[[ -e "/tmp/depbzHome" ]] && die "depbz is already running! Only one depbz instance can be running at a time."
 
-whoami > "/tmp/depbzUser"
+readlink -f ~ > "/tmp/depbzHome"
 ((EUID)) && exec sudo -- "$0" "$@"
-depbzUser="$(cat /tmp/depbzUser)"
+depbzHome="$(</tmp/depbzHome)"
 
 finish() {
-    [[ -e "/tmp/depbzUser" ]] && rm "/tmp/depbzUser"
+    [[ -e "/tmp/depbzHome" ]] && rm "/tmp/depbzHome"
 }
 trap finish EXIT
 
@@ -42,7 +42,9 @@ if [[ "$encrypted" == "true" ]]; then
     [[ -e "./Packed-$date.pdxe" ]] || die "Could not find encrypted bill of materials (pdxe) file."
     [[ -e "./Packed-$date.pmbze" ]] || die "Could not find encrypted pmbz (pmbze) file."
     if [[ "$useCustomPassphrase" == "false" ]]; then
-        
+        passphraseLocation="$depbzHome/.pbz"
+        [[ -e "$"]]
+        crystallizePassphrase="$(<~/.pbz)"
     cfgp = os.path.expanduser("~/.pbz")
     ad = ''
     try:

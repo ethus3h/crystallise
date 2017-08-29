@@ -168,10 +168,17 @@ until [[ "$getChecksumRetries" -ge 1000 ]]; do
 done
 checksumLine="${checksumLine/    <md5>/}"
 checksumLine="${checksumLine/<\/md5>/}"
+
+if [[ "$checksumLine" != "$knownChecksum" ]]; then
+    die "ERROR! Checksum known by Internet Archive does not match checksum known locally."
+fi
+
 knownChecksum="$(grep ",stdin" "$crystalWorkdir/$CrystalID.checksums" | awk -F',' '{print $2}')"
 if [[ "$checksumLine" != "$knownChecksum" ]]; then
     die "ERROR! Checksum known by Internet Archive does not match checksum known locally."
 fi
+
+knownChecksum=
 
 getChecksumRetries=0
 retryDelayTime=5

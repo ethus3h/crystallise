@@ -8,14 +8,18 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 action="$1"
 name="$2"
 
-if [[ "$(whoami)" != "$root" ]]; then
-    [[ -e "/tmp/rubberfsUser" ]] && die "RubberFS is already running! Only one RubberFS command can be running at a time."
+if [[ "$(whoami)" == "$root" ]]; then
+    [[ -e "/tmp/rubberfsUser.lock" ]] && die "RubberFS is already running! Only one RubberFS command can be running at a time."
+fi
 
 whoami > "/tmp/rubberfsUser"
 ((EUID)) && exec sudo -- "$0" "$@"
 rubberfsUser="$(</tmp/rubberfsUser)"
 
+touch "/tmp/rubberfsUser.lock"
+
 finish() {
+    [[ -e "/tmp/rubberfsUser.lock" ]] && rm "/tmp/rubberfsUser.lock"
     [[ -e "/tmp/rubberfsUser" ]] && rm "/tmp/rubberfsUser"
 }
 trap finish EXIT

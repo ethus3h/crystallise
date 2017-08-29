@@ -13,6 +13,7 @@ if [[ "$(whoami)" != "root" ]]; then
 fi
 ((EUID)) && exec sudo -- "$0" "$@"
 rubberfsUser="$(cat /tmp/rubberfsUser)"
+[[ -z "$rubberfsUser" ]] && rubberfsUser="root"
 
 set -e
 

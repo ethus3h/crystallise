@@ -14,6 +14,12 @@ if [[ -e "$dbDir/.locked" ]]; then
 fi
 touch "$dbDir.locked"
 
+finish() {
+    [[ -e "${dbDir:?}/.locked" ]] && rm "${dbDir:?}/.locked"
+    [[ -e "/tmp/rubberfsUser" ]] & rm "/tmp/rubberfsUser"
+}
+trap finish EXIT
+
 cacheType="s"
 if [[ -n "$2" ]]; then
     cacheType="$2"

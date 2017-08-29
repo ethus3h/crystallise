@@ -5,6 +5,13 @@ source ember_bash_setup &> /dev/null
 
 ((EUID)) && exec sudo -- "$0" "$@"
 
+removeFailCheckFile() {
+    save_traps="$(trap)"
+    trap - ERR
+    rm -f "${failCheckFile:?}"
+    eval "$save_traps"
+}
+
 finish() {
     if [[ -e "${crystalWorkdir:?}/${fsckId:?}" ]]; then
         rm -r "${crystalWorkdir:?}/${fsckId:?}"
@@ -13,8 +20,8 @@ finish() {
         rm -r "/tmp/${fsckId:?}"
     fi
 }
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
-trap finish EXIT
+trap 'removeFailCheckFile; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+trap 'removeFailCheckFile; finish' EXIT
 
 skipCache=""
 if [[ "--skip-cache" == "$1" ]]; then

@@ -219,22 +219,17 @@ finish() {
 trap finish EXIT
 
 if [[ -e "$dbLinkPath.locked" ]]; then
-    die "This URL cache entry (for a supposedly new crystal) is already in use. This should never happen, and indicates a bug in crystallize. Ple"
-    warn "Waiting 30 minutes for process using it to finish..."
-
-    waitForLockTries=0
-    until [[ "$waitForLockTries" -ge 360 ]]; do
-        if [[ -e "$dbLinkPath.locked" ]]; then
-            die "Still waiting..."
-        fi
-        getChecksumRetries=$((getChecksumRetries+1))
-        sleep 5
-    done
-
-    if [[ -e "$dbLinkPath.locked" ]]; then
-        die "This URL cache entry has been in use for 30 minutes so giving up. If the process using it has crashed, remove $dbFilePath.locked manually."
-    fi
+    die "This URL cache entry (for a supposedly new crystal) is already in use. This should never happen, and indicates a bug in crystallize."
 fi
+
+if [[ -e "$dbLinkPath" ]]; then
+    # Never seen this item before, so set the requestCount
+    requestCount=1
+else
+
+touch "$dbLinkPath.locked"
+
+
 
 #Build this again for the rm command
 CrystallizePaths=( "$@" )

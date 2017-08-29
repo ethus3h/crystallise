@@ -54,6 +54,11 @@ find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/Local
 rm -f "$fsckStatusFile.failed"
 bpid="$$"
 find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" \( -exec sregi_verify_entry --sreg-dir "$sregDir" {} "$fsckStatusFile" "$skipCache" \; -or -exec kill "-$bpid" \; \)
+
+if [[ -e "$failCheckFile" ]]; then
+    die "An invocation of sregi_verify_entry (called from $0) failed with the message \"$(<"$failCheckFile")\"!"
+fi
+
 [[ -e "$fsckStatusFile.failed" ]] && die "Failed verifying entry! Aborted."
 echo "Done all items."
 if [[ "$restoreCache" == "true" ]]; then

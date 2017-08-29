@@ -55,6 +55,11 @@ find "$folderToCheck" -type f -printf '.' | wc -c > "$fsckStatusFile"
 bpid="$$"
 find "$folderToCheck" -type f \( -exec sregi_hashpointer_sane --sreg-dir "$sregDir" {} "$fsckIdList" "$fsckStatusFile" "$sregVerify" \; -or -exec kill "-$bpid" \; \)
 
+
+if [[ -e "$failCheckFile" ]]; then
+    die "An invocation of sregi_hashpointer_sane (called from $0) failed with the message \"$(<"$failCheckFile")\"!"
+fi
+
 if [[ "$dropUnused" == "false" ]]; then
     finish
     exit 0
@@ -64,5 +69,9 @@ find "$sregDir" -not -path "$sregDir/Unused Pointers/*" -type f -printf '.' | wc
 echo "0" > "$fsckStatusFile.done"
 
 find "$sregDir" -not -path "$sregDir/Unused Pointers/*" -type f \( -exec sregi_drop_single_unused --sreg-dir "$sregDir" {} "$fsckIdList" "$fsckStatusFile" \; -or -exec kill "-$bpid" \; \)
+
+if [[ -e "$failCheckFile" ]]; then
+    die "An invocation of sregi_drop_single_unused (called from $0) failed with the message \"$(<"$failCheckFile")\"!"
+fi
 
 finish

@@ -95,7 +95,7 @@ for path in "${pathsToCopy[@]}"; do
 done
 
 if [[ -e "$failCheckFile" ]]; then
-    die "An invocation of $sregi_copy_write (called from $0) failed with the message \"$(<"$failCheckFile")\"!"
+    die "An invocation of sregi_copy_write (called from $0) failed with the message \"$(<"$failCheckFile")\"!"
 fi
 
 finish

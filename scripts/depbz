@@ -28,31 +28,11 @@ else
         die "Could not find specified date. Please make sure you have cded to the directory it's in."
     fi
 fi
-try:
-    ak = open('./Packed-'+date+'.pbze','rb')
-    ak.close()
-except:
-    try:
-        ak = open('./Packed-'+date+'.pbz','rb')
-        ak.close()
-    except:
-        print "Could not find specified date. Please make sure you have cded to the directory it's in."
-        sys.exit()
-    encr = False
-if encr:
-    print 'pbze extract'
-    try:
-        ak = open('./Packed-'+date+'.pdxe','rb')
-        ak.close()
-    except:
-        print "Could not find BOMe."
-        sys.exit()
-    try:
-        ak = open('./Packed-'+date+'.pmbze','rb')
-        ak.close()
-    except:
-        print "Could not find pmbze."
-        sys.exit()
+if [[ "$encrypted" == "true" ]]; then
+    [[ -e "./Packed-$date.pdxe" ]] || die "Could not find encrypted bill of materials (pdxe) file."
+    [[ -e "./Packed-$date.pmbze" ]] || die "Could not find encrypted pmbz (pmbze) file."
+    if [[ "$useCustomPassphrase" == "false" ]]; then
+        
     cfgp = os.path.expanduser("~/.pbz")
     ad = ''
     try:

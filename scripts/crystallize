@@ -212,23 +212,18 @@ hashSubdir="$hashA/$hashB/$hashC"
 hashDir="$dbDir/$hashSubdir"
 mkdir -p "$hashDir"
 dbLinkPath="$hashDir/$hashFull"
+checksumName="$dbLinkPath.checksum"
 
 finish() {
     [[ -e "${dbLinkPath:?}.locked" ]] && rm "${dbLinkPath:?}.locked"
 }
 trap finish EXIT
 
-if [[ -e "$dbLinkPath.locked" ]]; then
-    die "This URL cache entry (for a supposedly new crystal) is already in use. This should never happen, and indicates a bug in crystallize."
-fi
+[[ -e "$dbLinkPath.locked" ]] && die "This URL cache entry (for a supposedly new crystal) is already in use. This should never happen, and indicates a bug in crystallize."
 
-if [[ -e "$dbLinkPath" ]]; then
-    die "This URL cache entry (for a supposedly new crystal) already exists. This should never happen, and indicates a bug in crystallize."
-fi
+[[ -e "$dbLinkPath" ]] && die "This URL cache entry (for a supposedly new crystal) already exists. This should never happen, and indicates a bug in crystallize."
 
-checksumName="${dbLinkPath:?}.checksum"
-csAvail="false"
-[[ -e "$checksumName" ]] && csAvail="true"
+[[ -e "$checksumName" ]] && die "This URL cache entry (for a supposedly new crystal) already has a checksum file. This should never happen, and indicates a bug in crystallize."
 
 touch "$dbLinkPath.locked"
 

@@ -46,21 +46,7 @@ if [[ "$encrypted" == "true" ]]; then
         [[ -e "$passphraseLocation" && ! -d "$passphraseLocation" ]] || die "Could not find passphrase file, expected to be at $passphraseLocation. Please create it, or specify a passphrase using the --passphrase option."
         crystallizePassphrase="$(<~/.pbz)"
     fi
-    cfgp = os.path.expanduser("~/.pbz")
-    ad = ''
-    try:
-        ak = open(cfgp,'rb')
-        ad = ak.read()
-        ak.close()
-    except:
-        pass
-    if len(ad) < 1:
-        ad = raw_input('authkey? ');
-        os.system('rm -v ~/.pbz 2> /dev/null')
-        cfgp = os.path.expanduser("~/.pbz")
-        ax = open(cfgp,'wb')
-        ax.write(ad)
-        ax.close()
+    
     os.system('mv -v ./Packed-'+date+'.pbze .tmp-'+date+'.gpg')
     os.system('gpg --yes --batch --passphrase-file ~/.pbz ./.tmp-'+date+'.gpg')
     os.system('rm -v ./.tmp-'+date+'.gpg')

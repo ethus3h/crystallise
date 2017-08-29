@@ -52,3 +52,5 @@ fi
 pointerDir="$(sregi_find_dir --sreg-dir "$sregDir")/Unused Pointers"
 mkdir -p "$pointerDir"
 grep -Fxq "$pointerId" "$fsckIdList" || { mv "$1" "$pointerDir"; echo "Dropped unused stream $pointerId"; }
+
+success

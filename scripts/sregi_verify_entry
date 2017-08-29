@@ -101,3 +101,5 @@ if [[ "$exitCode" == "0" ]]; then
 else
     fail "$1"
 fi
+
+success

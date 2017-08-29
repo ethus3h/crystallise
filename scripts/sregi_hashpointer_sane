@@ -85,3 +85,5 @@ then
         printf '%s\n%s\n' "760fa662-89cf-4ebd-9664-150b7637ddd4" "$knownChecksum" | sregi_hashpointer_sane --sreg-dir "$sregDir" - "${@:2}"
     fi
 fi
+
+success

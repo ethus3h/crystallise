@@ -99,3 +99,5 @@ failCleanup() {
 }
 sregi_verify_entry --sreg-dir "$sregDir" "$dbFilePath" --quick || failCleanup
 rm "$dbTempFileDir/$hashFull"
+
+success

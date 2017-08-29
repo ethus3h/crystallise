@@ -32,3 +32,5 @@ if [[ "$knownHash" != "$recoveredHash" ]]; then
         die "File failed backup verification!: $1"
     fi
 fi
+
+success

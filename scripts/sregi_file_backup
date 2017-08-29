@@ -38,3 +38,5 @@ else
 fi
 echo -n "$(du -bsh "$1" | awk '{print $1;}')"
 echo ")"
+
+success

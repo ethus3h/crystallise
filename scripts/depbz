@@ -16,6 +16,7 @@ if [[ "$1" == "--passphrase" ]]; then
     crystallizePassphrase="$1"
     shift
 fi
+
 date = raw_input('date to restore? NOTE THAT THE INPUT FILES WILL BE REMOVED AFTER RESTORE! HAVE A BACKUP IN CASE THE RESTORE FAILS! ');
     encr = True
     try:
@@ -30,16 +31,6 @@ date = raw_input('date to restore? NOTE THAT THE INPUT FILES WILL BE REMOVED AFT
             sys.exit()
         encr = False
     if encr:
-        needsOtherKey = raw_input('Replace key? (y/n) ');
-        if needsOtherKey.lower().strip() == 'yes' or needsOtherKey.lower().strip() == 'y':
-            #akn = raw_input('new authkey? ')
-            #akn = os.path.expanduser(akn)
-            akn = ''
-            cfgkn = os.path.expanduser("~/.pbz")
-            os.system('rm -v ~/.pbz 2> /dev/null')
-            akx = open(cfgkn,'wb')
-            akx.write(akn)
-            akx.close()
         print 'pbze extract'
         try:
             ak = open('./Packed-'+date+'.pdxe','rb')

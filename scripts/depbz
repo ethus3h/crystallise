@@ -17,7 +17,7 @@ if [[ "$1" == "--passphrase" ]]; then
     shift
 fi
 
-date = raw_input('date to restore? NOTE THAT THE INPUT FILES WILL BE REMOVED AFTER RESTORE! HAVE A BACKUP IN CASE THE RESTORE FAILS! ');
+date="$1";
     encr = True
     try:
         ak = open('./Packed-'+date+'.pbze','rb')

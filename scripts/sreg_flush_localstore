@@ -14,6 +14,7 @@ fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 
 finish() {
+    [[ -e "${dbDir:?}"/.LocalStore.lock ]] && rm "${dbDir:?}"/.LocalStore.lock
     if cd "$crystalWorkdir"; then
         if [[ -e "${streamId:?}" ]]; then
             rm -r "${streamId:?}"
@@ -22,10 +23,10 @@ finish() {
 }
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; rm -f "${dbDir:?}"/.LocalStore.lock; finish; exit 1' ERR
 
-finish() {
+finishExit() {
     [[ -e "${dbDir:?}"/.LocalStore.lock ]] && rm "${dbDir:?}"/.LocalStore.lock
 }
-trap finish EXIT
+trap finishExit EXIT
 
 dbDir="$sregDir"
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"

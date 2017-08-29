@@ -43,8 +43,9 @@ if [[ "$encrypted" == "true" ]]; then
     [[ -e "./Packed-$date.pmbze" && ! -d "./Packed-$date.pmbze" ]] || die "Could not find encrypted pmbz (pmbze) file."
     if [[ "$useCustomPassphrase" == "false" ]]; then
         passphraseLocation="$depbzHome/.pbz"
-        [[ -e "$passphraseLocation" && ! -d "$passphraseLocation" ]] || die "Could n"
+        [[ -e "$passphraseLocation" && ! -d "$passphraseLocation" ]] || die "Could not find passphrase file, expected to be at $passphraseLocation. Please create it, or specify a passphrase using the --passphrase option."
         crystallizePassphrase="$(<~/.pbz)"
+    fi
     cfgp = os.path.expanduser("~/.pbz")
     ad = ''
     try:

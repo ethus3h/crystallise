@@ -16,11 +16,11 @@ sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check "${!#}")"
 
 finish() {
     trap - ERR
-    if [[ -e "$fsckStatusFile" ]]; then
-        rm "$fsckStatusFile"
+    if [[ -e "$statusFile" ]]; then
+        rm "$statusFile"
     fi
-    if [[ -e "$crystalWorkdir/$fsckId" ]]; then
-        rm -r "${crystalWorkdir:?}/${fsckId:?}"
+    if [[ -e "$crystalWorkdir/$instanceId" ]]; then
+        rm -r "${crystalWorkdir:?}/${instanceId:?}"
     fi
     trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while finishing srsync."' ERR
 }
@@ -55,11 +55,12 @@ if ! [[ -d "$destinationParameter" ]]; then
 fi
 echo "Counting items..."
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
-fsckId="srsync-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
-mkdir -p "$crystalWorkdir/$fsckId"
-fsckStatusFile="/tmp/$fsckId.srsync.status"
+instanceId="srsync-$(date-uuid)"
+mkdir -p "$crystalWorkdir/$instanceId"
+statusFile="/tmp/$instanceId.srsync.status"
+failCheckFile="/tmp/$instanceId.srsync.running"
 
-find "${pathsToCopy[@]}" -type f -printf '.' | wc -c > "$fsckStatusFile"
+find "${pathsToCopy[@]}" -type f -printf '.' | wc -c > "$statusFile"
 destinationReplaced="${destinationParameter/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"
 destinationReplaced="${destinationReplaced//\/.git\//\/.git.686fc528-0e8e-4724-91bb-c103cdcdd592\/}"
 destinationSuffix=""
@@ -85,9 +86,9 @@ for path in "${pathsToCopy[@]}"; do
     bpid="$$"
     # Use $path in find commands rather than sourceReplaced because sourceReplaced is used for the target computation and post-processing (post-processing with find, that is).
     if [[ "$sregNoVerify" == "true" ]]; then
-        find "$path" -type f \( -exec sregi_copy_write --sreg-dir "$sregDir" --no-verify {} "$destinationReplaced" "$fsckStatusFile" "$destinationRootLength" \; -or -exec kill "-$bpid" \; \)
+        find "$path" -type f \( -exec sregi_copy_write --sreg-dir "$sregDir" --no-verify {} "$destinationReplaced" "$statusFile" "$destinationRootLength" \; -or -exec kill "-$bpid" \; \)
     else
-        find "$path" -type f \( -exec sregi_copy_write --sreg-dir "$sregDir" {} "$destinationReplaced" "$fsckStatusFile" "$destinationRootLength" \; -or -exec kill "-$bpid" \; \)
+        find "$path" -type f \( -exec sregi_copy_write --sreg-dir "$sregDir" {} "$destinationReplaced" "$statusFile" "$destinationRootLength" \; -or -exec kill "-$bpid" \; \)
     fi
     # This NEEDS to skip regular files, because otherwise files that don't exist in the directory will be copied and take up space!
     # rsync -a --ignore-existing --no-i-r "${pathsToCopy[@]}" "$destinationParameter/"

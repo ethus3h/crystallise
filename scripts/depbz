@@ -18,7 +18,16 @@ if [[ "$1" == "--passphrase" ]]; then
 fi
 
 date="$1";
-encr = True
+encrypted=""
+if [[ -e "./Packed-$date.pbze" ]]; then
+    encrypted="true"
+else
+    if [[ -e "./Packed-$date.pbz" ]]; then
+        encrypted="false"
+    else
+        die "Could not find specified date. Please make sure you have cded to the directory it's in."
+    fi
+fi
 try:
     ak = open('./Packed-'+date+'.pbze','rb')
     ak.close()

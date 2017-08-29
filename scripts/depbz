@@ -9,6 +9,11 @@ readlink -f ~ > "/tmp/depbzHome"
 ((EUID)) && exec sudo -- "$0" "$@"
 depbzHome="$(</tmp/depbzHome)"
 
+# -t 1 checks if file descriptor 1 "is opened on a terminal" (—GNU coreutils 8.25 manpage for test)
+if [[ -t 1 ]]; then
+    warn-timeout "BE CAREFUL! On some tars (not GNU), this can overwrite important files if the files in the tar archive are stored with absolute paths. Eek!"
+fi
+
 finish() {
     [[ -e "/tmp/depbzHome" ]] && rm "/tmp/depbzHome"
     trap - ERR
@@ -81,11 +86,8 @@ else
 fi
 bunzip2 "$streamDir/Packed-$date.pdx.bz2"
 cp "$streamDir/Packed-$date.pdx" "$destDir/"
-# FIXME: On some tars, (not GNU), this will overwrite files if they are stored with absolute paths in the tar archive. Eek!
-cd 
-os.system('tar -xvf ./.tmp-'+date+'.tbz2')
-os.system('tar -xvf ./.tmp-'+date+'.pmb.tbz2')
-time.sleep(1)
-os.system('rm -v ./.tmp-'+date+'.tbz2')
-os.system('rm -v ./.tmp-'+date+'.pmb.tbz2')
-os.system('mv -v ./.tmp.Packed-'+date+'.pmb ./Packed-'+date+'.pmb')
+# FIXME: On some tars (not GNU), this can overwrite important files if the files in the tar archive are stored with absolute paths. Eek!
+cd "$destDir"
+tar -xvf "$streamDir/.tmp-$date.tbz2"
+tar -xvf "$streamDir/.tmp-$date.pmb.tbz2"
+mv "./.tmp.Packed-$date.pmb" "./Packed-$date.pmb"

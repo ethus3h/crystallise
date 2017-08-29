@@ -21,7 +21,7 @@ if [[ "$1" == "--sreg-dir" ]]; then
 fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 
-failCheckFile="/tmp/$(date-uuid).running"
+failCheckFile="/tmp/sreg_build_backup_set-$(date-uuid).running"
 
 dbDir="$sregDir"
 backupDir="$1"

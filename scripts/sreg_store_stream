@@ -26,7 +26,7 @@ trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINEN
 dbDir="$sregDir"
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 # Don't rename this to sreg. I think this name is needed for reading it
-streamId="scache-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+streamId="scache-$(date-uuid)"
 mkdir -p "$crystalWorkdir/$streamId"
 (
     cd "$crystalWorkdir/$streamId" || die

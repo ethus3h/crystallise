@@ -95,7 +95,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -d "$oldFilePath" ]] || [[ ! -d "$cacheEntry
     dbFilePath="$dbFileDir/$hashFull"
     rm -rf "${dbFilePath:?}"
     mkdir -p "$dbFilePath"
-    tempDirectoryName="$crystalWorkdir/localstorecache-request-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    tempDirectoryName="$crystalWorkdir/localstorecache-request-$(date-uuid)"
     mkdir -p "$tempDirectoryName"
     (
         cd "$tempDirectoryName" || exit 1

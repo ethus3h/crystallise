@@ -169,7 +169,7 @@ save)
     #sudo -u "$rubberfsUser" git submodule update --remote
     #sudo -u "$rubberfsUser" git push -u origin master
     #set -e
-    rubberfsSnapshot="rubberfs-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    rubberfsSnapshot="rubberfs-$(date-uuid)"
     zfs snapshot "$name@$rubberfsSnapshot"
     printf "\033c"
     echo "A saved snapshot $rubberfsSnapshot in RubberFS named $name has been created."
@@ -185,7 +185,7 @@ freeze)
     echo "### WARNING! ^^^ WARNING! ### WARNING! ### WARNING! ^^^ WARNING! ###"
     #TODO: make sure this works. What it should do: Back up the complete current filesystem to IA (as a .crystal but don't keep local copy), put the .crystal in the .rubberfs/history/ folder, and remove old snapshots.
     cd /
-    freezeId="rubberfs-freeze-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    freezeId="rubberfs-freeze-$(date-uuid)"
     crystalWorkdir="$(crystallize-getconf WorkDirectory)"
     freezeUuid="$(python -c 'import uuid; print str(uuid.uuid4())')"
     zfs snapshot -r "$name@$freezeId"
@@ -230,7 +230,7 @@ delta)
             echo "ERROR! There does not appear to be an existing freeze state. Please use rubberfs freeze instead." >&2
         fi
     fi
-    freezeId="rubberfs-delta-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    freezeId="rubberfs-delta-$(date-uuid)"
     crystalWorkdir="$(crystallize-getconf WorkDirectory)"
     freezeUuid="$(python -c 'import uuid; print str(uuid.uuid4())')"
     zfs snapshot -r "$name@$freezeId"
@@ -303,7 +303,7 @@ thaw)
     truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
     zpool create "$name" -O compression=gzip-9 -O relatime=on -O checksum=sha256 mirror "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
     crystalWorkdir="$(crystallize-getconf WorkDirectory)"
-    rubberfsThawId="rubberfs-thaw-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)").$(python -c 'import uuid; print str(uuid.uuid4())').tmp"
+    rubberfsThawId="rubberfs-thaw-$(date-uuid).$(python -c 'import uuid; print str(uuid.uuid4())').tmp"
     mkdir "$rubberfsThawId"
     cd "$rubberfsThawId"
     decrystallize "$freezeId" --here
@@ -330,7 +330,7 @@ patch)
     while [[ ! -z $2 ]]; do
         freezeId="$2"
         echo "Begun working on patch $freezeId"
-        rubberfsPatchId="rubberfs-patch-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)").$(python -c 'import uuid; print str(uuid.uuid4())').tmp"
+        rubberfsPatchId="rubberfs-patch-$(date-uuid).$(python -c 'import uuid; print str(uuid.uuid4())').tmp"
         mkdir "$rubberfsPatchId"
         cd "$rubberfsPatchId"
         decrystallize "$freezeId" --here
@@ -391,7 +391,7 @@ destroy)
     find "/$name" -maxdepth 1 ! -name '.rubberfs' ! -wholename "/$name" -exec rm -rfv {} +
     rubberfs save "$name"
     rubberfs freeze "$name"
-    rubberfsDestroyId="rubberfs-destroy-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)").$(python -c 'import uuid; print str(uuid.uuid4())').tmp"
+    rubberfsDestroyId="rubberfs-destroy-$(date-uuid).$(python -c 'import uuid; print str(uuid.uuid4())').tmp"
     mkdir "/$rubberfsDestroyId"
     rsync -av --checksum --progress --no-i-r "/$name" "/$rubberfsDestroyId"
     zpool export "$name"
@@ -414,7 +414,7 @@ destroy-no-upload)
     rubberfs save "$name"
     find "/$name" -maxdepth 1 ! -name '.rubberfs' ! -wholename "/$name" -exec rm -rfv {} +
     rubberfs save "$name"
-    freezeId="rubberfs-freeze-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+    freezeId="rubberfs-freeze-$(date-uuid)"
     crystalWorkdir="$(crystallize-getconf WorkDirectory)"
     freezeUuid="$(python -c 'import uuid; print str(uuid.uuid4())')"
     zfs snapshot -r "$name@$freezeId"
@@ -423,7 +423,7 @@ destroy-no-upload)
     rubberfsWatchPid="$!"
     zfs send -R "$name@$freezeId" > "$crystalWorkdir/$name@$freezeId.$freezeUuid.zfsrepl"
     kill "$rubberfsWatchPid"
-    rubberfsDestroyId="rubberfs-destroy-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)").$(python -c 'import uuid; print str(uuid.uuid4())').tmp"
+    rubberfsDestroyId="rubberfs-destroy-$(date-uuid).$(python -c 'import uuid; print str(uuid.uuid4())').tmp"
     mkdir "/$rubberfsDestroyId"
     rsync -av --checksum --progress --no-i-r "/$name" "/$rubberfsDestroyId"
     zpool export "$name"

@@ -132,7 +132,7 @@ if [[ -f "$destinationName" ]]; then
 fi
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
-streamId="sreg-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+streamId="sreg-$(date-uuid)"
 crystalSubdir="$crystalWorkdir/$streamId"
 mkdir -p "$crystalSubdir"
 rsync -a --checksum --no-i-r "$1" "$crystalSubdir/"

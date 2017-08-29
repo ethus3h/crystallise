@@ -8,14 +8,14 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 crystallizeVersion="$(crystallize-getconf crystallizeVersion)"
 
-IUIDENTIFIER="Liquid-"$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")-$(python -c 'import uuid; print str(uuid.uuid4())')
+iuIdentifier="Liquid-$(date-uuid)"
 
 crystalTitle="$(crystallize-getconf InstallationIdentifier)"
 
-ia upload "$IUIDENTIFIER" --verify --metadata="subject:Uploaded using quickliquid for Crystallize $crystallizeVersion" --metadata="subject:9F227910-A541-11E5-8BD3-7B584224FF49" --metadata="subject:$crystalTitle" "$@"
+ia upload "$iuIdentifier" --verify --metadata="subject:Uploaded using quickliquid for Crystallize $crystallizeVersion" --metadata="subject:9F227910-A541-11E5-8BD3-7B584224FF49" --metadata="subject:$crystalTitle" "$@"
 
 tail=""
 if [[ -z "$2" ]]; then
     tail="$(urlencode "$(basename "$1")")"
 fi
-echo "https://archive.org/download/$IUIDENTIFIER/"
+echo "https://archive.org/download/$iuIdentifier/$tail"

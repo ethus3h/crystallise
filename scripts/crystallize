@@ -199,7 +199,11 @@ xz -C sha256 -9 -e -v "$crystalWorkdir/$CrystalID".json
 
 rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.json.xz" "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
 
-requestUrl="https://archive.org/$"
+if ! [[ -e "$crystalWorkdir/.CrystalCache/" ]]; then
+    fcache_init "$crystalWorkdir/.CrystalCache/" 5000000000
+fi
+
+requestUrl="https://archive.org/download/$CrystalID/$CrystalID.coal5"
 hashFull="$(sha512sum <<< "$requestUrl" | awk '{print $1;}')"
 hashA="${hashFull:0:1}"
 hashB="${hashFull:1:1}"

@@ -221,7 +221,9 @@ trap finish EXIT
 
 [[ -e "$dbLinkPath.locked" ]] && die "This URL cache entry (for a supposedly new crystal) is already in use. This should never happen, and indicates a bug in crystallize."
 
-[[ -e "$dbLinkPath" ]] && die "This URL cache entry (for a supposedly new crystal) already exists. This should never happen, and indicates a bug in crystallize."
+if [[ -e "$dbLinkPath" ]] || [[ -h "$dbLinkPath" ]]; then
+    die "This URL cache entry (for a supposedly new crystal) already exists. This should never happen, and indicates a bug in crystallize."
+fi
 
 [[ -e "$checksumName" ]] && die "This URL cache entry (for a supposedly new crystal) already has a checksum file. This should never happen, and indicates a bug in crystallize."
 
@@ -233,7 +235,12 @@ dbFilePath="$dbFileDir/$hashFull"
 mkdir -p "$dbFileDir"
 mv "$crystalWorkdir/$CrystalID.coal5" "$dbFilePath"
 sha512sum < "$dbFilePath" | awk '{print $1;}' > "$checksumName"
+printf "%s" "$requestUrl" > "$dbLinkPath.url"
 
+ln -s "$dbFilePath" "$dbLinkPath"
+
+# Done editing the cache entry, so release the lock
+rm "$dbLinkPath.locked"
 
 #Build this again for the rm command
 CrystallizePaths=( "$@" )

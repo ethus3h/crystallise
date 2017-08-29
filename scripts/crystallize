@@ -213,6 +213,29 @@ hashDir="$dbDir/$hashSubdir"
 mkdir -p "$hashDir"
 dbLinkPath="$hashDir/$hashFull"
 
+finish() {
+    [[ -e "${dbLinkPath:?}.locked" ]] && rm "${dbLinkPath:?}.locked"
+}
+trap finish EXIT
+
+if [[ -e "$dbLinkPath.locked" ]]; then
+    die "This URL cache entry (for a supposedly new crystal) is already in use. This should never happen, and indicates a bug in crystallize. Ple"
+    warn "Waiting 30 minutes for process using it to finish..."
+
+    waitForLockTries=0
+    until [[ "$waitForLockTries" -ge 360 ]]; do
+        if [[ -e "$dbLinkPath.locked" ]]; then
+            die "Still waiting..."
+        fi
+        getChecksumRetries=$((getChecksumRetries+1))
+        sleep 5
+    done
+
+    if [[ -e "$dbLinkPath.locked" ]]; then
+        die "This URL cache entry has been in use for 30 minutes so giving up. If the process using it has crashed, remove $dbFilePath.locked manually."
+    fi
+fi
+
 #Build this again for the rm command
 CrystallizePaths=( "$@" )
 for i in "${!CrystallizePaths[@]}"; do

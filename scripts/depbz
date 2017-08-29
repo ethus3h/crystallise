@@ -3,9 +3,7 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
-if [[ "$(whoami)" != "root" ]]; then
-    whoami > /tmp/depbzUser
-fi
+whoami > /tmp/depbzUser
 ((EUID)) && exec sudo -- "$0" "$@"
 depbzUser="$(cat /tmp/depbzUser)"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR

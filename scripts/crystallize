@@ -234,7 +234,7 @@ fi
 
 touch "$dbLinkPath.locked"
 
-requestCount=1
+requestCount=0
 dbFileDir="$dbDir/ByCount/${requestCount:?}/$hashSubdir"
 dbFilePath="$dbFileDir/$hashFull"
 mkdir -p "$dbFileDir"

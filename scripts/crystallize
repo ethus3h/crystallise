@@ -193,8 +193,11 @@ fi
 
 echo "Retrieving remote index..."
 
+[[ -e "$crystalWorkdir/$CrystalID".json.xz ]] && rm "$crystalWorkdir/$CrystalID".json.xz
 wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" > "$crystalWorkdir/$CrystalID.json"
 xz -C sha256 -9 -e -v "$crystalWorkdir/$CrystalID".json
+
+rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.json.xz" "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
 
 requestUrl="$2"
 if [[ -z "$requestUrl" ]]; then

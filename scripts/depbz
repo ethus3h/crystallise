@@ -40,10 +40,10 @@ crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 cd "$crystalWorkdir" || exit 1
 
 streamId="depbz-$(date-uuid)"
-mkdir -p "$crystalWorkdir/$streamId"
-streamDir="$crystalWorkdir/$streamId"
-
 mkdir "./$streamId"
+
+streamDir="$crystalWorkdir/$streamId"
+mkdir -p "$streamDir"
 
 useCustomPassphrase="false"
 crystallizePassphrase=""

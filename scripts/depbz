@@ -19,6 +19,7 @@ if [[ -t 1 ]]; then
 fi
 
 finish() {
+    [[ -e "/tmp/depbz.lock" ]] && rm "/tmp/depbz.lock"
     [[ -e "/tmp/depbzHome" ]] && rm "/tmp/depbzHome"
     trap - ERR
     (

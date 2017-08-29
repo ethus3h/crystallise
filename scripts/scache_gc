@@ -16,7 +16,6 @@ touch "$dbDir.locked"
 
 finish() {
     [[ -e "${dbDir:?}/.locked" ]] && rm "${dbDir:?}/.locked"
-    [[ -e "/tmp/rubberfsUser" ]] & rm "/tmp/rubberfsUser"
 }
 trap finish EXIT
 

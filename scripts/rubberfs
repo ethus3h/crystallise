@@ -9,17 +9,17 @@ action="$1"
 name="$2"
 
 if [[ "$(whoami)" == "$root" ]]; then
-    [[ -e "/tmp/rubberfsUser.lock" ]] && die "RubberFS is already running! Only one RubberFS command can be running at a time."
+    [[ -e "/tmp/rubberfs.lock" ]] && die "RubberFS is already running! Only one RubberFS command can be running at a time."
 fi
 
 whoami > "/tmp/rubberfsUser"
 ((EUID)) && exec sudo -- "$0" "$@"
 rubberfsUser="$(</tmp/rubberfsUser)"
 
-touch "/tmp/rubberfsUser.lock"
+touch "/tmp/rubberfs.lock"
 
 finish() {
-    [[ -e "/tmp/rubberfsUser.lock" ]] && rm "/tmp/rubberfsUser.lock"
+    [[ -e "/tmp/rubberfs.lock" ]] && rm "/tmp/rubberfs.lock"
     [[ -e "/tmp/rubberfsUser" ]] && rm "/tmp/rubberfsUser"
 }
 trap finish EXIT

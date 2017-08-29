@@ -3,6 +3,9 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
+if [[ "$(whoami)" == "$root" ]]; then
+    [[ -e "/tmp/depbzHome.lock" ]] && die "RubberFS is already running! Only one RubberFS command can be running at a time."
+fi
 [[ -e "/tmp/depbzHome" ]] && die "depbz is already running! Only one depbz instance can be running at a time."
 
 readlink -f ~ > "/tmp/depbzHome"

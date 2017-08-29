@@ -107,7 +107,7 @@ mkdir "$streamId"
         waitForLockTries=0
         until [[ "$waitForLockTries" -ge 360 ]]; do
             if [[ -e "$dbLinkPath.locked" ]]; then
-                die "Still waiting..."
+                warn "Still waiting..."
             fi
             getChecksumRetries=$((getChecksumRetries+1))
             sleep 5

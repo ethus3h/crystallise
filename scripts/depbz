@@ -18,79 +18,78 @@ if [[ "$1" == "--passphrase" ]]; then
 fi
 
 date="$1";
-    encr = True
+encr = True
+try:
+    ak = open('./Packed-'+date+'.pbze','rb')
+    ak.close()
+except:
     try:
-        ak = open('./Packed-'+date+'.pbze','rb')
+        ak = open('./Packed-'+date+'.pbz','rb')
         ak.close()
     except:
-        try:
-            ak = open('./Packed-'+date+'.pbz','rb')
-            ak.close()
-        except:
-            print "Could not find specified date. Please make sure you have cded to the directory it's in."
-            sys.exit()
-        encr = False
-    if encr:
-        print 'pbze extract'
-        try:
-            ak = open('./Packed-'+date+'.pdxe','rb')
-            ak.close()
-        except:
-            print "Could not find BOMe."
-            sys.exit()
-        try:
-            ak = open('./Packed-'+date+'.pmbze','rb')
-            ak.close()
-        except:
-            print "Could not find pmbze."
-            sys.exit()
+        print "Could not find specified date. Please make sure you have cded to the directory it's in."
+        sys.exit()
+    encr = False
+if encr:
+    print 'pbze extract'
+    try:
+        ak = open('./Packed-'+date+'.pdxe','rb')
+        ak.close()
+    except:
+        print "Could not find BOMe."
+        sys.exit()
+    try:
+        ak = open('./Packed-'+date+'.pmbze','rb')
+        ak.close()
+    except:
+        print "Could not find pmbze."
+        sys.exit()
+    cfgp = os.path.expanduser("~/.pbz")
+    ad = ''
+    try:
+        ak = open(cfgp,'rb')
+        ad = ak.read()
+        ak.close()
+    except:
+        pass
+    if len(ad) < 1:
+        ad = raw_input('authkey? ');
+        os.system('rm -v ~/.pbz 2> /dev/null')
         cfgp = os.path.expanduser("~/.pbz")
-        ad = ''
-        try:
-            ak = open(cfgp,'rb')
-            ad = ak.read()
-            ak.close()
-        except:
-            pass
-        if len(ad) < 1:
-            ad = raw_input('authkey? ');
-            os.system('rm -v ~/.pbz 2> /dev/null')
-            cfgp = os.path.expanduser("~/.pbz")
-            ax = open(cfgp,'wb')
-            ax.write(ad)
-            ax.close()
-        os.system('mv -v ./Packed-'+date+'.pbze .tmp-'+date+'.gpg')
-        os.system('gpg --yes --batch --passphrase-file ~/.pbz ./.tmp-'+date+'.gpg')
-        os.system('rm -v ./.tmp-'+date+'.gpg')
-        os.system('mv -v ./Packed-'+date+'.pdxe .tmp-pdx-'+date+'.gpg')
-        os.system('gpg --yes --batch --passphrase-file ~/.pbz ./.tmp-pdx-'+date+'.gpg')
-        os.system('rm -v ./.tmp-pdx-'+date+'.gpg')
-        os.system('mv -v ./.tmp-'+date+' ./.tmp-'+date+'.tbz2')
-        os.system('mv -v ./.tmp-pdx-'+date+' ./Packed-'+date+'.pdx.bz2')
-        os.system('mv -v ./Packed-'+date+'.pmbze .tmp-pmbz-'+date+'.gpg')
-        os.system('gpg --yes --batch --passphrase-file ~/.pbz ./.tmp-pmbz-'+date+'.gpg')
-        os.system('rm -v ./.tmp-pmbz-'+date+'.gpg')
-        os.system('mv -v ./.tmp-pmbz-'+date+' ./.tmp-'+date+'.pmb.tbz2')
-    else:
-        print 'pbz extract'
-        os.system('mv -v ./Packed-'+date+'.pdx ./Packed-'+date+'.pdx.bz2')
-        try:
-            ak = open('./Packed-'+date+'.pdx','rb')
-            ak.close()
-        except:
-            print "Could not find BOM."
-            sys.exit()
-        try:
-            ak = open('./Packed-'+date+'.pmbze','rb')
-            ak.close()
-        except:
-            print "Could not find pmbze."
-            sys.exit()
-    os.system('bunzip2 ./Packed-'+date+'.pdx.bz2')
-    os.system('tar -xvf ./.tmp-'+date+'.tbz2')
-    os.system('tar -xvf ./.tmp-'+date+'.pmb.tbz2')
-    time.sleep(1)
-    os.system('rm -v ./.tmp-'+date+'.tbz2')
-    os.system('rm -v ./.tmp-'+date+'.pmb.tbz2')
-    os.system('mv -v ./.tmp.Packed-'+date+'.pmb ./Packed-'+date+'.pmb')
-sys.exit()
+        ax = open(cfgp,'wb')
+        ax.write(ad)
+        ax.close()
+    os.system('mv -v ./Packed-'+date+'.pbze .tmp-'+date+'.gpg')
+    os.system('gpg --yes --batch --passphrase-file ~/.pbz ./.tmp-'+date+'.gpg')
+    os.system('rm -v ./.tmp-'+date+'.gpg')
+    os.system('mv -v ./Packed-'+date+'.pdxe .tmp-pdx-'+date+'.gpg')
+    os.system('gpg --yes --batch --passphrase-file ~/.pbz ./.tmp-pdx-'+date+'.gpg')
+    os.system('rm -v ./.tmp-pdx-'+date+'.gpg')
+    os.system('mv -v ./.tmp-'+date+' ./.tmp-'+date+'.tbz2')
+    os.system('mv -v ./.tmp-pdx-'+date+' ./Packed-'+date+'.pdx.bz2')
+    os.system('mv -v ./Packed-'+date+'.pmbze .tmp-pmbz-'+date+'.gpg')
+    os.system('gpg --yes --batch --passphrase-file ~/.pbz ./.tmp-pmbz-'+date+'.gpg')
+    os.system('rm -v ./.tmp-pmbz-'+date+'.gpg')
+    os.system('mv -v ./.tmp-pmbz-'+date+' ./.tmp-'+date+'.pmb.tbz2')
+else:
+    print 'pbz extract'
+    os.system('mv -v ./Packed-'+date+'.pdx ./Packed-'+date+'.pdx.bz2')
+    try:
+        ak = open('./Packed-'+date+'.pdx','rb')
+        ak.close()
+    except:
+        print "Could not find BOM."
+        sys.exit()
+    try:
+        ak = open('./Packed-'+date+'.pmbze','rb')
+        ak.close()
+    except:
+        print "Could not find pmbze."
+        sys.exit()
+os.system('bunzip2 ./Packed-'+date+'.pdx.bz2')
+os.system('tar -xvf ./.tmp-'+date+'.tbz2')
+os.system('tar -xvf ./.tmp-'+date+'.pmb.tbz2')
+time.sleep(1)
+os.system('rm -v ./.tmp-'+date+'.tbz2')
+os.system('rm -v ./.tmp-'+date+'.pmb.tbz2')
+os.system('mv -v ./.tmp.Packed-'+date+'.pmb ./Packed-'+date+'.pmb')

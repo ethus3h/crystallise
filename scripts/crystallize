@@ -226,6 +226,10 @@ if [[ -e "$dbLinkPath" ]]; then
     die "This URL cache entry (for a supposedly new crystal) already exists. This should never happen, and indicates a bug in crystallize."
 fi
 
+checksumName="${dbLinkPath:?}.checksum"
+csAvail="false"
+[[ -e "$checksumName" ]] && csAvail="true"
+
 touch "$dbLinkPath.locked"
 
 requestCount=1

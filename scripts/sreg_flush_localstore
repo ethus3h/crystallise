@@ -30,7 +30,8 @@ trap finishExit EXIT
 
 dbDir="$sregDir"
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
-streamId="sreg_flush_localstore-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+streamId="sreg_flush_localstore-$(date-uuid)"
+failCheckFile="/tmp/$streamId.running"
 mkdir -p "$crystalWorkdir/$streamId"
 (
     cd "$crystalWorkdir/$streamId" || exit 1
@@ -51,7 +52,7 @@ mkdir -p "$crystalWorkdir/$streamId"
         pointerName="$(readlink -f "$streamId.bundle.pointer")"
         mkdir -p "$dbDir/Packs/"
         rsync -q --checksum "$pointerName" "$dbDir/Packs/"
-        find "$streamId.LocalStore" -type f -exec sregi_bundle_pointer --sreg-dir "$sregDir" "$pointerName" {} "$crystalWorkdir" \; || die "Failed running sreg_flush_localstore!"
+        find "$streamId.LocalStore" -type f -exec sregi_bundle_pointer "$failCheckFile" --sreg-dir "$sregDir" "$pointerName" {} "$crystalWorkdir" \; || die "Failed running sreg_flush_localstore!"
         
         if [[ -e "$failCheckFile" ]]; then
             die "An invocation of sregi_bundle_pointer (called from $0) failed with the message \"$(<"$failCheckFile")\"!"

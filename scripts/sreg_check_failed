@@ -41,7 +41,7 @@ dbDir="$sregDir"/Failed\ Fsck
 find "$dbDir" -type f -printf '.' | wc -c > "$fsckStatusFile"
 rm -f "$fsckStatusFile.failed"
 bpid="$$"
-find "$dbDir" -type f \( -exec sregi_check_failed_entry --sreg-dir "$sregDir" {} "$fsckStatusFile" "$skipCache" \; -or -exec kill "-$bpid" \; \)
+find "$dbDir" -type f \( -exec sregi_check_failed_entry "$failCheckFile" --sreg-dir "$sregDir" {} "$fsckStatusFile" "$skipCache" \; -or -exec kill "-$bpid" \; \)
 
 if [[ -e "$failCheckFile" ]]; then
     die "An invocation of sregi_check_failed_entry (called from $0) failed with the message \"$(<"$failCheckFile")\"!"

@@ -3,9 +3,9 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
-export crystallizeVersion='3.1.2.5_pre229'
+export crystallizeVersion='3.1.2.5_pre230'
 
-# ( sudo true; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a v3.1.2.5_pre229 -m "version"; egup-single .; sudo emerge crystallize; sudo dispatch-conf )
+# ( sudo true; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a v3.1.2.5_pre230 -m "version"; egup-single .; sudo emerge crystallize; sudo dispatch-conf )
 
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
@@ -154,7 +154,7 @@ done
 getChecksumRetries=0
 retryDelayTime=5
 until [[ "$getChecksumRetries" -ge 1000 ]]; do
-    if checksumLine="$(wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F -A 3 "<file name=\"$CrystalID.coal5\" source=\"original\">" | tail -n 1)"; then
+    if checksumLine="$(wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F -A 5 "<file name=\"$CrystalID.coal5\" source=\"original\">" | tail -n 1)"; then
         postUploadCheckFailHandler
         break
     fi
@@ -170,13 +170,13 @@ checksumLine="${checksumLine/<\/sha1>/}"
 # First, check against the stored checksum
 knownChecksum="$(grep ",stdin" "$crystalWorkdir/$CrystalID.checksums" | awk -F',' '{print $3}')"
 if [[ "$checksumLine" != "$knownChecksum" ]]; then
-    die "ERROR! Checksum known by Internet Archive does not match checksum known locally."
+    die "ERROR! Checksum known by Internet Archive does not match saved checksum known locally."
 fi
 
 # Now, check the local file's checksum again in case it's gotten screwed up in the mean time somehow
 knownChecksum="$(hashdeep -c sha1 -j0 -o fbcpsde < "$crystalWorkdir/$CrystalID.coal5")"
 if [[ "$checksumLine" != "$knownChecksum" ]]; then
-    die "ERROR! Checksum known by Internet Archive does not match checksum known locally."
+    die "ERROR! Checksum known by Internet Archive does not match new checksum known locally."
 fi
 
 getChecksumRetries=0

@@ -71,9 +71,9 @@ if [[ "$encrypted" == "true" ]]; then
     gpg --yes --batch --passphrase-file "$passphraseFile" "$streamDir/.tmp-pdx-$date.gpg"
     cp "./Packed-$date.pmbze" "$streamDir/.tmp-pmbz-$date.gpg"
     gpg --yes --batch --passphrase-file "$passphraseFile" "$streamDir/.tmp-pmbz-$date.gpg"
-    os.system('mv -v ./.tmp-'+date+' ./.tmp-'+date+'.tbz2')
-    os.system('mv -v ./.tmp-pdx-'+date+' ./Packed-'+date+'.pdx.bz2')
-    os.system('mv -v ./.tmp-pmbz-'+date+' ./.tmp-'+date+'.pmb.tbz2')
+    mv -v "./.tmp-$date" "./.tmp-$date.tbz2"
+    mv -v "./.tmp-pdx-$date" "./Packed-$date.pdx.bz2"
+    mv -v "./.tmp-pmbz-$date" "./.tmp-$date.pmb.tbz2"
 else:
     print 'pbz extract'
     os.system('mv -v ./Packed-'+date+'.pdx ./Packed-'+date+'.pdx.bz2')

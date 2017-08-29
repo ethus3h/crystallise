@@ -16,13 +16,13 @@ sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 finish() {
     trap - ERR
     (
-    if [[ -e "$localstoreLocation" ]]; then
-        rm -r "${localstoreLocation:?}"
-    fi
-    cd "/${crystalWorkdir:?}/" || die
-    if [[ -e "/$crystalWorkdir/${streamId:?}" ]]; then
-        rm -r "/$crystalWorkdir/${streamId:?}"
-    fi
+        if [[ -e "$localstoreLocation" ]]; then
+            rm -r "${localstoreLocation:?}"
+        fi
+        cd "/${crystalWorkdir:?}/" || die
+        if [[ -e "/$crystalWorkdir/${streamId:?}" ]]; then
+            rm -r "/$crystalWorkdir/${streamId:?}"
+        fi
     )
     trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while finishing $hashFull."' ERR
 }
@@ -50,7 +50,7 @@ if [[ "--skip-cache" == "$1" ]]; then
 fi
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 cd "$crystalWorkdir" || exit 1
-streamId="sreg_read_stream-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+streamId="sreg_read_stream-$(date-uuid)"
 dbDir="$sregDir"
 # Basic sanity check to make sure it bombs out if the pointer is cached but is missing a necessary LocalStore entry
 if [[ -z "$overrideEntryPath" ]]; then

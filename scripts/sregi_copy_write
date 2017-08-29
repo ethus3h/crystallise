@@ -7,9 +7,16 @@ source ember_bash_setup &> /dev/null
 
 failCheckFile="$1"
 if [[ -e "$failCheckFile" ]]; then
-    die "A previous invocation of "$0" failed with the message \""$(<"$failCheckFile")"\"! Aborting."
+    die "A previous invocation of $0 failed with the message \"$(<"$failCheckFile")\"! Aborting."
 else
-    echo "$0 running in "$(readlink -f "$(pwd)")" with the arguments $@$BASH_COMMAND" > 
+    echo "$0 running in $(readlink -f "$(pwd)") with the arguments $@" > "$failCheckFile" || echo "$0 running in an unknown directory with the arguments $@" > "$failCheckFile"
+fi
+shift
+success() {
+    rm -f "${failCheckFile:?}"
+    exit 0
+}
+
 finish() {
     trap - ERR
     (
@@ -102,7 +109,7 @@ if [[ -f "$destinationName" ]]; then
         if [[ "$destinationChecksum" == "$sourceChecksum" && "$hasEncounteredError" == "0" && "$assumePointerDbEntryFileExists" == "true" ]]; then
             # The file is already present, pointerized, and readable, so exit without doing anything.
             echo "(Nothing done for $1.)"
-            exit 0
+            success
         else
             warn "(Note: Destination pointer $destinationName did not match source checksum or could not be read: the source file has probably been changed. Removing and recreating.)"
             # cat "$destinationName"
@@ -118,7 +125,7 @@ if [[ -f "$destinationName" ]]; then
         then
             if [[ "$sourceChecksum" == "$(sha512sum < "$destinationName" | awk '{print $1;}')" ]]; then
                 echo "(Skipping matching normal file $destinationName)"
-                exit 0
+                success
             fi
         fi
     fi
@@ -146,3 +153,5 @@ if [[ -e "${streamId:?}" ]]; then
 fi
 
 finish
+
+success

@@ -14,6 +14,8 @@ fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 
 finish() {
+    rm -f "${failCheckFile:?}"
+
     rm -f "${dbDir:?}"/.LocalStore.lock
     if cd "$crystalWorkdir"; then
         if [[ -e "${streamId:?}" ]]; then
@@ -24,6 +26,7 @@ finish() {
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; rm -f "${dbDir:?}"/.LocalStore.lock; finish; exit 1' ERR
 
 finishExit() {
+    rm -f "${failCheckFile:?}"
     rm -f "${dbDir:?}"/.LocalStore.lock
 }
 trap finishExit EXIT

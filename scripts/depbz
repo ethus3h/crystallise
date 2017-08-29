@@ -35,7 +35,7 @@ else
     if [[ -e "./Packed-$date.pbz" ]]; then
         encrypted="false"
     else
-        die "Could not find specified date. Please make sure you have cded to the directory it's in."
+        die "Could not find specified date (pbz or pbze file). Please make sure you have cded to the directory it's in."
     fi
 fi
 if [[ "$encrypted" == "true" ]]; then

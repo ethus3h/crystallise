@@ -20,7 +20,12 @@ finish() {
         fi
     fi
 }
-trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; rm -f "$dbDir"/.LocalStore.lock; finish; exit 1' ERR
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; rm -f "${dbDir:?}"/.LocalStore.lock; finish; exit 1' ERR
+
+finish() {
+    [[ -e "${dbDir:?}"/.LocalStore.lock ]] && rm "${dbDir:?}"/.LocalStore.lock
+}
+trap finish EXIT
 
 dbDir="$sregDir"
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"

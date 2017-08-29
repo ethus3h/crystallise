@@ -37,7 +37,7 @@ CrystalID="$CrystalAddress"
 
 echo "Crystal address: $CrystalID"
 
-tempId="decrystallize-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
+tempId="decrystallize-$(date-uuid)"
 
 mkdir "$tempId"
 

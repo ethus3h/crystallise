@@ -28,10 +28,12 @@ shopt -s extglob
 
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 cd "$crystalWorkdir" || exit 1
-streamId="sreg_read_stream-$(date-uuid)"
+streamId="depbz-$(date-uuid)"
 mkdir -p "$streamId"
 
 streamDir="$crystalWorkdir/$streamId"
+mkdir "./$streamId"
+destDir="$(readlink -f "./$streamId")"
 
 useCustomPassphrase="false"
 crystallizePassphrase=""
@@ -61,14 +63,14 @@ if [[ "$encrypted" == "true" ]]; then
         [[ -e "$passphraseLocation" && ! -d "$passphraseLocation" ]] || die "Could not find passphrase file, expected to be at $passphraseLocation. Please create it, or specify a passphrase using the --passphrase option."
         crystallizePassphrase="$(<~/.pbz)"
     fi
-    echo "$crystallizePassphrase" > "$streamDir/passphrase"
+    passphraseFile="$streamDir/passphrase"
+    echo "$crystallizePassphrase" > "$passphraseFile"
     cp "./Packed-$date.pbze" "$streamDir/.tmp-$date.gpg"
-    os.system('mv -v ./Packed-'+date+'.pbze .tmp-'+date+'.gpg')
-    os.system('gpg --yes --batch --passphrase-file ~/.pbz ./.tmp-'+date+'.gpg')
-    os.system('rm -v ./.tmp-'+date+'.gpg')
-    os.system('mv -v ./Packed-'+date+'.pdxe .tmp-pdx-'+date+'.gpg')
-    os.system('gpg --yes --batch --passphrase-file ~/.pbz ./.tmp-pdx-'+date+'.gpg')
-    os.system('rm -v ./.tmp-pdx-'+date+'.gpg')
+    gpg --yes --batch --passphrase-file "$passphraseFile" "$streamDir/.tmp-$date.gpg"
+    cp "./Packed-$date.pdxe" "$streamDir/.tmp-pdx-$date.gpg"
+    gpg --yes --batch --passphrase-file "$passphraseFile" "$streamDir/.tmp-pdx-$date.gpg"
+    cp "./Packed-$date.pmbze" "$streamDir/.tmp-pmbz-$date.gpg"
+    gpg --yes --batch --passphrase-file "$passphraseFile" "$streamDir/.tmp-pmbz-$date.gpg"
     os.system('mv -v ./.tmp-'+date+' ./.tmp-'+date+'.tbz2')
     os.system('mv -v ./.tmp-pdx-'+date+' ./Packed-'+date+'.pdx.bz2')
     os.system('mv -v ./Packed-'+date+'.pmbze .tmp-pmbz-'+date+'.gpg')

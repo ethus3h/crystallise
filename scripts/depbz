@@ -49,13 +49,12 @@ if [[ "$1" == "--passphrase" ]]; then
 fi
 
 date="$1"
-altDir="$2"
+destDirPrefix="$2"
 
-if [[ -z "$altDir" ]]; then
-    destDir="$(readlink -f "./$streamId")"
-else
-    destDir="$(readlink -f "$altDir/$streamId")"
+if [[ -z "$destDirPrefix" ]]; then
+    destDirPrefix="."
 fi
+destDir="$(readlink -f "$destDirPrefix/$streamId")"
 
 encrypted=""
 if [[ -e "./Packed-$date.pbze" && ! -d "./Packed-$date.pbze" ]]; then

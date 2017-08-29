@@ -1,1 +1,11 @@
-List of scripts run by find -exec that need special handling to prevent contiuation after faliure
+List of scripts run by find -exec that need special handling to prevent continuation after failure
+
+Script name                     Called by
+==========================================
+sregi_file_backup               sreg_build_backup_set
+sregi_verify_backup             sreg_build_backup_set
+sregi_check_failed_entry        sreg_check_failed
+sregi_bundle_pointer            sreg_flush_localstore
+sregi_hashpointer_sane          sreg_folder_check
+sregi_drop_single_unused        sreg_folder_check
+sregi_verify_entry              sreg_fsck

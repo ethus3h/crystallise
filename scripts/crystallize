@@ -220,7 +220,7 @@ checksumName="$dbLinkPath.checksum"
 scache_gc "$dbDir" "f"
 
 finish() {
-    [[ -e "${dbLinkPath:?}.locked" ]] && rm "${dbLinkPath:?}.locked"
+    rm -f "${dbLinkPath:?}.locked"
 }
 trap finish EXIT
 

@@ -19,8 +19,8 @@ if [[ -t 1 ]]; then
 fi
 
 finish() {
-    [[ -e "/tmp/depbz.lock" ]] && rm "/tmp/depbz.lock"
-    [[ -e "/tmp/depbzHome" ]] && rm "/tmp/depbzHome"
+    rm -f "/tmp/depbz.lock"
+    rm -f "/tmp/depbzHome"
     trap - ERR
     (
         cd "/${crystalWorkdir:?}/" || die

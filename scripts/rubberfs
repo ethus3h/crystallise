@@ -19,8 +19,8 @@ rubberfsUser="$(</tmp/rubberfsUser)"
 touch "/tmp/rubberfs.lock"
 
 finish() {
-    [[ -e "/tmp/rubberfs.lock" ]] && rm "/tmp/rubberfs.lock"
-    [[ -e "/tmp/rubberfsUser" ]] && rm "/tmp/rubberfsUser"
+    rm -f "/tmp/rubberfs.lock"
+    rm -f "/tmp/rubberfsUser"
 }
 trap finish EXIT
 

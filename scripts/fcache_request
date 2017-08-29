@@ -22,7 +22,7 @@ mkdir -p "$hashDir"
 dbLinkPath="$hashDir/$hashFull"
 
 finish() {
-    [[ -e "${dbLinkPath:?}.locked" ]] && rm "${dbLinkPath:?}.locked"
+    rm -f "${dbLinkPath:?}.locked"
 }
 trap finish EXIT
 

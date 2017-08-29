@@ -206,6 +206,8 @@ if ! [[ -e "$crystalWorkdir/.CrystalCache/" ]]; then
 fi
 
 dbDir="$crystalWorkdir/.CrystalCache/"
+scache_gc "$dbDir" "f"
+
 requestUrl="https://archive.org/download/$CrystalID/$CrystalID.coal5"
 hashFull="$(sha512sum <<< "$requestUrl" | awk '{print $1;}')"
 hashA="${hashFull:0:1}"
@@ -216,8 +218,6 @@ hashDir="$dbDir/$hashSubdir"
 mkdir -p "$hashDir"
 dbLinkPath="$hashDir/$hashFull"
 checksumName="$dbLinkPath.checksum"
-
-scache_gc "$dbDir" "f"
 
 finish() {
     rm -f "${dbLinkPath:?}.locked"

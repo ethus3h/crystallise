@@ -75,21 +75,10 @@ if [[ "$encrypted" == "true" ]]; then
     mv -v "$streamDir/.tmp-pdx-$date" "$streamDir/Packed-$date.pdx.bz2"
     mv -v "$streamDir/.tmp-pmbz-$date" "$streamDir/.tmp-$date.pmb.tbz2"
 else
-    cp "./Packed-$date.pbz" "$streamDir/Packed-$date.pbz.bz2"
+    cp "./Packed-$date.pbz" "$streamDir/.tmp-$date.tbz2"
     cp "./Packed-$date.pdx" "$streamDir/Packed-$date.pdx.bz2"
-    cp "./Packed-$date.pmbz" "$streamDir/Packed-$date.pmbz.bz2"
-    try:
-        ak = open('./Packed-'+date+'.pdx','rb')
-        ak.close()
-    except:
-        print "Could not find BOM."
-        sys.exit()
-    try:
-        ak = open('./Packed-'+date+'.pmbze','rb')
-        ak.close()
-    except:
-        print "Could not find pmbze."
-        sys.exit()
+    cp "./Packed-$date.pmbz" "$streamDir/.tmp-$date.pmb.tbz2"
+fi
 os.system('bunzip2 ./Packed-'+date+'.pdx.bz2')
 os.system('tar -xvf ./.tmp-'+date+'.tbz2')
 os.system('tar -xvf ./.tmp-'+date+'.pmb.tbz2')

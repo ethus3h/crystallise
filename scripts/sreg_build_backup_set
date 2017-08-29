@@ -18,14 +18,14 @@ failCheckFile="/tmp/$(date-uuid).running"
 dbDir="$sregDir"
 backupDir="$1"
 rsync -av --checksum --progress --no-i-r --ignore-existing "$dbDir"/ "$backupDir"
-find "$backupDir" -type f -exec sregi_file_backup --sreg-dir "$sregDir" {} \;
+find "$backupDir" -type f -exec sregi_file_backup "$failCheckFile" --sreg-dir "$sregDir" {} \;
 
 if [[ -e "$failCheckFile" ]]; then
     die "An invocation of sregi_file_backup (called from $0) failed with the message \"$(<"$failCheckFile")\"!"
 fi
 
 rsync -av --checksum --progress --no-i-r --ignore-existing "$dbDir"/ "$backupDir"
-find "$backupDir" -type f -exec sregi_verify_backup {} \;
+find "$backupDir" -type f -exec sregi_verify_backup "$failCheckFile" {} \;
 
 if [[ -e "$failCheckFile" ]]; then
     die "An invocation of sregi_verify_backup (called from $0) failed with the message \"$(<"$failCheckFile")\"!"

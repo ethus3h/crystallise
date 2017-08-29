@@ -14,11 +14,11 @@ fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 
 finish() {
-    if [[ -e "${crystalWorkdir:?}/${fsckId:?}" ]]; then
-        rm -r "${crystalWorkdir:?}/${fsckId:?}"
+    if [[ -e "${crystalWorkdir:?}/${instanceId:?}" ]]; then
+        rm -r "${crystalWorkdir:?}/${instanceId:?}"
     fi
-    if [[ -e "/tmp/${fsckId:?}" ]]; then
-        rm -r "/tmp/${fsckId:?}"
+    if [[ -e "/tmp/${instanceId:?}" ]]; then
+        rm -r "/tmp/${instanceId:?}"
     fi
 }
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
@@ -32,10 +32,11 @@ fi
 
 echo "Counting items..."
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
-fsckId="sreg_check_failed-$(date +%Y-%m-%d-%H-%M-%S-%N)-$(xxd -pu <<< "$(date +%z)")"
-mkdir -p "$crystalWorkdir/${fsckId:?}"
-mkdir -p "/tmp/${fsckId:?}"
-fsckStatusFile="/tmp/$fsckId/.sreg_check_failed.status"
+instanceId="sreg_check_failed-$(date-uuid)"
+failCheckFile="/tmp/$instanceId.running"
+mkdir -p "$crystalWorkdir/${instanceId:?}"
+mkdir -p "/tmp/${instanceId:?}"
+fsckStatusFile="/tmp/$instanceId/.sreg_check_failed.status"
 dbDir="$sregDir"/Failed\ Fsck
 find "$dbDir" -type f -printf '.' | wc -c > "$fsckStatusFile"
 rm -f "$fsckStatusFile.failed"

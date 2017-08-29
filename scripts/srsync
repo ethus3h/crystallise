@@ -83,12 +83,11 @@ for path in "${pathsToCopy[@]}"; do
     else
         destinationRootLength=${#destinationRoot}
     fi
-    bpid="$$"
     # Use $path in find commands rather than sourceReplaced because sourceReplaced is used for the target computation and post-processing (post-processing with find, that is).
     if [[ "$sregNoVerify" == "true" ]]; then
-        find "$path" -type f \( -exec sregi_copy_write --sreg-dir "$sregDir" --no-verify {} "$destinationReplaced" "$statusFile" "$destinationRootLength" \; -or -exec kill "-$bpid" \; \)
+        find "$path" -type f -exec sregi_copy_write --sreg-dir "$sregDir" --no-verify {} "$destinationReplaced" "$statusFile" "$destinationRootLength" \;
     else
-        find "$path" -type f \( -exec sregi_copy_write --sreg-dir "$sregDir" {} "$destinationReplaced" "$statusFile" "$destinationRootLength" \; -or -exec kill "-$bpid" \; \)
+        find "$path" -type f -exec sregi_copy_write --sreg-dir "$sregDir" {} "$destinationReplaced" "$statusFile" "$destinationRootLength" \;
     fi
     # This NEEDS to skip regular files, because otherwise files that don't exist in the directory will be copied and take up space!
     # rsync -a --ignore-existing --no-i-r "${pathsToCopy[@]}" "$destinationParameter/"

@@ -1,4 +1,4 @@
-List of scripts run by find -exec that need special handling to prevent continuation after failure (found by searching for "-exec s")
+List of scripts run by find -exec that need special handling to prevent continuation after failure (found by searching for "-exec s" (without quotation marks))
 
 Script name                     Called by
 ==========================================

@@ -4,7 +4,39 @@ source ember_bash_setup &> /dev/null
 #set -x
 
 ((EUID)) && exec sudo -- "$0" "$@"
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+
+removeMyFailCheckFile() {
+    save_traps="$(trap)"
+    trap - ERR
+    rm -f "${myFailCheckFile:?}"
+    eval "$save_traps"
+}
+trap removeMyFailCheckFile EXIT
+
+trap 'removeMyFailCheckFile; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+
+failCheckFile=""
+if [[ "$1" == "--fail-check" ]]; then
+    shift
+    failCheckFile="$1"
+    shift
+fi
+if [[ -n "$failCheckFile" ]]; then
+    if [[ -e "$failCheckFile" ]]; then
+        die "A previous invocation of $0 failed with the message \"$(<"$failCheckFile")\"! Aborting."
+    else
+        echo "$0 running in $(readlink -f "$(pwd)") with the arguments $@" > "$failCheckFile" || echo "$0 running in an unknown directory with the arguments $@" > "$failCheckFile"
+    fi
+fi
+success() {
+    if [[ -n "$failCheckFile" ]]; then
+        rm -f "${failCheckFile:?}"
+    fi
+    exit 0
+}
+
+instanceId="sregi_expand_pointers-$(date-uuid)"
+myFailCheckFile="/tmp/$instanceId.running"
 
 sregDir=""
 if [[ "$1" == "--sreg-dir" ]]; then
@@ -45,10 +77,12 @@ while [[ ! -z "$1" ]]; do
         mv "$tempFileName" "$fileToResolve" || die "Moving retrieved data for $fileToResolve into place failed."
     else
         if [[ -d "$fileToResolve" ]]; then
-            find "$fileToResolve" -type f -exec sregi_expand_pointers --sreg-dir "$sregDir" "$fsckStatusFile" {} \;
+            find "$fileToResolve" -type f -exec sregi_expand_pointers --fail-check "$myFailCheckFile" --sreg-dir "$sregDir" "$fsckStatusFile" {} \;
         else
             warn "Skipping item $fileToResolve: not a regular file or directory."
         fi
     fi
     shift
 done
+
+success

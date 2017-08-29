@@ -62,6 +62,9 @@ if [[ -z "$destDirPrefix" ]]; then
 fi
 destDir="$(readlink -f "$destDirPrefix/$streamId")"
 
+[[ -d "$destDirPrefix" ]] || die "The requested destination directory $destDirPrefix does not appear to be a directory!"
+mkdir "$destDir"
+
 encrypted=""
 if [[ -e "./Packed-$date.pbze" && ! -d "./Packed-$date.pbze" ]]; then
     encrypted="true"

@@ -14,7 +14,10 @@ fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 
 removeFailCheckFile() {
+    save_traps="$(trap)"
+    trap - ERR
     rm -f "${failCheckFile:?}"
+    eval "$save_traps"
 }
 
 finish() {

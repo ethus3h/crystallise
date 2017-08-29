@@ -26,7 +26,11 @@ finish() {
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; rm -f "${dbDir:?}"/.LocalStore.lock; finish; exit 1' ERR
 
 finishExit() {
+    save_traps="$(trap)"
+    trap - ERR
     rm -f "${failCheckFile:?}"
+    eval "$save_traps"
+
     rm -f "${dbDir:?}"/.LocalStore.lock
 }
 trap finishExit EXIT

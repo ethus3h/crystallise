@@ -4,7 +4,10 @@ source ember_bash_setup &> /dev/null
 #set -x
 
 finish() {
+    save_traps="$(trap)"
+    trap - ERR
     rm -f "${failCheckFile:?}"
+    eval "$save_traps"
 }
 trap finish EXIT
 

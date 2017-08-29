@@ -13,6 +13,8 @@ if [[ "$1" == "--sreg-dir" ]]; then
 fi
 
 finish() {
+    rm -f "${failCheckFile:?}"
+
     trap - ERR
     if [[ -e "$crystalWorkdir/${fsckId:?}" ]]; then
         rm -r "$crystalWorkdir/${fsckId:?}"

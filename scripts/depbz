@@ -29,21 +29,21 @@ fi
 
 date="$1";
 encrypted=""
-if [[ -f "./Packed-$date.pbze" ]]; then
+if [[ -e "./Packed-$date.pbze" && ! -d "./Packed-$date.pbze" ]]; then
     encrypted="true"
 else
-    if [[ -f "./Packed-$date.pbz" ]]; then
+    if [[ -e "./Packed-$date.pbz" && ! -d "./Packed-$date.pbz" ]]; then
         encrypted="false"
     else
         die "Could not find specified date (pbz or pbze file). Please make sure you have cded to the directory it's in."
     fi
 fi
 if [[ "$encrypted" == "true" ]]; then
-    [[ -f "./Packed-$date.pdxe" ]] || die "Could not find encrypted bill of materials (pdxe) file."
-    [[ -f "./Packed-$date.pmbze" ]] || die "Could not find encrypted pmbz (pmbze) file."
+    [[ -e "./Packed-$date.pdxe" && ! -d "./Packed-$date.pdxe" ]] || die "Could not find encrypted bill of materials (pdxe) file."
+    [[ -e "./Packed-$date.pmbze" && ! -d "./Packed-$date.pmbze" ]] || die "Could not find encrypted pmbz (pmbze) file."
     if [[ "$useCustomPassphrase" == "false" ]]; then
         passphraseLocation="$depbzHome/.pbz"
-        [[ -f "$passphraseLocation" ]] || die "Could n"
+        [[ -e "$passphraseLocation" && ! -d "$passphraseLocation" ]] || die "Could n"
         crystallizePassphrase="$(<~/.pbz)"
     cfgp = os.path.expanduser("~/.pbz")
     ad = ''

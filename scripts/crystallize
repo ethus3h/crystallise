@@ -126,8 +126,6 @@ ia upload "$CrystalID" --retries=100 --verify "$crystalWorkdir/$CrystalID.coal5-
 
 # Check that things were correctly uploaded
 
-knownChecksum="$(<"$crystalWorkdir/$CrystalID.knownChecksum")"
-
 sleep 2
 
 postUploadCheckSuccess=""

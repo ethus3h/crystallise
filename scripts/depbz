@@ -3,11 +3,11 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
-[[ -e "/tmp/unpbzHome" ]] && die "unpbz is already running! Only one unpbz instance can be running at a time."
+[[ -e "/tmp/depbzHome" ]] && die "depbz is already running! Only one depbz instance can be running at a time."
 
-readlink -f ~ > "/tmp/unpbzHome"
+readlink -f ~ > "/tmp/depbzHome"
 ((EUID)) && exec sudo -- "$0" "$@"
-unpbzHome="$(</tmp/unpbzHome)"
+depbzHome="$(</tmp/depbzHome)"
 
 # -t 1 checks if file descriptor 1 "is opened on a terminal" (—GNU coreutils 8.25 manpage for test)
 if [[ -t 1 ]]; then
@@ -15,7 +15,7 @@ if [[ -t 1 ]]; then
 fi
 
 finish() {
-    [[ -e "/tmp/unpbzHome" ]] && rm "/tmp/unpbzHome"
+    [[ -e "/tmp/depbzHome" ]] && rm "/tmp/depbzHome"
     trap - ERR
     (
         cd "/${crystalWorkdir:?}/" || die
@@ -23,7 +23,7 @@ finish() {
             rm -r "/$crystalWorkdir/${streamId:?}"
         fi
     )
-    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while finishing unpbz execution."' ERR
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while finishing depbz execution."' ERR
 }
 trap finish EXIT
 
@@ -33,7 +33,7 @@ shopt -s extglob
 
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 cd "$crystalWorkdir" || exit 1
-streamId="unpbz-$(date-uuid)"
+streamId="depbz-$(date-uuid)"
 mkdir -p "$streamId"
 
 streamDir="$crystalWorkdir/$streamId"
@@ -64,7 +64,7 @@ if [[ "$encrypted" == "true" ]]; then
     [[ -e "./Packed-$date.pdxe" && ! -d "./Packed-$date.pdxe" ]] || die "Could not find encrypted bill of materials (pdxe) file."
     [[ -e "./Packed-$date.pmbze" && ! -d "./Packed-$date.pmbze" ]] || die "Could not find encrypted pmbz (pmbze) file."
     if [[ "$useCustomPassphrase" == "false" ]]; then
-        passphraseLocation="$unpbzHome/.pbz"
+        passphraseLocation="$depbzHome/.pbz"
         [[ -e "$passphraseLocation" && ! -d "$passphraseLocation" ]] || die "Could not find passphrase file, expected to be at $passphraseLocation. Please create it, or specify a passphrase using the --passphrase option."
         crystallizePassphrase="$(<~/.pbz)"
     fi

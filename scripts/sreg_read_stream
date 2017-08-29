@@ -14,11 +14,9 @@ fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 
 finish() {
+    [[ -e "${dbDir:?}"/.LocalStore.lock ]] && rm "${dbDir:?}"/.LocalStore.lock
     trap - ERR
     (
-        if [[ -e "$localstoreLocation" ]]; then
-            rm -r "${localstoreLocation:?}"
-        fi
         cd "/${crystalWorkdir:?}/" || die
         if [[ -e "/$crystalWorkdir/${streamId:?}" ]]; then
             rm -r "/$crystalWorkdir/${streamId:?}"

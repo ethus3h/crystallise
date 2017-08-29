@@ -3,7 +3,12 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+finish() {
+    rm -f "${failCheckFile:?}"
+}
+trap finish EXIT
+
+trap 'finish; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 sregDir=""
 if [[ "$1" == "--sreg-dir" ]]; then

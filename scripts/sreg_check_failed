@@ -13,6 +13,10 @@ if [[ "$1" == "--sreg-dir" ]]; then
 fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 
+removeFailCheckFile() {
+    rm -f "${failCheckFile:?}"
+}
+
 finish() {
     if [[ -e "${crystalWorkdir:?}/${instanceId:?}" ]]; then
         rm -r "${crystalWorkdir:?}/${instanceId:?}"
@@ -21,8 +25,8 @@ finish() {
         rm -r "/tmp/${instanceId:?}"
     fi
 }
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
-trap finish EXIT
+trap 'removeFailCheckFile; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+trap 'removeFailCheckFile; finish' EXIT
 
 skipCache=""
 if [[ "--skip-cache" == "$1" ]]; then

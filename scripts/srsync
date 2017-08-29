@@ -15,6 +15,7 @@ fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check "${!#}")"
 
 finish() {
+    rm -f "${failCheckFile:?}"
     trap - ERR
     if [[ -e "$statusFile" ]]; then
         rm "$statusFile"

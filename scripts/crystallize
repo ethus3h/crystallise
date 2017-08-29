@@ -199,6 +199,8 @@ xz -C sha256 -9 -e -v "$crystalWorkdir/$CrystalID".json
 
 rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.json.xz" "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
 
+# Next section registers the newly created crystal in the CrystalCache so an immediate decrystallize doesn't need to re-download it.
+
 if ! [[ -e "$crystalWorkdir/.CrystalCache/" ]]; then
     fcache_init "$crystalWorkdir/.CrystalCache/" 5000000000
 fi

@@ -58,7 +58,7 @@ mkdir -p "/tmp/${fsckId:?}"
 fsckStatusFile="/tmp/$fsckId/.sreg_folder_check.status"
 fsckIdList="/tmp/$fsckId/.sreg_folder_check.idlist"
 find "$folderToCheck" -type f -printf '.' | wc -c > "$fsckStatusFile"
-find "$folderToCheck" -type f -exec sregi_hashpointer_sane "$failCheckFile" --sreg-dir "$sregDir" {} "$fsckIdList" "$fsckStatusFile" "$sregVerify" \;
+find "$folderToCheck" -type f -exec sregi_hashpointer_sane --fail-check "$failCheckFile" --sreg-dir "$sregDir" {} "$fsckIdList" "$fsckStatusFile" "$sregVerify" \;
 
 
 if [[ -e "$failCheckFile" ]]; then

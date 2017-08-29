@@ -69,7 +69,7 @@ for path in "${pathsToCopy[@]}"; do
         echo "$itemCount" > "$fsckStatusFile"
     fi
 
-    sregi_expand_pointers --sreg-dir "$sregDir" "$fsckStatusFile" "$destinationFindTarget"
+    sregi_expand_pointers "" --sreg-dir "$sregDir" "$fsckStatusFile" "$destinationFindTarget"
 
     find "$destinationFindTarget" -name ".git.686fc528-0e8e-4724-91bb-c103cdcdd592" -exec bash -c 'destName="$(basename "$1")"; mv "$1" "$(dirname "$1")/${destName%.686fc528-0e8e-4724-91bb-c103cdcdd592*}"' - {} \;
 done

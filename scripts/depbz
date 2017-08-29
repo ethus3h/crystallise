@@ -38,7 +38,6 @@ mkdir -p "$streamId"
 
 streamDir="$crystalWorkdir/$streamId"
 mkdir "./$streamId"
-destDir="$(readlink -f "./$streamId")"
 
 useCustomPassphrase="false"
 crystallizePassphrase=""
@@ -49,7 +48,15 @@ if [[ "$1" == "--passphrase" ]]; then
     shift
 fi
 
-date="$1";
+date="$1"
+altDir="$2"
+
+if [[ -z "$altDir" ]]; then
+    destDir="$(readlink -f "./$streamId")"
+else
+    destDir="$(readlink -f "$altDir/$streamId")"
+fi
+
 encrypted=""
 if [[ -e "./Packed-$date.pbze" && ! -d "./Packed-$date.pbze" ]]; then
     encrypted="true"

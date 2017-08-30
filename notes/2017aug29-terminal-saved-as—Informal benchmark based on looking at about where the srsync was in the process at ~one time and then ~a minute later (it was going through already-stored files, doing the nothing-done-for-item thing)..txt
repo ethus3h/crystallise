@@ -1,0 +1,24 @@
+kyan@elegiac ~ nohup compiz --replace openbox $ 8:30:20 5020
+bash: 8:30:20: command not found
+/bin/bash
+failed with the error on /usr/bin/error-notify line 21:
+An error was reported on  line 1.
+kyan@elegiac ~ nohup compiz --replace openbox $ 7085 in 1 minute
+bash: 7085: command not found
+/bin/bash
+failed with the error on /usr/bin/error-notify line 21:
+An error was reported on  line 2.
+kyan@elegiac ~ nohup compiz --replace openbox $ ~2065 items per minute, ~34 items per second
+bash: ~2065: command not found
+/bin/bash
+failed with the error on /usr/bin/error-notify line 21:
+An error was reported on  line 3.
+kyan@elegiac ~ nohup compiz --replace openbox $ 
+
+
+
+
+
+
+
+

@@ -3,9 +3,9 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
-export crystallizeVersion='3.1.2.5_pre231'
+export crystallizeVersion='3.1.2.5_pre232'
 
-# ( sudo true; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a v3.1.2.5_pre231 -m "version"; egup-single .; sudo emerge crystallize; sudo dispatch-conf )
+# ( sudo true; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a v3.1.2.5_pre232 -m "version"; egup-single .; sudo emerge crystallize; sudo dispatch-conf )
 
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
@@ -174,7 +174,7 @@ if [[ "$checksumLine" != "$knownChecksum" ]]; then
 fi
 
 # Now, check the local file's checksum again in case it's gotten screwed up in the mean time somehow
-knownChecksum="$(hashdeep -c sha1 -j0 -o fbcpsde < "$crystalWorkdir/$CrystalID.coal5" | awk -F',' '{print $2}')"
+knownChecksum="$(hashdeep -c sha1 -j0 -o fbcpsde < "$crystalWorkdir/$CrystalID.coal5" | grep ",stdin" | awk -F',' '{print $2}')"
 if [[ "$checksumLine" != "$knownChecksum" ]]; then
     die "ERROR! Checksum known by Internet Archive does not match new checksum known locally."
 fi

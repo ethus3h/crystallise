@@ -214,9 +214,11 @@ mkdir "$streamId"
             elif [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
                 # Hash pointer
                 if [[ "true" == "$disallowHashPointer" ]]; then
+                    finish
                     die "The provided pointer $hashFull is a hash pointer, and --disallow-hash-pointer was specified!"
                 fi
                 if ! [[ -e "$dbDir/$hashA/$hashB/$hashC/$hashFull" ]]; then
+                    finish
                     die "The provided pointer $hashFull is a hash pointer, but the corresponding hash is not registered in the database! ($dbDir/$hashA/$hashB/$hashC/$hashFull does not exist.)"
                 fi
                 readStreamArgs=()

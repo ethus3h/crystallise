@@ -293,6 +293,7 @@ mkdir "$streamId"
             die "The cache entry could not be found. This indicates a bug in sreg."
         fi
         if ! unxz --stdout - < "$dbLinkPath" > "$decompressedCacheEntry"; then
+            # Probably the cache entry got truncated unexpectedly (e.g. xz was killed while writing to it), so remove the file and try again. If it fails *twice*, there's probably something weird going on.
             if [[ "$decompressFailed" != "true" ]]; then
                 decompressFailed="true"
                 rm "$dbFilePath"

@@ -128,6 +128,10 @@ mkdir "$streamId"
             echo "Beginning retry of reading stream $hashFull. $numRetries retries remaining."
         fi
         numRetries=$(( numRetries - 1 ))
+        if [[ -e "$dbFilePath" ]] && [[ "$(unxz --stdout - < "$dbFilePath" | sha512sum | awk '{print $1;}')" != "$knownChecksum" ]]; then
+            touch "$dbLinkPath.locked"
+            rm "$dbFilePath"
+        fi
         if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$(readlink "$dbLinkPath")" ]] || [[ "$skipCache" == "true" ]]; then
             # Only lock the cache entry while we're editing it
             touch "$dbLinkPath.locked"
@@ -242,10 +246,6 @@ mkdir "$streamId"
                     # It can be a regular file when the stream has been dropped from the cache.
                     die "Stream cache link file $dbLinkPath exists but is neither a link nor a regular file!"
                 fi
-            fi
-            if [[ -e "$dbFilePath" ]] && [[ "$(unxz --stdout - < "$dbFilePath" | sha512sum | awk '{print $1;}')" != "$knownChecksum" ]]; then
-                # This condition will happen only if --skip-cache were specified, because this entire block of code is conditional on dbFilePath existing (unless --skip-cache is specified or dbLinkPath isn't a link)
-                die "Checksum of existing cache file $dbFilePath does not match known checksum of stream being retrieved! This should not happen. Is the cache file corrupted?"
             fi
             [[ -e "$dbFilePath" ]] || xz --stdout -0 "$streamId.out" > "$dbFilePath"
             rm "$streamId.out"

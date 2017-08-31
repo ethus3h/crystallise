@@ -290,7 +290,7 @@ mkdir "$streamId"
         if ! [[ -f "$dbLinkPath" ]]; then
             die "The cache entry could not be found. This indicates a bug in sreg."
         fi
-        if ! [[ unxz --stdout - < "$dbLinkPath" > "$decompressedCacheEntry" ]]; then
+        if ! [[ { unxz --stdout - < "$dbLinkPath" > "$decompressedCacheEntry" } ]]; then
             if [[ "$decompressFailed" != "true" ]]; then
                 decompressFailed="true"
                 rm "$dbFilePath"

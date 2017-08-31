@@ -132,7 +132,7 @@ mkdir "$streamId"
             touch "$dbLinkPath.locked"
             rm "$dbFilePath"
         fi
-        if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$(readlink "$dbLinkPath")" ]] || [[ "$skipCache" == "true" ]]; then
+        if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$(readlink "$dbLinkPath")" ]] || [[ "$skipCache" == "true" ]] || [[ ! -f "$dbFilePath" ]]; then
             # Only lock the cache entry while we're editing it
             touch "$dbLinkPath.locked"
 
@@ -287,7 +287,19 @@ mkdir "$streamId"
         ln -sf "$dbFilePath" "$dbLinkPath"
         # Done cache cleanup
         decompressedCacheEntry="$streamId.dat"
-        unxz --stdout - < "$dbLinkPath" > "$decompressedCacheEntry"
+        if ! [[ -f "$dbLinkPath" ]]; then
+            die "The cache entry could not be found. This indicates a bug in sreg."
+        fi
+        if ! [[ unxz --stdout - < "$dbLinkPath" > "$decompressedCacheEntry" ]]; then
+            if [[ "$decompressFailed" != "true" ]]; then
+                decompressFailed="true"
+                rm "$dbFilePath"
+                warn "Failed decompressing cache entry. Retrying retrieval..."
+                break
+            else
+                die "Failed decompressing cache entry twice. This probably indicates a bug in sreg."
+            fi
+        fi
         retrievedHash="$(sha512sum < "$decompressedCacheEntry" | awk '{print $1;}')"
         if [[ "$retrievedHash" != "$hashFull" ]]; then
             rm "$dbFilePath" "$dbLinkPath"

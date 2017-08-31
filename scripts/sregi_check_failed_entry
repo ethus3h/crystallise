@@ -48,7 +48,7 @@ if sreg_read_stream --sreg-dir "$sregDir" --entry-path "$1" --checksum "$knownHa
         numberExpected="$(<"$fsckStatusFile")"
         numberProcessedFile="$fsckStatusFile.done"
         if ! [[ -f "$numberProcessedFile" ]]; then
-            numberProcessed="1"
+            numberProcessed="0"
         else
             numberProcessed="$(<"$numberProcessedFile")"
             numberProcessed=$(( numberProcessed + 1 ))

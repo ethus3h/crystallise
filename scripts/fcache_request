@@ -34,8 +34,10 @@ if [[ -e "$dbLinkPath.locked" ]]; then
     until [[ "$waitForLockTries" -ge 360 ]]; do
         if [[ -e "$dbLinkPath.locked" ]]; then
             warn "Still waiting..."
+        else
+            break
         fi
-        getChecksumRetries=$((getChecksumRetries+1))
+        waitForLockTries=$((waitForLockTries+1))
         sleep 5
     done
 

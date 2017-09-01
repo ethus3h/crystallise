@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env emberPlatformResolver bash
 # shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
 #set -x
@@ -205,8 +205,8 @@ unset optb
 
 trap - ERR
 #If GNU/Linux, set opt to 1 and unset optb; otherwise opposite
-[[ $OSTYPE = *inux* ]] && (( opt++ ))
-[[ $OSTYPE != *inux* ]] && (( optb++ ))
+[[ "$OSTYPE" = *inux* ]] && (( opt++ ))
+[[ "$OSTYPE" != *inux* ]] && (( optb++ ))
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/null}

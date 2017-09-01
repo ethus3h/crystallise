@@ -148,10 +148,12 @@ mkdir "$streamId"
             else
                 # Item is not in the cache, so add it
                 if ! [[ -h "$dbLinkPath" ]]; then
-                    # Never seen this item before, so set the requestCount
+                    # Either we've never seen this item before or it's a regular file, so set the requestCount
                     requestCount=1
+                    [[ -f "$dbLinkPath" ]] && requestCount="$(<"$dbLinkPath")"
                 else
-                    [[ -f "$dbLinkPath" ]] || die "Cache entry is not a normal file!"
+                    # it's a broken link or the link target isn't a normal file
+                    die "Cache entry is not a normal file!"
                     [[ -h "$dbLinkPath" ]] && die "Cache entry link for "
                     requestCount="$(<"$dbLinkPath")"
                     rm "$dbLinkPath"

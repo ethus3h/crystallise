@@ -273,7 +273,7 @@ mkdir "$streamId"
             dbFilePath="$(readlink -e "$dbLinkPath")"
         fi
         if ! [[ -e "$dbFilePath" ]]; then
-            die "Could not find the cache file, despite there being a link to it!"
+            die "Could not find the cache file, despite there being a link to it, and theoretically just having created it! This indicates a bug in sreg."
         fi
         dbFileOldPath="$dbFilePath"
         dbFileDir="$(dirname "$dbFilePath")"

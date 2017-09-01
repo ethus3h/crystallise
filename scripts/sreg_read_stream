@@ -153,7 +153,7 @@ mkdir "$streamId"
             if [[ "$skipCache" != "true" ]] || [[ "$gotRequestCount" != "true" ]]; then
                 if ! [[ -h "$dbLinkPath" ]]; then
                     # Either we've never seen this item before or it's a regular file, so set the requestCount
-                    requestCount=1
+                    requestCount="1"
                     [[ -f "$dbLinkPath" ]] && requestCount="$(<"$dbLinkPath")"
                 else
                     # it's a broken link or the link target isn't a normal file
@@ -163,6 +163,7 @@ mkdir "$streamId"
             if [[ -z "$requestCount" ]]; then
                 requestCount="1"
             fi
+            gotRequestCount="true" # gotRequestCount isn't used again, but the requestCount has been gotten.
             dbFileDir="$cacheDbDir/ByCount/${requestCount:?}/$hashSubdir"
             dbFilePath="$dbFileDir/$hashFull"
             mkdir -p "$dbFileDir"

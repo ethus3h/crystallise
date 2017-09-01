@@ -138,6 +138,7 @@ mkdir "$streamId"
 
             # Item is not in the cache (or --skip-cache was specified), so add it
 
+            # Figure out the requestCount for this stream's cache entry
             gotRequestCount=""
             if [[ "$skipCache" == "true" ]]; then
                 if [[ -h "$dbLinkPath" ]] && [[ -f "$(readlink "$dbLinkPath")" ]]; then
@@ -164,6 +165,7 @@ mkdir "$streamId"
                 requestCount="1"
             fi
             gotRequestCount="true" # gotRequestCount isn't used again, but the requestCount has been gotten.
+
             dbFileDir="$cacheDbDir/ByCount/${requestCount:?}/$hashSubdir"
             dbFilePath="$dbFileDir/$hashFull"
             mkdir -p "$dbFileDir"

@@ -1,4 +1,4 @@
-#!/usr/bin/env emberPlatformResolver bash
+#!/usr/bin/env emberPlatformResolver
 # shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
 #set -x

@@ -1,4 +1,4 @@
-#!/usr/bin/env emberPlatformResolver bash
+#!/usr/bin/env emberPlatformResolver
 #set -x
 
 configFileLocation="/usr/local/etc/crystallize.conf"

@@ -1,4 +1,4 @@
-#!/usr/bin/env emberPlatformResolver bash
+#!/usr/bin/env emberPlatformResolver
 #set -x
 
 rubberfs() {

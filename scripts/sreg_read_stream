@@ -152,6 +152,7 @@ mkdir "$streamId"
                     requestCount=1
                 else
                     [[ -f "$dbLinkPath" ]] || die "Cache entry is not a normal file!"
+                    [[ -h "$dbLinkPath" ]] && die "Cache entry link for "
                     requestCount="$(<"$dbLinkPath")"
                     rm "$dbLinkPath"
                 fi

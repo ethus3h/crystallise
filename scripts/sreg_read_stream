@@ -138,6 +138,7 @@ mkdir "$streamId"
 
             # Item is not in the cache (or --skip-cache was specified), so add it
 
+            gotRequestCount=""
             if [[ "$skipCache" == "true" ]]; then
                 if [[ -h "$dbLinkPath" ]] && [[ -f "$(readlink "$dbLinkPath")" ]]; then
                     # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
@@ -146,8 +147,10 @@ mkdir "$streamId"
                     if [[ -z "$requestCount" ]]; then
                         requestCount="1"
                     fi
+                    gotRequestCount="true"
                 fi
-            else
+            fi
+            if [[ "$skipCache" != "true" ]] || [[ "$gotRequestCount" != "true" ]]; then
                 if ! [[ -h "$dbLinkPath" ]]; then
                     # Either we've never seen this item before or it's a regular file, so set the requestCount
                     requestCount=1

@@ -136,6 +136,8 @@ mkdir "$streamId"
             # Only lock the cache entry while we're editing it
             touch "$dbLinkPath.locked"
 
+            # Item is not in the cache (or --skip-cache was specified), so add it
+
             if [[ "$skipCache" == "true" ]]; then
                 if [[ -h "$dbLinkPath" ]] && [[ -f "$(readlink "$dbLinkPath")" ]]; then
                     # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
@@ -146,7 +148,6 @@ mkdir "$streamId"
                     fi
                 fi
             else
-                # Item is not in the cache, so add it
                 if ! [[ -h "$dbLinkPath" ]]; then
                     # Either we've never seen this item before or it's a regular file, so set the requestCount
                     requestCount=1

@@ -59,7 +59,8 @@ if [[ -f "$dbFilePath" ]]; then
         mv "$dbFilePath" "$dbTempFileDir/$hashFull"
     fi
 else
-    die "The item $dbFilePath does not appear to exist, even though sregi_bundle_pointer has been requested for it! This situation should be investigated."
+    warn "The item $dbFilePath does not appear to exist, even though sregi_bundle_pointer has been requested for it! This situation should probably be investigated."
+    exit 0
 fi
 # 2fa... is the remote bundle pointer type signature
 printf "2fae2004-94bb-4aa8-a01a-fc44298efc2c\\n%s\\n%s" "$hashFull" "$(basename "$packPointerName")" > "$dbFilePath"

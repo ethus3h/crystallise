@@ -49,7 +49,7 @@ mkdir -p "$crystalWorkdir/$streamId"
         if [[ "$1" == "--verbose" ]]; then
             crystallize --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.LocalStore" | cat
         else
-            crystallize --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.LocalStore"
+            crystallize --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.LocalStore" &> /dev/null
         fi
         # (2fa... is the remote bundle pointer type signature)
         mv "$streamId.LocalStore.tmp" "$streamId.LocalStore"

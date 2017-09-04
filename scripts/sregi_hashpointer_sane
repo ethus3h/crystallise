@@ -6,6 +6,9 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
+success() {
+    exit 0
+}
 failCheckFile=""
 if [[ "$1" == "--fail-check" ]]; then
     shift
@@ -15,9 +18,6 @@ fi
 if [[ -n "$failCheckFile" ]]; then
     if [[ -e "$failCheckFile" ]]; then
         warn "A previous invocation of $0 failed with the message \"$(<"$failCheckFile")\"!"
-        success() {
-            exit 0
-        }
     else
         echo "$0 running in $(readlink -f "$(pwd)") with the arguments $*" > "$failCheckFile" || echo "$0 running in an unknown directory with the arguments $*" > "$failCheckFile"
         success() {

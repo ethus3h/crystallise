@@ -80,7 +80,7 @@ if [[ -f "$cacheDbFilePath" ]]; then
         requestCount="$oldCount"
     fi
 fi
-rm "$dbLinkPath"
+rm -f "$dbLinkPath"
 echo "$requestCount" > "$dbLinkPath"
 
 # Clean up empty directories. Kind of expensive, so commented out here. This will be taken care of by scache_gc when it's run, anyway.

@@ -8,14 +8,17 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 failCheckFile="$1"
 if [[ -e "$failCheckFile" ]]; then
     warn "A previous invocation of $0 failed with the message \"$(<"$failCheckFile")\"!"
+    success() {
+        exit 0
+    }
 else
     echo "$0 running in $(readlink -f "$(pwd)") with the arguments $*" > "$failCheckFile" || echo "$0 running in an unknown directory with the arguments $*" > "$failCheckFile"
+    success() {
+        rm -f "${failCheckFile:?}"
+        exit 0
+    }
 fi
 shift
-success() {
-    rm -f "${failCheckFile:?}"
-    exit 0
-}
 
 sregDir=""
 if [[ "$1" == "--sreg-dir" ]]; then

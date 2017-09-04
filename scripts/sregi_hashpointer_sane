@@ -15,16 +15,19 @@ fi
 if [[ -n "$failCheckFile" ]]; then
     if [[ -e "$failCheckFile" ]]; then
         warn "A previous invocation of $0 failed with the message \"$(<"$failCheckFile")\"!"
+        success() {
+            exit 0
+        }
     else
         echo "$0 running in $(readlink -f "$(pwd)") with the arguments $*" > "$failCheckFile" || echo "$0 running in an unknown directory with the arguments $*" > "$failCheckFile"
+        success() {
+            if [[ -n "$failCheckFile" ]]; then
+                rm -f "${failCheckFile:?}"
+            fi
+            exit 0
+        }
     fi
 fi
-success() {
-    if [[ -n "$failCheckFile" ]]; then
-        rm -f "${failCheckFile:?}"
-    fi
-    exit 0
-}
 
 sregDir=""
 if [[ "$1" == "--sreg-dir" ]]; then

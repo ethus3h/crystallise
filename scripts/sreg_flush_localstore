@@ -62,7 +62,7 @@ mkdir -p "$crystalWorkdir/$streamId"
         find "$streamId.LocalStore" -type f -exec sregi_bundle_pointer "$failCheckFile" --sreg-dir "$sregDir" "$pointerName" {} "$crystalWorkdir" \; || die "Failed running sreg_flush_localstore!"
         
         if [[ -e "$failCheckFile" ]]; then
-            warn "An invocation of sregi_bundle_pointer (called from $0) failed with the message \"$(<"$failCheckFile")\"!"
+            die "An invocation of sregi_bundle_pointer (called from $0) failed with the message \"$(<"$failCheckFile")\"!"
         fi
 
         rm -r "$dbDir"/LocalStore

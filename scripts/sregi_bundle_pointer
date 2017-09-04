@@ -53,14 +53,14 @@ if [[ -f "$dbFilePath" ]]; then
         else
             # This pointer has already been bundled, so quick-check it and exit
             sregi_hashpointer_sane --sreg-dir "$sregDir" "$dbFilePath"
-            exit 0
+            success
         fi
     else
         mv "$dbFilePath" "$dbTempFileDir/$hashFull"
     fi
 else
-    warn "The item $dbFilePath does not appear to exist, even though sregi_bundle_pointer has been requested for it! This situation should probably be investigated."
-    exit 0
+    warn "The item $dbFilePath does not appear to exist, even though sregi_bundle_pointer has been requested for it! This situation should perhaps be investigated."
+    success
 fi
 # 2fa... is the remote bundle pointer type signature
 printf "2fae2004-94bb-4aa8-a01a-fc44298efc2c\\n%s\\n%s" "$hashFull" "$(basename "$packPointerName")" > "$dbFilePath"

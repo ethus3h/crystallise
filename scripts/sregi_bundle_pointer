@@ -48,7 +48,12 @@ dbFilePath="$hashDir/$hashFull"
 mkdir -p "$dbTempFileDir"
 if [[ -f "$dbFilePath" ]]; then
     if [[ "$(head -c 36 "$dbFilePath")" != "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
-        die "The item $dbFilePath does not appear to be a LocalStore pointer! This is most likely a bug in sreg. Aborting to avoid messing things up."
+        if [[ "$(head -c 36 "$dbFilePath")" != "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]]; then
+            die "The item $dbFilePath does not appear to be a LocalStore pointer! This is most likely a bug in sreg. Aborting to avoid messing things up."
+        else
+            # This pointer has already been bundled, so call it quits
+            exit 0
+        fi
     else
         mv "$dbFilePath" "$dbTempFileDir/$hashFull"
     fi

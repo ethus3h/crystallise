@@ -82,7 +82,7 @@ echo "The crystal will have the following address when it is ready: $CrystalID"
 
 # -t 1 checks if file descriptor 1 "is opened on a terminal" (—GNU coreutils 8.25 manpage for test)
 if [[ -t 1 ]]; then
-    warn-timeout "Be careful that you don't crystallize your current working directory, the crystallize temp dir, or the crystallize scripts themselves. Either could cause problems."
+    warn-timeout "Be careful that you don't crystallize your current working directory, the crystallize temp dir, or the crystallize scripts themselves. Either could cause problems. (It's more likely to be OK if you use --keep, but still not guaranteed.)"
 fi
 
 CrystalID="C3-$(date-uuid)"

@@ -9,6 +9,10 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 action="$1"
 mountpoint="$(crystallize-getconf SrfsMountpoint)"
 
+if [[ -z "$action" ]]; then
+    action="mount"
+fi
+
 case $action in
 mount)
     mkdir -p "$mountpoint"

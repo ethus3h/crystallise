@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
+# shellcheck disable=SC1091
+source booze.sh
 #set -x
 
 if [[ $# -ne 2 ]]; then
-	echo >&2 "Usage: `basename $0` DIR MNTPT"
+	echo >&2 "Usage: $(basename "$0") DIR MNTPT"
 	exit 1
 fi
 
 rootdir="$(readlink -f "$1")"
 mntpt="$2"
 
-. booze.sh
 
 set -u
 shopt -s nullglob

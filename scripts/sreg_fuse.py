@@ -41,7 +41,11 @@ class sreg_fuse(Operations):
         shutil.copy2(source, outputfile.name)
 
     def _sreg_copy_write(self, source, destination):
-        inputfile = io.open(source, 'r')
+        if type(source) is type('string'):
+            inputfile = io.open(source, 'r')
+        else:
+            # Already have a file handle, so just use that
+            inputfile = source
         outputfile = io.open(destination, 'w')
         subprocess.call(["sreg_store_stream"], stdin=inputfile, stdout=outputfile)
         print("copy write source: "+source)

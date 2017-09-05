@@ -1,201 +1,139 @@
-#!/usr/bin/env python
+#!/bin/bash
 
-from __future__ import with_statement
+if [ $# -ne 2 ]; then
+	echo >&2 "Usage: `basename $0` DIR MNTPT"
+	exit 1
+fi
 
-import os
-import sys
-import errno
-import subprocess
-import atexit
-import uuid
-import shutil
-import tempfile
-import io
+rootdir="$(readlink -f "$1")"
+mntpt="$2"
 
-from fuse import FUSE, FuseOSError, Operations, fuse_get_context
+. ./booze.sh
 
-class sreg_fuse(Operations):
-    def __init__(self, root):
-        self.root = root
+set -u
+shopt -s nullglob
+shopt -s dotglob
 
-        out = subprocess.check_output(["crystallize-getconf", "WorkDirectory"], shell=False)
-        self.tempdir = out[:-1] + "/.sreg_fuse.tmp/" + str(uuid.uuid4())
-        if not os.path.exists(self.tempdir):
-            os.makedirs(self.tempdir)
+dostat()
+{
+	local st ino mode rest
+	st=$(stat -c '%i 0x%f %h %u %g %d %s %b %X %Y %Z' "$1") || return 1
+	read ino mode rest <<<"$st"
+	printf '%d %o %s\n' $ino $mode "$rest"
+}
 
-    # Helpers
-    # =======
+pt_getattr()
+{
+	[ -e "$rootdir/$1" ] || { booze_err=-$ENOENT; return 1; }
+	booze_out=`dostat "$rootdir/$1"`
+}
 
-    def _full_path(self, partial):
-        if partial.startswith("/"):
-            partial = partial[1:]
-        path = os.path.join(self.root, partial)
-        return path
+pt_access()
+{
+	[ -e "$rootdir/$1" ] || { booze_err=-$ENOENT; return 1; }
+	[ "$2" == "$F_OK" ] && return 0
 
-    def _sreg_copy_read(self, source, destination):
-        inputfile = io.open(source, 'r')
-        outputfile = io.open(destination, 'w')
-        subprocess.call(["sreg_read_stream"], stdin=inputfile, stdout=outputfile)
-        print("copy read source: "+source)
-        print("copy read outfile: "+outputfile.name)
-        shutil.copy2(source, outputfile.name)
+	if { [ "$(($2 & $R_OK))" -ne 0 ] && ! [ -r "$rootdir/$1" ]; } ||
+		{ [ "$(($2 & $W_OK))" -ne 0 ] && ! [ -w "$rootdir/$1" ]; } ||
+		{ [ "$(($2 & $X_OK))" -ne 0 ] && ! [ -x "$rootdir/$1" ]; }; then
+		booze_err=-$EACCES
+		return 1
+	else
+		return 0
+	fi
+}
 
-    def _sreg_copy_write(self, source, destination):
-        if type(source) is type('string'):
-            inputfile = io.open(source, 'r')
-        else:
-            # Already have a file handle, so just use that
-            inputfile = source
-        outputfile = io.open(destination, 'w')
-        subprocess.call(["sreg_store_stream"], stdin=inputfile, stdout=outputfile)
-        print("copy write source: "+source)
-        print("copy write outfile: "+outputfile.name)
-        shutil.copy2(source, outputfile.name)
+pt_readlink()
+{
+	[ -e "$rootdir/$1" ] || { booze_err=-$ENOENT; return 1; }
+	[ -l "$rootdir/$1" ] || { booze_err=-$EINVAL; return 1; }
+	booze_out="$(readlink "$rootdir/$1")"
+	return $?
+}
 
-    # Filesystem methods
-    # ==================
+pt_readdir()
+{
+	[ -e "$rootdir/$1" ] || { booze_err=-$ENOENT; return 1; }
+	[ -d "$rootdir/$1" ] || { booze_err=-$ENOTDIR; return 1; }
+	booze_out="./.."
+	# try to handle weird filenames correctly
+	local prefix="$rootdir/$1/"
+	for p in "$prefix"*; do
+		booze_out+="/${p#$prefix}"
+	done
+	return 0
+}
 
-    def access(self, path, mode):
-        full_path = self._full_path(path)
-        if not os.access(full_path, mode):
-            raise FuseOSError(errno.EACCES)
+pt_mknod()
+{
+	local perms=`printf %o $(($2 & 07777))`
 
-    def chmod(self, path, mode):
-        full_path = self._full_path(path)
-        return os.chmod(full_path, mode)
+	if S_ISREG $2; then
+		[ -e "$rootdir/$1" ] && { booze_err=-$EEXIST; return 1; }
+		touch "$rootdir/$1" &&  chmod $perms "$rootdir/$1"
+		return
+	elif S_ISFIFO $2; then
+		mkfifo -m $perms "$rootdir/$1"
+		return
+	else
+		booze_err=-$EOPNOTSUPP
+		return 1
+	fi
+}
 
-    def chown(self, path, uid, gid):
-        full_path = self._full_path(path)
-        return os.chown(full_path, uid, gid)
+pt_mkdir() { mkdir -m `printf %o $2` "$rootdir/$1"; }
+pt_unlink() { rm -f "$rootdir/$1"; }
+pt_rmdir() { rmdir "$rootdir/$1"; }
+pt_symlink() { ln -sn "$rootdir/$1" "$2"; }
+pt_rename() { mv -f "$rootdir/$1" "$rootdir/$2"; }
+pt_link() { ln -n "$rootdir/$1" "$rootdir/$2"; }
+pt_chmod() { chmod `printf %o $(($2 & 07777))` "$rootdir/$1"; }
+pt_chown() { chown -h $2:$3 "$rootdir/$1"; }
+pt_truncate() { truncate -s $2 "$rootdir/$1"; }
+pt_utimens() { touch -h -d @$2 "$rootdir/$1" && touch -h -d @$3 "$rootdir/$1"; }
 
-    def getattr(self, path, fh=None):
-        full_path = self._full_path(path)
-        st = os.lstat(full_path)
-        return dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
-                     'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size', 'st_uid'))
+pt_open()
+{
+	if ! [ -e "$rootdir/$1" ]; then
+		if [ "$(($2 & $O_CREAT))" -ne 0 ]; then
+			touch "$rootdir/$1"
+		else
+			booze_err=-$ENOENT
+			return 1
+		fi
+	fi
 
-    def readdir(self, path, fh):
-        full_path = self._full_path(path)
+	if [ "$(($2 & $O_TRUNC))" -ne 0 ]; then
+		> "$rootdir/$1"
+	fi
 
-        dirents = ['.', '..']
-        if os.path.isdir(full_path):
-            dirents.extend(os.listdir(full_path))
-        for r in dirents:
-            yield r
+	return 0
+}
 
-    def readlink(self, path):
-        pathname = os.readlink(self._full_path(path))
-        if pathname.startswith("/"):
-            # Path name is absolute, sanitize it.
-            return os.path.relpath(pathname, self.root)
-        else:
-            return pathname
+pt_read()
+{
+	dd if="$rootdir/$1" bs=1 count=$2 skip=$3
+}
 
-    def mknod(self, path, mode, dev):
-        return os.mknod(self._full_path(path), mode, dev)
+pt_write()
+{
+	dd of="$rootdir/$1" bs=1 count=$2 seek=$3 || {
+		booze_err=-$EIO
+		booze_out=-$EIO
+		return 1
+	}
+	booze_out="$2"
+	return 0
+}
 
-    def rmdir(self, path):
-        full_path = self._full_path(path)
-        return os.rmdir(full_path)
+pt_statfs() { booze_out="$(stat -L -f "$rootdir" -c "%S %b %f %a %c %d %l")"; }
 
-    def mkdir(self, path, mode):
-        directory = os.mkdir(self._full_path(path), mode)
-        keepfile = directory + '/.keep'
-        subprocess.call(["touch", keepfile], shell=False)
-        return directory
+declare -A passthrough_ops
 
-    def statfs(self, path):
-        full_path = self._full_path(path)
-        stv = os.statvfs(full_path)
-        return dict((key, getattr(stv, key)) for key in ('f_bavail', 'f_bfree',
-            'f_blocks', 'f_bsize', 'f_favail', 'f_ffree', 'f_files', 'f_flag',
-            'f_frsize', 'f_namemax'))
+for name in ${BOOZE_CALL_NAMES[@]}; do
+	if [ "`type -t pt_$name`" == "function" ]; then
+		passthrough_ops[$name]=pt_$name
+	fi
+done
 
-    def unlink(self, path):
-        return os.unlink(self._full_path(path))
-
-    def symlink(self, name, target):
-        return os.symlink(name, self._full_path(target))
-
-    def rename(self, old, new):
-        return os.rename(self._full_path(old), self._full_path(new))
-
-    def link(self, target, name):
-        return os.link(self._full_path(target), self._full_path(name))
-
-    def utimens(self, path, times=None):
-        return os.utime(self._full_path(path), times)
-
-    # File methods
-    # ============
-
-    def open(self, path, flags):
-        full_path = self._full_path(path)
-        temppath = self.tempdir + "/" + str(uuid.uuid4())
-        self._sreg_copy_read(full_path, temppath)
-        print("copy read target for open: "+temppath)
-        return os.open(temppath, flags)
-
-    def create(self, path, mode, fi=None):
-        uid, gid, pid = fuse_get_context()
-        full_path = self._full_path(path)
-        temppath = self.tempdir + "/" + str(uuid.uuid4())
-        if os.path.isfile(full_path):
-            self._sreg_copy_read(full_path, temppath)
-        else:
-            subprocess.call(["touch", temppath], shell=False)
-            self._sreg_copy_write(temppath, full_path)
-        fd = os.open(temppath, os.O_WRONLY | os.O_CREAT, mode)
-        os.chown(temppath,uid,gid) #chown to context uid & gid
-        return fd
-
-    def read(self, path, length, offset, fh):
-        os.lseek(fh, offset, os.SEEK_SET)
-        return os.read(fh, length)
-
-    def write(self, path, buf, offset, fh):
-        os.lseek(fh, offset, os.SEEK_SET)
-        return os.write(fh, buf)
-
-    def truncate(self, path, length, fh=None):
-        full_path = self._full_path(path)
-        temppath = self.tempdir + "/" + str(uuid.uuid4())
-        self._sreg_copy_read(full_path, temppath)
-        with open(temppath, 'r+') as f:
-            f.truncate(length)
-        self._sreg_copy_write(temppath, full_path)
-
-    def flush(self, path, fh):
-        temp = os.fsync(fh)
-        full_path = self._full_path(path)
-        self._sreg_copy_write(fh, full_path)
-        print("flush name: "+full_path)
-        return temp
-
-    def release(self, path, fh):
-        os.fsync(fh)
-        full_path = self._full_path(path)
-        print("release name: "+os.fdopen(fh).name)
-        self._sreg_copy_write(os.fdopen(fh).name, full_path)
-        temp = os.close(fh)
-        os.remove(fh)
-        return temp
-
-    def fsync(self, path, fdatasync, fh):
-        return self.flush(path, fh)
-
-# Mountpoint may not be a subdirectory of root, apparently. When running from the command line, specify the arguments in the opposite order (root then mountpoint).
-def main(mountpoint, root):
-    srf = sreg_fuse(root)
-    tempdir = srf.tempdir
-    FUSE(srf, mountpoint, nothreads=True, foreground=True, **{'allow_other': True})
-    def exit_handler():
-        # Clean up tempdir
-        if not os.path.exists(tempdir):
-            os.makedirs(tempdir)
-        shutil.rmtree(tempdir)
-
-    atexit.register(exit_handler)
-
-if __name__ == '__main__':
-    main(sys.argv[2], sys.argv[1])
+booze passthrough_ops "$mntpt"

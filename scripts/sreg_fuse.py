@@ -129,6 +129,7 @@ class sreg_fuse(Operations):
         full_path = self._full_path(path)
         temppath = self.tempdir + "/" + str(uuid.uuid4())
         self._sreg_copy_read(full_path, temppath)
+        print("copy read target for open: "+temppath)
         return os.open(temppath, flags)
 
     def create(self, path, mode, fi=None):

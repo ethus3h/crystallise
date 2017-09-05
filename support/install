@@ -94,7 +94,7 @@ ereplace "/usr/local/etc" "$crystallizeSysconfdir" scripts/crystallize-getconf
 ereplace "/usr/local/etc" "$crystallizeSysconfdir" scripts/crystallize-logsession
 
 if [[ "$OSTYPE" = darwin* ]]; then
-    if ! [[ -e "$(which "g$app")" ]]; then
+    if ! type "gbash"); then
         emberMacGNUUpgrade
     fi
     find scripts -type f -exec ereplace '#!/usr/bin/env bash' '#!/usr/bin/env gbash'

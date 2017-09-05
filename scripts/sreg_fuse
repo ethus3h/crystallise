@@ -13,7 +13,6 @@ fi
 rootdir="$(readlink -f "$1")"
 mntpt="$2"
 
-
 set -u
 shopt -s nullglob
 shopt -s dotglob
@@ -22,20 +21,20 @@ dostat()
 {
 	local st ino mode rest
 	st=$(stat -c '%i 0x%f %h %u %g %d %s %b %X %Y %Z' "$1") || return 1
-	read ino mode rest <<<"$st"
-	printf '%d %o %s\n' $ino $mode "$rest"
+	read -r ino mode rest <<<"$st"
+	printf '%d %o %s\n' "$ino" "$mode" "$rest"
 }
 
 pt_getattr()
 {
-	[ -e "$rootdir/$1" ] || { booze_err=-$ENOENT; return 1; }
-	booze_out=`dostat "$rootdir/$1"`
+	[[ -e "$rootdir/$1" ]] || { booze_err=-$ENOENT; return 1; }
+	booze_out="$(dostat "$rootdir/$1")"
 }
 
 pt_access()
 {
-	[ -e "$rootdir/$1" ] || { booze_err=-$ENOENT; return 1; }
-	[ "$2" == "$F_OK" ] && return 0
+	[[ -e "$rootdir/$1" ]] || { booze_err=-$ENOENT; return 1; }
+	[[ "$2" == "$F_OK" ]] && return 0
 
 	if { [ "$(($2 & $R_OK))" -ne 0 ] && ! [ -r "$rootdir/$1" ]; } ||
 		{ [ "$(($2 & $W_OK))" -ne 0 ] && ! [ -w "$rootdir/$1" ]; } ||

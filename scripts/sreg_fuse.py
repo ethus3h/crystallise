@@ -34,23 +34,22 @@ class sreg_fuse(Operations):
 
     def _sreg_copy_read(self, source, destination):
         inputfile = io.open(source, 'r')
-        outputfile = io.open(destination, 'w')
-        subprocess.call(["sreg_read_stream"], stdin=inputfile, stdout=outputfile)
         print("copy read source: "+source)
+        outputfile = io.open(destination, 'w')
         print("copy read outfile: "+outputfile.name)
-        shutil.copy2(source, outputfile.name)
+        subprocess.call(["sreg_read_stream"], stdin=inputfile, stdout=outputfile)
 
     def _sreg_copy_write(self, source, destination):
         if type(source) is type('string'):
             inputfile = io.open(source, 'r')
+            print("copy write source: "+source)
         else:
             # Already have a file handle, so just use that
             inputfile = os.fdopen(source, 'r')
+            print("copy write source: file handle")
         outputfile = io.open(destination, 'w')
+        print("copy write outfile: "+destination)
         subprocess.call(["sreg_store_stream"], stdin=inputfile, stdout=outputfile)
-        print("copy write source: "+source)
-        print("copy write outfile: "+outputfile.name)
-        shutil.copy2(source, outputfile.name)
 
     # Filesystem methods
     # ==================

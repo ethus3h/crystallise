@@ -76,6 +76,20 @@ mkdir "$streamId"
         cat "$streamId.xz"
         exit 0
     fi
+    pointerTypeSignature="$(head -c 36 "$streamId.xz")"
+    if [[ "$pointerTypeSignature" != "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]] && # Standard remote pointer
+        [[ "$pointerTypeSignature" != "c39f8657-384b-438b-a5a2-eece17147589" ]] && # LocalStore pointer
+        [[ "$pointerTypeSignature" != "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]] && # Remote pack pointer
+        [[ "$pointerTypeSignature" != "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] && # Remote pack pointer, with pointer data in the pointer
+        [[ "$pointerTypeSignature" != "760fa662-89cf-4ebd-9664-150b7637ddd4" ]] # Hash pointer
+    then
+        # The file isn't a stream pointer, so just return it and exit
+        if [[ -n "$knownChecksum" ]]; then
+            [[ "$(sha512sum < "$streamId.xz" | awk '{print $1;}')" == "$knownChecksum" ]] || die "Checksum of non-pointer file does not match provided or known checksum."
+        fi
+        cat "$streamId.xz"
+        exit 0
+    fi
     # 120 retries * 30 seconds = 1 hour
     numRetries=120
     numTotalRetries="$numRetries"
@@ -170,7 +184,6 @@ mkdir "$streamId"
             dbFilePath="$dbFileDir/$hashFull"
             mkdir -p "$dbFileDir"
             # Figure out what type of pointer it is
-            pointerTypeSignature="$(head -c 36 "$streamId.xz")"
             if [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then
                 # Standard remote pointer
                 tail -c +167 "$streamId.xz" | unxz --stdout - | tar -xf -
@@ -243,12 +256,7 @@ mkdir "$streamId"
                 fi
                 sreg_read_stream "${readStreamArgs[@]}" < "$dbDir/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
             else
-                # The file isn't a stream pointer, so just return it and exit
-                if [[ -n "$knownChecksum" ]]; then
-                    [[ "$(sha512sum < "$streamId.xz" | awk '{print $1;}')" == "$knownChecksum" ]] || die "Checksum of non-pointer file does not match provided or known checksum."
-                fi
-                cat "$streamId.xz"
-                exit 0
+                die "The provided data is not a pointer, and this was not handled when it should be. This indicates a bug in sreg_read_stream." # This should have been handled earlier
             fi
             if [[ -e "$dbLinkPath" ]]; then
                 if ! ( [[ -f "$dbLinkPath" ]] || [[ -h "$dbLinkPath" ]] ); then

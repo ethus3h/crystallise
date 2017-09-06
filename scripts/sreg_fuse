@@ -129,7 +129,7 @@ pt_open()
     return 0
 }
 
-pt_flush()
+pt_fsync()
 {
     local fileDir="$(dirname "$rootdir/$1")"
     local tempFile="/tmp/$fuseId/$rootdir/$1"
@@ -140,7 +140,7 @@ pt_flush()
     return 0
 }
 
-pt_close()
+pt_release()
 {
     local fileDir="$(dirname "$rootdir/$1")"
     local tempFile="/tmp/$fuseId/$rootdir/$1"

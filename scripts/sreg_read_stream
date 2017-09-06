@@ -41,6 +41,10 @@ if [[ "--disallow-hash-pointer" == "$1" ]]; then
     disallowHashPointer="true"
     shift
 fi
+if [[ "--require-hash-pointer" == "$1" ]]; then
+    requireHashPointer="true"
+    shift
+fi
 skipCache="false"
 if [[ "--skip-cache" == "$1" ]]; then
     skipCache="true"
@@ -89,6 +93,9 @@ mkdir "$streamId"
         fi
         cat "$streamId.xz"
         exit 0
+    fi
+    if [[ "$requireHashPointer" == "true" ]] && [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
+        die "--require-hash-pointer was specified, but the target was neither a hash pointer or a regular file!"
     fi
     # 120 retries * 30 seconds = 1 hour
     numRetries=120

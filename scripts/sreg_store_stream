@@ -13,6 +13,13 @@ if [[ "$1" == "--sreg-dir" ]]; then
 fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 
+outFile=""
+if [[ "$1" == "--output-file" ]]; then
+    shift
+    outFile="$1"
+    shift
+fi
+
 finish() {
     (
         cd "/${crystalWorkdir:?}/" || die
@@ -38,6 +45,31 @@ mkdir -p "$crystalWorkdir/$streamId"
         shift
     else
         hashFull="$(sha512sum < "$streamId.tmp" | awk '{print $1;}')"
+    fi
+    if [[ -n "$outFile" ]]; then
+        if [[ -f "$outFile" ]]; then
+            if [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]] || # Standard remote pointer
+                [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]] || # LocalStore pointer
+                [[ "$pointerTypeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]] || # Remote pack pointer
+                [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] || # Remote pack pointer, with pointer data in the pointer
+                [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]] # Hash pointer
+            then
+                # The file is a stream pointer
+                if [[ -n "$knownChecksum" ]]; then
+                    [[ "$(sha512sum < "$streamId.xz" | awk '{print $1;}')" == "$knownChecksum" ]] || die "Checksum of non-pointer file does not match provided or known checksum."
+                fi
+                cat "$streamId.xz"
+                finish; exit 0
+            else
+                outFileHash="$(sha512sum < "$outFile" | awk '{print $1;}')"
+                if [[ "$hashFull" == "$outFileHash" ]]; then
+                    finish; exit 0
+                else
+                    mv "$streamId.tmp" "$outFileHash"
+                    finish; exit 0
+                fi
+            fi
+        fi
     fi
     # Upload a pack of the LocalStore items if there are enough, and update the pointers accordingly.
     if ! [[ -e "$crystalWorkdir/.LocalStoreCache/" ]]; then

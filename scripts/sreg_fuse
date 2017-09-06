@@ -129,9 +129,9 @@ pt_flush()
 {
     local tempFile="/tmp/$fuseId/$(date-uuid).tmp"
     if [[ -e "$rootdir/$1" ]]; then
-        srpull "$rootdir/$1" "$tempFile.dat"
-        mv "$rootdir/$1" "$tempFile"
-        mv "$tempFile.dat" "$rootdir/$1"
+        srsync "$rootdir/$1" "$tempFile"
+        rm "$rootdir/$1"
+        mv "$tempFile" "$rootdir/$1"
     fi
 
     if ! [[ -e "$rootdir/$1" ]]; then

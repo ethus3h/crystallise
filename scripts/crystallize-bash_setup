@@ -28,7 +28,7 @@ git-escape-path() {
     fi
 }
 
-sreg_fuse() {
+sreg_fuse_py() {
     sreg_fuse.py "$@" "$(sregi_find_dir)"
 }
 

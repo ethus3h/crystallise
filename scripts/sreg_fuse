@@ -7,6 +7,8 @@ source booze.sh
 
 trap 'warn "An error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
+fuseId="sreg_fuse-$(date-uuid)"
+
 if [[ $# -ne 2 ]]; then
     echo "Usage: $(basename "$0") DIR MNTPT" >&2
     exit 1
@@ -100,6 +102,38 @@ pt_utimens() { touch -h -d "@$2" "$rootdir/$1" && touch -h -d "@$3" "$rootdir/$1
 
 pt_open()
 {
+    local tempFile="/tmp/$fuseId/$(date-uuid).tmp"
+    if [[ -e "$rootdir/$1" ]]; then
+        srpull "$rootdir/$1" "$tempFile.dat"
+        mv "$rootdir/$1" "$tempFile"
+        mv "$tempFile.dat" "$rootdir/$1"
+    fi
+
+    if ! [[ -e "$rootdir/$1" ]]; then
+        if [[ "$(($2 & O_CREAT))" -ne 0 ]]; then
+            touch "$rootdir/$1"
+        else
+            booze_err=-$ENOENT
+            return 1
+        fi
+    fi
+
+    if [[ "$(($2 & O_TRUNC))" -ne 0 ]]; then
+        true > "$rootdir/$1"
+    fi
+
+    return 0
+}
+
+pt_flush()
+{
+    local tempFile="/tmp/$fuseId/$(date-uuid).tmp"
+    if [[ -e "$rootdir/$1" ]]; then
+        srpull "$rootdir/$1" "$tempFile.dat"
+        mv "$rootdir/$1" "$tempFile"
+        mv "$tempFile.dat" "$rootdir/$1"
+    fi
+
     if ! [[ -e "$rootdir/$1" ]]; then
         if [[ "$(($2 & O_CREAT))" -ne 0 ]]; then
             touch "$rootdir/$1"
@@ -118,7 +152,7 @@ pt_open()
 
 pt_read()
 {
-    dd if="$rootdir/$1" bs=1 count="$2" skip="$3"
+    sreg_read_stream < "$rootdir/$1" | dd bs=1 count="$2" skip="$3"
 }
 
 pt_write()

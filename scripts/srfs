@@ -23,7 +23,7 @@ mount)
             root="$(crystallize-getconf EmberLibrary)"
         fi
     fi
-    ( sreg_fuse_py "$root" "$mountpoint" & ) # Double fork so sreg_fuse.py survives after srfs exits
+    ( sreg_fuse "$root" "$mountpoint" & ) # Double fork so sreg_fuse.py survives after srfs exits
     ;;
 unmount)
     umount "$mountpoint"

@@ -49,21 +49,16 @@ mkdir -p "$crystalWorkdir/$streamId"
     if [[ -n "$outFile" ]]; then
         if [[ -f "$outFile" ]]; then
             pointerTypeSignature=""
-            tinyFile=""
-            if [[ "$(wc -c < "$streamId.xz")" -lt 166 ]]; then
-                tinyFile="true"
-            else
+            if ! [[ "$(wc -c < "$streamId.xz")" -lt 166 ]]; then
                 pointerTypeSignature="$(head -c 36 "$streamId.xz")"
             fi
-            if [[ "$tinyFile" != "true" ]] && [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
+            if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
                 # The file is a hash pointer. This is fine: continue nomally.
                 true
-            elif [[ "$tinyFile" != "true" ]] && {
-                    [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]] || # Standard remote pointer
-                    [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]] || # LocalStore pointer
-                    [[ "$pointerTypeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]] || # Remote pack pointer
-                    [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] # Remote pack pointer, with pointer data in the pointer
-                }
+            elif [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]] || # Standard remote pointer
+                [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]] || # LocalStore pointer
+                [[ "$pointerTypeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]] || # Remote pack pointer
+                [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] # Remote pack pointer, with pointer data in the pointer
             then
                 # The file is a stream pointer, but not a hash pointer.
                 die "Refusing to overwrite non-hashpointer stream pointer."
@@ -161,7 +156,11 @@ mkdir -p "$crystalWorkdir/$streamId"
         mv "$tmpFilePath" "$dbFilePath" || die "Could not move pointer into place!"
     fi
     # Output the finished hashpointer
-    printf '%s\n%s\n' "760fa662-89cf-4ebd-9664-150b7637ddd4" "$hashFull"
+    if [[ -n "$outFile" ]]; then
+        printf '%s\n%s\n' "760fa662-89cf-4ebd-9664-150b7637ddd4" "$hashFull" > "$outFile"
+    else
+        printf '%s\n%s\n' "760fa662-89cf-4ebd-9664-150b7637ddd4" "$hashFull"
+    fi
     finish
     if [[ -e "${streamId:?}.tmp" ]]; then
         rm "${streamId:?}.tmp"

@@ -140,6 +140,18 @@ pt_flush()
     return 0
 }
 
+pt_close()
+{
+    local fileDir="$(dirname "$rootdir/$1")"
+    local tempFile="/tmp/$fuseId/$rootdir/$1"
+    if [[ -e "$tempFile" ]]; then
+        srsync "$tempFile" "$rootdir/$1"
+        rm "$tempFile"
+    fi
+
+    return 0
+}
+
 pt_read()
 {
     sreg_read_stream < "$rootdir/$1" | dd bs=1 count="$2" skip="$3"

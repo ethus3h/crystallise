@@ -153,12 +153,12 @@ mkdir "$streamId"
         fi
         numRetries=$(( numRetries - 1 ))
         if [[ -e "$dbFilePath" ]] && [[ "$(unxz --stdout - < "$dbFilePath" | sha512sum | awk '{print $1;}')" != "$knownChecksum" ]]; then
-            touch "$dbLinkPath.locked"
+            [[ "$ignoreLock" != "true" ]] && touch "$dbLinkPath.locked"
             rm "$dbFilePath"
         fi
         if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$(readlink "$dbLinkPath")" ]] || [[ "$skipCache" == "true" ]] || [[ ! -f "$dbFilePath" ]]; then
             # Only lock the cache entry while we're editing it
-            touch "$dbLinkPath.locked"
+            [[ "$ignoreLock" != "true" ]] && touch "$dbLinkPath.locked"
 
             # Item is not in the cache (or --skip-cache was specified), so add it
 
@@ -283,7 +283,7 @@ mkdir "$streamId"
             ln -s "$dbFilePath" "$dbLinkPath"
 
             # Done editing the cache entry, so release the lock
-            rm -f "$dbLinkPath.locked"
+            [[ "$ignoreLock" != "true" ]] && rm -f "$dbLinkPath.locked"
         fi
         dbFilePath="$(readlink -e "$dbLinkPath")"
         # First, make sure the link is good and fix it up if it's not.

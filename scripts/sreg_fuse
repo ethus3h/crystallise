@@ -51,7 +51,7 @@ pt_readlink()
     [[ -e "$rootdir/$1" ]] || { booze_err=-$ENOENT; return 1; }
     [[ -h "$rootdir/$1" ]] || { booze_err=-$EINVAL; return 1; }
     booze_out="$(readlink "$rootdir/$1")"
-    return $?
+    return "$?"
 }
 
 pt_readdir()
@@ -69,14 +69,14 @@ pt_readdir()
 
 pt_mknod()
 {
-    local perms=`printf %o $(($2 & 07777))`
+    local perms="$(printf %o $(($2 & 07777)))"
 
-    if S_ISREG $2; then
+    if S_ISREG "$2"; then
         [[ -e "$rootdir/$1" ]] && { booze_err=-$EEXIST; return 1; }
         touch "$rootdir/$1" &&  chmod $perms "$rootdir/$1"
         return
-    elif S_ISFIFO $2; then
-        mkfifo -m $perms "$rootdir/$1"
+    elif S_ISFIFO "$2"; then
+        mkfifo -m "$perms" "$rootdir/$1"
         return
     else
         booze_err=-$EOPNOTSUPP
@@ -84,21 +84,21 @@ pt_mknod()
     fi
 }
 
-pt_mkdir() { mkdir -m `printf %o $2` "$rootdir/$1"; }
+pt_mkdir() { mkdir -m "$(printf %o "$2")" "$rootdir/$1"; }
 pt_unlink() { rm -f "$rootdir/$1"; }
 pt_rmdir() { rmdir "$rootdir/$1"; }
 pt_symlink() { ln -sn "$rootdir/$1" "$2"; }
 pt_rename() { mv -f "$rootdir/$1" "$rootdir/$2"; }
 pt_link() { ln -n "$rootdir/$1" "$rootdir/$2"; }
-pt_chmod() { chmod `printf %o $(($2 & 07777))` "$rootdir/$1"; }
-pt_chown() { chown -h $2:$3 "$rootdir/$1"; }
-pt_truncate() { truncate -s $2 "$rootdir/$1"; }
-pt_utimens() { touch -h -d @$2 "$rootdir/$1" && touch -h -d @$3 "$rootdir/$1"; }
+pt_chmod() { chmod "$(printf %o $(($2 & 07777)))" "$rootdir/$1"; }
+pt_chown() { chown -h "$2:$3" "$rootdir/$1"; }
+pt_truncate() { truncate -s "$2" "$rootdir/$1"; }
+pt_utimens() { touch -h -d "@$2" "$rootdir/$1" && touch -h -d "@$3" "$rootdir/$1"; }
 
 pt_open()
 {
     if ! [[ -e "$rootdir/$1" ]]; then
-        if [[ "$(($2 & $O_CREAT))" -ne 0 ]]; then
+        if [[ "$(($2 & O_CREAT))" -ne 0 ]]; then
             touch "$rootdir/$1"
         else
             booze_err=-$ENOENT
@@ -106,7 +106,7 @@ pt_open()
         fi
     fi
 
-    if [[ "$(($2 & $O_TRUNC))" -ne 0 ]]; then
+    if [[ "$(($2 & O_TRUNC))" -ne 0 ]]; then
         > "$rootdir/$1"
     fi
 

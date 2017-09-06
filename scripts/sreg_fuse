@@ -5,6 +5,8 @@ source ember_bash_setup &> /dev/null
 source booze.sh
 #set -x
 
+trap 'warn "An error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+
 if [[ $# -ne 2 ]]; then
     echo "Usage: $(basename "$0") DIR MNTPT" >&2
     exit 1
@@ -86,7 +88,7 @@ pt_mknod()
 }
 
 pt_mkdir() { mkdir -m "$(printf %o "$2")" "$rootdir/$1"; }
-pt_unlink() { rm -f "$rootdir/$1"; }
+pt_unlink() { rm "$rootdir/$1"; }
 pt_rmdir() { rmdir "$rootdir/$1"; }
 pt_symlink() { ln -sn "$rootdir/$1" "$2"; }
 pt_rename() { mv -f "$rootdir/$1" "$rootdir/$2"; }

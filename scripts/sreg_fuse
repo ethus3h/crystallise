@@ -8,6 +8,7 @@ source booze.sh
 trap 'warn "An error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 fuseId="sreg_fuse-$(date-uuid)"
+mkdir -p "/tmp/$fuseId"
 
 if [[ $# -ne 2 ]]; then
     echo "Usage: $(basename "$0") DIR MNTPT" >&2
@@ -102,11 +103,11 @@ pt_utimens() { touch -h -d "@$2" "$rootdir/$1" && touch -h -d "@$3" "$rootdir/$1
 
 pt_open()
 {
-    local tempFile="/tmp/$fuseId/$(date-uuid).tmp"
     if [[ -e "$rootdir/$1" ]]; then
+        local fileDir="$(dirname "$rootdir/$1")"
+        mkdir -p "/tmp/$fuseId/$dirname"
+        local tempFile="/tmp/$fuseId/$rootdir/$1"
         srpull "$rootdir/$1" "$tempFile"
-        rm "$rootdir/$1"
-        mv "$tempFile" "$rootdir/$1"
     fi
 
     if ! [[ -e "$rootdir/$1" ]]; then

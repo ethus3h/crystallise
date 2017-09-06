@@ -7,7 +7,7 @@ source booze.sh
 
 trap 'warn "An error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
-fuseId="sreg_fuse-$(date-uuid)"
+local fuseId="sreg_fuse-$(date-uuid)"
 mkdir -p "/tmp/$fuseId"
 
 if [[ $# -ne 2 ]]; then
@@ -105,7 +105,7 @@ pt_open()
 {
     if [[ -e "$rootdir/$1" ]]; then
         local fileDir="$(dirname "$rootdir/$1")"
-        mkdir -p "/tmp/$fuseId/$dirname"
+        mkdir -p "/tmp/$fuseId/$fileDir"
         local tempFile="/tmp/$fuseId/$rootdir/$1"
         srpull "$rootdir/$1" "$tempFile"
     fi

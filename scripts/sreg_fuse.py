@@ -45,7 +45,7 @@ class sreg_fuse(Operations):
             inputfile = io.open(source, 'r')
         else:
             # Already have a file handle, so just use that
-            inputfile = source
+            inputfile = os.fdopen(source, 'r')
         outputfile = io.open(destination, 'w')
         subprocess.call(["sreg_store_stream"], stdin=inputfile, stdout=outputfile)
         print("copy write source: "+source)

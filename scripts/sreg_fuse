@@ -11,7 +11,7 @@ fuseId="sreg_fuse-$(date-uuid)"
 mkdir -p "/tmp/$fuseId"
 
 if [[ $# -ne 2 ]]; then
-    echo "Usage: $(basename "$0") DIR MNTPT" >&2
+    echo "Usage: $(basename "$0") <sreg-directory-to-mount> <mount-point>" >&2
     exit 1
 fi
 

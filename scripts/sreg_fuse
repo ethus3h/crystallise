@@ -103,16 +103,18 @@ pt_utimens() { touch -h -d "@$2" "$rootdir/$1" && touch -h -d "@$3" "$rootdir/$1
 
 pt_open()
 {
+    local fileDir="$(dirname "$rootdir/$1")"
+    mkdir -p "/tmp/$fuseId/$fileDir"
+    local tempFile="/tmp/$fuseId/$rootdir/$1"
+
     if [[ -e "$rootdir/$1" ]]; then
-        local fileDir="$(dirname "$rootdir/$1")"
-        mkdir -p "/tmp/$fuseId/$fileDir"
-        local tempFile="/tmp/$fuseId/$rootdir/$1"
         srpull "$rootdir/$1" "$tempFile"
     fi
 
     if ! [[ -e "$rootdir/$1" ]]; then
         if [[ "$(($2 & O_CREAT))" -ne 0 ]]; then
-            touch "$rootdir/$1"
+            touch "$tempFile"
+            srsync "$tempFile" "$rootdir/$1"
         else
             booze_err=-$ENOENT
             return 1
@@ -120,7 +122,8 @@ pt_open()
     fi
 
     if [[ "$(($2 & O_TRUNC))" -ne 0 ]]; then
-        true > "$rootdir/$1"
+        true > "$tempFile"
+        srsync "$tempFile" "$rootdir/$1"
     fi
 
     return 0

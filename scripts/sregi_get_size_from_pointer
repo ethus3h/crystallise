@@ -27,11 +27,16 @@ if [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]] || # 
 then
     # This is a pointer
     numLines="$(wc -l "$pointer")"
-    if [[ "$numLines" ]] == "2"; then
+    if [[ "$numLines" == "2" ]]; then
         # The size isn't available from the pointer itself
         
+    elif [[ "$numLines" == "3" ]]
+        # The size is stored in the pointer, so return it
+        tail -n 1 "$pointer"
+    else
+        die "This file looks like a pointer, but has more lines than expected. Is this a bug in sreg?"
     fi
 else
     # This is a normal file
-    stat --printf='%s' "$pointer"
+    stat --printf='%s\n' "$pointer"
 fi

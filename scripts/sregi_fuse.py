@@ -140,7 +140,7 @@ class sregi_fuse(Operations):
         full_path = self._full_path(path)
         temppath = self.tempdir + "/" + str(uuid.uuid4())
         self._sreg_copy_read(full_path, temppath)
-        # print("copy read target for open: "+temppath)
+        print("copy read target for open: "+temppath)
         return os.open(temppath, flags)
 
     def create(self, path, mode, fi=None):
@@ -182,7 +182,7 @@ class sregi_fuse(Operations):
     def release(self, path, fh):
         os.fsync(fh)
         full_path = self._full_path(path)
-        # print("release name: "+os.fdopen(fh).name)
+        print("release name: "+full_path)
         self._sreg_copy_write(os.fdopen(fh).name, full_path)
         temp = os.close(fh)
         os.remove(fh)

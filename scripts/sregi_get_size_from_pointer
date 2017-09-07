@@ -29,7 +29,10 @@ then
     numLines="$(wc -l "$pointer")"
     if [[ "$numLines" == "2" ]]; then
         # The size isn't available from the pointer itself
-        
+        crystalWorkdir="$(crystallize-getconf WorkDirectory)"
+        streamId="sregi_get_size_from_pointer-$(date-uuid)"
+        sreg_read_stream < "$pointer" > "$crystalWorkdir/.$streamId"
+        stat --printf='%s\n' "$pointer"
     elif [[ "$numLines" == "3" ]]
         # The size is stored in the pointer, so return it
         tail -n 1 "$pointer"

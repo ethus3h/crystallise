@@ -29,6 +29,7 @@ then
     numLines="$(wc -l "$pointer")"
     if [[ "$numLines" ]] == "2"; then
         # The size isn't available from the pointer itself
+        
     fi
 else
     # This is a normal file

@@ -15,34 +15,38 @@ sregDir="$(sregi_find_dir --sreg-dir "$sregDir")"
 
 pointer="$1"
 
-pointerTypeSignature=""
-if ! [[ "$(wc -c < "$pointer")" -lt 166 ]]; then
-    pointerTypeSignature="$(head -c 36 "$pointer")"
-fi
-if [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]] || # Standard remote pointer
-    [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]] || # LocalStore pointer
-    [[ "$pointerTypeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]] || # Remote pack pointer
-    [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] || # Remote pack pointer, with pointer data in the pointer
-    [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]] # Hash pointer
-then
-    # This is a pointer
-    numLines="$(wc -l "$pointer")"
-    if [[ "$numLines" == "2" ]]; then
-        # The size isn't available from the pointer itself
-        # This case can be removed once there aren't any pointers that need to be read that have only 2 lines.
-        crystalWorkdir="$(crystallize-getconf WorkDirectory)"
-        streamId="sregi_get_size_from_pointer-$(date-uuid)"
-        sreg_read_stream --sreg-dir "$sregDir" < "$pointer" > "$crystalWorkdir/.$streamId"
-        stat --printf='%s\n' "$pointer" | sponge -a "$pointer"
-        rm "$crystalWorkdir/.$streamId"
-    elif [[ "$numLines" == "3" ]]; then
-        # The size is stored in the pointer, so do nothing and return it in a few lines
-        true
-    else
-        die "This file looks like a pointer, but has more lines than expected. Is this a bug in sreg?"
-    fi
-    tail -n 1 "$pointer"
-else
-    # This is a normal file
+if [[ -f "$pointer" ]] && [[ ! -h "$pointer" ]]; then
     stat --printf='%s\n' "$pointer"
+else
+    pointerTypeSignature=""
+    if ! [[ "$(wc -c < "$pointer")" -lt 166 ]]; then
+        pointerTypeSignature="$(head -c 36 "$pointer")"
+    fi
+    if [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]] || # Standard remote pointer
+        [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]] || # LocalStore pointer
+        [[ "$pointerTypeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]] || # Remote pack pointer
+        [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] || # Remote pack pointer, with pointer data in the pointer
+        [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]] # Hash pointer
+    then
+        # This is a pointer
+        numLines="$(wc -l "$pointer")"
+        if [[ "$numLines" == "2" ]]; then
+            # The size isn't available from the pointer itself
+            # This case can be removed once there aren't any pointers that need to be read that have only 2 lines.
+            crystalWorkdir="$(crystallize-getconf WorkDirectory)"
+            streamId="sregi_get_size_from_pointer-$(date-uuid)"
+            sreg_read_stream --sreg-dir "$sregDir" < "$pointer" > "$crystalWorkdir/.$streamId"
+            stat --printf='%s\n' "$pointer" | sponge -a "$pointer"
+            rm "$crystalWorkdir/.$streamId"
+        elif [[ "$numLines" == "3" ]]; then
+            # The size is stored in the pointer, so do nothing and return it in a few lines
+            true
+        else
+            die "This file looks like a pointer, but has more lines than expected. Is this a bug in sreg?"
+        fi
+        tail -n 1 "$pointer"
+    else
+        # This is a normal file
+        stat --printf='%s\n' "$pointer"
+    fi
 fi

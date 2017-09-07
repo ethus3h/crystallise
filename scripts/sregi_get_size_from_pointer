@@ -31,7 +31,7 @@ then
         # The size isn't available from the pointer itself
         crystalWorkdir="$(crystallize-getconf WorkDirectory)"
         streamId="sregi_get_size_from_pointer-$(date-uuid)"
-        sreg_read_stream < "$pointer" > "$crystalWorkdir/.$streamId"
+        sreg_read_stream --sreg-dir "$sregDir" < "$pointer" > "$crystalWorkdir/.$streamId"
         stat --printf='%s\n' "$pointer" >> "$pointer"
         rm "$crystalWorkdir/.$streamId"
     elif [[ "$numLines" == "3" ]]

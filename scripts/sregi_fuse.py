@@ -72,8 +72,8 @@ class sregi_fuse(Operations):
         st = os.lstat(full_path)
         statDict = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
                      'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size', 'st_uid'))
-         size = subprocess.check_output(["sregi_get_size_from_pointer", "--sreg-dir", self.sregdir, "--output-file", destination], stdin=inputfile)
-        statDict = 
+        expandedSize = subprocess.check_output(["sregi_get_size_from_pointer", "--sreg-dir", self.sregdir, full_path])
+        statDict.st_size = expandedSize
         return statDict
 
     def readdir(self, path, fh):

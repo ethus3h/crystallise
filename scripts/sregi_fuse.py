@@ -15,8 +15,9 @@ import io
 from fuse import FUSE, FuseOSError, Operations, fuse_get_context
 
 class sregi_fuse(Operations):
-    def __init__(self, root):
+    def __init__(self, root, sregdir):
         self.root = root
+        self.sregdir = sregdir
 
         out = subprocess.check_output(["crystallize-getconf", "WorkDirectory"], shell=False)
         self.tempdir = out[:-1] + "/.sregi_fuse.tmp/" + str(uuid.uuid4())
@@ -37,7 +38,7 @@ class sregi_fuse(Operations):
         print("copy read source: "+source)
         outputfile = io.open(destination, 'w')
         print("copy read outfile: "+outputfile.name)
-        subprocess.call(["sreg_read_stream"], stdin=inputfile, stdout=outputfile)
+        subprocess.call(["sreg_read_stream", "--sreg-dir", sregdir], stdin=inputfile, stdout=outputfile)
 
     def _sreg_copy_write(self, source, destination):
         if type(source) is type('string'):
@@ -48,7 +49,7 @@ class sregi_fuse(Operations):
             inputfile = os.fdopen(source, 'r')
             print("copy write source: file handle")
         print("copy write outfile: "+destination)
-        subprocess.call(["sreg_store_stream", "--output-file", destination], stdin=inputfile)
+        subprocess.call(["sreg_store_stream", "--sreg-dir", sregdir, "--output-file", destination], stdin=inputfile)
 
     # Filesystem methods
     # ==================
@@ -184,7 +185,7 @@ class sregi_fuse(Operations):
 
 # Mountpoint may not be a subdirectory of root, apparently. When running from the command line, specify the arguments in the opposite order (root then mountpoint).
 def main(mountpoint, root):
-    srf = sregi_fuse(root)
+    srf = sregi_fuse(root, sregdir)
     tempdir = srf.tempdir
     FUSE(srf, mountpoint, nothreads=True, foreground=True, **{'allow_other': True})
     def exit_handler():

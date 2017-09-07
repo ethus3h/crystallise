@@ -29,6 +29,7 @@ then
     numLines="$(wc -l "$pointer")"
     if [[ "$numLines" == "2" ]]; then
         # The size isn't available from the pointer itself
+        # This case can be removed once there aren't any pointers that need to be read that have only 2 lines.
         crystalWorkdir="$(crystallize-getconf WorkDirectory)"
         streamId="sregi_get_size_from_pointer-$(date-uuid)"
         sreg_read_stream --sreg-dir "$sregDir" < "$pointer" > "$crystalWorkdir/.$streamId"

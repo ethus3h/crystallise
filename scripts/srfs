@@ -6,26 +6,35 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
-action="$1"
-mountpoint="$(crystallize-getconf SrfsMountpoint)"
-
-if [[ -z "$action" ]]; then
-    action="mount"
+action="mount"
+if [[ "$1" == "mount" ]]; then
+    shift
+elif [[ "$1" == "unmount" ]]; then
+    action="unmount"
+    shift
 fi
 
 case $action in
 mount)
-    mkdir -p "$mountpoint"
-    root="$2"
+    root="$1"
     if [[ -z "$root" ]]; then
         root="$(crystallize-getconf SrfsDefaultRoot)"
         if [[ -z "$root" ]]; then
             root="$(crystallize-getconf EmberLibrary)"
         fi
     fi
-    ( sreg_fuse "$root" "$mountpoint" & ) # Double fork so sreg_fuse.py survives after srfs exits
+    mountpoint="$2"
+    if [[ -z "$mountpoint" ]]; then
+        mountpoint="$(crystallize-getconf SrfsMountpoint)"
+    fi
+    mkdir -p "$mountpoint"
+    ( sreg_fuse --sreg-dir "$sregDir" "$root" "$mountpoint" & ) # Double fork so sreg_fuse.py survives after srfs exits
     ;;
 unmount)
+    mountpoint="$1"
+    if [[ -z "$mountpoint" ]]; then
+        mountpoint="$(crystallize-getconf SrfsMountpoint)"
+    fi
     umount "$mountpoint"
     ;;
 *)

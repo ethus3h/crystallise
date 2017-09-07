@@ -3,6 +3,8 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
+((EUID)) && exec sudo -- "$0" "$@"
+
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
 sregDir=""
@@ -34,7 +36,8 @@ if [[ -f "$pointer" ]] && [[ ! -h "$pointer" ]]; then
             crystalWorkdir="$(crystallize-getconf WorkDirectory)"
             streamId="sregi_get_size_from_pointer-$(date-uuid)"
             sreg_read_stream --sreg-dir "$sregDir" < "$pointer" > "$crystalWorkdir/.$streamId"
-            stat --printf='%s\n' "$pointer" | sponge -a "$pointer"
+            retrievedSize="$(stat --printf='%s\n' "$crystalWorkdir/.$streamId")"
+            echo "$retrievedSize" >> "$pointer"
             rm "$crystalWorkdir/.$streamId"
         elif [[ "$numLines" == "3" ]]; then
             # The size is stored in the pointer, so do nothing and return it in a few lines

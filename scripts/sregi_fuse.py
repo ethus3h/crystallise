@@ -184,7 +184,7 @@ class sregi_fuse(Operations):
         return self.flush(path, fh)
 
 # Mountpoint may not be a subdirectory of root, apparently. When running from the command line, specify the arguments in the opposite order (root then mountpoint).
-def main(mountpoint, root):
+def main(mountpoint, root, sregdir):
     srf = sregi_fuse(root, sregdir)
     tempdir = srf.tempdir
     FUSE(srf, mountpoint, nothreads=True, foreground=True, **{'allow_other': True})

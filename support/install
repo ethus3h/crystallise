@@ -98,6 +98,7 @@ if [[ "$OSTYPE" = darwin* ]]; then
         emberMacGNUUpgrade
     fi
     find scripts -type f -exec ereplace '#!/usr/bin/env bash' '#!/usr/bin/env gbash'
+    find scripts -type f -exec ereplace 'readlink ' 'greadlink '
 fi
 
 

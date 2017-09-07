@@ -38,7 +38,7 @@ class sregi_fuse(Operations):
         print("copy read source: "+source)
         outputfile = io.open(destination, 'w')
         print("copy read outfile: "+outputfile.name)
-        subprocess.call(["sreg_read_stream", "--sreg-dir", sregdir], stdin=inputfile, stdout=outputfile)
+        subprocess.call(["sreg_read_stream", "--sreg-dir", self.sregdir], stdin=inputfile, stdout=outputfile)
 
     def _sreg_copy_write(self, source, destination):
         if type(source) is type('string'):
@@ -49,7 +49,7 @@ class sregi_fuse(Operations):
             inputfile = os.fdopen(source, 'r')
             print("copy write source: file handle")
         print("copy write outfile: "+destination)
-        subprocess.call(["sreg_store_stream", "--sreg-dir", sregdir, "--output-file", destination], stdin=inputfile)
+        subprocess.call(["sreg_store_stream", "--sreg-dir", self.sregdir, "--output-file", destination], stdin=inputfile)
 
     # Filesystem methods
     # ==================

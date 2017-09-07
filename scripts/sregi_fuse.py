@@ -14,12 +14,12 @@ import io
 
 from fuse import FUSE, FuseOSError, Operations, fuse_get_context
 
-class sreg_fuse(Operations):
+class sregi_fuse(Operations):
     def __init__(self, root):
         self.root = root
 
         out = subprocess.check_output(["crystallize-getconf", "WorkDirectory"], shell=False)
-        self.tempdir = out[:-1] + "/.sreg_fuse.tmp/" + str(uuid.uuid4())
+        self.tempdir = out[:-1] + "/.sregi_fuse.tmp/" + str(uuid.uuid4())
         if not os.path.exists(self.tempdir):
             os.makedirs(self.tempdir)
 
@@ -184,7 +184,7 @@ class sreg_fuse(Operations):
 
 # Mountpoint may not be a subdirectory of root, apparently. When running from the command line, specify the arguments in the opposite order (root then mountpoint).
 def main(mountpoint, root):
-    srf = sreg_fuse(root)
+    srf = sregi_fuse(root)
     tempdir = srf.tempdir
     FUSE(srf, mountpoint, nothreads=True, foreground=True, **{'allow_other': True})
     def exit_handler():

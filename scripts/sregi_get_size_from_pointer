@@ -40,9 +40,6 @@ then
     else
         die "This file looks like a pointer, but has more lines than expected. Is this a bug in sreg?"
     fi
-    if [[ "$numLines" != "3" ]]
-        die "There is a bug in sregi_get_size_from_pointer: assertion failed."
-    fi
     tail -n 1 "$pointer"
 else
     # This is a normal file

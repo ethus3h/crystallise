@@ -32,13 +32,18 @@ then
         crystalWorkdir="$(crystallize-getconf WorkDirectory)"
         streamId="sregi_get_size_from_pointer-$(date-uuid)"
         sreg_read_stream < "$pointer" > "$crystalWorkdir/.$streamId"
-        stat --printf='%s\n' "$pointer"
+        stat --printf='%s\n' "$pointer" >> "$pointer"
+        rm "$crystalWorkdir/.$streamId"
     elif [[ "$numLines" == "3" ]]
-        # The size is stored in the pointer, so return it
-        tail -n 1 "$pointer"
+        # The size is stored in the pointer, so do nothing and return it in a few lines
+        true
     else
         die "This file looks like a pointer, but has more lines than expected. Is this a bug in sreg?"
     fi
+    if [[ "$numLines" != "3" ]]
+        die "There is a bug in sregi_get_size_from_pointer: assertion failed."
+    fi
+    tail -n 1 "$pointer"
 else
     # This is a normal file
     stat --printf='%s\n' "$pointer"

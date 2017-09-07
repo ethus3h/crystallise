@@ -40,7 +40,7 @@ if [[ -f "$pointer" ]] && [[ ! -h "$pointer" ]]; then
             # The size is stored in the pointer, so do nothing and return it in a few lines
             true
         else
-            die "This file looks like a pointer, but has more lines than expected. Is this a bug in sreg?"
+            die "This file ($pointer) looks like a pointer, but has more lines than expected ($numLines). Is this a bug in sreg?"
         fi
         tail -n 1 "$pointer"
     else

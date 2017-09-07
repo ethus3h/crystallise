@@ -35,20 +35,20 @@ class sregi_fuse(Operations):
 
     def _sreg_copy_read(self, source, destination):
         inputfile = io.open(source, 'r')
-        print("copy read source: "+source)
+        # print("copy read source: "+source)
         outputfile = io.open(destination, 'w')
-        print("copy read outfile: "+outputfile.name)
+        # print("copy read outfile: "+outputfile.name)
         subprocess.call(["sreg_read_stream", "--sreg-dir", self.sregdir], stdin=inputfile, stdout=outputfile)
 
     def _sreg_copy_write(self, source, destination):
         if type(source) is type('string'):
             inputfile = io.open(source, 'r')
-            print("copy write source: "+source)
+            # print("copy write source: "+source)
         else:
             # Already have a file handle, so just use that
             inputfile = os.fdopen(source, 'r')
-            print("copy write source: file handle")
-        print("copy write outfile: "+destination)
+            # print("copy write source: file handle")
+        # print("copy write outfile: "+destination)
         subprocess.call(["sreg_store_stream", "--sreg-dir", self.sregdir, "--output-file", destination], stdin=inputfile)
 
     # Filesystem methods
@@ -72,13 +72,13 @@ class sregi_fuse(Operations):
         st = os.lstat(full_path)
         statDict = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
                      'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size', 'st_uid'))
-        for i in statDict:
-            print i, statDict[i]
+        # for i in statDict:
+        #     print i, statDict[i]
         expandedSize = subprocess.check_output(["sregi_get_size_from_pointer", "--sreg-dir", self.sregdir, full_path])
         # Replace st_size value
         statDict.update({'st_size': int(expandedSize)})
-        for i in statDict:
-            print i, statDict[i]
+        # for i in statDict:
+        #     print i, statDict[i]
         return statDict
 
     def readdir(self, path, fh):
@@ -140,7 +140,7 @@ class sregi_fuse(Operations):
         full_path = self._full_path(path)
         temppath = self.tempdir + "/" + str(uuid.uuid4())
         self._sreg_copy_read(full_path, temppath)
-        print("copy read target for open: "+temppath)
+        # print("copy read target for open: "+temppath)
         return os.open(temppath, flags)
 
     def create(self, path, mode, fi=None):
@@ -176,13 +176,13 @@ class sregi_fuse(Operations):
         temp = os.fsync(fh)
         full_path = self._full_path(path)
         self._sreg_copy_write(fh, full_path)
-        print("flush name: "+full_path)
+        # print("flush name: "+full_path)
         return temp
 
     def release(self, path, fh):
         os.fsync(fh)
         full_path = self._full_path(path)
-        print("release name: "+os.fdopen(fh).name)
+        # print("release name: "+os.fdopen(fh).name)
         self._sreg_copy_write(os.fdopen(fh).name, full_path)
         temp = os.close(fh)
         os.remove(fh)

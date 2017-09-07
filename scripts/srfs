@@ -36,7 +36,7 @@ mount)
         mountpoint="$(crystallize-getconf SrfsMountpoint)"
     fi
     mkdir -p "$mountpoint"
-    ( sregi_fuse --sreg-dir "$sregDir" "$root" "$mountpoint" & ) # Double fork so sreg_fuse.py survives after srfs exits
+    ( sregi_fuse "$root" "$mountpoint" "$sregDir" & ) # Double fork so sreg_fuse.py survives after srfs exits
     ;;
 unmount)
     mountpoint="$1"

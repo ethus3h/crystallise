@@ -27,7 +27,7 @@ if [[ -f "$pointer" ]] && [[ ! -h "$pointer" ]]; then
         [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]] # Hash pointer
     then
         # This is a pointer
-        numLines="$(wc -l "$pointer")"
+        numLines="$(wc -l < "$pointer")"
         if [[ "$numLines" == "2" ]]; then
             # The size isn't available from the pointer itself
             # This case can be removed once there aren't any pointers that need to be read that have only 2 lines.

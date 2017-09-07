@@ -49,7 +49,7 @@ mkdir -p "$crystalWorkdir/$streamId"
     if [[ -n "$outFile" ]]; then
         if [[ -f "$outFile" ]]; then
             pointerTypeSignature=""
-            if ! [[ "$(wc -c < "$streamId.xz")" -lt 166 ]]; then
+            if ! [[ "$(wc -c < "$streamId.tmp")" -lt 166 ]]; then
                 pointerTypeSignature="$(head -c 36 "$streamId.xz")"
             fi
             if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then

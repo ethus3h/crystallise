@@ -75,7 +75,7 @@ class sregi_fuse(Operations):
         for i in statDict:
             print i, statDict[i]
         expandedSize = subprocess.check_output(["sregi_get_size_from_pointer", "--sreg-dir", self.sregdir, full_path])
-        statDict[st_size] = expandedSize
+        statDict['st_size'] = expandedSize
         for i in statDict:
             print i, statDict[i]
         return statDict

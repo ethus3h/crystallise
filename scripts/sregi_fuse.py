@@ -45,9 +45,9 @@ class sregi_fuse(Operations):
             inputfile = io.open(source, 'r')
             # print("copy write source: "+source)
         else:
-            # Already have a file handle, so just use that
+            # This is a numeric file descriptor, so open it
             inputfile = os.fdopen(source, 'r')
-            # print("copy write source: file handle")
+            print("copy write source: "+inputfile.name)
         # print("copy write outfile: "+destination)
         subprocess.call(["sreg_store_stream", "--sreg-dir", self.sregdir, "--output-file", destination], stdin=inputfile)
 
@@ -183,7 +183,7 @@ class sregi_fuse(Operations):
         os.fsync(fh)
         full_path = self._full_path(path)
         print("release name: "+full_path)
-        self._sreg_copy_write(os.fdopen(fh).name, full_path)
+        self._sreg_copy_write(fh, full_path)
         temp = os.close(fh)
         os.remove(fh)
         return temp

@@ -330,13 +330,13 @@ mkdir "$streamId"
             fi
         fi
         retrievedHash="$(sha512sum < "$decompressedCacheEntry" | awk '{print $1;}')"
-        if [[ "$retrievedHash" != "$hashFull" ]]; then
+        if [[ "$retrievedHash" != "$hashFull" ]] || [[ "$retrievedHash" != "$knownChecksum" ]]; then
             rm "$dbFilePath" "$dbLinkPath"
             echo "$oldCount" > "$dbLinkPath"
             # mkdir -p "$cacheDbDir/Failed Checksum"
             # mv "$dbFilePath" "$cacheDbDir/Failed Checksum/$(basename "$dbFilePath")"
             # warn "Checksum mismatch when retrieving the requested stream!"
-            error-notify "Checksum mismatch when retrieving the requested stream!"
+            error-notify "Checksum mismatch when retrieving the requested stream! Checksums: $knownChecksum $hashFull $retrievedHash at ${BASH_SOURCE[0]} line ${LINENO}"
             # if [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
             #     mkdir -p "$dbDir/LocalStore/Failed\ Fsck/"
             #     mv "$dbDir/LocalStore/$hashA/$hashB/$hashC/$hashFull" "$dbDir/LocalStore/Failed\ Fsck/"
@@ -352,7 +352,7 @@ mkdir "$streamId"
     fi
 
     # Return the data to the caller
-    cat "$decompressedCacheEntry"
+    cat "${decompressedCacheEntry:?}"
 
     # Cache cleanup is expensive, so only do it occasionally
     if [[ "$RANDOM" -lt 250 ]]; then

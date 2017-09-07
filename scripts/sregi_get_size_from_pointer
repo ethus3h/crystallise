@@ -16,8 +16,6 @@ sregDir="$(sregi_find_dir --sreg-dir "$sregDir")"
 pointer="$1"
 
 if [[ -f "$pointer" ]] && [[ ! -h "$pointer" ]]; then
-    stat --printf='%s\n' "$pointer"
-else
     pointerTypeSignature=""
     if ! [[ "$(wc -c < "$pointer")" -lt 166 ]]; then
         pointerTypeSignature="$(head -c 36 "$pointer")"
@@ -49,4 +47,6 @@ else
         # This is a normal file
         stat --printf='%s\n' "$pointer"
     fi
+else
+    stat --printf='%s\n' "$pointer"
 fi

@@ -28,8 +28,8 @@ git-escape-path() {
     fi
 }
 
-sreg_fuse() {
-    sreg_fuse.py "$@" "$(sregi_find_dir)"
+sregi_fuse() {
+    sregi_fuse.py "$@" "$(sregi_find_dir)"
 }
 
 # Function is defined with parentheses to make it run in a subshell to prevent the "die" affecting the calling script (the calling script should be responsible for trapping/handling nonzero exit codes itself)

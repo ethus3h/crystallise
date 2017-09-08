@@ -69,7 +69,7 @@ mkdir -p "$crystalWorkdir/$streamId"
                 outFileHashFull="$(sregi_hash_from_file "$outFile")"
                 if [[ "$hashFull" == "$outFileHashFull" ]]; then
                     # Basic sanity check for existing pointer
-                    sregi_available_by_hash --sreg-dir "$sregDir"
+                    sregi_hashpointer_sane --sreg-dir "$sregDir" "$outFile"
                     # Previous command exited OK, so the pointer already there is good to go.
                     finish; exit 0
                 fi

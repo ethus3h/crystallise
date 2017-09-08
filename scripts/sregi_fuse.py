@@ -71,6 +71,7 @@ class sregi_fuse(Operations):
         # for i in statDict:
         #     print i, statDict[i]
         expandedSize = subprocess.check_output(["sregi_get_size_from_pointer", "--sreg-dir", self.sregdir, full_path])
+        print "getattr run on "+full_path
         # Replace st_size value
         statDict.update({'st_size': int(expandedSize)})
         # for i in statDict:
@@ -179,7 +180,6 @@ class sregi_fuse(Operations):
         full_path = self._full_path(path)
         print("flush name: "+full_path)
         temppath = self.tempdir + "/" + full_path
-        print type(fh)
         self._sreg_copy_write(temppath, full_path)
         return temp
 

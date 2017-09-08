@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
+source ember_bash_setup &> /dev/null
+#set -x
+
+((EUID)) && exec sudo -- "$0" "$@"
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+
+dbDir="$1"
+
+if [[ -e "$dbDir/.locked" ]]; then
+    warn "This database is already in use. If the scache_gc instance using it has crashed, remove $dbDir/.locked manually."
+    exit 0
+fi
+touch "$dbDir.locked"
+
+finish() {
+    rm -f "${dbDir:?}/.locked"
+}
+trap finish EXIT
+
+cacheType="s"
+if [[ -n "$2" ]]; then
+    cacheType="$2"
+fi
+# Clean up empty directories
+find "$dbDir" -type d -not -name "ByCount" -empty -delete
+# Remove the least-used items from the cache until it fits within the alloted disk space
+diskUsageLimit="$(<"$dbDir/.$cacheType""cache.limit")"
+diskUsageLimitSub=$(( diskUsageLimit - 1000000000 ))
+if [[ "$diskUsageLimitSub" -lt 0 ]]; then
+    diskUsageLimitSub=0
+fi
+if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
+    while [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimitSub" ]]; do
+        rm -f "$dbDir"/Failed\ Checksum/*
+        # Remove the least-used item from the cache
+        leastUsedItemDirectory="$(find "$dbDir/ByCount" -maxdepth 1 -type d | sort -n | head -n 2 | tail -n 1)"
+        largestLeastUsedItem="$(find "$leastUsedItemDirectory" -mindepth 4 -maxdepth 4 -type f -printf "%s\\t%p\\n" | sort -n | tail -1 | awk '{print $2;}')"
+        if [[ -n "$largestLeastUsedItem" ]]; then
+            leastUsedItemCount="$(basename "$leastUsedItemDirectory")"
+            hashFull="$(basename "$largestLeastUsedItem")"
+            hashA="${hashFull:0:1}"
+            hashB="${hashFull:1:1}"
+            hashC="${hashFull:2:1}"
+            hashSubdir="$hashA/$hashB/$hashC"
+            hashDir="$dbDir/$hashSubdir"
+            dbLinkPath="$hashDir/$hashFull"
+            if [[ -e "$dbLinkPath.locked" ]]; then
+                # File is in use, so leave it alone
+                continue
+            fi
+            rm -rf "${largestLeastUsedItem:?}"
+            rm -f "$dbLinkPath"
+            echo "$leastUsedItemCount" > "$dbLinkPath"
+        fi
+        find "$dbDir" -type d -not -name "ByCount" -empty -delete
+    done
+fi
+
+rm "$dbDir".locked

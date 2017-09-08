@@ -189,6 +189,10 @@ class sregi_fuse(Operations):
         full_path = self._full_path(path)
         temppath = self.tempdir + "/" + full_path
         os.remove(temppath)
+            if [[ "$RANDOM" -lt 250 ]]; then
+                scache_gc "$cacheDbDir"
+            fi
+
         return temp
 
     def fsync(self, path, fdatasync, fh):

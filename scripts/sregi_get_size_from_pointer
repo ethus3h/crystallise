@@ -26,27 +26,26 @@ if [[ -f "$pointer" ]] && [[ ! -h "$pointer" ]]; then
         [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]] || # LocalStore pointer
         [[ "$pointerTypeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]] || # Remote pack pointer
         [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] || # Remote pack pointer, with pointer data in the pointer
-        then
-            # Not a hash pointer, so we can't easily embed the size in the pointer itself
-            if ! [[ -e "$pointer.size" ]]; then
-                crystalWorkdir="$(crystallize-getconf WorkDirectory)"
-                streamId="sregi_get_size_from_pointer-$(date-uuid)"
-                sreg_read_stream --sreg-dir "$sregDir" < "$pointer" > "$crystalWorkdir/.$streamId"
-                retrievedSize="$(stat --printf='%s\n' "$crystalWorkdir/.$streamId")"
-                warn "$crystalWorkdir/.$streamId has size $retrievedSize Pointer contents: $(<"$pointer")"
-                echo "$retrievedSize" > "$pointer.size"
-                rm "$crystalWorkdir/.$streamId"
-            else
-                cat "$pointer.size"
-                exit 0
-            fi
+    then
+        # Not a hash pointer, so we can't easily embed the size in the pointer itself
+        if ! [[ -e "$pointer.length" ]]; then
+            crystalWorkdir="$(crystallize-getconf WorkDirectory)"
+            streamId="sregi_get_size_from_pointer-$(date-uuid)"
+            sreg_read_stream --sreg-dir "$sregDir" < "$pointer" > "$crystalWorkdir/.$streamId"
+            retrievedSize="$(stat --printf='%s\n' "$crystalWorkdir/.$streamId")"
+            warn "$crystalWorkdir/.$streamId (not hash pointer) has size $retrievedSize Pointer contents: $(xxd "$pointer")"
+            echo "$retrievedSize" > "$pointer.length"
+            rm "$crystalWorkdir/.$streamId"
+        fi
+        cat "$pointer.length"
+        exit 0
     elif [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]] # Hash pointer
     then
         # This is a pointer
         numLines="$(wc -l < "$pointer")"
         if [[ "$numLines" == "2" ]]; then
             # The size isn't available from the pointer itself
-            # This case can be removed once there aren't any pointers that need to be read that have only 2 lines.
+            # This case can be removed once/if there aren't any pointers that need to be read that have only 2 lines.
             crystalWorkdir="$(crystallize-getconf WorkDirectory)"
             streamId="sregi_get_size_from_pointer-$(date-uuid)"
             sreg_read_stream --sreg-dir "$sregDir" < "$pointer" > "$crystalWorkdir/.$streamId"

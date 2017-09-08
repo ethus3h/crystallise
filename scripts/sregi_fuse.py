@@ -134,7 +134,7 @@ class sregi_fuse(Operations):
     def open(self, path, flags):
         full_path = self._full_path(path)
         temppath = self.tempdir + "/" + full_path
-        if not os.path.exists(temppath):
+        if not os.path.exists(os.path.dirname(temppath)):
             os.makedirs(os.path.dirname(temppath))
         self._sreg_copy_read(full_path, temppath)
         print("copy read target for open: "+temppath)
@@ -144,7 +144,7 @@ class sregi_fuse(Operations):
         uid, gid, pid = fuse_get_context()
         full_path = self._full_path(path)
         temppath = self.tempdir + "/" + full_path
-        if not os.path.exists(temppath):
+        if not os.path.exists(os.path.dirname(temppath)):
             os.makedirs(os.path.dirname(temppath))
         if os.path.isfile(full_path):
             self._sreg_copy_read(full_path, temppath)
@@ -166,7 +166,7 @@ class sregi_fuse(Operations):
     def truncate(self, path, length, fh=None):
         full_path = self._full_path(path)
         temppath = self.tempdir + "/" + full_path
-        if not os.path.exists(temppath):
+        if not os.path.exists(os.path.dirname(temppath)):
             os.makedirs(os.path.dirname(temppath))
         self._sreg_copy_read(full_path, temppath)
         with open(temppath, 'r+') as f:

@@ -33,7 +33,7 @@ if [[ -f "$pointer" ]] && [[ ! -h "$pointer" ]]; then
             streamId="sregi_get_size_from_pointer-$(date-uuid)"
             sreg_read_stream --sreg-dir "$sregDir" < "$pointer" > "$crystalWorkdir/.$streamId"
             retrievedSize="$(stat --printf='%s\n' "$crystalWorkdir/.$streamId")"
-            warn "$crystalWorkdir/.$streamId (not hash pointer) has size $retrievedSize Pointer contents: $(xxd "$pointer")"
+            warn "$crystalWorkdir/.$streamId (not hash pointer) has length $retrievedSize Pointer contents: $(xxd "$pointer")"
             echo "$retrievedSize" > "$pointer.length"
             rm "$crystalWorkdir/.$streamId"
         fi
@@ -50,7 +50,7 @@ if [[ -f "$pointer" ]] && [[ ! -h "$pointer" ]]; then
             streamId="sregi_get_size_from_pointer-$(date-uuid)"
             sreg_read_stream --sreg-dir "$sregDir" < "$pointer" > "$crystalWorkdir/.$streamId"
             retrievedSize="$(stat --printf='%s\n' "$crystalWorkdir/.$streamId")"
-            warn "$crystalWorkdir/.$streamId has size $retrievedSize Pointer contents: $(<"$pointer")"
+            warn "$crystalWorkdir/.$streamId has length $retrievedSize Pointer contents: $(<"$pointer")"
             echo "$retrievedSize" >> "$pointer"
             rm "$crystalWorkdir/.$streamId"
         elif [[ "$numLines" == "3" ]]; then

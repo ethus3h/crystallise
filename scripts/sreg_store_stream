@@ -38,6 +38,7 @@ mkdir -p "$crystalWorkdir/$streamId"
 (
     cd "$crystalWorkdir/$streamId" || die
     sponge "$streamId.tmp"
+    streamLength=
     # Calculate hash
     if [[ "$1" == "--assume-checksum" ]]; then
         shift

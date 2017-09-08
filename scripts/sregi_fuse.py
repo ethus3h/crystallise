@@ -41,13 +41,8 @@ class sregi_fuse(Operations):
         subprocess.call(["sreg_read_stream", "--sreg-dir", self.sregdir], stdin=inputfile, stdout=outputfile)
 
     def _sreg_copy_write(self, source, destination):
-        if type(source) is type('string'):
-            inputfile = io.open(source, 'r')
-            # print("copy write source: "+source)
-        else:
-            # This is a numeric file descriptor, so open it
-            inputfile = os.fdopen(source, 'r')
-            print("copy write source: "+inputfile.name)
+        inputfile = io.open(source, 'r')
+        print("copy write source: "+source)
         # print("copy write outfile: "+destination)
         subprocess.call(["sreg_store_stream", "--sreg-dir", self.sregdir, "--output-file", destination], stdin=inputfile)
 

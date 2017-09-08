@@ -179,9 +179,11 @@ mkdir -p "$crystalWorkdir/$streamId"
     fi
     # Output the finished hashpointer
     if [[ -n "$outFile" ]]; then
-        printf '%s\n%s\n%s\n' "760fa662-89cf-4ebd-9664-150b7637ddd4" "$hashFull" "$streamLength" > "$outFile"
+        printf '%s\n%s\n' "760fa662-89cf-4ebd-9664-150b7637ddd4" "$hashFull" > "$outFile"
+        echo "$streamLength" >> "$outFile"
     else
-        printf '%s\n%s\n%s\n' "760fa662-89cf-4ebd-9664-150b7637ddd4" "$hashFull" "$streamLength"
+        printf '%s\n%s\n' "760fa662-89cf-4ebd-9664-150b7637ddd4" "$hashFull"
+        echo "$streamLength"
     fi
     finish
     if [[ -e "${streamId:?}.tmp" ]]; then

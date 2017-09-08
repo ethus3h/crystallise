@@ -138,7 +138,9 @@ class sregi_fuse(Operations):
 
     def open(self, path, flags):
         full_path = self._full_path(path)
-        temppath = self.tempdir + "/" + str(uuid.uuid4())
+        temppath = self.tempdir + "/" + full_path
+        if not os.path.exists(temppath):
+            os.makedirs(os.path.dirname(temppath))
         self._sreg_copy_read(full_path, temppath)
         print("copy read target for open: "+temppath)
         return os.open(temppath, flags)
@@ -146,7 +148,9 @@ class sregi_fuse(Operations):
     def create(self, path, mode, fi=None):
         uid, gid, pid = fuse_get_context()
         full_path = self._full_path(path)
-        temppath = self.tempdir + "/" + str(uuid.uuid4())
+        temppath = self.tempdir + "/" + full_path
+        if not os.path.exists(temppath):
+            os.makedirs(os.path.dirname(temppath))
         if os.path.isfile(full_path):
             self._sreg_copy_read(full_path, temppath)
         else:
@@ -166,7 +170,9 @@ class sregi_fuse(Operations):
 
     def truncate(self, path, length, fh=None):
         full_path = self._full_path(path)
-        temppath = self.tempdir + "/" + str(uuid.uuid4())
+        temppath = self.tempdir + "/" + full_path
+        if not os.path.exists(temppath):
+            os.makedirs(os.path.dirname(temppath))
         self._sreg_copy_read(full_path, temppath)
         with open(temppath, 'r+') as f:
             f.truncate(length)
@@ -176,8 +182,9 @@ class sregi_fuse(Operations):
         temp = os.fsync(fh)
         full_path = self._full_path(path)
         print("flush name: "+full_path)
+        temppath = self.tempdir + "/" + full_path
         print type(fh)
-        self._sreg_copy_write(fh, full_path)
+        self._sreg_copy_write(temppath, full_path)
         return temp
 
     def release(self, path, fh):

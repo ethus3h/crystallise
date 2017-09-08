@@ -45,6 +45,7 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
             hashC="${hashFull:2:1}"
             hashSubdir="$hashA/$hashB/$hashC"
             hashDir="$dbDir/$hashSubdir"
+            mkdir -p "$hashDir"
             dbLinkPath="$hashDir/$hashFull"
             if [[ -e "$dbLinkPath.locked" ]]; then
                 # File is in use, so leave it alone

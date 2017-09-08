@@ -30,10 +30,11 @@ if [[ -f "$pointer" ]] && [[ ! -h "$pointer" ]]; then
         # Not a hash pointer, so we can't easily embed the size in the pointer itself
         if ! [[ -e "$pointer.length" ]]; then
             crystalWorkdir="$(crystallize-getconf WorkDirectory)"
-            streamId="sregi_get_size_from_pointer-$(date-uuid)"
+            streamId="sregi_get_length_from_pointer-$(date-uuid)"
+            trap 'rm -f ${streamId:?}; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
             sreg_read_stream --sreg-dir "$sregDir" < "$pointer" > "$crystalWorkdir/.$streamId"
             retrievedSize="$(stat --printf='%s\n' "$crystalWorkdir/.$streamId")"
-            warn "$crystalWorkdir/.$streamId (not hash pointer) has length $retrievedSize Pointer contents: $(xxd "$pointer")"
+            warn "$crystalWorkdir/.$streamId (not hash pointer) has length $retrievedSize bytes. Pointer contents: $(xxd "$pointer")"
             echo "$retrievedSize" > "$pointer.length"
             rm "$crystalWorkdir/.$streamId"
         fi
@@ -48,9 +49,10 @@ if [[ -f "$pointer" ]] && [[ ! -h "$pointer" ]]; then
             # This case can be removed once/if there aren't any pointers that need to be read that have only 2 lines.
             crystalWorkdir="$(crystallize-getconf WorkDirectory)"
             streamId="sregi_get_size_from_pointer-$(date-uuid)"
+            trap 'rm -f ${streamId:?}; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
             sreg_read_stream --sreg-dir "$sregDir" < "$pointer" > "$crystalWorkdir/.$streamId"
             retrievedSize="$(stat --printf='%s\n' "$crystalWorkdir/.$streamId")"
-            warn "$crystalWorkdir/.$streamId has length $retrievedSize Pointer contents: $(<"$pointer")"
+            warn "$crystalWorkdir/.$streamId has length $retrievedSize bytes. Pointer contents: $(<"$pointer")"
             echo "$retrievedSize" >> "$pointer"
             rm "$crystalWorkdir/.$streamId"
         elif [[ "$numLines" == "3" ]]; then

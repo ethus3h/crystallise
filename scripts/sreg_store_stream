@@ -38,7 +38,7 @@ mkdir -p "$crystalWorkdir/$streamId"
 (
     cd "$crystalWorkdir/$streamId" || die
     sponge "$streamId.tmp"
-    streamLength=
+    streamLength="$(stat --printf='%s\n' "$streamId.tmp")"
     # Calculate hash
     if [[ "$1" == "--assume-checksum" ]]; then
         shift
@@ -164,6 +164,7 @@ mkdir -p "$crystalWorkdir/$streamId"
         fi
         echo "$pointerTypeSignature" > "$tmpFilePath"
         echo "$hashFull" >> "$tmpFilePath"
+        echo "$streamLength" >> "$tmpFilePath"
         if [[ "$useLocalStore" != "true" ]]; then
             tar -c -P -S --format pax "$streamId.tmp.crystal" ".$streamId.tmp.crystal-data" > "$streamId.nonbundle.pointer.tar"
             [[ "$(xxd "$streamId.nonbundle.pointer.tar" | head -c 12)" == "00000000: 00" ]] && { mkdir -p "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/$streamId/"; rsync -a "$streamId.LocalStore.crystal" ".$streamId.LocalStore.crystal-data" "$streamId.nonbundle.pointer.tar" "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/$streamId/"; die "Pointer pax was corrupt!"; }
@@ -178,9 +179,9 @@ mkdir -p "$crystalWorkdir/$streamId"
     fi
     # Output the finished hashpointer
     if [[ -n "$outFile" ]]; then
-        printf '%s\n%s\n' "760fa662-89cf-4ebd-9664-150b7637ddd4" "$hashFull" > "$outFile"
+        printf '%s\n%s\n%s\n' "760fa662-89cf-4ebd-9664-150b7637ddd4" "$hashFull" "$streamLength" > "$outFile"
     else
-        printf '%s\n%s\n' "760fa662-89cf-4ebd-9664-150b7637ddd4" "$hashFull"
+        printf '%s\n%s\n%s\n' "760fa662-89cf-4ebd-9664-150b7637ddd4" "$hashFull" "$streamLength"
     fi
     finish
     if [[ -e "${streamId:?}.tmp" ]]; then

@@ -176,6 +176,7 @@ class sregi_fuse(Operations):
         temp = os.fsync(fh)
         full_path = self._full_path(path)
         print("flush name: "+full_path)
+        print type(fh)
         self._sreg_copy_write(fh, full_path)
         return temp
 

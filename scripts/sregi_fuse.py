@@ -11,6 +11,7 @@ import uuid
 import shutil
 import tempfile
 import io
+import random
 
 from fuse import FUSE, FuseOSError, Operations, fuse_get_context
 
@@ -189,10 +190,8 @@ class sregi_fuse(Operations):
         full_path = self._full_path(path)
         temppath = self.tempdir + "/" + full_path
         os.remove(temppath)
-            if [[ "$RANDOM" -lt 250 ]]; then
-                scache_gc "$cacheDbDir"
-            fi
-
+        if random.randint(-1,32768) < 250:
+            subprocess.call(['sregi_fuse_cache_gc', self.tempdir])
         return temp
 
     def fsync(self, path, fdatasync, fh):

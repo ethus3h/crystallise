@@ -19,8 +19,6 @@ finish() {
 }
 trap finish EXIT
 
-# Clean up empty directories
-find "$dbDir" -type d -not -name "ByCount" -empty -delete
 # Remove the least-used items from the cache until it fits within the alloted disk space
 diskUsageLimit="1500000000" # 1.5GB
 diskUsageLimitSub=$(( diskUsageLimit - 1000000000 )) # 500MB
@@ -31,8 +29,8 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
         if [[ -n "$largestLeastUsedItem" ]]; then
             rm -f "${largestLeastUsedItem:?}"
         fi
-        find "$dbDir" -mindepth 1 -type d -empty -delete
     done
+    find "$dbDir" -mindepth 1 -type d -empty -delete
 fi
 
 rm "$dbDir/.locked"

@@ -12,7 +12,7 @@ if [[ -e "$dbDir/.locked" ]]; then
     warn "This database is already in use. If the scache_gc instance using it has crashed, remove $dbDir/.locked manually."
     exit 0
 fi
-touch "$dbDir.locked"
+touch "$dbDir/.locked"
 
 finish() {
     rm -f "${dbDir:?}/.locked"
@@ -58,4 +58,4 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
     done
 fi
 
-rm "$dbDir".locked
+rm "$dbDir/.locked"

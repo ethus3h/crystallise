@@ -9,7 +9,7 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 dbDir="$1"
 
 if [[ -e "$dbDir/.locked" ]]; then
-    warn "This database is already in use. If the scache_gc instance using it has crashed, remove $dbDir/.locked manually."
+    warn "This database is already in use. If the scache_gc or sreg_read_stream instance using it has crashed, remove $dbDir/.locked manually."
     exit 0
 fi
 touch "$dbDir/.locked"

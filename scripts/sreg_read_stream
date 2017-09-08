@@ -14,6 +14,7 @@ fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 
 finish() {
+    rm -f "${dbDir:?}/.locked"
     rm -f "${dbDir:?}"/.LocalStore.lock
     trap - ERR
     (
@@ -122,28 +123,6 @@ mkdir "$streamId"
     mkdir -p "$hashDir"
     dbLinkPath="$hashDir/$hashFull"
 
-    if [[ "$ignoreLock" != "true" ]]; then
-        if [[ -e "$dbLinkPath.locked" ]]; then
-            warn "This stream cache entry is already in use. If the process using it has crashed, remove $dbLinkPath.locked manually."
-            warn "Waiting 30 minutes for process using it to finish..."
-
-            waitForLockTries=0
-            until [[ "$waitForLockTries" -ge 360 ]]; do
-                if [[ -e "$dbLinkPath.locked" ]]; then
-                    warn "Still waiting..."
-                else
-                    break
-                fi
-                waitForLockTries=$((waitForLockTries+1))
-                sleep 5
-            done
-
-            if [[ -e "$dbLinkPath.locked" ]]; then
-                die "This stream cache entry has been in use for 30 minutes so giving up. If the process using it has crashed, remove $dbLinkPath.locked manually."
-            fi
-        fi
-    fi
-
     trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while reading $hashFull."' ERR
     while [[ "$numRetries" -gt 0 ]] && [[ "$successfulRetrieval" -eq 0 ]]; do
         trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while reading $hashFull."; continue' ERR
@@ -157,8 +136,31 @@ mkdir "$streamId"
             rm "$dbFilePath"
         fi
         if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$(readlink "$dbLinkPath")" ]] || [[ "$skipCache" == "true" ]] || [[ ! -f "$dbFilePath" ]]; then
-            # Only lock the cache entry while we're editing it
-            [[ "$ignoreLock" != "true" ]] && touch "$dbLinkPath.locked"
+
+            if [[ "$ignoreLock" != "true" ]]; then
+                if [[ -e "$dbLinkPath.locked" ]]; then
+                    warn "This stream cache entry is already in use. If the process using it has crashed, remove $dbLinkPath.locked manually."
+                    warn "Waiting 30 minutes for process using it to finish..."
+
+                    waitForLockTries=0
+                    until [[ "$waitForLockTries" -ge 360 ]]; do
+                        if [[ -e "$dbLinkPath.locked" ]]; then
+                            warn "Still waiting..."
+                        else
+                            break
+                        fi
+                        waitForLockTries=$((waitForLockTries+1))
+                        sleep 5
+                    done
+
+                    if [[ -e "$dbLinkPath.locked" ]]; then
+                        die "This stream cache entry has been in use for 30 minutes so giving up. If the process using it has crashed, remove $dbLinkPath.locked manually."
+                    fi
+                else
+                    # Only lock the cache entry while we're editing it
+                    touch "$dbLinkPath.locked"
+                fi
+            fi
 
             # Item is not in the cache (or --skip-cache was specified), so add it
 
@@ -190,9 +192,6 @@ mkdir "$streamId"
             fi
             gotRequestCount="true" # gotRequestCount isn't used again, but the requestCount has been gotten.
 
-            dbFileDir="$cacheDbDir/ByCount/${requestCount:?}/$hashSubdir"
-            dbFilePath="$dbFileDir/$hashFull"
-            mkdir -p "$dbFileDir"
             # Figure out what type of pointer it is
             if [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then
                 # Standard remote pointer
@@ -275,12 +274,40 @@ mkdir "$streamId"
                     die "Stream cache link file $dbLinkPath exists but is neither a link nor a regular file!"
                 fi
             fi
-            [[ -e "$dbFilePath" ]] || xz --stdout -0 "$streamId.out" > "$dbFilePath"
-            rm "$streamId.out"
-            if [[ -e "$dbLinkPath" ]] || [[ -h "$dbLinkPath" ]]; then
-                rm "$dbLinkPath"
-            fi
-            ln -s "$dbFilePath" "$dbLinkPath"
+            dbFileDir="$cacheDbDir/ByCount/${requestCount:?}/$hashSubdir"
+            dbFilePath="$dbFileDir/$hashFull"
+            # Lock entire database directory
+            (
+                if [[ -e "$dbDir/.locked" ]]; then
+                    warn "This database is already in use. If the scache_gc or sreg_read_stream instance using it has crashed, remove $dbDir/.locked manually."
+                    warn "Waiting 30 minutes for process using it to finish..."
+
+                    waitForLockTries=0
+                    until [[ "$waitForLockTries" -ge 360 ]]; do
+                        if [[ -e "$dbLinkPath.locked" ]]; then
+                            warn "Still waiting..."
+                        else
+                            break
+                        fi
+                        waitForLockTries=$((waitForLockTries+1))
+                        sleep 5
+                    done
+
+                    if [[ -e "$dbLinkPath.locked" ]]; then
+                        die "The stream database has been in use for 30 minutes so giving up. If the process using it has crashed, remove $dbLinkPath.locked manually."
+                    fi
+                fi
+
+                mkdir -p "$dbFileDir"
+                [[ -e "$dbFilePath" ]] || xz --stdout -0 "$streamId.out" > "$dbFilePath"
+                rm "$streamId.out"
+                if [[ -e "$dbLinkPath" ]] || [[ -h "$dbLinkPath" ]]; then
+                    rm "$dbLinkPath"
+                fi
+                ln -s "$dbFilePath" "$dbLinkPath"
+
+                rm -f "${dbDir:?}/.locked"
+            )
 
             # Done editing the cache entry, so release the lock
             [[ "$ignoreLock" != "true" ]] && rm -f "$dbLinkPath.locked"
@@ -298,21 +325,46 @@ mkdir "$streamId"
         dbFileDir="$(dirname "$dbFilePath")"
         # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
         oldCount="$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")"
-        if ! [[ "$oldCount" =~ ^-?[0-9]+$ ]]; then
-            rm "$dbLinkPath"
-            oldCount="1"
-        fi
-        # Increment the item's requestCount.
-        requestCount=$(( oldCount + 1 ))
-        if [[ -z "$requestCount" ]]; then
-            requestCount=1
-        fi
-        # First, get the names of where the file should go.
-        dbFileDir="$cacheDbDir/ByCount/${requestCount:?}/$hashSubdir"
-        dbFilePath="$dbFileDir/$hashFull"
-        mkdir -p "$dbFileDir"
-        mv "$dbFileOldPath" "$dbFilePath"
-        ln -sf "$dbFilePath" "$dbLinkPath"
+        # Lock entire database directory
+        (
+            if [[ -e "$dbDir/.locked" ]]; then
+                warn "This database is already in use. If the scache_gc or sreg_read_stream instance using it has crashed, remove $dbDir/.locked manually."
+                warn "Waiting 30 minutes for process using it to finish..."
+
+                waitForLockTries=0
+                until [[ "$waitForLockTries" -ge 360 ]]; do
+                    if [[ -e "$dbLinkPath.locked" ]]; then
+                        warn "Still waiting..."
+                    else
+                        break
+                    fi
+                    waitForLockTries=$((waitForLockTries+1))
+                    sleep 5
+                done
+
+                if [[ -e "$dbLinkPath.locked" ]]; then
+                    die "The stream database has been in use for 30 minutes so giving up. If the process using it has crashed, remove $dbLinkPath.locked manually."
+                fi
+            fi
+
+            if ! [[ "$oldCount" =~ ^-?[0-9]+$ ]]; then
+                rm "$dbLinkPath"
+                oldCount="1"
+            fi
+            # Increment the item's requestCount.
+            requestCount=$(( oldCount + 1 ))
+            if [[ -z "$requestCount" ]]; then
+                requestCount=1
+            fi
+            # First, get the names of where the file should go.
+            dbFileDir="$cacheDbDir/ByCount/${requestCount:?}/$hashSubdir"
+            dbFilePath="$dbFileDir/$hashFull"
+            mkdir -p "$dbFileDir"
+            mv "$dbFileOldPath" "$dbFilePath"
+            ln -sf "$dbFilePath" "$dbLinkPath"
+
+            rm -f "${dbDir:?}/.locked"
+        )
         # Done cache cleanup
         decompressedCacheEntry="$streamId.dat"
         if ! [[ -f "$dbLinkPath" ]]; then
@@ -354,9 +406,11 @@ mkdir "$streamId"
     # Return the data to the caller
     cat "${decompressedCacheEntry:?}"
 
-    # Cache cleanup is expensive, so only do it occasionally
-    if [[ "$RANDOM" -lt 250 ]]; then
-        scache_gc "$cacheDbDir"
+    if [[ "$ignoreLock" != "true" ]]; then
+        # Cache cleanup is expensive, so only do it occasionally
+        if [[ "$RANDOM" -lt 250 ]]; then
+            scache_gc "$cacheDbDir"
+        fi
     fi
 )
 finish

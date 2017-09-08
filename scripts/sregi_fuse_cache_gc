@@ -24,15 +24,10 @@ find "$dbDir" -type d -not -name "ByCount" -empty -delete
 # Remove the least-used items from the cache until it fits within the alloted disk space
 diskUsageLimit="1500000000" # 1.5GB
 diskUsageLimitSub=$(( diskUsageLimit - 1000000000 )) # 500MB
-if [[ "$diskUsageLimitSub" -lt 0 ]]; then
-    diskUsageLimitSub=0
-fi
 if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
     while [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimitSub" ]]; do
-        rm -f "$dbDir"/Failed\ Checksum/*
-        # Remove the least-used item from the cache
-        leastUsedItemDirectory="$(find "$dbDir/ByCount" -maxdepth 1 -type d | sort -n | head -n 2 | tail -n 1)"
-        largestLeastUsedItem="$(find "$leastUsedItemDirectory" -mindepth 4 -maxdepth 4 -type f -printf "%s\\t%p\\n" | sort -n | tail -1 | awk '{print $2;}')"
+        # Remove the largest item from the cache
+        largestLeastUsedItem="$(find . -mindepth 4 -maxdepth 4 -type f -printf "%s\\t%p\\n" | sort -n | tail -1 | awk '{print $2;}')"
         if [[ -n "$largestLeastUsedItem" ]]; then
             leastUsedItemCount="$(basename "$leastUsedItemDirectory")"
             hashFull="$(basename "$largestLeastUsedItem")"

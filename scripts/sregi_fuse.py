@@ -186,7 +186,9 @@ class sregi_fuse(Operations):
         print("release name: "+path)
         self.flush(path, fh)
         temp = os.close(fh)
-        os.remove(fh)
+        full_path = self._full_path(path)
+        temppath = self.tempdir + "/" + full_path
+        os.remove(temppath)
         return temp
 
     def fsync(self, path, fdatasync, fh):

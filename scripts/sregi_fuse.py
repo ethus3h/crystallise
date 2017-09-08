@@ -187,9 +187,6 @@ class sregi_fuse(Operations):
         print("release name: "+path)
         self.flush(path, fh)
         temp = os.close(fh)
-        full_path = self._full_path(path)
-        temppath = self.tempdir + "/" + full_path
-        os.remove(temppath)
         if random.randint(-1,32768) < 250:
             subprocess.call(['sregi_fuse_cache_gc', self.tempdir])
         return temp

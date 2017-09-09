@@ -68,6 +68,8 @@ class sregi_fuse(Operations):
         st = os.lstat(full_path)
         statDict = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
                      'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size', 'st_uid'))
+        if os.path.isdir(full_path):
+            return statDict
         # for i in statDict:
         #     print i, statDict[i]
         expandedSize = subprocess.check_output(["sregi_get_length_from_pointer", "--sreg-dir", self.sregdir, full_path])

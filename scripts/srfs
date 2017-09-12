@@ -46,7 +46,6 @@ unmount)
     umount "$mountpoint"
     ;;
 *)
-    echo "Unknown action."
-    exit 1
+    die "Unknown action."
     ;;
 esac

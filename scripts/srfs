@@ -23,6 +23,7 @@ fi
 
 case $action in
 mount)
+    zpool import -d "/Wreathe/.Resources/RubberFS/library/dev/" "library"
     root="$1"
     if [[ -z "$root" ]]; then
         root="$(crystallize-getconf SrfsDefaultRoot)"

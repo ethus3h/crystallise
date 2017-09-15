@@ -3,9 +3,9 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
-export crystallizeVersion='3.1.2.5.6'
+export crystallizeVersion='3.1.2.5.7'
 
-# ( sudo true; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a v3.1.2.5.6 -m "version"; egup-single .; sudo emerge crystallize; sudo dispatch-conf )
+# ( sudo true; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a v3.1.2.5.7 -m "version"; egup-single .; sudo emerge crystallize; sudo dispatch-conf )
 
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR

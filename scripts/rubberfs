@@ -188,6 +188,7 @@ freeze)
     freezeId="rubberfs-freeze-$(date-uuid)"
     crystalWorkdir="$(crystallize-getconf WorkDirectory)"
     freezeUuid="$(python -c 'import uuid; print str(uuid.uuid4())')"
+    snapshotsToDrop="$(zfs list -t snapshot -o name -S creation)"
     zfs snapshot -r "$name@$freezeId"
     echo "Begun working on saving snapshot."
     #TODO: Can this be parallelized, to avoid the huge tempfile?
@@ -212,9 +213,9 @@ freeze)
     echo "The following snapshots will be DELETED. Continuing in 1 minute;"
     echo "press Ctrl+C to cancel."
     echo "### WARNING! ^^^ WARNING! ### WARNING! ### WARNING! ^^^ WARNING! ###"
-    zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3
+    print "$snapshotsToDrop" | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3
     sleep 60
-    zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3 | xargs -n 1 zfs destroy -vr
+    print "$snapshotsToDrop" | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3 | xargs -n 1 zfs destroy -vr
     rubberfs soft-remount "$name"
     printf "\033c"
     echo "A frozen snapshot $freezeCrystal of RubberFS named $name has been created, and the obsolete local snapshots removed."

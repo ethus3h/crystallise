@@ -39,8 +39,8 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
         if [[ "$cacheType" == "localstore" ]]; then
             findType="d"
         fi
-        leastUsedItemDirectory="$(find "$dbDir/ByCount" -maxdepth 1 -type "$findType" | sort -n | head -n 2 | tail -n 1)"
-        largestLeastUsedItem="$(find "$leastUsedItemDirectory" -mindepth 4 -maxdepth 4 -type f -printf "%s\\t%p\\n" | sort -n | tail -1 | awk '{print $2;}')"
+        leastUsedItemDirectory="$(find "$dbDir/ByCount" -maxdepth 1 -type d | sort -n | head -n 2 | tail -n 1)"
+        largestLeastUsedItem="$(find "$leastUsedItemDirectory" -mindepth 4 -maxdepth 4 -type "$findType" -printf "%s\\t%p\\n" | sort -n | tail -1 | awk '{print $2;}')"
         if [[ -n "$largestLeastUsedItem" ]]; then
             leastUsedItemCount="$(basename "$leastUsedItemDirectory")"
             hashFull="$(basename "$largestLeastUsedItem")"

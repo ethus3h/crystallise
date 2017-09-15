@@ -57,7 +57,7 @@ if [[ "--skip-cache" == "$1" ]]; then
 fi
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 cd "$crystalWorkdir" || exit 1
-streamId="sreg_read_stream-$(date-uuid)"
+streamId=".sreg_read_stream-$(date-uuid)"
 dbDir="$sregDir"
 # Basic sanity check to make sure it bombs out if the pointer is cached but is missing a necessary LocalStore entry
 if [[ -z "$overrideEntryPath" ]]; then

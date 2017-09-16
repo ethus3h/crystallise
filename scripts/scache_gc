@@ -68,7 +68,7 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
                 done
 
                 if [[ -e "$dbLinkPath.locked" ]]; then
-                    die "This stream cache entry has been in use for 30 minutes so giving up. If the process using it has crashed, remove $dbLinkPath.locked manually."
+                    finish; die "This stream cache entry has been in use for 30 minutes so giving up. If the process using it has crashed, remove $dbLinkPath.locked manually."
                 fi
             fi
             rm -rf "${largestLeastUsedItem:?}"

@@ -14,7 +14,9 @@ fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 
 finish() {
-    rm -f "${dbLinkPath:?}.locked"
+    if [[ -n "$dbLinkPath" ]]; then
+        rm -f "${dbLinkPath:?}.locked"
+    fi
     rm -f "${dbDir:?}/.locked"
     rm -f "${dbDir:?}/.LocalStore.lock"
     trap - ERR

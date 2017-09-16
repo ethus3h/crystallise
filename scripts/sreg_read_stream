@@ -14,8 +14,9 @@ fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 
 finish() {
+    rm -f "${dbLinkPath:?}.locked"
     rm -f "${dbDir:?}/.locked"
-    rm -f "${dbDir:?}"/.LocalStore.lock
+    rm -f "${dbDir:?}/.LocalStore.lock"
     trap - ERR
     (
         cd "/${crystalWorkdir:?}/" || die

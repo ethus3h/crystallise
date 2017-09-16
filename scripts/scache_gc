@@ -55,12 +55,12 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
                 # File is in use
                 if [[ -e "$dbLinkPath.locked" ]]; then
                     warn "This stream cache entry is already in use. If the process using it has crashed, remove $dbLinkPath.locked manually."
-                    warn "Waiting 30 minutes for process using this stream cache entry to finish... If the process using it has crashed, remove $dbLinkPath.locked manually."
+                    warn "Waiting 30 minutes for process using it to finish... If the process using it has crashed, remove $dbLinkPath.locked manually."
 
                     waitForLockTries=0
                     until [[ "$waitForLockTries" -ge 360 ]]; do
                         if [[ -e "$dbLinkPath.locked" ]]; then
-                            warn "Still waiting, $((waitForLockTries - 360)) tries remaining... If the process using it has crashed, remove $dbLinkPath.locked manually."
+                            warn "Still waiting, $((waitForLockTries - 360)) tries remaining... If the process using this stream cache entry has crashed, remove $dbLinkPath.locked manually."
                         else
                             break
                         fi

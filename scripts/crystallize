@@ -3,9 +3,10 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
-export crystallizeVersion='3.1.2.5.9.1'
+export crystallizeVersion='3.1.2.5.10'
 
-# ( sudo true; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a v3.1.2.5.9.1 -m "version"; egup-single .; sudo emerge crystallize; sudo dispatch-conf )
+# The update script shown here requires there to be only one ebuild of crystallize in the wreathe-overlay overlay.
+# ( sudo true; newVersion="3.1.2.5.10"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo layman -s wreathe-overlay; sudo emerge crystallize )
 
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR

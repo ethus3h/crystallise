@@ -386,7 +386,7 @@ mkdir "$streamId"
         fi
         retrievedHash="$(sha512sum < "$decompressedCacheEntry" | awk '{print $1;}')"
         if [[ "$retrievedHash" != "$hashFull" ]] || [[ "$retrievedHash" != "$knownChecksum" ]]; then
-            rm "$dbFilePath" "$dbLinkPath"
+            rm -f "$dbFilePath" "$dbLinkPath"
             echo "$oldCount" > "$dbLinkPath"
             # mkdir -p "$cacheDbDir/Failed Checksum"
             # mv "$dbFilePath" "$cacheDbDir/Failed Checksum/$(basename "$dbFilePath")"

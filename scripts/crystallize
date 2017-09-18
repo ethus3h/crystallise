@@ -102,10 +102,10 @@ if [[ $crystallizeLeavePointer == true ]]; then
     #echo "Added crystal metadata"
 fi
 trap - ERR
-xz -C sha256 -v -9 -e "$crystalWorkdir/$CrystalID"
-xz -C sha256 -v -9 -e "$crystalWorkdir/$CrystalID.time-done.warc.gz"
-xz -C sha256 -v -9 -e "$crystalWorkdir/$CrystalID.local.idx"
-xz -C sha256 -v -9 -e "$crystalWorkdir/$CrystalID.deep.idx"
+checkedxz "$crystalWorkdir/$CrystalID" -C sha256 -v -9 -e
+checkedxz "$crystalWorkdir/$CrystalID.time-done.warc.gz" -C sha256 -v -9 -e
+checkedxz "$crystalWorkdir/$CrystalID.local.idx" -C sha256 -v -9 -e
+checkedxz "$crystalWorkdir/$CrystalID.deep.idx" -C sha256 -v -9 -e
 rsync -a --checksum "$crystalWorkdir/$CrystalID".xz "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/"$CrystalID".log.xz
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.xz"
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.time-done.warc.gz.xz"
@@ -202,7 +202,7 @@ echo "Retrieving remote index..."
 
 rm -f "$crystalWorkdir/$CrystalID".json.xz
 wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" > "$crystalWorkdir/$CrystalID.json"
-xz -C sha256 -9 -e -v "$crystalWorkdir/$CrystalID".json
+checkedxz "$crystalWorkdir/$CrystalID".json -C sha256 -9 -e -v
 
 rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.json.xz" "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
 

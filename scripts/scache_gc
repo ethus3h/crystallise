@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
-#set -x
+set -x
 
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
@@ -32,6 +32,7 @@ if [[ "$diskUsageLimitSub" -lt 0 ]]; then
     diskUsageLimitSub=0
 fi
 if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
+    find "$dbDir" -type d -not -name "ByCount" -empty -delete
     while [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimitSub" ]]; do
         rm -f "$dbDir"/Failed\ Checksum/*
         # Remove the least-used item from the cache

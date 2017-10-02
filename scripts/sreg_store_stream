@@ -23,8 +23,8 @@ fi
 finish() {
     (
         cd "/${crystalWorkdir:?}/" || die
-        if [[ -e "${streamId:?}" ]]; then
-            rm -r "${streamId:?}"
+        if [[ -e ".${streamId:?}" ]]; then
+            rm -r ".${streamId:?}"
         fi
     )
 }

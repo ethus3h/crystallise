@@ -32,6 +32,9 @@ finishExit() {
     eval "$save_traps"
 
     rm -f "${dbDir:?}"/.LocalStore.lock
+    if [[ -e "$crystalWorkdir/.${streamId:?}" ]]; then
+        rm -rf "$crystalWorkdir/.${streamId:?}"
+    fi
 }
 trap finishExit EXIT
 

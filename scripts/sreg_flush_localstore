@@ -37,11 +37,12 @@ trap finishExit EXIT
 
 dbDir="$sregDir"
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
+# Don't change the value of streamId: it would break compatibility with existing pointers.
 streamId="sreg_flush_localstore-$(date-uuid)"
 failCheckFile="/tmp/$streamId.running"
-mkdir -p "$crystalWorkdir/$streamId"
+mkdir -p "$crystalWorkdir/.$streamId/$streamId"
 (
-    cd "$crystalWorkdir/$streamId" || exit 1
+    cd "$crystalWorkdir/.$streamId/$streamId" || exit 1
     if ! [[ -e "$dbDir"/.LocalStore.lock ]]; then
         touch "$dbDir"/.LocalStore.lock
         rsync -aq --checksum --no-i-r "$dbDir"/LocalStore "$streamId.LocalStore"

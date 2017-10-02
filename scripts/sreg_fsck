@@ -52,7 +52,7 @@ fi
 
 echo "Counting items..."
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
-fsckId="sreg_fsck-$(date-uuid)"
+fsckId=".sreg_fsck-$(date-uuid)"
 failCheckFile="/tmp/$fsckId.srsync.running"
 mkdir -p "$crystalWorkdir/${fsckId:?}"
 mkdir -p "/tmp/${fsckId:?}"

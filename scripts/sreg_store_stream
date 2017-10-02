@@ -130,18 +130,13 @@ mkdir -p "$crystalWorkdir/$streamId"
         sanityCheckPassed="0"
         knownChecksum="$hashFull"
         if sregi_available_by_hash --sreg-dir "$sregDir" "$knownChecksum" &> /dev/null; then
-            # Item already has been stored and passes a basic sanity check, so check that the existing pointer can be restored
-            recoveredHash="$(sreg_read_stream --sreg-dir "$sregDir" --disallow-hash-pointer < "$dbFilePath" | sha512sum | awk '{print $1;}')"
-            if [[ "$recoveredHash" != "$hashFull" ]]; then
-                # This is a fatal error because this condition could go undetected a long time (since the pointer passed the basic sanity check), and should perhaps have human attention.
-                die "Could not read existing item."
-                # if [[ "$1" == "--verbose" ]]; then
-                #     warn "Could not read existing item."
-                # fi
-                # fsckDir="$sregDir"/Failed\ Fsck/
-                # mkdir -p "$fsckDir"
-                # mv "$tmpFilePath" "$fsckDir"
-            fi
+            # This previously next checked whether the existing pointer could be restored.
+            # It doesn't do that now, because there should be no need:
+            # we should assume that the basic sanity check is sufficient, and
+            # rely on the user regularly running sreg_fsck --skip-cache (because
+            # the errors that this would catch are only a select few (the ones
+            # being stored again) of the possible streams that could have this
+            # class of error).
             sanityCheckPassed="1"
         else
             # Item failed a basic sanity check, so it can pretty safely be removed and recreated, because it would presumably be found failed by that same basic sanity check in the course of general maintenance.

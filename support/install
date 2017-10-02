@@ -99,6 +99,7 @@ if [[ "$OSTYPE" = darwin* ]]; then
     fi
     find scripts -type f -exec ereplace '#!/usr/bin/env bash' '#!/usr/bin/env gbash'
     find scripts -type f -exec ereplace 'readlink ' 'greadlink '
+    find scripts -type f -exec ereplace 'sort ' 'gsort '
 fi
 
 

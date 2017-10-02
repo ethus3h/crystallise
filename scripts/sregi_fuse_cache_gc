@@ -25,7 +25,7 @@ diskUsageLimitSub=$(( diskUsageLimit - 1000000000 )) # 500MB
 if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
     while [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimitSub" ]]; do
         # Remove the largest item from the cache
-        largestLeastUsedItem="$(find "$dbDir" -type f -not -path "$dbDir/.locked" -printf "%s\\t%p\\n" | sort -n | tail -1 | awk '{print $2;}')"
+        largestLeastUsedItem="$(find "$dbDir" -type f -not -path "$dbDir/.locked" -printf "%s\\t%p\\n" | sort -V | tail -1 | awk '{print $2;}')"
         if [[ -n "$largestLeastUsedItem" ]]; then
             rm -f "${largestLeastUsedItem:?}"
         fi

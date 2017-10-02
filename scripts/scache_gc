@@ -50,7 +50,9 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
             leastUsedItemDirectory="$(find "$dbDir/ByCount" -maxdepth 1 -type d | sort -V | head -n 2 | tail -n 1)"
             largestLeastUsedItem="$(find "$leastUsedItemDirectory" -mindepth 4 -maxdepth 4 -type "$findType" -printf "%s\\t%p\\n" | sort -V | tail -1 | awk '{print $2;}')"
             [[ -e "${largestLeastUsedItem:?}" ]] || die "scache_gc has selected an item that doesn't exist for removal. This indicates a bug in scache_gc."
-        else
+        fi
+        # Don't change this to a simple else clause, because in the body of the if, largestLeastUsedItem is set.
+        if [[ -n "$largestLeastUsedItem" ]]; then
             leastUsedItemCount="$(basename "$leastUsedItemDirectory")"
             hashFull="$(basename "$largestLeastUsedItem")"
             hashA="${hashFull:0:1}"

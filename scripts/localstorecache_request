@@ -78,7 +78,7 @@ fi
 if [[ ! -h "$dbLinkPath" ]] || [[ ! -d "$oldFilePath" ]] || [[ ! -d "$cacheEntryFile" ]] || [[ -z "$cacheEntryFile" ]]; then
     # Item is not in the cache, so add it
 
-    # Only lock the cache entry while we're editing it
+    # Lock the cache entry while we're editing it
     touch "$dbLinkPath.locked"
 
     # Make sure there isn't a dangling LocalStore content folder with no associated link
@@ -147,7 +147,9 @@ ln -s "$dbFilePath" "$dbLinkPath"
 echo "$dbLinkPath"
 
 # Clean up empty directories
-find "$dbDir" -type d -not -name "ByCount" -empty -delete
+if [[ "$RANDOM" -lt 500 ]]; then
+    find "$dbDir" -type d -not -name "ByCount" -empty -delete
+fi
 if [[ -d "$tempDirectoryName" ]]; then
     rm -r "${tempDirectoryName:?}"
 fi

@@ -44,8 +44,7 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
         if [[ -z "$largestLeastUsedItem" ]]; then
             leastUsedItemDirectory="$(find "$dbDir/ByCount" -maxdepth 1 -type d | sort -n | head -n 2 | tail -n 1)"
             largestLeastUsedItem="$(find "$leastUsedItemDirectory" -mindepth 4 -maxdepth 4 -type "$findType" -printf "%s\\t%p\\n" | sort -n | tail -1 | awk '{print $2;}')"
-        fi
-        if [[ -n "$largestLeastUsedItem" ]]; then
+        else
             leastUsedItemCount="$(basename "$leastUsedItemDirectory")"
             hashFull="$(basename "$largestLeastUsedItem")"
             hashA="${hashFull:0:1}"
@@ -53,8 +52,6 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
             hashC="${hashFull:2:1}"
             hashSubdir="$hashA/$hashB/$hashC"
             hashDir="$dbDir/$hashSubdir"
-            mkdir -p "$hashDir"
-            dbLinkPath="$hashDir/$hashFull"
             if [[ -e "$dbLinkPath.locked" ]]; then
                 # File is in use
                 warn "This stream cache entry is already in use. If the process using it has crashed, remove $dbLinkPath.locked manually."
@@ -75,6 +72,9 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
                     finish; die "This stream cache entry has been in use for 30 minutes so giving up. If the process using it has crashed, remove $dbLinkPath.locked manually."
                 fi
             fi
+            mkdir -p "$hashDir"
+            dbLinkPath="$hashDir/$hashFull"
+            [[ -e "${largestLeastUsedItem:?}" ]] || die "scache_gc has selected an item that doesn't exist for removal. This indicates a bug in scache_gc."
             rm -rf "${largestLeastUsedItem:?}"
             rm -f "$dbLinkPath"
             echo "$leastUsedItemCount" > "$dbLinkPath"

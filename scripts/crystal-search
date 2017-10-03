@@ -6,5 +6,13 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
-for file in "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/*.deep.idx; do
-    
+pattern="$1"
+
+cd "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
+for file in ./*.deep.idx; do
+    if grep -q "$pattern" "$file"; then
+        echo "Found $(grep -v '^#' "$file" | grep "$pattern" | cut -d ',' -f 5- -) in crystal:"
+        fileName="${file/\.\/}"
+        echo "${fileName%\.deep\.idx}"
+    fi
+done

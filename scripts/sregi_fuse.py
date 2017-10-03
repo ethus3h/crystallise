@@ -48,8 +48,7 @@ class sregi_fuse(Operations):
             print("copy write source: "+source)
             # print("copy write outfile: "+destination)
             subprocess.call(["sreg_store_stream", "--sreg-dir", self.sregdir, "--output-file", destination], stdin=inputfile)
-        if os.stat(source).st_ctime != os.stat(destination).st_ctime:
-            shutil.copystat(source,destination)
+        shutil.copystat(source,destination)
 
     # Filesystem methods
     # ==================

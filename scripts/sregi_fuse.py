@@ -35,11 +35,12 @@ class sregi_fuse(Operations):
         return path
 
     def _sreg_copy_read(self, source, destination):
-        inputfile = io.open(source, 'r')
-        # print("copy read source: "+source)
-        outputfile = io.open(destination, 'w')
-        # print("copy read outfile: "+outputfile.name)
-        subprocess.call(["sreg_read_stream", "--sreg-dir", self.sregdir], stdin=inputfile, stdout=outputfile)
+        if not os.path.exists(destination):
+            inputfile = io.open(source, 'r')
+            # print("copy read source: "+source)
+            outputfile = io.open(destination, 'w')
+            # print("copy read outfile: "+outputfile.name)
+            subprocess.call(["sreg_read_stream", "--sreg-dir", self.sregdir], stdin=inputfile, stdout=outputfile)
 
     def _sreg_copy_write(self, source, destination):
         inputfile = io.open(source, 'r')
@@ -73,7 +74,7 @@ class sregi_fuse(Operations):
         # for i in statDict:
         #     print i, statDict[i]
         expandedSize = subprocess.check_output(["sregi_get_length_from_pointer", "--sreg-dir", self.sregdir, full_path])
-        print "getattr run on "+full_path+" and found length "+str(expandedSize)
+        # print "getattr run on "+full_path+" and found length "+str(expandedSize)
         # Replace st_size value
         statDict.update({'st_size': int(expandedSize)})
         # for i in statDict:
@@ -141,7 +142,7 @@ class sregi_fuse(Operations):
         if not os.path.exists(os.path.dirname(temppath)):
             os.makedirs(os.path.dirname(temppath))
         self._sreg_copy_read(full_path, temppath)
-        print("copy read target for open: "+temppath)
+        # print("copy read target for open: "+temppath)
         return os.open(temppath, flags)
 
     def create(self, path, mode, fi=None):
@@ -186,7 +187,7 @@ class sregi_fuse(Operations):
         return temp
 
     def release(self, path, fh):
-        print("release name: "+path)
+        # print("release name: "+path)
         self.flush(path, fh)
         temp = os.close(fh)
         if random.randint(-1,32768) < 250:

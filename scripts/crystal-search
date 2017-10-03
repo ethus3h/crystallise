@@ -11,8 +11,11 @@ pattern="$1"
 cd "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
 for file in ./*.deep.idx; do
     if grep -q "$pattern" "$file"; then
-        echo "Found $(grep -v '^#' "$file" | grep "$pattern" | cut -d ',' -f 5- -) in crystal:"
         fileName="${file/\.\/}"
-        echo "${fileName%\.deep\.idx}"
+        fileNamePrefix="${fileName%\.deep\.idx}"
+        grep -v '^#' "$file" | grep "$pattern" | cut -d ',' -f 5- - | while read line; do
+            echo "Found $line in crystal:"
+            echo "$fileNamePrefix"
+        fi
     fi
 done

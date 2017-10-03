@@ -14,8 +14,9 @@ for file in ./*.deep.idx; do
         fileName="${file/\.\/}"
         fileNamePrefix="${fileName%\.deep\.idx}"
         grep -v '^#' "$file" | grep "$pattern" | cut -d ',' -f 5- - | while read line; do
-            echo "Found in crystal $fileNamePrefix:"
-            echo "$line"
+            echo "Found:"
+            echo "    Crystal $fileNamePrefix contains:"
+            echo "        $line"
         fi
     fi
 done

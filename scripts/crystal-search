@@ -16,6 +16,6 @@ for file in ./*.deep.idx; do
         grep -v '^#' "$file" | grep "$pattern" | cut -d ',' -f 5- - | while read line; do
             echo "Crystal $fileNamePrefix contains:"
             echo "    $line"
-        fi
+        done
     fi
 done

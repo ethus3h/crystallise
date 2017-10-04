@@ -3,7 +3,7 @@
 source ember_bash_setup &> /dev/null
 
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
-set -x
+#set -x
 
 fail() {
     printf '%b' '\033[1;31m' >&2
@@ -19,8 +19,7 @@ if [[ "$OSTYPE" = darwin* ]]; then
     if ! type "ember_bash_setup"; then
         fail
     fi
-    #find scripts -type f -exec ereplace '#!/usr/bin/env bash' '#!/usr/bin/env gbash' \;
-    find scripts -type f -exec ereplace 'readlink ' 'greadlink ' \;
-    find scripts -type f -exec ereplace 'sort ' 'gsort ' \;
-    find scripts -type f -exec ereplace 'du ' 'gdu ' \;
+    find scripts -type f -exec bash -c "ereplace 'readlink ' 'greadlink '" \;
+    find scripts -type f -exec bash -c "ereplace 'sort ' 'gsort '" \;
+    find scripts -type f -exec bash -c "ereplace 'du ' 'gdu '" \;
 fi

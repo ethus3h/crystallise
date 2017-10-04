@@ -19,7 +19,7 @@ if [[ "$OSTYPE" = darwin* ]]; then
     if ! type "ember_bash_setup"; then
         fail
     fi
-    find scripts -type f -exec bash -c "source ember_bash_setup &> /dev/null; ereplace 'readlink ' 'greadlink '\"$1\"" {} \;
-    find scripts -type f -exec bash -c "source ember_bash_setup &> /dev/null; ereplace 'sort ' 'gsort '\"$1\"" {} \;
-    find scripts -type f -exec bash -c "source ember_bash_setup &> /dev/null; ereplace 'du ' 'gdu '\"$1\"" {} \;
+    find scripts -type f -exec bash -c "source ember_bash_setup &> /dev/null; ereplace 'readlink ' 'greadlink '"'"$1"' {} \;
+    find scripts -type f -exec bash -c "source ember_bash_setup &> /dev/null; ereplace 'sort ' 'gsort '"'"$1"' {} \;
+    find scripts -type f -exec bash -c "source ember_bash_setup &> /dev/null; ereplace 'du ' 'gdu '"'"$1"' {} \;
 fi

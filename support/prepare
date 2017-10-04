@@ -19,7 +19,7 @@ if [[ "$OSTYPE" = darwin* ]]; then
     if ! type "ember_bash_setup"; then
         fail
     fi
-    find scripts -type f -exec ereplace '#!/usr/bin/env bash' '#!/usr/bin/env gbash'
-    find scripts -type f -exec ereplace 'readlink ' 'greadlink '
-    find scripts -type f -exec ereplace 'sort ' 'gsort '
+    find scripts -type f -exec ereplace '#!/usr/bin/env bash' '#!/usr/bin/env gbash' \;
+    find scripts -type f -exec ereplace 'readlink ' 'greadlink ' \;
+    find scripts -type f -exec ereplace 'sort ' 'gsort ' \;
 fi

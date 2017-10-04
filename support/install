@@ -93,16 +93,6 @@ ereplace "/Ember\ Library/" "$crystallizeEmberdir" support/crystallize.conf
 ereplace "/usr/local/etc" "$crystallizeSysconfdir" scripts/crystallize-getconf
 ereplace "/usr/local/etc" "$crystallizeSysconfdir" scripts/crystallize-logsession
 
-if [[ "$OSTYPE" = darwin* ]]; then
-    if ! type "gbash"; then
-        emberMacGNUUpgrade
-    fi
-    find scripts -type f -exec ereplace '#!/usr/bin/env bash' '#!/usr/bin/env gbash'
-    find scripts -type f -exec ereplace 'readlink ' 'greadlink '
-    find scripts -type f -exec ereplace 'sort ' 'gsort '
-fi
-
-
 mkdir -p "$crystallizeBindir"
 chmod +x scripts/*
 cp scripts/* "$crystallizeBindir/"

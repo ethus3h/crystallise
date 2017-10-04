@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
+source ember_bash_setup &> /dev/null
+
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+# set -x
+
+fail() {
+    printf '%b' '\033[1;31m' >&2
+    echo "Please install the current version of ember-shared before installing crystallize."
+    printf '%b' '\033[0m' >&2
+    exit 1
+}
+
+if [[ "$OSTYPE" = darwin* ]]; then
+    if ! type "gbash"; then
+        fail
+    fi
+    if ! type "ember_bash_setup"; then
+        fail
+    fi
+    find scripts -type f -exec ereplace '#!/usr/bin/env bash' '#!/usr/bin/env gbash'
+    find scripts -type f -exec ereplace 'readlink ' 'greadlink '
+    find scripts -type f -exec ereplace 'sort ' 'gsort '
+fi

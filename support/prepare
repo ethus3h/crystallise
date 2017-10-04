@@ -22,5 +22,5 @@ if [[ "$OSTYPE" = darwin* ]]; then
     find scripts -type f -exec bash -c "source ember_bash_setup &> /dev/null; perl -0777 -p -i -e '\''s/readlink /greadlink /g'\'' \"\$0\"" {} \;
     find scripts -type f -exec bash -c "source ember_bash_setup &> /dev/null; perl -0777 -p -i -e '\''s/sort /gsort /g'\'' \"\$0\"" {} \;
     find scripts -type f -exec bash -c "source ember_bash_setup &> /dev/null; perl -0777 -p -i -e '\''s/du /gdu /g'\'' \"\$0\"" {} \;
-    find scripts -type f -exec bash -c "source ember_bash_setup &> /dev/null; perl -0777 -p -i -e '\''s/du /gdu /g'\'' \"\$0\"" {} \;
+    find scripts -type f -exec bash -c "source ember_bash_setup &> /dev/null; perl -0777 -p -i -e '\''s/sed /gsed /g'\'' \"\$0\"" {} \;
 fi

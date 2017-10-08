@@ -3,21 +3,7 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
+((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
-sudo echo
-
-installDir="$(tempDir)"
-cd installDir
-    # update ember-shared
-    git clone https://github.com/ethus3h/ember-shared.git
-    (
-        cd ember-shared
-        make
-        sudo make install
-    )
-    # update crystallize
-    git clone https://github.com/ethus3h/crystallize.git
-        cd crystallize
-        make
-        sudo make noconf
+mkdir 2017oct03; cd 2017oct03; git clone https://github.com/ethus3h/ember-shared.git; cd ember-shared; make; sudo make install; cd ..; git clone https://github.com/ethus3h/crystallize.git; cd crystallize; make; sudo make noconf

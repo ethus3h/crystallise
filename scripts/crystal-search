@@ -6,16 +6,30 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 
+firstResultOnly="false"
+if [[ "$1" == "--first" ]]; then
+    firstResultOnly="true"
+    shift
+fi
+
+if [[ "$1" == "--" ]]; then
+    shift
+fi
+
 pattern="$1"
 
 cd "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
 for file in ./*.deep.idx; do
     if grep -q "$pattern" "$file"; then
+        filePassedFirst="0"
         fileName="${file/\.\/}"
         fileNamePrefix="${fileName%\.deep\.idx}"
         grep -v '^#' "$file" | grep "$pattern" | cut -d ',' -f 5- - | while read line; do
-            echo "Crystal $fileNamePrefix contains:"
-            echo "    $line"
+            if [[ "$filePassedFirst" != "1" ]] || [[ "$firstResultOnly" != "true" ]]; then
+                echo "Crystal $fileNamePrefix contains:"
+                echo "    $line"
+                filePassedFirst="1"
+            fi
         done
     fi
 done

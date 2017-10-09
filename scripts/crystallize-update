@@ -8,7 +8,7 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
 sudo echo
 
 installDir="$(tempDir)"
-cd installDir
+cd "$installDir"
     # update ember-shared
     git clone https://github.com/ethus3h/ember-shared.git
     (

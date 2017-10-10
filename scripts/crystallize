@@ -3,10 +3,10 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
-export crystallizeVersion='3.1.2.5.10.27'
+export crystallizeVersion='3.1.2.5.10.28'
 
 # The update script shown here requires there to be only one ebuild of crystallize in the wreathe-overlay overlay.
-# ( sudo true; newVersion="3.1.2.5.10.27"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo layman -s wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
+# ( sudo true; newVersion="3.1.2.5.10.28"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo layman -s wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
 
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
@@ -156,17 +156,30 @@ until [[ "$getChecksumRetries" -ge 1000 ]]; do
     fi
 done
 
+getChecksumOuterRetries=0
 getChecksumRetries=0
+retryOuterDelayTime=5
 retryDelayTime=5
-until [[ "$getChecksumRetries" -ge 1000 ]]; do
-    if checksumLine="$(wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F -A 5 "<file name=\"$CrystalID.coal5\" source=\"original\">" | tail -n 1)"; then
-        postUploadCheckFailHandler
+until [[ "$getChecksumOuterRetries" -ge 15 ]]; do
+    until [[ "$getChecksumRetries" -ge 100 ]]; do
+        if checksumLine="$(wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F -A 5 "<file name=\"$CrystalID.coal5\" source=\"original\">" | tail -n 1)"; then
+            postUploadCheckFailHandler
+            break
+        fi
+        getChecksumRetries=$((getChecksumRetries+1))
+        sleep "$retryDelayTime"
+        if [[ "$retryDelayTime" -lt 30 ]]; then
+            retryDelayTime=$((retryDelayTime + 5))
+        fi
+    done
+    if [[ "$checksumLine" == "$knownChecksum" ]]; then
         break
+    else
+        getChecksumOuterRetries=$((getChecksumOuterRetries+1))
     fi
-    getChecksumRetries=$((getChecksumRetries+1))
-    sleep "$retryDelayTime"
-    if [[ "$retryDelayTime" -lt 30 ]]; then
-        retryDelayTime=$((retryDelayTime + 5))
+    sleep "$retryOuterDelayTime"
+    if [[ "$retryOuterDelayTime" -lt 30 ]]; then
+        retryOuterDelayTime=$((retryOuterDelayTime + 5))
     fi
 done
 checksumLine="${checksumLine/    <sha1>/}"
@@ -175,13 +188,13 @@ checksumLine="${checksumLine/<\/sha1>/}"
 # First, check against the stored checksum
 knownChecksum="$(grep ",stdin" "$crystalWorkdir/$CrystalID.checksums" | awk -F',' '{print $3}')"
 if [[ "$checksumLine" != "$knownChecksum" ]]; then
-    die "ERROR! Checksum known by Internet Archive does not match saved checksum known locally."
+    die "ERROR! Checksum known by Internet Archive $checksumLine does not match saved checksum known locally $knownChecksum."
 fi
 
 # Now, check the local file's checksum again in case it's gotten screwed up in the mean time somehow
 knownChecksum="$(hashdeep -c sha1 -j0 -o fbcpsde < "$crystalWorkdir/$CrystalID.coal5" | grep ",stdin" | awk -F',' '{print $2}')"
 if [[ "$checksumLine" != "$knownChecksum" ]]; then
-    die "ERROR! Checksum known by Internet Archive does not match new checksum known locally."
+    die "ERROR! Checksum known by Internet Archive $checksumLine does not match new checksum known locally $knownChecksum."
 fi
 
 getChecksumRetries=0

@@ -3,10 +3,10 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
-export crystallizeVersion='3.1.2.5.10.31'
+export crystallizeVersion='3.1.2.5.10.32'
 
 # The update script shown here requires there to be only one ebuild of crystallize in the wreathe-overlay overlay.
-# ( sudo true; newVersion="3.1.2.5.10.31"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo layman -s wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
+# ( sudo true; newVersion="3.1.2.5.10.32"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo layman -s wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
 
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
@@ -156,6 +156,8 @@ until [[ "$getChecksumRetries" -ge 1000 ]]; do
     fi
 done
 
+knownChecksum="$(grep ",stdin" "$crystalWorkdir/$CrystalID.checksums" | awk -F',' '{print $3}')"
+
 getChecksumOuterRetries=0
 getChecksumRetries=0
 retryOuterDelayTime=5
@@ -186,7 +188,6 @@ until [[ "$getChecksumOuterRetries" -ge 15 ]]; do
 done
 
 # First, check against the stored checksum
-knownChecksum="$(grep ",stdin" "$crystalWorkdir/$CrystalID.checksums" | awk -F',' '{print $3}')"
 if [[ "$checksumLine" != "$knownChecksum" ]]; then
     die "ERROR! Checksum known by Internet Archive $checksumLine does not match saved checksum known locally $knownChecksum."
 fi

@@ -333,7 +333,7 @@ mkdir "$streamId"
         # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
         oldCount="$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")"
         # Lock entire database directory
-        (
+        {
             if [[ -e "$dbDir/.locked" ]]; then
                 warn "This database is already in use. If the scache_gc or sreg_read_stream instance using it has crashed, remove $dbDir/.locked manually."
                 warn "Waiting 30 minutes for process using it to finish..."
@@ -346,7 +346,7 @@ mkdir "$streamId"
                     else
                         break
                     fi
-                    tempWaitForLockTries=$((tempWaitForLockTries+1))
+                    tempWaitForLockTries=$(( tempWaitForLockTries + 1 ))
                     sleep 5
                 done
                 unset tempWaitForLockTries
@@ -377,7 +377,7 @@ mkdir "$streamId"
             ln -sf "$dbFilePath" "$dbLinkPath"
 
             rm -f "${dbDir:?}/.locked"
-        )
+        }
         # Done cache cleanup
         decompressedCacheEntry="$streamId.dat"
         if ! [[ -f "$dbLinkPath" ]]; then

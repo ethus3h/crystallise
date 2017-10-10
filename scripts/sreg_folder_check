@@ -73,7 +73,7 @@ fi
 find "$sregDir" -not -path "$sregDir/Unused Pointers/*" -type f -printf '.' | wc -c > "$fsckStatusFile"
 echo "0" > "$fsckStatusFile.done"
 
-find "$sregDir" -not -path "$sregDir/Unused Pointers/*" -type f \( -exec sregi_drop_single_unused "$failCheckFile" --sreg-dir "$sregDir" {} "$fsckIdList" "$fsckStatusFile" \; -or -exec kill "-$bpid" \; \)
+find "$sregDir" -not -path "$sregDir/Unused Pointers/*" -type f -exec sregi_drop_single_unused "$failCheckFile" --sreg-dir "$sregDir" {} "$fsckIdList" "$fsckStatusFile" \;
 
 if [[ -e "$failCheckFile" ]]; then
     die "An invocation of sregi_drop_single_unused (called from $0) failed with the message \"$(<"$failCheckFile")\"!"

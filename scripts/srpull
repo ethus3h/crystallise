@@ -71,6 +71,8 @@ for path in "${pathsToCopy[@]}"; do
 
     sregi_expand_pointers --sreg-dir "$sregDir" "$fsckStatusFile" "$destinationFindTarget"
 
+    # Disable SC2016 because the variable-looking things in the bash -c are intended to be passed literally to bash -c.
+    # shellcheck disable=SC2016
     find "$destinationFindTarget" -name ".git.686fc528-0e8e-4724-91bb-c103cdcdd592" -exec emberPlatformResolver-bash bash -c 'destName="$(basename "$1")"; mv "$1" "$(dirname "$1")/${destName%.686fc528-0e8e-4724-91bb-c103cdcdd592*}"' - {} \;
 done
 

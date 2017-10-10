@@ -83,7 +83,8 @@ if [[ "$quick" == "true" ]]; then
     sregi_hashpointer_sane --sreg-dir "$sregDir" "$1"
     exitCode="$?"
 else
-    #echo "Started verifying stream registry database entry $knownHash."
+    # Disable SC2094 because sreg_read_stream should not write to the file specified by --entry-path.
+    # shellcheck disable=SC2094
     sreg_read_stream --sreg-dir "$sregDir" --entry-path "$1" --checksum "$knownHash" --disallow-hash-pointer "$skipCache" < "$1" > /dev/null
     exitCode="$?"
 fi
@@ -105,7 +106,6 @@ if [[ "$exitCode" == "0" ]]; then
         numberProcessedPercentage="$(printf "%.3f\\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
         echo "Verified stream registry database entry $knownHash: finished #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
     else
-        #echo "Verified stream registry database entry $knownHash."
         true
     fi
     success

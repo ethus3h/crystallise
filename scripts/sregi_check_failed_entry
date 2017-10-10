@@ -41,12 +41,14 @@ if [[ "--skip-cache" == "$3" ]]; then
     skipCache="--skip-cache"
 fi
 
+# Disable SC2094 because sreg_read_stream should not write to the file specified by --entry-path.
+# shellcheck disable=SC2094
 if sreg_read_stream --sreg-dir "$sregDir" --entry-path "$1" --checksum "$knownHash" --disallow-hash-pointer "$skipCache" < "$1" > /dev/null; then
     dbDir="$(sregi_find_dir --sreg-dir "$sregDir")"
     hashA="${knownHash:0:1}"
     hashB="${knownHash:1:1}"
     hashC="${knownHash:2:1}"
-    mv "$1" "$dbDir/$hashSubdir/$hashA/$hashB/$hashC/$knownHash"
+    mv "$1" "$dbDir/$hashA/$hashB/$hashC/$knownHash"
     if [[ -n "$fsckStatusFile" ]]; then
         numberExpected="$(<"$fsckStatusFile")"
         numberProcessedFile="$fsckStatusFile.done"

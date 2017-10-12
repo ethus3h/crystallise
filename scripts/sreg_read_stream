@@ -24,12 +24,12 @@ releaseLocks() {
 finish() {
     releaseLocks
     trap - ERR
-    (
-        cd "/${crystalWorkdir:?}/" || die
-        if [[ -e "/$crystalWorkdir/${streamId:?}" ]]; then
-            rm -r "/$crystalWorkdir/${streamId:?}"
-        fi
-    )
+    # (
+    #     cd "/${crystalWorkdir:?}/" || die
+    #     if [[ -e "/$crystalWorkdir/${streamId:?}" ]]; then
+    #         rm -r "/$crystalWorkdir/${streamId:?}"
+    #     fi
+    # )
     trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while finishing $hashFull."' ERR
 }
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR
@@ -114,7 +114,8 @@ mkdir "$streamId"
         exit 0
     fi
     # 120 retries * 30 seconds = 1 hour
-    numRetries=120
+    # Dropped it to 2 retries because it *really* shouldn't need 120
+    numRetries=2
     numTotalRetries="$numRetries"
     successfulRetrieval="0"
     (

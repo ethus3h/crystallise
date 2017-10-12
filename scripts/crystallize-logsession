@@ -4,7 +4,7 @@ source ember_bash_setup &> /dev/null
 #set -x
 
 ((EUID)) && exec sudo -- "$0" "$@"
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."' ERR
 
 useCustomPassphrase="$1"
 shift
@@ -28,7 +28,7 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
 
     trap - ERR
     wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-start" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z"
-    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."' ERR
 
     echo "Time (log stage 1b) locally:"
 
@@ -70,7 +70,7 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
 
     trap - ERR
     wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.ip" -e robots=off http://icanhazip.com/ &
-    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."' ERR
 
     echo "Time (log stage 2) locally:"
 
@@ -81,7 +81,7 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
 
     trap - ERR
     wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-env" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z" &
-    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."' ERR
 
     echo "Time (log stage 2b) locally:"
 
@@ -211,7 +211,7 @@ trap - ERR
 #If GNU/Linux, set opt to 1 and unset optb; otherwise opposite
 [[ "$OSTYPE" = *inux* ]] && (( opt++ ))
 [[ "$OSTYPE" != *inux* ]] && (( optb++ ))
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."' ERR
 
 script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/null}
 
@@ -258,7 +258,7 @@ printf "%s" "$CrystalFileName" > "$crystalWorkdir/$CrystalID.CrystalFileName"
 
     trap - ERR
     wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-done" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z"
-    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."' ERR
 
     echo "Time (log stage 3b) locally:"
 

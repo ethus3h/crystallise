@@ -4,7 +4,7 @@ source ember_bash_setup &> /dev/null
 #set -x
 
 ((EUID)) && exec sudo -- "$0" "$@"
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."' ERR
 
 sregDir=""
 if [[ "$1" == "--sreg-dir" ]]; then
@@ -27,9 +27,9 @@ finish() {
     if [[ -e "$crystalWorkdir/$instanceId" ]]; then
         rm -r "${crystalWorkdir:?}/${instanceId:?}"
     fi
-    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while finishing srsync."' ERR
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate) while finishing srsync."' ERR
 }
-trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."; finish; exit 1' ERR
 trap finish EXIT
 
 sregNoVerify="true"

@@ -4,7 +4,7 @@ source ember_bash_setup &> /dev/null
 #set -x
 
 ((EUID)) && exec sudo -- "$0" "$@"
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; if [[ -n "${tempDirectoryName:?}" ]]; then if [[ -d "${tempDirectoryName:?}" ]]; then rm -r "${tempDirectoryName:?}"; fi; fi' ERR
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."; if [[ -n "${tempDirectoryName:?}" ]]; then if [[ -d "${tempDirectoryName:?}" ]]; then rm -r "${tempDirectoryName:?}"; fi; fi' ERR
 
 sregDir=""
 if [[ "$1" == "--sreg-dir" ]]; then
@@ -28,7 +28,7 @@ hashC="${hashFull:2:1}"
 hashSubdir="$hashA/$hashB/$hashC"
 
 # Clean up if there's an error to avoid leaving a broken cache entry
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; rm -rf "${dbLinkPath:?}" "$(readlink -e "$dbLinkPath")"' ERR
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."; rm -rf "${dbLinkPath:?}" "$(readlink -e "$dbLinkPath")"' ERR
 
 if [[ "$RANDOM" -lt 500 ]]; then
     scache_gc "$dbDir" "localstore"
@@ -65,7 +65,7 @@ fi
 
 trap - ERR
 oldFilePath="$(readlink "$dbLinkPath")"
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; rm -rf "${dbLinkPath:?}" "$(readlink -e "$dbLinkPath")"' ERR
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."; rm -rf "${dbLinkPath:?}" "$(readlink -e "$dbLinkPath")"' ERR
 
 localStoreMatchArray=("$oldFilePath"/sreg_flush_localstore-*.LocalStore)
 if ( ! [[ -e "${localStoreMatchArray[0]}" ]] ) || [[ -z "${localStoreMatchArray[0]}" ]]; then

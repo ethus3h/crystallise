@@ -18,7 +18,7 @@ finish() {
         rm -r "${fsckId:?}" "/tmp/${fsckId:?}.status"
     fi
 }
-trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."; finish; exit 1' ERR
 
 srpullReplace="false"
 if [[ "$1" == "--replace" ]]; then

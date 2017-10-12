@@ -30,9 +30,9 @@ finish() {
     #         rm -r "/$crystalWorkdir/${streamId:?}"
     #     fi
     # )
-    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while finishing $hashFull."' ERR
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate) while finishing $hashFull."' ERR
 }
-trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."; finish; exit 1' ERR
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."; finish; exit 1' ERR
 trap finish EXIT
 
 ignoreLock=""
@@ -69,7 +69,7 @@ dbDir="$sregDir"
 # Basic sanity check to make sure it bombs out if the pointer is cached but is missing a necessary LocalStore entry
 if [[ -z "$overrideEntryPath" ]]; then
     if [[ -n "$knownChecksum" ]]; then
-        sregi_available_by_hash --sreg-dir "$sregDir" "$knownChecksum" || die "sregi_available_by_hash failed on ${BASH_SOURCE[0]} line ${LINENO} while reading $knownChecksum."
+        sregi_available_by_hash --sreg-dir "$sregDir" "$knownChecksum" || die "sregi_available_by_hash failed on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate) while reading $knownChecksum."
     fi
 fi
 # Set up cache directory
@@ -81,7 +81,7 @@ fi
 # Get stream
 mkdir "$streamId"
 (
-    trap 'releaseLocks; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+    trap 'releaseLocks; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."' ERR
     cd "$streamId" || exit 1
     sponge "$streamId.xz"
     # Get the hash of the stream
@@ -120,8 +120,8 @@ mkdir "$streamId"
     successfulRetrieval="0"
     (
         # Basic sanity check to make sure it bombs out if the pointer is cached but is missing a necessary LocalStore entry
-        sregi_available_by_hash --sreg-dir "$sregDir" "$knownChecksum" "$streamId.xz" || die "sregi_available_by_hash failed on ${BASH_SOURCE[0]} line ${LINENO} while reading $knownChecksum."
-    ) || die "sregi_available_by_hash failed on ${BASH_SOURCE[0]} line ${LINENO} while reading $knownChecksum."
+        sregi_available_by_hash --sreg-dir "$sregDir" "$knownChecksum" "$streamId.xz" || die "sregi_available_by_hash failed on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate) while reading $knownChecksum."
+    ) || die "sregi_available_by_hash failed on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate) while reading $knownChecksum."
     hashA="${hashFull:0:1}"
     hashB="${hashFull:1:1}"
     hashC="${hashFull:2:1}"
@@ -131,9 +131,9 @@ mkdir "$streamId"
     mkdir -p "$hashDir"
     dbLinkPath="$hashDir/$hashFull"
 
-    trap 'releaseLocks; warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while reading $hashFull."' ERR
+    trap 'releaseLocks; warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate) while reading $hashFull."' ERR
     while [[ "$numRetries" -gt 0 ]] && [[ "$successfulRetrieval" -eq 0 ]]; do
-        trap 'releaseLocks; warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while reading $hashFull."; continue' ERR
+        trap 'releaseLocks; warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate) while reading $hashFull."; continue' ERR
         if [[ "$numRetries" -lt "$numTotalRetries" ]]; then
             sleep 30
             warn "Beginning retry of reading stream $hashFull. $numRetries retries remaining."
@@ -208,7 +208,7 @@ mkdir "$streamId"
                 cp scache-*.tmp "$streamId.out"
             elif [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
                 # LocalStore pointer
-                trap 'releaseLocks; warn "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while attempting to read the LocalStore pointer $hashFull. Giving up now: retrying would likely not help in this situation."; numRetries=0; break' ERR
+                trap 'releaseLocks; warn "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate) while attempting to read the LocalStore pointer $hashFull. Giving up now: retrying would likely not help in this situation."; numRetries=0; break' ERR
                 unxz --stdout - < "$dbDir/LocalStore/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
             elif [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] || [[ "$pointerTypeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]]; then
                 # Remote pack pointer
@@ -220,7 +220,7 @@ mkdir "$streamId"
                     packName="$(tail -c +167 "$streamId.xz")"
                     unxz --stdout - < "$dbDir/Packs/$packName" | tar -xf -
                 fi
-                trap 'releaseLocks; warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while reading $hashFull."' ERR
+                trap 'releaseLocks; warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate) while reading $hashFull."' ERR
                 if ! [[ -e "$crystalWorkdir/.LocalStoreCache/" ]]; then
                     localstorecache_init "$crystalWorkdir/.LocalStoreCache/" 5000000000
                 fi
@@ -238,7 +238,7 @@ mkdir "$streamId"
                 }
                 localStoreCrystalIdentifier="$(<"$localStoreCrystalName"/identifier)"
                 localstoreLocation="$(localstorecache_request --sreg-dir "$sregDir" "$crystalWorkdir/.LocalStoreCache/" "$localStoreCrystalIdentifier")" || localstoreErrorBreak
-                trap 'releaseLocks; warn "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while attempting to read a remote pack pointer $hashFull (stream was not in the pack given). Giving up now: retrying would likely not help in this situation."; numRetries=0; break' ERR
+                trap 'releaseLocks; warn "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate) while attempting to read a remote pack pointer $hashFull (stream was not in the pack given). Giving up now: retrying would likely not help in this situation."; numRetries=0; break' ERR
                 localStoreMatchArray=("$localstoreLocation"/sreg_flush_localstore-*.LocalStore)
                 if ( ! [[ -e "${localStoreMatchArray[0]}" ]] ) || [[ -z "${localStoreMatchArray[0]}" ]]; then
                     localStoreMatchArray=("$localstoreLocation"/scache-*.LocalStore)
@@ -247,7 +247,7 @@ mkdir "$streamId"
                     localStoreMatchedFolder="${localStoreMatchArray[0]}/LocalStore"
                 fi
                 unxz --stdout - < "$localStoreMatchedFolder/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
-                trap 'releaseLocks; warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while reading $hashFull."' ERR
+                trap 'releaseLocks; warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate) while reading $hashFull."' ERR
             elif [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
                 # Hash pointer
                 if [[ "true" == "$disallowHashPointer" ]]; then
@@ -402,7 +402,7 @@ mkdir "$streamId"
             # mkdir -p "$cacheDbDir/Failed Checksum"
             # mv "$dbFilePath" "$cacheDbDir/Failed Checksum/$(basename "$dbFilePath")"
             # warn "Checksum mismatch when retrieving the requested stream!"
-            error-notify "Checksum mismatch when retrieving the requested stream! Checksums: $knownChecksum $hashFull $retrievedHash at ${BASH_SOURCE[0]} line ${LINENO}"
+            error-notify "Checksum mismatch when retrieving the requested stream! Checksums: $knownChecksum $hashFull $retrievedHash at ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)"
             # if [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
             #     mkdir -p "$dbDir/LocalStore/Failed\ Fsck/"
             #     mv "$dbDir/LocalStore/$hashA/$hashB/$hashC/$hashFull" "$dbDir/LocalStore/Failed\ Fsck/"
@@ -412,7 +412,7 @@ mkdir "$streamId"
             successfulRetrieval="1"
         fi
     done
-    trap 'releaseLocks; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while reading $hashFull."' ERR
+    trap 'releaseLocks; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate) while reading $hashFull."' ERR
     if [[ "$successfulRetrieval" != "1" ]]; then
         die "Failed retrieving stream, and no retries left!"
     fi

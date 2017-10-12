@@ -9,7 +9,7 @@ export crystallizeVersion='3.1.2.5.10.38'
 # ( sudo true; newVersion="3.1.2.5.10.38"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo layman -s wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
 
 ((EUID)) && exec sudo -- "$0" "$@"
-trap 'cat $crystalWorkdir/$CrystalID || true; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+trap 'cat $crystalWorkdir/$CrystalID || true; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."' ERR
 
 if [[ "$1" == "--version" ]]; then
     echo "Crystallize version $(crystallize-getconf crystallizeVersion) using ember-shared version $(ember_bash_setup --version)."
@@ -125,7 +125,7 @@ mv "$crystalWorkdir/$CrystalID.deep.idx.xz.gpg" "$crystalWorkdir/$CrystalID.coal
 mv "$crystalWorkdir/$CrystalID.cmd.gpg" "$crystalWorkdir/$CrystalID.coal5-cmd"
 mv "$crystalWorkdir/$CrystalID.cwd.gpg" "$crystalWorkdir/$CrystalID.coal5-cwd"
 
-trap 'cat $crystalWorkdir/$CrystalID || true; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+trap 'cat $crystalWorkdir/$CrystalID || true; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."' ERR
 ia upload "$CrystalID" --retries=100 --verify --delete "$crystalWorkdir/$CrystalID.coal5-log" "$crystalWorkdir/$CrystalID.coal5-idx-l" "$crystalWorkdir/$CrystalID.coal5-idx-d" "$crystalWorkdir/$CrystalID.coal5-cmd" "$crystalWorkdir/$CrystalID.coal5-cwd"
 ia upload "$CrystalID" --retries=100 --verify "$crystalWorkdir/$CrystalID.coal5-timestamp"
 
@@ -288,7 +288,7 @@ trap - ERR
 if [[ "$keepFiles" != "true" ]]; then
     rm -rf "${CrystallizePaths[@]}"
 fi
-trap 'cat $crystalWorkdir/$CrystalID || true; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+trap 'cat $crystalWorkdir/$CrystalID || true; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."' ERR
 set -o pipefail
 echo "Done cleaning up..."
 

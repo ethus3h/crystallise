@@ -28,11 +28,11 @@ finish() {
             rm -r "/$crystalWorkdir/${streamId:?}"
         fi
     )
-    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} while finishing depbz execution."' ERR
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate) while finishing depbz execution."' ERR
 }
 trap finish EXIT
 
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."' ERR
 
 shopt -s extglob
 

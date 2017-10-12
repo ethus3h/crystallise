@@ -306,7 +306,7 @@ mkdir "$streamId"
                 fi
 
                 mkdir -p "$dbFileDir"
-                [[ -e "$dbFilePath" ]] || checkedxz "$streamId.out" --stdout -0 > "$dbFilePath"
+                [[ -e "$dbFilePath" ]] || checkedxz --quiet "$streamId.out" --stdout -0 > "$dbFilePath"
                 rm -f "$streamId.out"
                 if [[ -e "$dbLinkPath" ]] || [[ -h "$dbLinkPath" ]]; then
                     rm "$dbLinkPath"

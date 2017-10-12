@@ -117,7 +117,7 @@ mkdir -p "$crystalWorkdir/.$streamId/$streamId"
     dbFilePath="$hashDir/$hashFull"
     tmpFilePath="$streamId.tmp.stored"
     streamSize="$(du -sb "$streamId.tmp" | awk '{print $1;}')"
-    if [[ "$streamSize" -gt 10000000 ]]; then
+    if [[ "$streamSize" -gt 20000000 ]]; then
         useLocalStore="false"
     else
         useLocalStore="true"

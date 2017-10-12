@@ -16,7 +16,7 @@ whoami > "/tmp/rubberfsUser"
 ((EUID)) && exec sudo -- "$0" "$@"
 rubberfsUser="$(</tmp/rubberfsUser)"
 
-touch "/tmp/rubberfs.lock"
+emdate > "/tmp/rubberfs.lock"
 
 finish() {
     rm -f "/tmp/rubberfs.lock"

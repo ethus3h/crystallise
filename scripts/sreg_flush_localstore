@@ -47,7 +47,7 @@ mkdir -p "$crystalWorkdir/.$streamId/$streamId"
 (
     cd "$crystalWorkdir/.$streamId/$streamId" || exit 1
     if ! [[ -e "$dbDir"/.LocalStore.lock ]]; then
-        touch "$dbDir"/.LocalStore.lock
+        emdate > "$dbDir"/.LocalStore.lock
         rsync -aq --checksum --no-i-r "$dbDir"/LocalStore "$streamId.LocalStore"
         rsync -aq --checksum --no-i-r "$streamId.LocalStore" "$streamId.LocalStore.tmp"
         if [[ "$1" == "--verbose" ]]; then

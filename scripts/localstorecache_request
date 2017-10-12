@@ -79,7 +79,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -d "$oldFilePath" ]] || [[ ! -d "$cacheEntry
     # Item is not in the cache, so add it
 
     # Lock the cache entry while we're editing it
-    touch "$dbLinkPath.locked"
+    emdate > "$dbLinkPath.locked"
 
     # Make sure there isn't a dangling LocalStore content folder with no associated link
     find "$dbDir/ByCount" -maxdepth 2 -type d -name "$hashFull" -exec rm -rf {} \;

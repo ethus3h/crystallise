@@ -52,7 +52,7 @@ csAvail="false"
 tempResolvedFileName="$(readlink "$dbLinkPath")" || true # It's totally ok if this fails.
 if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvail" == "false" ]]; then
     # Only lock the cache entry while we're editing it
-    touch "$dbLinkPath.locked"
+    emdate > "$dbLinkPath.locked"
 
     if [[ -f "$tempResolvedFileName" ]]; then
         rm "$tempResolvedFileName"

@@ -392,7 +392,7 @@ mkdir "$streamId"
                 decompressFailed="true"
                 rm "$dbFilePath"
                 warn "Failed decompressing cache entry. Retrying retrieval..."
-                break
+                continue
             else
                 die "Failed decompressing cache entry twice. This probably indicates a bug in sreg."
             fi

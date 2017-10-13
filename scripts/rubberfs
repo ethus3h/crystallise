@@ -8,10 +8,6 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 action="$1"
 name="$2"
 
-if [[ "$(whoami)" == "root" ]]; then
-    [[ -e "/tmp/rubberfs.lock" ]] && die "RubberFS is already running! Only one RubberFS command can be running at a time."
-fi
-
 whoami > "/tmp/rubberfsUser"
 ((EUID)) && exec sudo -- "$0" "$@"
 rubberfsUser="$(</tmp/rubberfsUser)"
@@ -31,6 +27,10 @@ if [[ ! -n "$name" ]]; then
 fi
 
 /sbin/modprobe zfs
+
+if [[ "$action" == "create" ]] || [[ "$action" == "mount" ]] || [[ "$action" == "soft-mount" ]] || [[ "$action" == "remount" ]] || [[ "$action" == "soft-remount" ]] || [[ "$action" == "rename" ]] || [[ "$action" == "unmount" ]] || [[ "$action" == "soft-unmount" ]] || [[ "$action" == "freeze" ]] || [[ "$action" == "delta" ]] || [[ "$action" == "thaw" ]] || [[ "$action" == "patch" ]] || [[ "$action" == "destroy" ]]; then
+    [[ -e "/tmp/rubberfs.lock" ]] && die "RubberFS is already running! Only one RubberFS command can be running at a time."
+fi
 
 case $action in
 create)
@@ -267,16 +267,6 @@ delta)
     echo "A frozen incremental snapshot $freezeCrystal of RubberFS named $name has been created, and the obsolete local snapshots removed."
     ;;
 gc)
-    echo "Unimplemented!"
-    exit 1
-    set -e
-    rubberfs delta "$name"
-    rubberfs unmount "$name"
-    rubberfs create "$name.new"
-    rubberfs freeze "$name.new"
-    
-    rubberfs delete "$name"
-    rubberfs rename "$name.new" "$name"
     rubberfs delta "$name"
     ;;
 thaw)

@@ -44,8 +44,8 @@ finish() {
 trap finish EXIT
 
 if [[ -e "$dbLinkPath.locked" ]]; then
-    warn "This LocalStore cache entry is already in use. If the process using it has crashed, remove $dbLinkPath.locked manually."
-    warn "Waiting 30 minutes for process using it to finish..."
+    warn "This LocalStore cache entry is already in use. If the process using it ($("$dbLinkPath.locked")) has crashed, remove $dbLinkPath.locked manually."
+    warn "Waiting 30 minutes for process using it ($("$dbLinkPath.locked")) to finish..."
 
     waitForLockTries=0
     until [[ "$waitForLockTries" -ge 360 ]]; do
@@ -59,7 +59,7 @@ if [[ -e "$dbLinkPath.locked" ]]; then
     done
 
     if [[ -e "$dbLinkPath.locked" ]]; then
-        die "This LocalStore cache entry has been in use for 30 minutes so giving up. If the process using it has crashed, remove $dbLinkPath.locked manually."
+        die "This LocalStore cache entry has been in use for 30 minutes so giving up. If the process using it ($("$dbLinkPath.locked")) has crashed, remove $dbLinkPath.locked manually."
     fi
 fi
 

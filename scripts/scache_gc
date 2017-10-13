@@ -72,7 +72,7 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
                 waitForLockTries=0
                 until [[ "$waitForLockTries" -ge 360 ]]; do
                     if [[ -e "$dbLinkPath.locked" ]]; then
-                        warn "Still waiting, $((waitForLockTries - 360)) tries remaining... If the process using this stream cache entry has crashed, remove $dbLinkPath.locked manually."
+                        warn "Still waiting, $((waitForLockTries - 360)) tries remaining... If the process using this stream cache entry ($("$dbLinkPath.locked")) has crashed, remove $dbLinkPath.locked manually."
                     else
                         break
                     fi

@@ -50,7 +50,7 @@ if [[ -e "$dbLinkPath.locked" ]]; then
     waitForLockTries=0
     until [[ "$waitForLockTries" -ge 360 ]]; do
         if [[ -e "$dbLinkPath.locked" ]]; then
-            warn "Still waiting, $((waitForLockTries - 360)) tries remaining... If the process using this LocalStore cache entry has crashed, remove $dbLinkPath.locked manually."
+            warn "Still waiting, $((waitForLockTries - 360)) tries remaining... If the process using this LocalStore cache entry ($("$dbLinkPath.locked")) has crashed, remove $dbLinkPath.locked manually."
         else
             break
         fi

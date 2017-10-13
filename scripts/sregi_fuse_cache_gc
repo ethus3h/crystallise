@@ -12,7 +12,7 @@ if [[ -e "$dbDir/.locked" ]]; then
     warn "This sregi_fuse temporary folder is already in use. If the sregi_fuse_cache_gc instance using it has crashed, remove $dbDir/.locked manually."
     exit 0
 fi
-emdate > "$dbDir/.locked"
+echo "locked on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)" > "$dbDir/.locked"
 
 finish() {
     rm -f "${dbDir:?}/.locked"

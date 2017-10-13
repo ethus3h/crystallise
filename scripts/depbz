@@ -11,7 +11,7 @@ readlink -f ~ > "/tmp/depbzHome"
 ((EUID)) && exec sudo -- "$0" "$@"
 depbzHome="$(</tmp/depbzHome)"
 
-emdate > "/tmp/depbz.lock"
+echo "locked on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)" > "/tmp/depbz.lock"
 
 # -t 1 checks if file descriptor 1 "is opened on a terminal" (—GNU coreutils 8.25 manpage for test)
 if [[ -t 1 ]]; then

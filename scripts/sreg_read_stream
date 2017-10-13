@@ -140,7 +140,7 @@ mkdir "$streamId"
         fi
         numRetries=$(( numRetries - 1 ))
         if [[ -e "$dbFilePath" ]] && [[ "$(unxz --stdout - < "$dbFilePath" | sha512sum | awk '{print $1;}')" != "$knownChecksum" ]]; then
-            [[ "$ignoreLock" != "true" ]] && { emdate > "$dbLinkPath.locked"; }
+            [[ "$ignoreLock" != "true" ]] && { echo "locked on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)" > "$dbLinkPath.locked"; }
             rm "$dbFilePath"
         fi
         if [[ ! -h "$dbLinkPath" ]] || [[ ! -f "$(readlink "$dbLinkPath")" ]] || [[ "$skipCache" == "true" ]] || [[ ! -f "$dbFilePath" ]]; then
@@ -166,7 +166,7 @@ mkdir "$streamId"
                     fi
                 else
                     # Only lock the cache entry while we're editing it
-                    emdate > "$dbLinkPath.locked"
+                    echo "locked on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)" > "$dbLinkPath.locked"
                 fi
             fi
 

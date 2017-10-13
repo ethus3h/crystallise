@@ -257,7 +257,7 @@ fi
 
 [[ -e "$checksumName" ]] && die "This URL cache entry (for a supposedly new crystal) already has a checksum file. This should never happen, and indicates a bug in crystallize."
 
-emdate > "$dbLinkPath.locked"
+echo "locked on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)" > "$dbLinkPath.locked"
 
 requestCount=0
 dbFileDir="$dbDir/ByCount/${requestCount:?}/$hashSubdir"

@@ -16,7 +16,7 @@ whoami > "/tmp/rubberfsUser"
 ((EUID)) && exec sudo -- "$0" "$@"
 rubberfsUser="$(</tmp/rubberfsUser)"
 
-emdate > "/tmp/rubberfs.lock"
+echo "locked on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)" > "/tmp/rubberfs.lock"
 
 finish() {
     rm -f "/tmp/rubberfs.lock"

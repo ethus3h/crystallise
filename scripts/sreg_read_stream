@@ -391,10 +391,13 @@ mkdir "$streamId"
             if [[ "$decompressFailed" != "true" ]]; then
                 decompressFailed="true"
                 rm "$dbFilePath"
-                warn "Failed decompressing cache entry. Retrying retrieval..."
+                rm "$dbLinkPath"
+                warn "Failed decompressing cache entry (dbFilePath: $dbFilePath ; dbLinkPath: $dbLinkPath). Retrying retrieval..."
                 continue
             else
-                die "Failed decompressing cache entry twice. This probably indicates a bug in sreg."
+                rm "$dbFilePath"
+                rm "$dbLinkPath"
+                die "Failed decompressing cache entry (dbFilePath: $dbFilePath ; dbLinkPath: $dbLinkPath) twice. This probably indicates a bug in sreg."
             fi
         fi
         retrievedHash="$(sha512sum < "$decompressedCacheEntry" | awk '{print $1;}')"

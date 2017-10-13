@@ -60,7 +60,7 @@ if ! [[ -d "$destinationParameter" ]]; then
 fi
 echo "Counting items..."
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
-instanceId="srsync-$(date-uuid)"
+instanceId=".srsync-$(date-uuid)"
 mkdir -p "$crystalWorkdir/$instanceId"
 statusFile="/tmp/$instanceId.srsync.status"
 failCheckFile="/tmp/$instanceId.srsync.running"

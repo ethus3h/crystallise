@@ -2,7 +2,7 @@
 # shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
 
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd)."' ERR
 # set -x
 
 skipConfigFile="false"

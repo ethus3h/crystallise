@@ -3,6 +3,6 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO}."' ERR
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd)."' ERR
 
 # Create a local S3 host and run tests.

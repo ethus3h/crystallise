@@ -8,11 +8,21 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 action="$1"
 name="$2"
 
+lockedAction=""
+if [[ "$action" == "create" ]] || [[ "$action" == "mount" ]] || [[ "$action" == "soft-mount" ]] || [[ "$action" == "remount" ]] || [[ "$action" == "soft-remount" ]] || [[ "$action" == "rename" ]] || [[ "$action" == "unmount" ]] || [[ "$action" == "soft-unmount" ]] || [[ "$action" == "freeze" ]] || [[ "$action" == "delta" ]] || [[ "$action" == "thaw" ]] || [[ "$action" == "patch" ]] || [[ "$action" == "destroy" ]]; then
+    lockedAction="true"
+    if [[ "$(whoami)" == "root" ]]; then
+        [[ -e "/tmp/rubberfs.lock" ]] && die "RubberFS is already running! Only one RubberFS command can be running at a time."
+    fi
+fi
+
 whoami > "/tmp/rubberfsUser"
 ((EUID)) && exec sudo -- "$0" "$@"
 rubberfsUser="$(</tmp/rubberfsUser)"
 
-echo "locked on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)" > "/tmp/rubberfs.lock"
+if [[ "$lockedAction" == "true" ]]; then
+    echo "locked on ${BASH_SOURCE[0]} (with action $action) line ${LINENO} in $(pwd) at $(emdate)" > "/tmp/rubberfs.lock"
+fi
 
 finish() {
     rm -f "/tmp/rubberfs.lock"
@@ -27,10 +37,6 @@ if [[ ! -n "$name" ]]; then
 fi
 
 /sbin/modprobe zfs
-
-if [[ "$action" == "create" ]] || [[ "$action" == "mount" ]] || [[ "$action" == "soft-mount" ]] || [[ "$action" == "remount" ]] || [[ "$action" == "soft-remount" ]] || [[ "$action" == "rename" ]] || [[ "$action" == "unmount" ]] || [[ "$action" == "soft-unmount" ]] || [[ "$action" == "freeze" ]] || [[ "$action" == "delta" ]] || [[ "$action" == "thaw" ]] || [[ "$action" == "patch" ]] || [[ "$action" == "destroy" ]]; then
-    [[ -e "/tmp/rubberfs.lock" ]] && die "RubberFS is already running! Only one RubberFS command can be running at a time."
-fi
 
 case $action in
 create)
@@ -77,7 +83,7 @@ mount)
     set -e
     ln -s -T -f "/$name" "/Wreathe/.Resources/RubberFS/$name/mount"
     #rubberfs cd "$name"
-    printf "\033c"
+    printf '\033c'
     echo "RubberFS named $name has been mounted."
     ;;
 soft-mount)
@@ -88,7 +94,7 @@ soft-mount)
     zpool scrub "$name"
     ln -s -T -f "/$name" "/Wreathe/.Resources/RubberFS/$name/mount"
     #rubberfs cd "$name"
-    printf "\033c"
+    printf '\033c'
     echo "RubberFS named $name has been mounted."
     ;;
 remount)
@@ -112,7 +118,7 @@ rename)
     zpool import -d "/Wreathe/.Resources/RubberFS/$newname/dev/" "$name" "$newname"
     rubberfs unmount "$newname"
     rubberfs mount "$newname"
-    printf "\033c"
+    printf '\033c'
     echo "RubberFS named $name has been renamed to $newname."
     ;;
 cd)
@@ -126,7 +132,7 @@ unmount)
         rubberfs save "$name"
     fi
     zpool export "$name"
-    printf "\033c"
+    printf '\033c'
     echo "RubberFS named $name has been unmounted."
     ;;
 soft-unmount)
@@ -138,7 +144,7 @@ soft-unmount)
     set +e
     zpool export "$name"
     set -e
-    printf "\033c"
+    printf '\033c'
     echo "RubberFS named $name has been unmounted."
     ;;
 attach)
@@ -150,7 +156,7 @@ attach)
     ;;
 check)
     zpool scrub "$name"
-    printf "\033c"
+    printf '\033c'
     echo "A check for RubberFS named $name has been begun; use rubberfs status $name to see its progress."
     ;;
 save)
@@ -171,7 +177,7 @@ save)
     #set -e
     rubberfsSnapshot="rubberfs-$(date-uuid)"
     zfs snapshot "$name@$rubberfsSnapshot"
-    printf "\033c"
+    printf '\033c'
     echo "A saved snapshot $rubberfsSnapshot in RubberFS named $name has been created."
     ;;
 freeze)
@@ -217,7 +223,7 @@ freeze)
     sleep 60
     print "$snapshotsToDrop" | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3 | xargs -n 1 zfs destroy -vr
     rubberfs soft-remount "$name"
-    printf "\033c"
+    printf '\033c'
     echo "A frozen snapshot $freezeCrystal of RubberFS named $name has been created, and the obsolete local snapshots removed."
     #echo "To restore, first make a new zpool, then run zfs recv (new-zpool-name) -F < /foo/bar.zfsrepl"
     ;;
@@ -253,7 +259,7 @@ delta)
     if [[ "$keepSnapshots" == "true" ]]; then
         echo "(not removing snapshots)"
     else
-        printf "\033c"
+        printf '\033c'
         echo "### WARNING! ### WARNING! ### WARNING! ### WARNING! ### WARNING! ###"
         echo "The following snapshots will be DELETED. Continuing in 1 minute;"
         echo "press Ctrl+C to cancel."
@@ -263,7 +269,7 @@ delta)
         zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3 | xargs -n 1 zfs destroy -vr
     fi
     rubberfs soft-remount "$name"
-    printf "\033c"
+    printf '\033c'
     echo "A frozen incremental snapshot $freezeCrystal of RubberFS named $name has been created, and the obsolete local snapshots removed."
     ;;
 gc)
@@ -303,7 +309,7 @@ thaw)
         echo "Passing off remaining work to rubberfs patch..."
         rubberfs patch "${@:4}"
     fi
-    printf "\033c"
+    printf '\033c'
     echo "The requested filesystem $name has been retrieved."
     ;;
 patch)
@@ -331,7 +337,7 @@ patch)
         shift
     done
     zpool scrub "$name"
-    printf "\033c"
+    printf '\033c'
     echo "The requested filesystem update(s) has/have been applied to $name."
     ;;
 status)
@@ -387,7 +393,7 @@ destroy)
     zpool export "$name"
     rm -v "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
     crystallize "/$rubberfsDestroyId" "/Wreathe/.Resources/RubberFS/$name"
-    printf "\033c"
+    printf '\033c'
     echo "Done removing RubberFS named $name."
     ;;
 destroy-no-upload)
@@ -419,7 +425,7 @@ destroy-no-upload)
     zpool export "$name"
     rm -v "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
     crystallize "/$rubberfsDestroyId" "/Wreathe/.Resources/RubberFS/$name"
-    printf "\033c"
+    printf '\033c'
     echo "Done removing RubberFS named $name."
     ;;
 stash)
@@ -437,7 +443,7 @@ stash)
         echo "Done stashing $fileToStash."
         shift
     done
-    printf "\033c"
+    printf '\033c'
     echo "Done stashing all items."
     ;;
 historybak)

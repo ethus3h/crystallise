@@ -24,16 +24,18 @@ releaseLocks() {
 finish() {
     releaseLocks
     trap - ERR
-    # (
-    #     cd "/${crystalWorkdir:?}/" || die
-    #     if [[ -e "/$crystalWorkdir/${streamId:?}" ]]; then
-    #         rm -r "/$crystalWorkdir/${streamId:?}"
-    #     fi
-    # )
+    if [[ $1 == "ok" ]]; then
+        (
+            cd "/${crystalWorkdir:?}/" || die
+            if [[ -e "/$crystalWorkdir/${streamId:?}" ]]; then
+                rm -r "/$crystalWorkdir/${streamId:?}"
+            fi
+        )
+    fi
     trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate) while finishing $hashFull."' ERR
 }
-trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; finish; exit 1' ERR
-trap finish EXIT
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; finish "error"; exit 1' ERR
+trap 'finish "ok"' EXIT
 
 ignoreLock=""
 if [[ "$1" == "--ignore-lock" ]]; then
@@ -251,11 +253,11 @@ mkdir "$streamId"
             elif [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
                 # Hash pointer
                 if [[ "true" == "$disallowHashPointer" ]]; then
-                    finish
+                    finish "error"
                     die "The provided pointer $hashFull is a hash pointer, and --disallow-hash-pointer was specified!"
                 fi
                 if ! [[ -e "$dbDir/$hashA/$hashB/$hashC/$hashFull" ]]; then
-                    finish
+                    finish "error"
                     die "The provided pointer $hashFull is a hash pointer, but the corresponding hash is not registered in the database! ($dbDir/$hashA/$hashB/$hashC/$hashFull does not exist.)"
                 fi
                 readStreamArgs=()
@@ -427,4 +429,4 @@ mkdir "$streamId"
         fi
     fi
 )
-finish
+finish "ok"

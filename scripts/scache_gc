@@ -6,6 +6,12 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
+verbose="false"
+if [[ "$1" == "--verbose" ]]; then
+    verbose="true"
+    shift
+fi
+
 dbDir="$1"
 
 if [[ -e "$dbDir/.locked" ]]; then
@@ -87,6 +93,7 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
             mkdir -p "$hashDir"
             dbLinkPath="$hashDir/$hashFull"
             [[ -e "${largestLeastUsedItem:?}" ]] || die "scache_gc has selected an item that doesn't exist for removal. This indicates a bug in scache_gc."
+            [[ "$verbose" == "true" ]] && disk-size-in-bytes "${largestLeastUsedItem:?}"
             rm -rf "${largestLeastUsedItem:?}"
             rm -f "$dbLinkPath"
             echo "$leastUsedItemCount" > "$dbLinkPath"

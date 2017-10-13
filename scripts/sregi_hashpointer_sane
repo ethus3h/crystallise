@@ -4,7 +4,7 @@ source ember_bash_setup &> /dev/null
 #set -x
 
 ((EUID)) && exec sudo -- "$0" "$@"
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."' ERR
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
 success() {
     exit 0
@@ -83,7 +83,7 @@ then
             if ! sreg_read_stream --sreg-dir "$sregDir" --checksum "$knownChecksum" --skip-cache < "$inputFile" > /dev/null; then
                 trap - ERR
                 mv "$2" "$2.CORRUPTED-HASHPOINTER"
-                trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."' ERR
+                trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
                 die "Item $inputFile did not match the stored checksum!"
             fi
         else

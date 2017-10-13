@@ -30,7 +30,7 @@ git-escape-path() {
 
 # Function is defined with parentheses to make it run in a subshell to prevent the "die" affecting the calling script (the calling script should be responsible for trapping/handling nonzero exit codes itself)
 sregi_available_by_hash() (
-    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."' ERR
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
     local sregDir=""
     if [[ "$1" == "--sreg-dir" ]]; then
@@ -63,7 +63,7 @@ sregi_available_by_hash() (
 
 # Function is defined with parentheses to avoid dumping the enclosed function definition into the calling script
 sregi_hash_from_file() (
-    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."' ERR
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
     file="$1"
     sregi_hash_from_file_pipecheck() {

@@ -11,7 +11,7 @@ finish() {
 }
 trap finish EXIT
 
-trap 'finish; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."' ERR
+trap 'finish; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
 sregDir=""
 if [[ "$1" == "--sreg-dir" ]]; then

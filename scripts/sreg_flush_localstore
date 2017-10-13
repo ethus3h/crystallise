@@ -23,7 +23,7 @@ finish() {
         fi
     fi
 }
-trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."; rm -f "${dbDir:?}"/.LocalStore.lock; finish; exit 1' ERR
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; rm -f "${dbDir:?}"/.LocalStore.lock; finish; exit 1' ERR
 
 finishExit() {
     save_traps="$(trap)"

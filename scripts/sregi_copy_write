@@ -31,9 +31,9 @@ finish() {
         fi
     fi
     )
-    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate) while finishing sregi_copy_write."' ERR
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate) while finishing sregi_copy_write."' ERR
 }
-trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."; finish; exit 1' ERR
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; finish; exit 1' ERR
 trap finish EXIT
 
 sregDir=""
@@ -91,7 +91,7 @@ if [[ -f "$destinationName" ]]; then
     destinationChecksum=""
     hasEncounteredError="0"
     if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
-        trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."; hasEncounteredError="1"' ERR
+        trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; hasEncounteredError="1"' ERR
         assumePointerDbEntryFileExists="true"
         if [[ "$sregNoVerify" == "true" ]]; then
             destinationChecksum="$(tail -c +38 "$destinationName" | head -c 129)"
@@ -134,7 +134,7 @@ if [[ -f "$destinationName" ]]; then
         fi
     fi
 fi
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."' ERR
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 streamId="sreg-$(date-uuid)"
 crystalSubdir="$crystalWorkdir/$streamId"

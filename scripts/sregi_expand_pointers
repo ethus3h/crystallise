@@ -13,7 +13,7 @@ removeMyFailCheckFile() {
 }
 trap removeMyFailCheckFile EXIT
 
-trap 'removeMyFailCheckFile; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."' ERR
+trap 'removeMyFailCheckFile; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
 success() {
     exit 0

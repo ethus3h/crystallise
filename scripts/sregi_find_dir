@@ -3,7 +3,7 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."' ERR
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
 reportResult() {
     [[ -d "$1" ]] || die "Result from running sregi_find_dir in $(pwd) is not a directory!"

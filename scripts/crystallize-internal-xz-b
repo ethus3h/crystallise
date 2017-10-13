@@ -3,6 +3,6 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."' ERR
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
 checkedxz "${crystalWorkdir:?}/${CrystalID:?}".json -C sha256 -9 -e -v

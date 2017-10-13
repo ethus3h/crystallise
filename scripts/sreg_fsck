@@ -20,7 +20,7 @@ finish() {
         rm -r "/tmp/${fsckId:?}"
     fi
 }
-trap 'removeFailCheckFile; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} at $(emdate)."' ERR
+trap 'removeFailCheckFile; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 trap 'removeFailCheckFile; finish' EXIT
 
 skipCache=""

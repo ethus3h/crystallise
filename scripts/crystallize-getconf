@@ -9,7 +9,7 @@ if [[ "$1" == "ConfigLocation" ]]; then
 fi
 
 if [[ "$1" == "crystallizeVersion" ]]; then
-    crystallizeVersionA="$(sed '6q;d' "$(which crystallize)")"
+    crystallizeVersionA="$(sed '12q;d' "$(which crystallize)")"
     crystallizeVersionB="${crystallizeVersionA%\'*}"
     echo "${crystallizeVersionB##*\'}"
     exit

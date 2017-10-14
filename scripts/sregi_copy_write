@@ -97,12 +97,12 @@ if [[ -f "$destinationName" ]]; then
             destinationChecksum="$(tail -c +38 "$destinationName" | head -c 129)"
             pointerDbEntryFile="$sregDir/${destinationChecksum:0:1}/${destinationChecksum:1:1}/${destinationChecksum:2:1}/$destinationChecksum"
             if ! [[ -e "$pointerDbEntryFile" ]]; then
-                assumePointerDbEntryFileExists="false"
+                assumePointerDbEntryFileExists="pointerDbEntryFile missing!"
             else
                 innerPointerTypeSignature="$(head -c 36 "$pointerDbEntryFile")"
                 if [[ "$innerPointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
                     if ! [[ -e "$sregDir/LocalStore/${destinationChecksum:0:1}/${destinationChecksum:1:1}/${destinationChecksum:2:1}/$destinationChecksum" ]]; then
-                        assumePointerDbEntryFileExists="false"
+                        assumePointerDbEntryFileExists="LocalStore missing!"
                     fi
                 fi
             fi
@@ -115,7 +115,7 @@ if [[ -f "$destinationName" ]]; then
             echo "(Nothing done for $1.)"
             success
         else
-            warn "(Note: Destination pointer $destinationName did not match source checksum or could not be read: the source file has probably been changed. Removing and recreating.)"
+            warn "(Note: Destination pointer $destinationName did not match source checksum or could not be read (source checksum: $sourceChecksum / destinationChecksum: $destinationChecksum /  stream read status: $hasEncounteredError / quick check status: $hasEncounteredError / destination pointer contents: $(<"$destinationName")): the source file has probably been changed. Removing and recreating.)"
             # cat "$destinationName"
             rm "${destinationName:?}"
         fi

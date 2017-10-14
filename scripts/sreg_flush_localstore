@@ -63,7 +63,7 @@ mkdir -p "$crystalWorkdir/.$streamId/$streamId"
         pointerName="$(readlink -f "$streamId.bundle.pointer")"
         mkdir -p "$dbDir/Packs/"
         rsync -q --checksum "$pointerName" "$dbDir/Packs/"
-        find "$streamId.LocalStore" -type f -exec sregi_bundle_pointer "$failCheckFile" --sreg-dir "$sregDir" "$pointerName" {} "$crystalWorkdir" \; || die "Failed running sreg_flush_localstore!"
+        find "$streamId.LocalStore" -type f -exec sregi_bundle_pointer "$failCheckFile" --sreg-dir "$sregDir" "$pointerName" {} "$crystalWorkdir" \; || die "Failed running sregi_bundle_pointer!"
         
         if [[ -e "$failCheckFile" ]]; then
             die "An invocation of sregi_bundle_pointer (called from $0) failed with the message \"$(<"$failCheckFile")\"!"

@@ -70,7 +70,7 @@ mkdir -p "$crystalWorkdir/.$streamId/$streamId"
         fi
 
         rm -r "$dbDir"/LocalStore
-        rm "$dbDir"/.LocalStore.lock
+        rm "$dbDir"/.LocalStore.lock || warn "FIXME: Couldn't remove $dbDir/.LocalStore.lock. This is a weird bug, and should be looked into, but I'm just ignoring it for now..."
         mkdir -p "$dbDir"/LocalStore
     fi
     finish

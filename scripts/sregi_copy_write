@@ -97,12 +97,13 @@ if [[ -f "$destinationName" ]]; then
             destinationChecksum="$(tail -c +38 "$destinationName" | head -c 129)"
             pointerDbEntryFile="$sregDir/${destinationChecksum:0:1}/${destinationChecksum:1:1}/${destinationChecksum:2:1}/$destinationChecksum"
             if ! [[ -e "$pointerDbEntryFile" ]]; then
-                assumePointerDbEntryFileExists="pointerDbEntryFile missing!"
+                assumePointerDbEntryFileExists="pointerDbEntryFile $pointerDbEntryFile missing!"
             else
                 innerPointerTypeSignature="$(head -c 36 "$pointerDbEntryFile")"
                 if [[ "$innerPointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
-                    if ! [[ -e "$sregDir/LocalStore/${destinationChecksum:0:1}/${destinationChecksum:1:1}/${destinationChecksum:2:1}/$destinationChecksum" ]]; then
-                        assumePointerDbEntryFileExists="LocalStore missing!"
+                    localStoreToTest="$sregDir/LocalStore/${destinationChecksum:0:1}/${destinationChecksum:1:1}/${destinationChecksum:2:1}/$destinationChecksum"
+                    if ! [[ -e "$localStoreToTest" ]]; then
+                        assumePointerDbEntryFileExists="LocalStore $localStoreToTest missing!"
                     fi
                 fi
             fi

@@ -36,7 +36,11 @@ if [[ ! -n "$name" ]]; then
     name="library"
 fi
 
-/sbin/modprobe zfs
+if [[ "$lockedAction" == "true" ]]; then
+    /sbin/modprobe zfs
+else
+    /sbin/modprobe zfs || true
+fi
 
 case $action in
 create)

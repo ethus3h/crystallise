@@ -21,7 +21,9 @@ if [[ "$OSTYPE" = darwin* ]]; then
     fi
     find scripts -type f -exec perl -0777 -p -i -e 's/readlink /greadlink /g' {} \;
     find scripts -type f -exec perl -0777 -p -i -e 's/sort /gsort /g' {} \;
+    find scripts -type f -exec perl -0777 -p -i -e 's/ncdu /8731d097a5ed41149c7ffb67756c310e /g' {} \;
     find scripts -type f -exec perl -0777 -p -i -e 's/du /gdu /g' {} \;
+    find scripts -type f -exec perl -0777 -p -i -e 's/8731d097a5ed41149c7ffb67756c310e /ncdu /g' {} \;
     find scripts -type f -exec perl -0777 -p -i -e 's/sed /gsed /g' {} \;
     find scripts -type f -exec perl -0777 -p -i -e 's/find /gfind /g' {} \;
 fi

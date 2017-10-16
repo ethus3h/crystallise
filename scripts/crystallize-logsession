@@ -162,8 +162,6 @@ memlimit="$((memlimit - 1073741824))"
     echo "crystallizeVersion=\"${crystallizeVersion:?}\""
     echo "crystalCollection=\"$crystalCollection\""
 
-    CrystalFileName="$(basename "$crystalWorkdir/$CrystalID".coal5)"
-
     echo "Filesize: $crystalFilesSize"
     # For the progress bar, the estimate should be scaled up a bit to account
     # for the overhead of tarring the files (the amount varies depending
@@ -185,7 +183,7 @@ memlimit="$((memlimit - 1073741824))"
 # FIXME: May continue even when hashdeep is missing
 # pack files into stream | measure rate of stream's flow | compress the stream | encrypt the stream | send the input to a checksummer and to the output | send the stream to ia
 # For debugging the curl command, can add tee >(cat > "$crystalWorkdir/$CrystalID.local-coal5") to the pipeline to get a local copy of the coal5
-# For the streaming upload (broken atm), (also remove the TmpUploadFile and pipe directly) do: s3-streaming-upload s3.us.archive.org "$crystalCollection" "$CrystalID" "$CrystalFileName" "$crystalFilesSize" "$crystalTitle" "Crystal $CrystalID" "Uploaded using Crystallize $crystallizeVersion; 1EA21BD8-DB7E-11E5-9733-728C37852114; $crystalTitle; $CrystalID"
+# For the streaming upload (broken atm), (also remove the TmpUploadFile and pipe directly) do: s3-streaming-upload s3.us.archive.org "$crystalCollection" "$CrystalID" "$CrystalID.coal5" "$crystalFilesSize" "$crystalTitle" "Crystal $CrystalID" "Uploaded using Crystallize $crystallizeVersion; 1EA21BD8-DB7E-11E5-9733-728C37852114; $crystalTitle; $CrystalID"
 CrystalTmpUploadFile="$crystalWorkdir/$CrystalID.coal5"
 export CrystalTmpUploadFile
 # tar requires backslashes to be escaped in file names
@@ -217,12 +215,10 @@ script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/
 
 #sendRetries=0
 #until [[ $sendRetries -ge 100 ]]; do
-    #curl --location --raw -X PUT --data-binary @"$CrystalTmpUploadFile" --header "x-amz-auto-make-bucket:1" --header "x-archive-queue-derive:0" --header "x-archive-size-hint:$crystalFilesSize" --header "authorization: LOW $crystallizeAccessKey:$crystallizeSecretKey" --header "x-archive-meta-collection:$crystalCollection" --header "x-archive-meta-title:$CrystalID" --header "x-archive-meta-description:Crystal $CrystalID" --header "x-archive-meta-subject:Uploaded using Crystallize $crystallizeVersion; 1EA21BD8-DB7E-11E5-9733-728C37852114; $crystalTitle; $CrystalID" "http://s3.us.archive.org/$CrystalID/$CrystalFileName" && break
+    #curl --location --raw -X PUT --data-binary @"$CrystalTmpUploadFile" --header "x-amz-auto-make-bucket:1" --header "x-archive-queue-derive:0" --header "x-archive-size-hint:$crystalFilesSize" --header "authorization: LOW $crystallizeAccessKey:$crystallizeSecretKey" --header "x-archive-meta-collection:$crystalCollection" --header "x-archive-meta-title:$CrystalID" --header "x-archive-meta-description:Crystal $CrystalID" --header "x-archive-meta-subject:Uploaded using Crystallize $crystallizeVersion; 1EA21BD8-DB7E-11E5-9733-728C37852114; $crystalTitle; $CrystalID" "http://s3.us.archive.org/$CrystalID/$CrystalID.coal5" && break
 #    sendRetries=$((sendRetries+1))
 #    sleep 30
 #done
-
-printf "%s" "$CrystalFileName" > "$crystalWorkdir/$CrystalID.CrystalFileName"
 
 {
     echo "Retrieving remote index..."

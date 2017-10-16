@@ -37,14 +37,19 @@ if [[ "$1" == "--verify" ]]; then
 fi
 
 dropUnused="false"
-if [[ "$1" == "--drop-unused" ]]; then
-    dropUnused="true"
+pretendDropUnused="true"
+if [[ "$1" == "--drop-unused" ]] || [[ "$1" == "--drop" ]]; then
+    pretendDropUnused="true"
     shift
+    if [[ "$1" == "--delete" ]]; then
+        dropUnused="true"
+        shift
+    fi
 fi
 
 folderToCheck="$1"
 if [[ -z "$folderToCheck" ]]; then
-    folderToCheck="."
+    folderToCheck="${EmberLibrary:?}"
 fi
 
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check "$folderToCheck")"
@@ -65,7 +70,7 @@ if [[ -e "$failCheckFile" ]]; then
     die "An invocation of sregi_hashpointer_sane (called from $0) failed with the message \"$(<"$failCheckFile")\"!"
 fi
 
-if [[ "$dropUnused" == "false" ]]; then
+if [[ "$dropUnused" == "false" ]] && [[ "$pretendDropUnused" == "false" ]]; then
     finish
     exit 0
 fi
@@ -73,7 +78,8 @@ fi
 find "$sregDir" -not -path "$sregDir/Unused Pointers/*" -type f -printf '.' | wc -c > "$fsckStatusFile"
 echo "0" > "$fsckStatusFile.done"
 
-find "$sregDir" -not -path "$sregDir/Unused Pointers/*" -type f -exec sregi_drop_single_unused "$failCheckFile" --sreg-dir "$sregDir" {} "$fsckIdList" "$fsckStatusFile" \;
+[[ "$dropUnused" != "true" ]]
+    find "$sregDir" -not -path "$sregDir/Unused Pointers/*" -type f -exec sregi_drop_single_unused "$failCheckFile" --sreg-dir "$sregDir" --pretend {} "$fsckIdList" "$fsckStatusFile" \;
 
 if [[ -e "$failCheckFile" ]]; then
     die "An invocation of sregi_drop_single_unused (called from $0) failed with the message \"$(<"$failCheckFile")\"!"

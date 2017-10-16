@@ -9,10 +9,10 @@ fi
 source ember_bash_setup &> /dev/null
 #set -x
 
-export crystallizeVersion='3.1.2.5.10.60'
+export crystallizeVersion='3.1.2.5.10.61'
 
 # The update script shown here requires there to be only one ebuild of crystallize in the wreathe-overlay overlay.
-# ( sudo true; newVersion="3.1.2.5.10.60"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo layman -s wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
+# ( sudo true; newVersion="3.1.2.5.10.61"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo layman -s wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
 
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'cat $crystalWorkdir/$CrystalID || true; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
@@ -115,7 +115,7 @@ gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$Cr
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.deep.idx.xz"
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.cmd"
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.cwd"
-rm "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.local.idx.xz" "$crystalWorkdir/$CrystalID.deep.idx.xz" "$crystalWorkdir/$CrystalID.cmd" "$crystalWorkdir/$CrystalID.cwd" "$crystalWorkdir/$CrystalID.time-done.warc.gz.xz" "$crystalWorkdir/$CrystalID.time-env.warc.gz" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.xz"
+rm "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.local.idx.xz" "$crystalWorkdir/$CrystalID.deep.idx.xz" "$crystalWorkdir/$CrystalID.cmd" "$crystalWorkdir/$CrystalID.cwd" "$crystalWorkdir/$CrystalID.time-done.warc.gz.xz" "$crystalWorkdir/$CrystalID.time-env.warc.gz" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.xz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.passphrase"
 mv "$crystalWorkdir/$CrystalID.xz.gpg" "$crystalWorkdir/$CrystalID.coal5-log"
 mv "$crystalWorkdir/$CrystalID.time-done.warc.gz.xz.gpg" "$crystalWorkdir/$CrystalID.coal5-timestamp"
 mv "$crystalWorkdir/$CrystalID.local.idx.xz.gpg" "$crystalWorkdir/$CrystalID.coal5-idx-l"
@@ -222,9 +222,9 @@ rm -f "$crystalWorkdir/$CrystalID".json.xz
 wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" > "$crystalWorkdir/$CrystalID.json"
 checkedxz "$crystalWorkdir/$CrystalID".json -C sha256 -9 -e -v
 
-rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.json.xz" "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
+rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.json.xz" "$crystalWorkdir/$CrystalID.checksums" "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
 
-rm "$crystalWorkdir/$CrystalID.json.xz"
+rm "$crystalWorkdir/$CrystalID.json.xz" "$crystalWorkdir/$CrystalID.checksums"
 
 # Next section registers the newly created crystal in the CrystalCache so an immediate decrystallize doesn't need to re-download it.
 

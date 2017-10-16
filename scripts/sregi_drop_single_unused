@@ -28,12 +28,6 @@ if [[ "$1" == "--sreg-dir" ]]; then
     shift
 fi
 
-pretend=""
-if [[ "$1" == "--pretend" ]]; then
-    pretend="true"
-    shift
-fi
-
 fsckIdList="$2"
 pointerId="$(basename "$1")"
 fsckStatusFile="$3"

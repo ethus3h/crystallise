@@ -98,27 +98,24 @@ crystallize-logsession "$useCustomPassphrase" "$customPassphrase" "$crystalWorkd
 
 #echo "Working..."
 echo "$0 $*" > "$crystalWorkdir/$CrystalID.cmd"
-#echo "Crystal cwd is: $(pwd)"
 pwd > "$crystalWorkdir/$CrystalID.cwd"
 #Script should not exit if an operation fails. FIXME: why?
 if [[ $crystallizeLeavePointer == true ]]; then
     mkdir -p "$crystallizePointerDir"
     rsync -a --checksum "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.cmd" "$crystalWorkdir/$CrystalID.cwd" "$crystallizePointerDir"/
-    #echo "Added crystal metadata"
 fi
 trap - ERR
 checkedxz "$crystalWorkdir/$CrystalID" -C sha256 -v -9 -e
 checkedxz "$crystalWorkdir/$CrystalID.time-done.warc.gz" -C sha256 -v -9 -e
 checkedxz "$crystalWorkdir/$CrystalID.local.idx" -C sha256 -v -9 -e
 checkedxz "$crystalWorkdir/$CrystalID.deep.idx" -C sha256 -v -9 -e
-rsync -a --checksum "$crystalWorkdir/$CrystalID".xz "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/"$CrystalID".log.xz
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.xz"
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.time-done.warc.gz.xz"
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.local.idx.xz"
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.deep.idx.xz"
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.cmd"
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.cwd"
-rm "$crystalWorkdir/$CrystalID.tmp"
+rm "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.local.idx.xz" "$crystalWorkdir/$CrystalID.deep.idx.xz" "$crystalWorkdir/$CrystalID.cmd" "$crystalWorkdir/$CrystalID.cwd" "$crystalWorkdir/$CrystalID.time-done.warc.gz.xz" "$crystalWorkdir/$CrystalID.time-env.warc.gz" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.xz"
 mv "$crystalWorkdir/$CrystalID.xz.gpg" "$crystalWorkdir/$CrystalID.coal5-log"
 mv "$crystalWorkdir/$CrystalID.time-done.warc.gz.xz.gpg" "$crystalWorkdir/$CrystalID.coal5-timestamp"
 mv "$crystalWorkdir/$CrystalID.local.idx.xz.gpg" "$crystalWorkdir/$CrystalID.coal5-idx-l"

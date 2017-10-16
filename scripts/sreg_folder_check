@@ -45,6 +45,9 @@ if [[ "$1" == "--drop-unused" ]] || [[ "$1" == "--drop" ]]; then
         dropUnused="true"
         shift
     fi
+    actualDir="$(readlink -f "$(<"$sregDir/.sreg.root")")"
+    requestedDir="$(readlink -f "$1")"
+    assert equals "$actualDir" "$requestedDir" || die "The requested directory $requestedDir and the sreg root directory $actualDir do not look the same, and unused pointer removal was requested."
 fi
 
 folderToCheck="$1"

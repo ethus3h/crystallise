@@ -25,7 +25,7 @@ directory="."
 [[ -n "$1" ]] && directory="$1"
 
 mkdir -p "$directory/.sreg"
-echo "$directory" > "$directory/.sreg/.sreg.root"
+echo "$(readlink -f "$directory")" > "$directory/.sreg/.sreg.root"
 if [[ "$addToGitignore" == "true" ]]; then
     echo ".sreg/LocalStore" >> "$directory/.gitignore"
 fi

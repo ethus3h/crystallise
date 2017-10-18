@@ -211,7 +211,7 @@ trap - ERR
 [[ "$OSTYPE" != *inux* ]] && (( optb++ ))
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
-script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/null}
+script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/null} | tee "$logfile"
 
 #sendRetries=0
 #until [[ $sendRetries -ge 100 ]]; do

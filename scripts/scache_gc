@@ -85,18 +85,18 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
                 waitForLockTries=$((waitForLockTries+1))
                 sleep 5
             done
-
-            if [[ -e "$dbLinkPath.locked" ]]; then
-                finish; die "This stream cache entry has been in use for 30 minutes so giving up. If the process using it ($(<"$dbLinkPath.locked")) has crashed, remove $dbLinkPath.locked manually."
-            fi
-            mkdir -p "$hashDir"
-            dbLinkPath="$hashDir/$hashFull"
-            [[ -e "${largestLeastUsedItem:?}" ]] || die "scache_gc has selected an item that doesn't exist for removal. This indicates a bug in scache_gc."
-            [[ "$verbose" == "true" ]] && disk-size-in-bytes "${largestLeastUsedItem:?}"
-            rm -rf "${largestLeastUsedItem:?}"
-            rm -f "$dbLinkPath"
-            echo "$leastUsedItemCount" > "$dbLinkPath"
         fi
+
+        if [[ -e "$dbLinkPath.locked" ]]; then
+            finish; die "This stream cache entry has been in use for 30 minutes so giving up. If the process using it ($(<"$dbLinkPath.locked")) has crashed, remove $dbLinkPath.locked manually."
+        fi
+        mkdir -p "$hashDir"
+        dbLinkPath="$hashDir/$hashFull"
+        [[ -e "${largestLeastUsedItem:?}" ]] || die "scache_gc has selected an item that doesn't exist for removal. This indicates a bug in scache_gc."
+        [[ "$verbose" == "true" ]] && disk-size-in-bytes "${largestLeastUsedItem:?}"
+        rm -rf "${largestLeastUsedItem:?}"
+        rm -f "$dbLinkPath"
+        echo "$leastUsedItemCount" > "$dbLinkPath"
         find "$dbDir" -type d -not -name "ByCount" -empty -delete
     done
 fi

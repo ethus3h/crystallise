@@ -109,7 +109,7 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
     done
 
     echo "Building local index..."
-} &>> "$logfile"
+} 2>&1 | tee -a "$logfile"
 
 hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -e -o fbsd "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.local.idx" 2>&1 | tee -a "$logfile" &
 localIndexPid="$!"
@@ -124,7 +124,7 @@ hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -e -o fbsd -r "$crystalWorkdir/"
     echo "Counting size..."
 
     crystalFilesSize="$(disk-size-in-bytes "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID")"
-} &>> "$logfile"
+} 2>&1 | tee -a "$logfile"
 
 #get available memory
 memlimit=-1
@@ -176,51 +176,49 @@ memlimit="$((memlimit - 1073741824))"
     echo "Filesize estimate: $crystalFilesSize"
 
     echo "Sending..."
-} &>> "$logfile"
-# Get API keys for the non-streaming upload method
-# crystallizeAccessKey="$(grep access ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
-# crystallizeSecretKey="$(grep secret ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
-# FIXME: May continue even when hashdeep is missing
-# pack files into stream | measure rate of stream's flow | compress the stream | encrypt the stream | send the input to a checksummer and to the output | send the stream to ia
-# For debugging the curl command, can add tee >(cat > "$crystalWorkdir/$CrystalID.local-coal5") to the pipeline to get a local copy of the coal5
-# For the streaming upload (broken atm), (also remove the TmpUploadFile and pipe directly) do: s3-streaming-upload s3.us.archive.org "$crystalCollection" "$CrystalID" "$CrystalID.coal5" "$crystalFilesSize" "$crystalTitle" "Crystal $CrystalID" "Uploaded using Crystallize $crystallizeVersion; 1EA21BD8-DB7E-11E5-9733-728C37852114; $crystalTitle; $CrystalID"
-CrystalTmpUploadFile="$crystalWorkdir/$CrystalID.coal5"
-export CrystalTmpUploadFile
-# tar requires backslashes to be escaped in file names
-tarCrystallizePaths=("${CrystallizePaths[@]//\\/\\\\}")
-set +o pipefail
-tar -cv -P -S --format pax "$crystalWorkdir/""$CrystallizeFirstArg" "${tarCrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.time-env.warc.gz" | pv -tparbIfei 0.1 -s "$crystalFilesSize" | checkedxz --request-wait-after - -k -C sha256 -T 0 --lzma2=preset=1 --memlimit-compress="$memlimit" | gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - | tee >(hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -o fbcpsde > "$crystalWorkdir/$CrystalID.checksums") > "$CrystalTmpUploadFile" 2>&1 | tee -a "$logfile"
-exitCodes=("${PIPESTATUS[@]}") # this pattern for copying an array doesn't "work for associative arrays, or for arrays with non-contiguous indices". (quotation from https://stackoverflow.com/questions/19417015/how-to-copy-an-array-in-bash)
-exitcode="${exitCodes[0]}"
-#Ignore exit code 1 from tar on Linux, which indicates files changed while reading; see http://stackoverflow.com/questions/20318852/tar-file-changed-as-we-read-it
-if [[ "$exitcode" != "0" ]] && [[ $OSTYPE != *inux* ]]; then
-    exit "$exitcode"
-fi
-if [[ "$exitcode" != "1" ]] && [[ "$exitcode" != "0" ]]; then
-    exit "$exitcode"
-fi
-pipecheck "${exitCodes[@]:1}"
-set -o pipefail
+    # Get API keys for the non-streaming upload method
+    # crystallizeAccessKey="$(grep access ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
+    # crystallizeSecretKey="$(grep secret ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
+    # FIXME: May continue even when hashdeep is missing
+    # pack files into stream | measure rate of stream's flow | compress the stream | encrypt the stream | send the input to a checksummer and to the output | send the stream to ia
+    # For debugging the curl command, can add tee >(cat > "$crystalWorkdir/$CrystalID.local-coal5") to the pipeline to get a local copy of the coal5
+    # For the streaming upload (broken atm), (also remove the TmpUploadFile and pipe directly) do: s3-streaming-upload s3.us.archive.org "$crystalCollection" "$CrystalID" "$CrystalID.coal5" "$crystalFilesSize" "$crystalTitle" "Crystal $CrystalID" "Uploaded using Crystallize $crystallizeVersion; 1EA21BD8-DB7E-11E5-9733-728C37852114; $crystalTitle; $CrystalID"
+    CrystalTmpUploadFile="$crystalWorkdir/$CrystalID.coal5"
+    export CrystalTmpUploadFile
+    # tar requires backslashes to be escaped in file names
+    tarCrystallizePaths=("${CrystallizePaths[@]//\\/\\\\}")
+    set +o pipefail
+    tar -cv -P -S --format pax "$crystalWorkdir/""$CrystallizeFirstArg" "${tarCrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.time-env.warc.gz" | pv -tparbIfei 0.1 -s "$crystalFilesSize" | checkedxz --request-wait-after - -k -C sha256 -T 0 --lzma2=preset=1 --memlimit-compress="$memlimit" | gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - | tee >(hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -o fbcpsde > "$crystalWorkdir/$CrystalID.checksums") > "$CrystalTmpUploadFile" 2>&1 | tee -a "$logfile"
+    exitCodes=("${PIPESTATUS[@]}") # this pattern for copying an array doesn't "work for associative arrays, or for arrays with non-contiguous indices". (quotation from https://stackoverflow.com/questions/19417015/how-to-copy-an-array-in-bash)
+    exitcode="${exitCodes[0]}"
+    #Ignore exit code 1 from tar on Linux, which indicates files changed while reading; see http://stackoverflow.com/questions/20318852/tar-file-changed-as-we-read-it
+    if [[ "$exitcode" != "0" ]] && [[ $OSTYPE != *inux* ]]; then
+        exit "$exitcode"
+    fi
+    if [[ "$exitcode" != "1" ]] && [[ "$exitcode" != "0" ]]; then
+        exit "$exitcode"
+    fi
+    pipecheck "${exitCodes[@]:1}"
+    set -o pipefail
 
-unset opt
-unset optb
+    unset opt
+    unset optb
 
-trap - ERR
-#If GNU/Linux, set opt to 1 and unset optb; otherwise opposite
-[[ "$OSTYPE" = *inux* ]] && (( opt++ ))
-[[ "$OSTYPE" != *inux* ]] && (( optb++ ))
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+    trap - ERR
+    #If GNU/Linux, set opt to 1 and unset optb; otherwise opposite
+    [[ "$OSTYPE" = *inux* ]] && (( opt++ ))
+    [[ "$OSTYPE" != *inux* ]] && (( optb++ ))
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
-script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/null} | tee "$logfile"
+    script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/null}
 
-#sendRetries=0
-#until [[ $sendRetries -ge 100 ]]; do
-    #curl --location --raw -X PUT --data-binary @"$CrystalTmpUploadFile" --header "x-amz-auto-make-bucket:1" --header "x-archive-queue-derive:0" --header "x-archive-size-hint:$crystalFilesSize" --header "authorization: LOW $crystallizeAccessKey:$crystallizeSecretKey" --header "x-archive-meta-collection:$crystalCollection" --header "x-archive-meta-title:$CrystalID" --header "x-archive-meta-description:Crystal $CrystalID" --header "x-archive-meta-subject:Uploaded using Crystallize $crystallizeVersion; 1EA21BD8-DB7E-11E5-9733-728C37852114; $crystalTitle; $CrystalID" "http://s3.us.archive.org/$CrystalID/$CrystalID.coal5" && break
-#    sendRetries=$((sendRetries+1))
-#    sleep 30
-#done
+    #sendRetries=0
+    #until [[ $sendRetries -ge 100 ]]; do
+        #curl --location --raw -X PUT --data-binary @"$CrystalTmpUploadFile" --header "x-amz-auto-make-bucket:1" --header "x-archive-queue-derive:0" --header "x-archive-size-hint:$crystalFilesSize" --header "authorization: LOW $crystallizeAccessKey:$crystallizeSecretKey" --header "x-archive-meta-collection:$crystalCollection" --header "x-archive-meta-title:$CrystalID" --header "x-archive-meta-description:Crystal $CrystalID" --header "x-archive-meta-subject:Uploaded using Crystallize $crystallizeVersion; 1EA21BD8-DB7E-11E5-9733-728C37852114; $crystalTitle; $CrystalID" "http://s3.us.archive.org/$CrystalID/$CrystalID.coal5" && break
+    #    sendRetries=$((sendRetries+1))
+    #    sleep 30
+    #done
 
-{
     echo "Retrieving remote index..."
 
     wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" | tee "$crystalWorkdir/$CrystalID.json"
@@ -267,4 +265,4 @@ script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/
     echo "Finishing $CrystalID..."
 
     echo "Please wait..."
-} &>> "$logfile"
+} 2>&1 | tee -a "$logfile"

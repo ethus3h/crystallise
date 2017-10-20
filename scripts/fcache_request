@@ -88,9 +88,10 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvai
         }
         getChecksumRetries=0
         retryDelayTime=5
-        until [[ "$getChecksumRetries" -ge 100 ]]; do
+        until [[ "$getChecksumRetries" -ge 5 ]]; do
             CrystalID="${requestUrl%.coal5}"
-            CrystalID="${requestUrl#https:\/\/archive.org\/download\/}"
+            CrystalID="${CrystalID#https:\/\/archive.org\/download\/}"
+            CrystalID="${CrystalID%%\/*}"
             if checksumLine="$(wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F -A 6 "<file name=\"$CrystalID.coal5\" source=\"original\">" | grep "<sha1>" | head -n 1)"; then
                 postUploadCheckFailHandler
                 break

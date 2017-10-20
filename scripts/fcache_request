@@ -112,8 +112,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvai
     fi
     ln -s "$dbFilePath" "$dbLinkPath"
 
-    # Done editing the cache entry, so release the lock
-    rm "$dbLinkPath.locked"
+    # Don't release the lock here, so the cache entry we just downloaded doesn't get dropped by scache_gc even if it normally would be
 fi
 dbFilePath="$(readlink -e "$dbLinkPath")"
 # Check that the data were retrieved successfully
@@ -157,3 +156,4 @@ ln -s "$dbFilePath" "$dbLinkPath"
 cat "$dbLinkPath"
 
 scache_gc "$dbDir" "f"
+finish

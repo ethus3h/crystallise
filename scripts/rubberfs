@@ -87,6 +87,10 @@ mount)
     set -e
     ln -s -T -f "/$name" "/Wreathe/.Resources/RubberFS/$name/mount"
     #rubberfs cd "$name"
+    workDir="$(crystallize-getconf WorkDirectory)"
+    [[ -d "$workDir/.CrystalCache" ]] && find "$workDir/.CrystalCache/" -name "*.locked" -delete
+    [[ -d "$workDir/.StreamCache" ]] && find "$workDir/.StreamCache/" -name "*.locked" -delete
+    [[ -d "$workDir/.LocalStoreCache" ]] && find "$workDir/.LocalStoreCache/" -name "*.locked" -delete
     printf '\033c'
     echo "RubberFS named $name has been mounted."
     ;;

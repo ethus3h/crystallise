@@ -156,5 +156,5 @@ ln -s "$dbFilePath" "$dbLinkPath"
 # Return the data to the caller
 cat "$dbLinkPath"
 
-scache_gc "$dbDir" "f"
 finish
+scache_gc "$dbDir" "f"

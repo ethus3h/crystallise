@@ -21,22 +21,10 @@ dateNowLiquify="$(date +%Y-%m-%d-%H-%M-%S-%N)"
 
 mkdir "$CrystalAddress-dequicklified-$dateNowLiquify"
 cd "$CrystalAddress-dequicklified-$dateNowLiquify" || die "Failed to cd!"
-postUploadCheckSuccess=""
-postUploadCheckFailHandler() {
-    if [[ -z "$postUploadCheckSuccess" ]] || [[ "$postUploadCheckSuccess" == "1" ]]; then
-        postUploadCheckSuccess=1
-    else
-        postUploadCheckSuccess=0
-    fi
-}
-getChecksumRetries=0
+fetchRetries=0
 retryDelayTime=5
-until [[ "$getChecksumRetries" -ge 5 ]]; do
-    CrystalID="${requestUrl%.coal5}"
-    CrystalID="${CrystalID#https:\/\/archive.org\/download\/}"
-    CrystalID="${CrystalID%%\/*}"
-    if checksumLine="$(ia downloadAsStream https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F -A 6 "<file name=\"$CrystalID.coal5\" source=\"original\">" | grep "<sha1>" | head -n 1)"; then
-        postUploadCheckFailHandler
+until [[ "$fetchRetries" -ge 5 ]]; do
+    if ia download "$CrystalAddress"; then
         break
     fi
     getChecksumRetries=$((getChecksumRetries+1))

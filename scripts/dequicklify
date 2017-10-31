@@ -11,10 +11,6 @@ shopt -s extglob
 CrystalAddress="${1#https://archive.org/@(details|download)/}"
 #Remove trailing path(s) from identifier
 CrystalAddress="${CrystalAddress%%/*}"
-if [[ "$2" != "--no-trim-extensions" ]]; then
-    #Remove filename extensions
-    CrystalAddress="${CrystalAddress%\.coal5*}"
-fi
 
 if [[ "$CrystalAddress" == "" ]]; then
     echo "Please specify an item to retrieve."
@@ -25,4 +21,10 @@ dateNowLiquify="$(date +%Y-%m-%d-%H-%M-%S-%N)"
 
 mkdir "$CrystalAddress-dequicklified-$dateNowLiquify"
 cd "$CrystalAddress-dequicklified-$dateNowLiquify" || die "Failed to cd!"
-wget --mirror --no-parent -e robots=off "https://archive.org/download/$CrystalAddress/";
+succeeded="false"
+until [[ "$succeeded" == "true" ]]; do
+tempLocation="$(date-uuid)"
+mv "$CrystalAddress" "$tempLocation"
+shopt -s dotglob
+mv "$tempLocation"/* .
+wget --mirror --no-parent -e robots=off "https://archive.org/download/$CrystalAddress/"

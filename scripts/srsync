@@ -68,9 +68,9 @@ failCheckFile="/tmp/$instanceId.srsync.running"
 find "${pathsToCopy[@]}" -type f -printf '.' | wc -c > "$statusFile"
 destinationReplaced="${destinationParameter/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"
 destinationReplaced="${destinationReplaced//\/.git\//\/.git.686fc528-0e8e-4724-91bb-c103cdcdd592\/}"
-destinationSuffix=""
 
 for path in "${pathsToCopy[@]}"; do
+    destinationSuffix=""
     sourceReplaced="${path/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"
     sourceReplaced="${path/%.git\//.git.686fc528-0e8e-4724-91bb-c103cdcdd592\/}"
     if [[ -d "$path" ]]; then

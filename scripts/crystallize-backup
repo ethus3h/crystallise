@@ -40,15 +40,15 @@ mkdir "$CrystalID"
     cd "$CrystalID" || die "Could not cd to newly created folder! This should never happen."
     [[ "$useCustomPassphrase" != "true" ]] && customPassphrase="$(crystallize-getconf Passphrase)"
     printf "%s" "$customPassphrase" > "$CrystalID.passphrase"
-    wget "https://archive.org/download/$CrystalID/$CrystalID.coal5"
-    wget "https://archive.org/download/$CrystalID/$CrystalID.coal5-cmd"
-    wget "https://archive.org/download/$CrystalID/$CrystalID.coal5-cwd"
-    wget "https://archive.org/download/$CrystalID/$CrystalID.coal5-idx-d"
-    wget "https://archive.org/download/$CrystalID/$CrystalID.coal5-idx-l"
-    wget "https://archive.org/download/$CrystalID/$CrystalID.coal5-log"
-    wget "https://archive.org/download/$CrystalID/$CrystalID.coal5-timestamp"
-    wget "https://archive.org/download/$CrystalID/$CrystalID"_files.xml
-    wget "https://archive.org/download/$CrystalID/$CrystalID"_meta.sqlite
-    wget "https://archive.org/download/$CrystalID/$CrystalID"_meta.xml
+    ia downloadHere "https://archive.org/download/$CrystalID/$CrystalID.coal5"
+    ia downloadHere "https://archive.org/download/$CrystalID/$CrystalID.coal5-cmd"
+    ia downloadHere "https://archive.org/download/$CrystalID/$CrystalID.coal5-cwd"
+    ia downloadHere "https://archive.org/download/$CrystalID/$CrystalID.coal5-idx-d"
+    ia downloadHere "https://archive.org/download/$CrystalID/$CrystalID.coal5-idx-l"
+    ia downloadHere "https://archive.org/download/$CrystalID/$CrystalID.coal5-log"
+    ia downloadHere "https://archive.org/download/$CrystalID/$CrystalID.coal5-timestamp"
+    ia downloadHere "https://archive.org/download/$CrystalID/$CrystalID"_files.xml
+    ia downloadHere "https://archive.org/download/$CrystalID/$CrystalID"_meta.sqlite
+    ia downloadHere "https://archive.org/download/$CrystalID/$CrystalID"_meta.xml
 )
 echo "Done! The crystal has been backed up to $CrystalID."

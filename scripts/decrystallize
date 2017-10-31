@@ -60,7 +60,7 @@ fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$C
 
 destination="$tempId in "
 if [[ "$decrystallizeHere" == "true" ]]; then
-    wget -qO - "https://archive.org/download/$CrystalID/$CrystalID.coal5-cwd" | gpg --yes --batch --passphrase-file "$tempId.tmp" - > "$tempId.cwd"
+    ia downloadAsStream "https://archive.org/download/$CrystalID/$CrystalID.coal5-cwd" | gpg --yes --batch --passphrase-file "$tempId.tmp" - > "$tempId.cwd"
     crystalPath="$(< "$tempId.cwd")"
 
     destination=""

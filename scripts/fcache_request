@@ -75,7 +75,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvai
         warn "$dbFilePath already seems to exist. Huh? Removing it."
         rm "$dbFilePath"
     fi
-    wget -t 150 -qO "$dbFilePath" "$requestUrl"
+    ia downloadAsStream "$requestUrl" > "$dbFilePath"
     regex='^https:\/\/archive.org\/download\/.+\/.+\.coal5$'
     if [[ "$requestUrl" =~ $regex ]]; then
         postUploadCheckSuccess=""
@@ -92,7 +92,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvai
             CrystalID="${requestUrl%.coal5}"
             CrystalID="${CrystalID#https:\/\/archive.org\/download\/}"
             CrystalID="${CrystalID%%\/*}"
-            if checksumLine="$(wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F -A 6 "<file name=\"$CrystalID.coal5\" source=\"original\">" | grep "<sha1>" | head -n 1)"; then
+            if checksumLine="$(ia downloadAsStream https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F -A 6 "<file name=\"$CrystalID.coal5\" source=\"original\">" | grep "<sha1>" | head -n 1)"; then
                 postUploadCheckFailHandler
                 break
             fi

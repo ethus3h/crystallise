@@ -150,7 +150,7 @@ postUploadCheckFailHandler() {
 getChecksumRetries=0
 retryDelayTime=5
 until [[ "$getChecksumRetries" -ge 1000 ]]; do
-    if wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F "<file name=\"$CrystalID.coal5\" source=\"original\">" > /dev/null; then
+    if ia downloadAsStream https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F "<file name=\"$CrystalID.coal5\" source=\"original\">" > /dev/null; then
         postUploadCheckFailHandler
         break
     fi
@@ -169,7 +169,7 @@ retryOuterDelayTime=5
 retryDelayTime=5
 until [[ "$getChecksumOuterRetries" -ge 15 ]]; do
     until [[ "$getChecksumRetries" -ge 100 ]]; do
-        if checksumLine="$(wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F -A 6 "<file name=\"$CrystalID.coal5\" source=\"original\">" | grep "<sha1>" | head -n 1)"; then
+        if checksumLine="$(ia downloadAsStream https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F -A 6 "<file name=\"$CrystalID.coal5\" source=\"original\">" | grep "<sha1>" | head -n 1)"; then
             postUploadCheckFailHandler
             break
         fi
@@ -206,7 +206,7 @@ fi
 getChecksumRetries=0
 retryDelayTime=5
 until [[ $getChecksumRetries -ge 1000 ]]; do
-    if wget -qO - https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F "<file name=\"$CrystalID.coal5-timestamp\" source=\"original\">" > /dev/null; then
+    if ia downloadAsStream https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F "<file name=\"$CrystalID.coal5-timestamp\" source=\"original\">" > /dev/null; then
         postUploadCheckFailHandler
         break
     fi

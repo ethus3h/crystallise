@@ -25,6 +25,7 @@ succeeded="false"
 until [[ "$succeeded" == "true" ]]; do
 tempLocation="$(date-uuid)"
 mv "$CrystalAddress" "$tempLocation"
+mkdir -p "archive.org/download/$CrystalAddress/"
 shopt -s dotglob
-mv "$tempLocation"/* .
+mv "$tempLocation"/* "archive.org/download/$CrystalAddress/"
 wget --mirror --no-parent -e robots=off "https://archive.org/download/$CrystalAddress/"

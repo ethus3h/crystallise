@@ -21,8 +21,18 @@ dateNowLiquify="$(date +%Y-%m-%d-%H-%M-%S-%N)"
 
 mkdir "$CrystalAddress-dequicklified-$dateNowLiquify"
 cd "$CrystalAddress-dequicklified-$dateNowLiquify" || die "Failed to cd!"
-succeeded="false"
-until [[ "$succeeded" == "true" ]]; do
+fetchRetries=0
+retryDelayTime=5
+until [[ "$fetchRetries" -ge 5 ]]; do
+    if ia download "$CrystalAddress"; then
+        break
+    fi
+    getChecksumRetries=$((getChecksumRetries+1))
+    sleep "$retryDelayTime"
+    if [[ "$retryDelayTime" -lt 30 ]]; then
+        retryDelayTime=$((retryDelayTime + 5))
+    fi
+done
 tempLocation="$(date-uuid)"
 mv "$CrystalAddress" "$tempLocation"
 mkdir -p "archive.org/download/$CrystalAddress/"

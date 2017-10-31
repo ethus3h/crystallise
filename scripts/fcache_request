@@ -75,9 +75,9 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvai
         warn "$dbFilePath already seems to exist. Huh? Removing it."
         rm "$dbFilePath"
     fi
-    ia downloadAsStream "$requestUrl" > "$dbFilePath"
     regex='^https:\/\/archive.org\/download\/.+\/.+\.coal5$'
     if [[ "$requestUrl" =~ $regex ]]; then
+        ia downloadAsStream "$requestUrl" > "$dbFilePath"
         postUploadCheckSuccess=""
         postUploadCheckFailHandler() {
             if [[ -z "$postUploadCheckSuccess" ]] || [[ "$postUploadCheckSuccess" == "1" ]]; then
@@ -105,6 +105,8 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvai
         checksumLine="${checksumLine/    <sha1>/}"
         checksumLine="${checksumLine/<\/sha1>/}"
         [[ "$(sha1sum "$dbFilePath" | awk '{print $1;}')" == "$checksumLine" ]] || die "Checksum known by Internet Archive did not match the retrieved file! Was it corrupted in transit?"
+    else
+        wget -t 150 -qO "$dbFilePath" "$requestUrl"
     fi
     sha512sum < "$dbFilePath" | awk '{print $1;}' > "$checksumName"
     printf "%s" "$requestUrl" > "$dbLinkPath.url"

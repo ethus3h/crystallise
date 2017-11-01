@@ -87,10 +87,11 @@ if [[ "$exitStatus" == "0" ]]; then
     ) || die
     rm -r "${tempId:?}.tempDir"
 else
-    if [[ "$requireChecksum" == "true" ]]; then
+    if [[ version_gt "$crystalCrystallizeVersion" "3.1.2.5.13" ]]; then
+        # This crystal was made by a version that supports checksumming
         die "Error retrieving csum file for this crystal, and checksumming was specified as being required!"
     fi
-    warn "(Couldn't retrieve csum file for this crystal; contents will not be checked for checksum errors.)"
+    warn "(Couldn't retrieve csum file for this crystal as the version of crystallize it was created using is too old; contents will not be checked for checksum errors.)"
 fi
 rm -f "${tempId:?}.csum"
 

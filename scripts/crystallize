@@ -288,7 +288,7 @@ echo "Please wait, testing finished item..."
 testDecrystDir="$(tempDir)"
 (
     cd "$testDecrystDir" || die "cd failed"
-    decrystallize --passphrase "$(<"$crystalWorkdir/$CrystalID".tmp)" --checksum "$CrystalID" || die "Could not decrystallize the finished crystal!"
+    decrystallize --passphrase "$(<"$crystalWorkdir/$CrystalID".tmp)" "$CrystalID" || die "Could not decrystallize the finished crystal!"
     rm "$crystalWorkdir/$CrystalID.tmp"
 )
 rm -r "${testDecrystDir:?}"

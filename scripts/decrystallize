@@ -17,12 +17,6 @@ if [[ "$1" == "--passphrase" ]]; then
     shift
 fi
 
-requireChecksum="false"
-if [[ "$2" == "--checksum" ]]; then
-    requireChecksum="true"
-    shift
-fi
-
 decrystallizeHere="false"
 if [[ "$2" == "--here" ]]; then
     decrystallizeHere="true"
@@ -82,7 +76,7 @@ if [[ "$exitStatus" == "0" ]]; then
     ) || die
 
     (
-        cd "$tempID.tempDir"
+        cd "$tempId.tempDir"
         find . -name "$CrystalID"'*' -exec bash -c 'dir="$(dirname "$0")"; mv "$0" "../'"$tempId"'/$dir/"' {} \; || die
     ) || die
     rm -r "${tempId:?}.tempDir"

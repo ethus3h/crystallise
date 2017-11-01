@@ -110,5 +110,7 @@ if [[ "$decrystallizeHere" == "true" ]]; then
     )
 fi
 
+rm "${tempId:?}.tmp"
+
 printf "\\033c"
 echo "Done! The crystal has been extracted to ""$destination""the current directory, $(pwd)."

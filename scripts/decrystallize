@@ -60,7 +60,7 @@ fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$C
 
 shopt -qo pipefail
 
-if (fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-csum" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - > "$tempId.csum"); then
+if (shopt -s pipefail; fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-csum" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - > "$tempId.csum"); then
     mkdir "$tempId.tempDir"
     (
         cd "$tempId"

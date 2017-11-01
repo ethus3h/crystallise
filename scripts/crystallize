@@ -10,10 +10,10 @@ fi
 source ember_bash_setup &> /dev/null
 #set -x
 
-export crystallizeVersion='3.1.2.5.13.10'
+export crystallizeVersion='3.1.2.5.13.11'
 
 # The update script shown here requires there to be only one ebuild of crystallize in the wreathe-overlay overlay.
-# ( sudo true; newVersion="3.1.2.5.13.10"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo layman -s wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
+# ( sudo true; newVersion="3.1.2.5.13.11"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo layman -s wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
 
 ((EUID)) && exec sudo -- "$0" "$@"
 
@@ -92,7 +92,7 @@ echo "The crystal will have the following address when it is ready: $CrystalID"$
 
 # -t 1 checks if file descriptor 1 "is opened on a terminal" (—GNU coreutils 8.25 manpage for test)
 if [[ -t 1 ]]; then
-    warn-timeout "Be careful that you don't crystallize your current working directory, the crystallize temp dir, or the crystallize scripts themselves. Either could cause problems. (It's more likely to be OK if you use --keep, but still not guaranteed.) Successful completion will be indicated by Crystallize stating \"Done! The new crystal's address is:\" with an address, and by an exit status of 0." &
+    warn-timeout "Be careful that you don't crystallize your current working directory, the crystallize temp dir, or the crystallize scripts themselves. Either could cause problems. (It's more likely to be OK if you use --keep, but still not guaranteed.) Successful completion will be indicated by crystallize printing a message beginning with \"Done! The new crystal's address is:\", and by an exit status of 0." &
 fi
 
 dig +short myip.opendns.com @resolver1.opendns.com > /dev/null || die "Could not connect to OpenDNS. Is UDP traffic being blocked by a firewall?"

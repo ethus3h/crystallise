@@ -33,6 +33,8 @@ if [[ "$CrystalAddress" == "" ]]; then
     exit 1
 fi
 
+warn "Successful completion will be indicated by decrystallize printing a message beginning with \"Done! The crystal has been extracted\", and by an exit status of 0."
+
 CrystalID="$CrystalAddress"
 
 echo "Crystal address: $CrystalID"

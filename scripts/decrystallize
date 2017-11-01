@@ -43,7 +43,7 @@ mkdir "$tempId"
 
 crystalXzFileSize=1
 if [[ -t 1 ]]; then
-    crystalXzFileSize="$(curl -sIL "https://archive.org/download/$CrystalID/$CrystalID.coal5" | grep Content-Length | awk '{print $2}')"
+    crystalXzFileSize="$(curl -sIL "https://archive.org/download/$CrystalID/$CrystalID.coal5" | grep Content-Length | awk '{print $2}')" || warn "Couldn't get compressed file size"
     crystalXzFileSize="${crystalXzFileSize::-1}"
 fi
 
@@ -60,7 +60,7 @@ fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$C
 
 shopt -qo pipefail
 
-if (set -s pipefail; fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-csum" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - > "$tempId.csum"); then
+if (set -o pipefail; fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-csum" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - > "$tempId.csum"); then
     mkdir "$tempId.tempDir"
     (
         cd "$tempId"

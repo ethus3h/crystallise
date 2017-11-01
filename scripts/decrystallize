@@ -76,6 +76,7 @@ if fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download
     ) || die
     rm -r "${tempId:?}.tempDir"
 fi
+rm -f "${tempId:?}.csum"
 
 destination="$tempId in "
 if [[ "$decrystallizeHere" == "true" ]]; then

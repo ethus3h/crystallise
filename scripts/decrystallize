@@ -58,24 +58,24 @@ fi
 
 fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - | tar -xvf - -C "$tempId/"
 
-fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-csum" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - > "$tempId.csum"
+if fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-csum" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - > "$tempId.csum"; then
+    mkdir "$tempId.tempDir"
+    (
+        cd "$tempId"
+        find . -name "$CrystalID"'*' -exec bash -c 'dir="$(dirname "$0")"; mkdir -p "'"$tempId"'.tempDir/$dir/"; mv "$0" "../'"$tempId"'.tempDir/$dir/"' {} \; || die
+    ) || die
 
-mkdir "$tempId.tempDir"
-(
-    cd "$tempId"
-    find . -name "$CrystalID"'*' -exec bash -c 'dir="$(dirname "$0")"; mkdir -p "'"$tempId"'.tempDir/$dir/"; mv "$0" "../'"$tempId"'.tempDir/$dir/"' {} \; || die
-) || die
+    (
+        shopt -s dotglob
+        csum --check "$tempId"/* "$tempId.csum" || die
+    ) || die
 
-(
-    shopt -s dotglob
-    csum --check "$tempId"/* "$tempId.csum" || die
-) || die
-
-(
-    cd "$tempID.tempDir"
-    find . -name "$CrystalID"'*' -exec bash -c 'dir="$(dirname "$0")"; mv "$0" "../'"$tempId"'/$dir/"' {} \; || die
-) || die
-rm -r "${tempId:?}.tempDir"
+    (
+        cd "$tempID.tempDir"
+        find . -name "$CrystalID"'*' -exec bash -c 'dir="$(dirname "$0")"; mv "$0" "../'"$tempId"'/$dir/"' {} \; || die
+    ) || die
+    rm -r "${tempId:?}.tempDir"
+fi
 
 destination="$tempId in "
 if [[ "$decrystallizeHere" == "true" ]]; then

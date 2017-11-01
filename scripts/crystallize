@@ -114,22 +114,25 @@ checkedxz "$crystalWorkdir/$CrystalID" -C sha256 -v -9 -e
 checkedxz "$crystalWorkdir/$CrystalID.time-done.warc.gz" -C sha256 -v -9 -e
 checkedxz "$crystalWorkdir/$CrystalID.local.idx" -C sha256 -v -9 -e
 checkedxz "$crystalWorkdir/$CrystalID.deep.idx" -C sha256 -v -9 -e
+checkedxz "$crystalWorkdir/$CrystalID.csum" -C sha256 -v -9 -e
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.xz"
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.time-done.warc.gz.xz"
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.local.idx.xz"
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.deep.idx.xz"
+gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.csum.xz"
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.cmd"
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.cwd"
-rm "$crystalWorkdir/$CrystalID.local.idx.xz" "$crystalWorkdir/$CrystalID.deep.idx.xz" "$crystalWorkdir/$CrystalID.cmd" "$crystalWorkdir/$CrystalID.cwd" "$crystalWorkdir/$CrystalID.time-done.warc.gz.xz" "$crystalWorkdir/$CrystalID.time-env.warc.gz" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.xz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.passphrase"
+rm "$crystalWorkdir/$CrystalID.csum.xz" "$crystalWorkdir/$CrystalID.local.idx.xz" "$crystalWorkdir/$CrystalID.deep.idx.xz" "$crystalWorkdir/$CrystalID.cmd" "$crystalWorkdir/$CrystalID.cwd" "$crystalWorkdir/$CrystalID.time-done.warc.gz.xz" "$crystalWorkdir/$CrystalID.time-env.warc.gz" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.xz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.passphrase"
 mv "$crystalWorkdir/$CrystalID.xz.gpg" "$crystalWorkdir/$CrystalID.coal5-log"
 mv "$crystalWorkdir/$CrystalID.time-done.warc.gz.xz.gpg" "$crystalWorkdir/$CrystalID.coal5-timestamp"
+mv "$crystalWorkdir/$CrystalID.csum.xz.gpg" "$crystalWorkdir/$CrystalID.coal5-csum"
 mv "$crystalWorkdir/$CrystalID.local.idx.xz.gpg" "$crystalWorkdir/$CrystalID.coal5-idx-l"
 mv "$crystalWorkdir/$CrystalID.deep.idx.xz.gpg" "$crystalWorkdir/$CrystalID.coal5-idx-d"
 mv "$crystalWorkdir/$CrystalID.cmd.gpg" "$crystalWorkdir/$CrystalID.coal5-cmd"
 mv "$crystalWorkdir/$CrystalID.cwd.gpg" "$crystalWorkdir/$CrystalID.coal5-cwd"
 
 trap 'cat "$crystalWorkdir/$CrystalID" || true; finishclean; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
-ia upload "$CrystalID" --retries=100 --verify --delete "$crystalWorkdir/$CrystalID.coal5-log" "$crystalWorkdir/$CrystalID.coal5-idx-l" "$crystalWorkdir/$CrystalID.coal5-idx-d" "$crystalWorkdir/$CrystalID.coal5-cmd" "$crystalWorkdir/$CrystalID.coal5-cwd"
+ia upload "$CrystalID" --retries=100 --verify --delete "$crystalWorkdir/$CrystalID.coal5-log" "$crystalWorkdir/$CrystalID.coal5-idx-l" "$crystalWorkdir/$CrystalID.coal5-idx-d" "$crystalWorkdir/$CrystalID.coal5-csum" "$crystalWorkdir/$CrystalID.coal5-cmd" "$crystalWorkdir/$CrystalID.coal5-cwd"
 ia upload "$CrystalID" --retries=100 --verify "$crystalWorkdir/$CrystalID.coal5-timestamp"
 
 echo "Please wait..."

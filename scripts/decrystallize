@@ -58,9 +58,16 @@ fi
 
 fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - | tar -xvf - -C "$tempId/"
 
+fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-csum" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - > "$tempId.csum"
+
+(
+    shopt -s dotglob
+    csum --check "$tempId"/* "$tempId.csum" || die
+) || die
+
 destination="$tempId in "
 if [[ "$decrystallizeHere" == "true" ]]; then
-    ia downloadAsStream "https://archive.org/download/$CrystalID/$CrystalID.coal5-cwd" | gpg --yes --batch --passphrase-file "$tempId.tmp" - > "$tempId.cwd"
+    fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-cwd" | gpg --yes --batch --passphrase-file "$tempId.tmp" - > "$tempId.cwd"
     crystalPath="$(< "$tempId.cwd")"
 
     destination=""

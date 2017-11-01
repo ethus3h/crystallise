@@ -110,6 +110,11 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
         CrystallizePaths[$i]="${abspath:?}"
     done
 
+    echo "Creating checksum file..."
+    csum "${CrystallizePaths[@]}" - > "$crystalWorkdir/$CrystalID.csum"
+
+    CrystallizePaths+=("$crystalWorkdir/$CrystalID.csum")
+
     echo "Building local index..."
 } &>> "$logfile"
 

@@ -71,8 +71,9 @@ if [[ "$exitStatus" == "0" ]]; then
     ) || die
 
     (
+        cd "$tempId"
         shopt -s dotglob
-        csum --check "$tempId"/* "$tempId.csum" || die
+        csum --check ./* "$tempId.csum" || die
     ) || die
 
     (

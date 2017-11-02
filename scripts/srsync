@@ -14,6 +14,13 @@ if [[ "$1" == "--sreg-dir" ]]; then
 fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check "${!#}")"
 
+skipCount="0"
+if [[ "$1" == "--skip" ]]; then
+    shift
+    skipCount="$1"
+    shift
+fi
+
 finish() {
     save_traps="$(trap)"
     trap - ERR
@@ -64,6 +71,8 @@ instanceId=".srsync-$(date-uuid)"
 mkdir -p "$crystalWorkdir/$instanceId"
 statusFile="/tmp/$instanceId.srsync.status"
 failCheckFile="/tmp/$instanceId.srsync.running"
+skipFile="$failCheckFile.skip"
+echo "0" > "$skipFile"
 
 find "${pathsToCopy[@]}" -type f -printf '.' | wc -c > "$statusFile"
 destinationReplaced="${destinationParameter/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"
@@ -90,9 +99,9 @@ for path in "${pathsToCopy[@]}"; do
     fi
     # Use $path in find commands rather than sourceReplaced because sourceReplaced is used for the target computation and post-processing (post-processing with find, that is).
     if [[ "$sregNoVerify" == "true" ]]; then
-        find "$path" -type f -exec sregi_copy_write "$failCheckFile" --sreg-dir "$sregDir" --no-verify {} "$destinationReplaced" "$statusFile" "$destinationRootLength" \;
+        find "$path" -type f -exec sregi_copy_write "$failCheckFile" --sreg-dir "$sregDir" --skip "$skipCount" --no-verify {} "$destinationReplaced" "$statusFile" "$destinationRootLength" \;
     else
-        find "$path" -type f -exec sregi_copy_write "$failCheckFile" --sreg-dir "$sregDir" {} "$destinationReplaced" "$statusFile" "$destinationRootLength" \;
+        find "$path" -type f -exec sregi_copy_write "$failCheckFile" --sreg-dir "$sregDir" --skip "$skipCount" {} "$destinationReplaced" "$statusFile" "$destinationRootLength" \;
     fi
     # This NEEDS to skip regular files, because otherwise files that don't exist in the directory will be copied and take up space!
     # rsync -a --ignore-existing --no-i-r "${pathsToCopy[@]}" "$destinationParameter/"

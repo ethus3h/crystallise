@@ -6,6 +6,14 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
+lockOverride="--no-lock-override"
+if [[ "$1" == "--no-lock-override" ]]; then
+    shift
+elif [[ "$1" == "--lock-override" ]]; then
+    lockOverride="--lock-override"
+    shift
+fi
+
 success() {
     exit 0
 }
@@ -85,7 +93,7 @@ if [[ "$quick" == "true" ]]; then
 else
     # Disable SC2094 because sreg_read_stream should not write to the file specified by --entry-path.
     # shellcheck disable=SC2094
-    sreg_read_stream --sreg-dir "$sregDir" --entry-path "$1" --checksum "$knownHash" --disallow-hash-pointer "$skipCache" < "$1" > /dev/null
+    sreg_read_stream "$lockOverride" --sreg-dir "$sregDir" --entry-path "$1" --checksum "$knownHash" --disallow-hash-pointer "$skipCache" < "$1" > /dev/null
     exitCode="$?"
 fi
 

@@ -15,6 +15,12 @@ if [[ "$1" == "--passphrase" ]]; then
     shift
 fi
 
+lockOverride="--no-lock-override"
+if [[ "$1" == "--lock-override" ]]; then
+    lockOverride="--lock-override"
+    shift
+fi
+
 decrystallizeHere=""
 if [[ "$2" == "--here" ]]; then
     decrystallizeHere="--here"
@@ -23,7 +29,7 @@ fi
 identifier="$(cat "$(dirname "$1")"/."$(basename "$1")"-data/identifier)"
 
 if [[ "$useCustomPassphrase" != "true" ]]; then
-    decrystallize "$identifier" "$decrystallizeHere"
+    decrystallize "$lockOverride" "$identifier" "$decrystallizeHere"
 else
-    decrystallize --passphrase "$customPassphrase" "$identifier" "$decrystallizeHere"
+    decrystallize --passphrase "$customPassphrase" "$lockOverride" "$identifier" "$decrystallizeHere"
 fi

@@ -17,6 +17,14 @@ if [[ "$1" == "--passphrase" ]]; then
     shift
 fi
 
+lockOverride="--no-lock-override"
+if [[ "$1" == "--no-lock-override" ]]; then
+    shift
+elif [[ "$1" == "--lock-override" ]]; then
+    lockOverride="--lock-override"
+    shift
+fi
+
 decrystallizeHere="false"
 if [[ "$2" == "--here" ]]; then
     decrystallizeHere="true"
@@ -58,7 +66,7 @@ if ! [[ -e "$crystalWorkdir/.CrystalCache/" ]]; then
     fcache_init "$crystalWorkdir/.CrystalCache/" 5000000000
 fi
 
-fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - | tar -xvf - -C "$tempId/"
+fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5" "$lockOverride" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - | tar -xvf - -C "$tempId/"
 
 trap - ERR
 { fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-csum" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - > "$tempId.csum"; } 2>/dev/null

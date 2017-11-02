@@ -62,7 +62,7 @@ while [[ ! -z "$1" ]]; do
     if [[ "$skipCount" -gt "0" ]]; then
         skipFile="$failCheckFile.skip"
         skippedSoFar="$(<"$skipFile")"
-        skippedSoFar=$(( numberProcessed + 1 ))
+        skippedSoFar=$(( skippedSoFar + 1 ))
         if [[ "$skippedSoFar" -le "$skipCount" ]]; then
             if [[ "$skippedSoFar" -eq "$skipCount" ]]; then
                 numberProcessedFile="$fsckStatusFile.done"

@@ -5,10 +5,40 @@ source ember_bash_setup &> /dev/null
 
 ((EUID)) && exec sudo -- "$0" "$@"
 
+failCheckFile="$1"
+
+skipCount="0"
+if [[ "$1" == "--skip" ]]; then
+    shift
+    skipCount="$1"
+    shift
+fi
+if [[ "$skipCount" -gt "0" ]]; then
+    skipFile="$failCheckFile.skip"
+    skippedSoFar="$(<"$skipFile")"
+    skippedSoFar=$(( numberProcessed + 1 ))
+    if [[ "$skippedSoFar" -le "$skipCount" ]]; then
+        if [[ "$skippedSoFar" -eq "$skipCount" ]]; then
+            # Mirror the argument parsing code here so we can find the fsckStatusFile
+            if [[ "$1" == "--sreg-dir" ]]; then
+                shift
+                shift
+            fi
+            if [[ "$1" == "--no-verify" ]]; then
+                shift
+            fi
+            fsckStatusFile="$3"
+            numberProcessedFile="$fsckStatusFile.done"
+            echo "$skipCount" > "$numberProcessedFile"
+        fi
+        exit 0
+    fi
+fi
+
 success() {
     exit 0
 }
-failCheckFile="$1"
+
 if [[ -e "$failCheckFile" ]]; then
     warn "A previous invocation of $0 failed with the message \"$(<"$failCheckFile")\"!"
 else
@@ -43,25 +73,6 @@ if [[ "$1" == "--sreg-dir" ]]; then
     shift
 fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir")"
-
-skipCount="0"
-if [[ "$1" == "--skip" ]]; then
-    shift
-    skipCount="$1"
-    shift
-fi
-if [[ "$skipCount" -gt "0" ]]; then
-    skipFile="$failCheckFile.skip"
-    skippedSoFar="$(<"$skipFile")"
-    skippedSoFar=$(( numberProcessed + 1 ))
-    if [[ "$skippedSoFar" -le "$skipCount" ]]; then
-        if [[ "$skippedSoFar" -eq "$skipCount" ]]; then
-            numberProcessedFile="$fsckStatusFile.done"
-            echo "$skipCount" > "$numberProcessedFile"
-        fi
-        exit 0
-    fi
-fi
 
 if [[ "$1" == "--no-verify" ]]; then
     #echo "(Not verifying pointers.)"

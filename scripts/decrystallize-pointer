@@ -16,7 +16,9 @@ if [[ "$1" == "--passphrase" ]]; then
 fi
 
 lockOverride="--no-lock-override"
-if [[ "$1" == "--lock-override" ]]; then
+if [[ "$1" == "--no-lock-override" ]]; then
+    shift
+elif [[ "$1" == "--lock-override" ]]; then
     lockOverride="--lock-override"
     shift
 fi

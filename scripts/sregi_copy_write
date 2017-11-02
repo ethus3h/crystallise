@@ -32,6 +32,8 @@ if [[ "$skipCount" -gt "0" ]]; then
             numberProcessedFile="$fsckStatusFile.done"
             echo "$skipCount" > "$numberProcessedFile"
         fi
+        echo "$skippedSoFar" > "$skipFile"
+        echo "(skipped $skippedSoFar out of $skipCount...)"
         exit 0
     fi
 fi

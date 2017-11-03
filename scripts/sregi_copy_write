@@ -176,7 +176,7 @@ rsync -a --checksum --no-i-r "$1" "$crystalSubdir/"
 setVariableToCommandOutput "basename" "embasename" "$1"
 fileToStash="$crystalSubdir/${basename:?}"
 if [[ -f "$fileToStash" ]]; then
-    sreg_store_stream --sreg-dir "$sregDir" --assume-checksum "$sourceChecksum" < "$fileToStash" | sponge "$fileToStash"
+    sreg_store_stream --sreg-dir "$sregDir" --assume-checksum "$sourceChecksum" --verbose < "$fileToStash" | sponge "$fileToStash"
 else
     die "Skipping item $fileToStash: not a regular file."
 fi

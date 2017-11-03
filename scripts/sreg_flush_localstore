@@ -76,4 +76,4 @@ statusFile="/tmp/$streamId.sreg_flush_localstore.status"
         mkdir -p "$dbDir"/LocalStore
     fi
     finish
-)
+) || die

@@ -47,6 +47,10 @@ mkdir -p "$crystalWorkdir/.$streamId/$streamId"
     else
         hashFull="$(sha512sum < "$streamId.tmp" | awk '{print $1;}')"
     fi
+    sregStoreStreamVerbose=""
+    if [[ "$1" == "--verbose" ]]; then
+        sregStoreStreamVerbose="true"
+    fi
     inputPointerTypeSignature=""
     if ! [[ "$(wc -c < "$streamId.tmp")" -lt 166 ]]; then
         inputPointerTypeSignature="$(head -c 36 "$streamId.tmp")"
@@ -107,7 +111,11 @@ mkdir -p "$crystalWorkdir/.$streamId/$streamId"
         if [[ "$localStoreSize" -gt 300000000 ]] && [[ -e "$dbDir"/.LocalStore.lock ]]; then
             die "LocalStore is larger than expected, and lock file is present. Has a previous invocation of sreg_flush_localstore crashed? If so, manually remove $dbDir/.LocalStore.lock and re-run sreg_flush_localstore... (It's possible that sreg_flush_localstore is still running, though.)"
         fi
-        sreg_flush_localstore --sreg-dir "$sregDir" > /dev/null
+        if [[ "$sregStoreStreamVerbose" != "true" ]]; then
+            sreg_flush_localstore --sreg-dir "$sregDir" > /dev/null
+        else
+            sreg_flush_localstore --sreg-dir "$sregDir" >&2
+        fi
     fi
     hashA="${hashFull:0:1}"
     hashB="${hashFull:1:1}"
@@ -150,7 +158,7 @@ mkdir -p "$crystalWorkdir/.$streamId/$streamId"
         # Item not available in cache, so add it (c39... is the LocalStore pointer type signature; a5e... is the remote type signature)
         pointerTypeSignature="c39f8657-384b-438b-a5a2-eece17147589"
         if [[ "$useLocalStore" != "true" ]]; then
-            if [[ "$1" == "--verbose" ]]; then
+            if [[ "$sregStoreStreamVerbose" == "true" ]]; then
                 crystallize --leave-locked --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.tmp" | 1&>2
             else
                 crystallize --leave-locked --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.tmp" &> /dev/null

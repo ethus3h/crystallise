@@ -130,7 +130,7 @@ failCleanup() {
     mv "$dbTempFileDir/$hashFull" "$dbFilePath"
     die "Failed to read pointer after bundling it!$noteAppend"
 }
-sregi_verify_entry --sreg-dir "$sregDir" "$dbFilePath" --quick || failCleanup
+{ sregi_verify_entry --sreg-dir "$sregDir" "$dbFilePath" --quick || failCleanup } > /dev/null
 rm "$dbTempFileDir/$hashFull"
 
 success

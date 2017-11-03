@@ -44,6 +44,8 @@ crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 streamId="sreg_flush_localstore-$(date-uuid)"
 failCheckFile="/tmp/$streamId.running"
 mkdir -p "$crystalWorkdir/.$streamId/$streamId"
+statusFile="/tmp/$streamId.sreg_flush_localstore.status"
+find "$streamId.LocalStore" -type f -printf '.' | wc -c > "$statusFile"
 (
     cd "$crystalWorkdir/.$streamId/$streamId" || exit 1
     if ! [[ -e "$dbDir"/.LocalStore.lock ]]; then
@@ -63,7 +65,7 @@ mkdir -p "$crystalWorkdir/.$streamId/$streamId"
         pointerName="$(readlink -f "$streamId.bundle.pointer")"
         mkdir -p "$dbDir/Packs/"
         rsync -q --checksum "$pointerName" "$dbDir/Packs/"
-        find "$streamId.LocalStore" -type f -exec sregi_bundle_pointer "$failCheckFile" --sreg-dir "$sregDir" "$pointerName" {} "$crystalWorkdir" \; || die "Failed running sregi_bundle_pointer!"
+        find "$streamId.LocalStore" -type f -exec sregi_bundle_pointer "$failCheckFile" --sreg-dir "$sregDir" "$statusFile" "$pointerName" {} "$crystalWorkdir" \; || die "Failed running sregi_bundle_pointer!"
         
         if [[ -e "$failCheckFile" ]]; then
             die "An invocation of sregi_bundle_pointer (called from $0) failed with the message \"$(<"$failCheckFile")\"!"

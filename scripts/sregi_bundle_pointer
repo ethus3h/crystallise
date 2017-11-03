@@ -28,6 +28,28 @@ if [[ "$1" == "--sreg-dir" ]]; then
 fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir")"
 
+fsckStatusFile="$1"
+shift
+if [[ -n "$fsckStatusFile" ]]; then
+    numberExpected="$(<"$fsckStatusFile")"
+    numberProcessedFile="$fsckStatusFile.done"
+    if ! [[ -f "$numberProcessedFile" ]]; then
+        numberProcessed="1"
+    else
+        numberProcessed="$(<"$numberProcessedFile")"
+        numberProcessed=$(( numberProcessed + 1 ))
+    fi
+    echo "$numberProcessed" > "$numberProcessedFile"
+    if [[ "$numberExpected" == "0" ]]; then
+        # wtf?
+        numberExpected="-1"
+    fi
+    numberProcessedPercentage="$(printf "%.3f\\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
+    echo "Copying item $1: #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
+else
+    echo "Copying item $1."
+fi
+
 packPointerName="$1"
 dbDir="$sregDir"
 hashFull="$(basename "$2")"

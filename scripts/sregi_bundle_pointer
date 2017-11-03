@@ -47,6 +47,7 @@ if [[ -n "$fsckStatusFile" ]]; then
     numberProcessedPercentage="$(printf "%.3f\\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
     echo "Working on bundling item #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
 else
+    # Don't bother mentioning anything, since we don't really have anything interesting to say
     true
 fi
 

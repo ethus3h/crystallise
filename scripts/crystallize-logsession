@@ -29,7 +29,7 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
     echo "Time (log stage 1) from http://timeapi.org/: "
 
     trap - ERR
-    wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-start" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z"
+    wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-start" -e robots=off "http://www.timeapi.org/utc/now?\\Y-\\m-\\d-\\H-\\M-\\S-\\6N-\\z"
     trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
     echo "Time (log stage 1b) locally:"
@@ -82,7 +82,7 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
     echo "Time (log stage 2) from http://timeapi.org/: "
 
     trap - ERR
-    wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-env" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z" &
+    wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-env" -e robots=off "http://www.timeapi.org/utc/now?\\Y-\\m-\\d-\\H-\\M-\\S-\\6N-\\z" &
     trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
     echo "Time (log stage 2b) locally:"
@@ -110,9 +110,12 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
         CrystallizePaths[$i]="${abspath:?}"
     done
 
-    echo "Creating checksum file..."
-    csum "${CrystallizePaths[@]}" - > "$crystalWorkdir/$CrystalID.csum"
+} &>> "$logfile"
 
+echo "Creating checksum file..." 2>&1 | tee -a "$logfile"
+{ csum "${CrystallizePaths[@]}" - > "$crystalWorkdir/$CrystalID.csum"; } 2>&1 | tee -a "$logfile"
+
+{
     CrystallizePaths+=("$crystalWorkdir/$CrystalID.csum")
 
     echo "Building local index..."
@@ -246,7 +249,7 @@ script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/
     echo "rsynced..."
 
     #Clear the screen
-    printf "\033c"
+    printf "\\033c"
 
     #Delete everything except log
     #echo "Cleaning up..."
@@ -261,7 +264,7 @@ script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/
     echo "Time (log stage 3) from http://timeapi.org/: "
 
     trap - ERR
-    wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-done" -e robots=off "http://www.timeapi.org/utc/now?\Y-\m-\d-\H-\M-\S-\6N-\z"
+    wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-done" -e robots=off "http://www.timeapi.org/utc/now?\\Y-\\m-\\d-\\H-\\M-\\S-\\6N-\\z"
     trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
     echo "Time (log stage 3b) locally:"
@@ -270,7 +273,7 @@ script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-ia ${opt+/dev/
     xxd -pu <<< "$(date +%z)"
 
     #Clear the screen
-    printf "\033c"
+    printf "\\033c"
 
     echo "Finishing $CrystalID..."
 

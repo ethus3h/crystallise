@@ -10,10 +10,10 @@ fi
 source ember_bash_setup &> /dev/null
 #set -x
 
-export crystallizeVersion='3.1.2.5.13.30'
+export crystallizeVersion='3.1.2.5.13.31'
 
 # The update script shown here requires there to be only one ebuild of crystallize in the wreathe-overlay overlay.
-# ( sudo true; newVersion="3.1.2.5.13.30"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo layman -s wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
+# ( sudo true; newVersion="3.1.2.5.13.31"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo layman -s wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
 
 ((EUID)) && exec sudo -- "$0" "$@"
 
@@ -111,13 +111,13 @@ echo "$0 $*" > "$crystalWorkdir/$CrystalID.cmd"
 pwd > "$crystalWorkdir/$CrystalID.cwd"
 if [[ $crystallizeLeavePointer == true ]]; then
     mkdir -p "$crystallizePointerDir"
-    rsync -a --checksum "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.cmd" "$crystalWorkdir/$CrystalID.cwd" "$crystallizePointerDir"/
+    rsync -a --checksum "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.cmd" "$crystalWorkdir/$CrystalID.cwd" "$crystallizePointerDir"/ 2>&1
 fi
-checkedxz "$crystalWorkdir/$CrystalID" -C sha256 -v -9 -e
-checkedxz "$crystalWorkdir/$CrystalID.time-done.warc.gz" -C sha256 -v -9 -e
-checkedxz "$crystalWorkdir/$CrystalID.local.idx" -C sha256 -v -9 -e
-checkedxz "$crystalWorkdir/$CrystalID.deep.idx" -C sha256 -v -9 -e
-checkedxz "$crystalWorkdir/$CrystalID.csum" -C sha256 -v -9 -e
+checkedxz "$crystalWorkdir/$CrystalID" -C sha256 -v -9 -e 2>&1
+checkedxz "$crystalWorkdir/$CrystalID.time-done.warc.gz" -C sha256 -v -9 -e 2>&1
+checkedxz "$crystalWorkdir/$CrystalID.local.idx" -C sha256 -v -9 -e 2>&1
+checkedxz "$crystalWorkdir/$CrystalID.deep.idx" -C sha256 -v -9 -e 2>&1
+checkedxz "$crystalWorkdir/$CrystalID.csum" -C sha256 -v -9 -e 2>&1
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.xz"
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.time-done.warc.gz.xz"
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.local.idx.xz"
@@ -135,8 +135,8 @@ mv "$crystalWorkdir/$CrystalID.cmd.gpg" "$crystalWorkdir/$CrystalID.coal5-cmd"
 mv "$crystalWorkdir/$CrystalID.cwd.gpg" "$crystalWorkdir/$CrystalID.coal5-cwd"
 
 trap 'cat "$crystalWorkdir/$CrystalID" || true; finishclean; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
-ia upload "$CrystalID" --retries=100 --verify --delete "$crystalWorkdir/$CrystalID.coal5-log" "$crystalWorkdir/$CrystalID.coal5-idx-l" "$crystalWorkdir/$CrystalID.coal5-idx-d" "$crystalWorkdir/$CrystalID.coal5-csum" "$crystalWorkdir/$CrystalID.coal5-cmd" "$crystalWorkdir/$CrystalID.coal5-cwd"
-ia upload "$CrystalID" --retries=100 --verify "$crystalWorkdir/$CrystalID.coal5-timestamp"
+ia upload "$CrystalID" --retries=100 --verify --delete "$crystalWorkdir/$CrystalID.coal5-log" "$crystalWorkdir/$CrystalID.coal5-idx-l" "$crystalWorkdir/$CrystalID.coal5-idx-d" "$crystalWorkdir/$CrystalID.coal5-csum" "$crystalWorkdir/$CrystalID.coal5-cmd" "$crystalWorkdir/$CrystalID.coal5-cwd" 2>&1
+ia upload "$CrystalID" --retries=100 --verify "$crystalWorkdir/$CrystalID.coal5-timestamp" 2>&1
 
 echo "Please wait..."
 
@@ -230,8 +230,8 @@ fi
 echo "Retrieving remote index..."
 
 rm -f "$crystalWorkdir/$CrystalID".json.xz
-wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" > "$crystalWorkdir/$CrystalID.json"
-checkedxz "$crystalWorkdir/$CrystalID".json -C sha256 -9 -e -v
+{ wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" > "$crystalWorkdir/$CrystalID.json"; } 2>&1
+checkedxz "$crystalWorkdir/$CrystalID".json -C sha256 -9 -e -v 2>&1
 
 rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.json.xz" "$crystalWorkdir/$CrystalID.checksums" "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
 

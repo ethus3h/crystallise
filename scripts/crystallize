@@ -107,15 +107,12 @@ wait
 
 crystallize-logsession "$useCustomPassphrase" "$customPassphrase" "$crystalWorkdir/$CrystalID" "$CrystalID" "$@"
 
-#echo "Working..."
 echo "$0 $*" > "$crystalWorkdir/$CrystalID.cmd"
 pwd > "$crystalWorkdir/$CrystalID.cwd"
-#Script should not exit if an operation fails. FIXME: why?
 if [[ $crystallizeLeavePointer == true ]]; then
     mkdir -p "$crystallizePointerDir"
     rsync -a --checksum "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.cmd" "$crystalWorkdir/$CrystalID.cwd" "$crystallizePointerDir"/
 fi
-trap - ERR
 checkedxz "$crystalWorkdir/$CrystalID" -C sha256 -v -9 -e
 checkedxz "$crystalWorkdir/$CrystalID.time-done.warc.gz" -C sha256 -v -9 -e
 checkedxz "$crystalWorkdir/$CrystalID.local.idx" -C sha256 -v -9 -e
@@ -296,7 +293,7 @@ echo "Please wait, testing finished item..."
 testDecrystDir="$(tempDir)"
 (
     cd "$testDecrystDir" || die "cd failed"
-    decrystallize --passphrase "$(<"$crystalWorkdir/$CrystalID".tmp)" "$CrystalID" || die "Could not decrystallize the finished crystal!"
+    decrystallize --passphrase "$(<"$crystalWorkdir/$CrystalID".tmp)" "$CrystalID" 2>&1 || die "Could not decrystallize the finished crystal!"
     rm "$crystalWorkdir/$CrystalID.tmp"
 )
 rm -r "${testDecrystDir:?}"

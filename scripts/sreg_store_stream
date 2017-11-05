@@ -159,7 +159,7 @@ mkdir -p "$crystalWorkdir/.$streamId/$streamId"
         pointerTypeSignature="c39f8657-384b-438b-a5a2-eece17147589"
         if [[ "$useLocalStore" != "true" ]]; then
             if [[ "$sregStoreStreamVerbose" == "true" ]]; then
-                crystallize --leave-locked --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.tmp" | 1&>2
+                crystallize --leave-locked --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.tmp" 1>&2
             else
                 crystallize --leave-locked --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.tmp" &> /dev/null
             fi

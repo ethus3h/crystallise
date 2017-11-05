@@ -158,7 +158,11 @@ mkdir -p "$crystalWorkdir/.$streamId/$streamId"
         # Item not available in cache, so add it (c39... is the LocalStore pointer type signature; a5e... is the remote type signature)
         pointerTypeSignature="c39f8657-384b-438b-a5a2-eece17147589"
         if [[ "$useLocalStore" != "true" ]]; then
-            crystallize --leave-locked --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.tmp" &> /dev/null
+            if [[ "$sregStoreStreamVerbose" == "true" ]]; then
+                crystallize --leave-locked --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.tmp" > /dev/null
+            else
+                crystallize --leave-locked --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.tmp" &> /dev/null
+            fi
             pointerTypeSignature="a5e2f296-3085-49c0-8f48-24ea436b7a8b"
         fi
         echo "$pointerTypeSignature" > "$tmpFilePath"

@@ -98,4 +98,10 @@ sregi_hash_from_file() (
     fi
 )
 
+CrystallyMove() {
+    csum "$1" > "$2"/"$1.csum"
+    rsync -av --checksum --progress --no-i-r "$1" "$2/"
+    crystallize "$1"
+}
+
 EmberLibrary="$(crystallize-getconf EmberLibrary)"

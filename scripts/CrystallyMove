@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
+source ember_bash_setup &> /dev/null
+#set -x
+
+((EUID)) && exec sudo -- "$0" "$@"
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+
+destinationParameter="${!#}" # last argument
+pathsToCopy=("${@:1:$(($#-1))}") # all but last argument
+[[ -d "$destinationParameter" ]] || die "Destination must be a directory!"
+csum "${pathsToCopy[@]}" > "$destinationParameter/$(date-uuid).csum"
+rsync -av --checksum --progress --no-i-r "${pathsToCopy[@]}" "$destinationParameter/"
+crystallize "${pathsToCopy[@]}"

@@ -11,4 +11,4 @@ pathsToCopy=("${@:1:$(($#-1))}") # all but last argument
 [[ -d "$destinationParameter" ]] || die "Destination must be a directory!"
 csum "${pathsToCopy[@]}" > "$destinationParameter/$(date-uuid).csum"
 rsync -av --checksum --progress --no-i-r "${pathsToCopy[@]}" "$destinationParameter/"
-crystallize "${pathsToCopy[@]}"
+crystallize --keep "${pathsToCopy[@]}"

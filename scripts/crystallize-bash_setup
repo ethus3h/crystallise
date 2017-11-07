@@ -99,9 +99,12 @@ sregi_hash_from_file() (
 )
 
 CrystallyMove() {
-    csum "$1" > "$2"/"$1.csum"
-    rsync -av --checksum --progress --no-i-r "$1" "$2/"
-    crystallize "$1"
+    destinationParameter="${!#}" # last argument
+    pathsToCopy=("${@:1:$(($#-1))}") # all but last argument
+    [[ -d "$destinationParameter" ]] || die "Destination must be a directory!"
+    csum "${pathsToCopy[@]}" > "$destinationParameter/$(date-uuid).csum"
+    rsync -av --checksum --progress --no-i-r "${pathsToCopy[@]}" "$destinationParameter/"
+    crystallize "${pathsToCopy[@]}"
 }
 
 EmberLibrary="$(crystallize-getconf EmberLibrary)"

@@ -42,7 +42,9 @@ fi
 if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
     find "$dbDir" -type d -not -name "ByCount" -empty -delete
     while [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimitSub" ]]; do
+        shopt -u failglob
         rm -f "$dbDir"/Failed\ Checksum/*
+        shopt -s failglob
         # Remove the least-used item from the cache
         largestLeastUsedItem=""
         findType="f"

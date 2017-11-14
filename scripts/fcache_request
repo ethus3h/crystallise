@@ -79,6 +79,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvai
     fi
     if isIaUrl "$requestUrl"; then
         ia downloadAsStream "$requestUrl" > "$dbFilePath"
+        iaIdentifier="$(iaident "$requestUrl")"
         postUploadCheckSuccess=""
         postUploadCheckFailHandler() {
             if [[ -z "$postUploadCheckSuccess" ]] || [[ "$postUploadCheckSuccess" == "1" ]]; then
@@ -90,8 +91,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvai
         getChecksumRetries=0
         retryDelayTime=5
         until [[ "$getChecksumRetries" -ge 5 ]]; do
-            CrystalID="$(iaident "$requestUrl")"
-            if iasha1 "$CrystalID/$CrystalID.coal5"; then
+            if iasha1 "$iaIdentifier/$iaIdentifier.coal5"; then
                 postUploadCheckFailHandler
                 break
             fi
@@ -101,9 +101,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvai
                 retryDelayTime=$((retryDelayTime + 5))
             fi
         done
-        checksumLine="${checksumLine/    <sha1>/}"
-        checksumLine="${checksumLine/<\/sha1>/}"
-        [[ "$(sha1sum "$dbFilePath" | awk '{print $1;}')" == "$(iasha1 "$CrystalID/$CrystalID.coal5")" ]] || die "Checksum known by Internet Archive did not match the retrieved file! Was it corrupted in transit?"
+        [[ "$(sha1sum "$dbFilePath" | awk '{print $1;}')" == "$(iasha1 "$iaIdentifier/$iaIdentifier.coal5")" ]] || die "Checksum known by Internet Archive did not match the retrieved file! Was it corrupted in transit?"
     else
         wget -t 150 -qO "$dbFilePath" "$requestUrl"
     fi

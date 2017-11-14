@@ -5,8 +5,12 @@ source ember_bash_setup &> /dev/null
 
 ((EUID)) && exec sudo -- "$0" "$@"
 
+url="$(iaurl "$1")"
 temp="$(tempFile)"
-wget 
+wget -t 150 -qO "$temp" "$url"
+[[ "$(sha1sum "$temp" | awk '{print $1;}')" == "$(iasha1 "$url")" ]] || die "Checksum of retrieved file did not match checksum reported by the Internet Archive!"
 say '45baff46-8db7-46f6-aad9-de5f713b02fe'
-printf '%s\n' '45baff46-8db7-46f6-aad9-de5f713b02fe'
-printf '%s\n' '45baff46-8db7-46f6-aad9-de5f713b02fe'
+sha512sum < "$temp" | awk '{print $1;}'
+iaident "$url"
+print "/"
+iapath "$url"

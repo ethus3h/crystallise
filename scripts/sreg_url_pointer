@@ -5,6 +5,8 @@ source ember_bash_setup &> /dev/null
 
 ((EUID)) && exec sudo -- "$0" "$@"
 
+temp="$(tempFile)"
+wget 
 say '45baff46-8db7-46f6-aad9-de5f713b02fe'
 printf '%s\n' '45baff46-8db7-46f6-aad9-de5f713b02fe'
 printf '%s\n' '45baff46-8db7-46f6-aad9-de5f713b02fe'

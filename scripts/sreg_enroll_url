@@ -4,6 +4,7 @@ source ember_bash_setup &> /dev/null
 #set -x
 
 ((EUID)) && exec sudo -- "$0" "$@"
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
 sregDir=""
 if [[ "$1" == "--sreg-dir" ]]; then
@@ -12,71 +13,3 @@ if [[ "$1" == "--sreg-dir" ]]; then
     shift
 fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
-
-finish() {
-    rm -f "${failCheckFile:?}"
-
-    rm -f "${dbDir:?}"/.LocalStore.lock
-    if cd "$crystalWorkdir"; then
-        if [[ -e "${streamId:?}" ]]; then
-            rm -r "${streamId:?}"
-        fi
-    fi
-}
-trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; rm -f "${dbDir:?}"/.LocalStore.lock; finish; exit 1' ERR
-
-finishExit() {
-    save_traps="$(trap)"
-    trap - ERR
-    rm -f "${failCheckFile:?}"
-    eval "$save_traps"
-
-    rm -f "${dbDir:?}"/.LocalStore.lock
-    if [[ -e "$crystalWorkdir/.${streamId:?}" ]]; then
-        rm -rf "$crystalWorkdir/.${streamId:?}"
-    fi
-}
-trap finishExit EXIT
-
-dbDir="$sregDir"
-crystalWorkdir="$(crystallize-getconf WorkDirectory)"
-# Don't change the value of streamId: it would break compatibility with existing pointers.
-streamId="sreg_flush_localstore-$(date-uuid)"
-failCheckFile="/tmp/$streamId.running"
-mkdir -p "$crystalWorkdir/.$streamId/$streamId"
-statusFile="/tmp/$streamId.sreg_flush_localstore.status"
-(
-    cd "$crystalWorkdir/.$streamId/$streamId" || exit 1
-    if ! [[ -e "$dbDir"/.LocalStore.lock ]]; then
-        echo "locked on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)" > "$dbDir"/.LocalStore.lock
-        rsync -aq --checksum --no-i-r "$dbDir"/LocalStore "$streamId.LocalStore"
-        rsync -aq --checksum --no-i-r "$streamId.LocalStore" "$streamId.LocalStore.tmp"
-        if [[ "$1" == "--verbose" ]]; then
-            crystallize --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.LocalStore" | cat
-        else
-            crystallize --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.LocalStore" &> /dev/null
-        fi
-        if [[ ! -e "$streamId.LocalStore.crystal" ]] || [[ ! -e ".$streamId.LocalStore.crystal-data" ]]; then
-            die "Crystal data does not seem to exist! Did crystallizing fail, and not trigger the error trap for some reason?" # I think this is the condition that causes the "Pointer pax was corrupt" problem. If that happens after adding this check, something else weird is going on.
-        fi
-        # (2fa... is the remote bundle pointer type signature)
-        mv "$streamId.LocalStore.tmp" "$streamId.LocalStore"
-        tar -c -P -S --format pax "$streamId.LocalStore.crystal" ".$streamId.LocalStore.crystal-data" > "$streamId.bundle.pointer.tar"
-        [[ "$(xxd "$streamId.bundle.pointer.tar" | head -c 12)" == "00000000: 00" ]] && { mkdir -p "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/"; rsync -a "$streamId.LocalStore.crystal" ".$streamId.LocalStore.crystal-data" "$streamId.bundle.pointer.tar" "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/"; die "Pointer pax was corrupt!"; }
-        checkedxz --quiet - -k -C sha256 -T 0 -9 -e < "$streamId.bundle.pointer.tar" > "$streamId.bundle.pointer"
-        pointerName="$(readlink -f "$streamId.bundle.pointer")"
-        mkdir -p "$dbDir/Packs/"
-        rsync -q --checksum "$pointerName" "$dbDir/Packs/"
-        find "$streamId.LocalStore" -type f -printf '.' | wc -c > "$statusFile"
-        find "$streamId.LocalStore" -type f -exec sregi_bundle_pointer "$failCheckFile" --sreg-dir "$sregDir" "$statusFile" "$pointerName" {} "$crystalWorkdir" \; || die "Failed running sregi_bundle_pointer!"
-        
-        if [[ -e "$failCheckFile" ]]; then
-            die "An invocation of sregi_bundle_pointer (called from $0) failed with the message \"$(<"$failCheckFile")\"!"
-        fi
-
-        rm -r "$dbDir"/LocalStore
-        rm "$dbDir"/.LocalStore.lock || warn "FIXME: Couldn't remove $dbDir/.LocalStore.lock. This is a weird bug, and should be looked into, but I'm just ignoring it for now..."
-        mkdir -p "$dbDir"/LocalStore
-    fi
-    finish
-) || die

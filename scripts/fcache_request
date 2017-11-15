@@ -104,7 +104,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvai
         [[ "$postUploadCheckSuccess" != "0" ]] && die "Number of allowed retries exceeded without success."
         [[ "$(sha1sum "$dbFilePath" | awk '{print $1;}')" == "$(iasha1 "$iaIdentifier/$iaIdentifier.coal5")" ]] || die "Checksum known by Internet Archive did not match the retrieved file! Was it corrupted in transit?"
     else
-        wget -t 150 -qO "$dbFilePath" "$requestUrl"
+        retryUntilSuccess 100 30 5 5 wget -t 150 -qO "$dbFilePath" "$requestUrl"
     fi
     sha512sum < "$dbFilePath" | awk '{print $1;}' > "$checksumName"
     printf "%s" "$requestUrl" > "$dbLinkPath.url"

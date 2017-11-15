@@ -66,7 +66,7 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
 
     echo "IP address from DNS: "
 
-    dig +short myip.opendns.com @resolver1.opendns.com
+    retryUntilSuccess 100 30 5 5 dig +short myip.opendns.com @resolver1.opendns.com
 
     echo "IP address from http://icanhazip.com/: "
 
@@ -234,7 +234,7 @@ script ${optb+/dev/null} ${opt+-e} ${opt+-q} ${opt+-c} crystallize-internal-ia $
 
     echo "Retrieving remote index..."
 
-    wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" | tee "$crystalWorkdir/$CrystalID.json"
+    retryUntilSuccess 100 30 5 5 wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" | tee "$crystalWorkdir/$CrystalID.json"
 
     #If the opt(b) variable is unset, insert the text after "opt(b)+"
     #opt is for GNU/Linux; optb is for others

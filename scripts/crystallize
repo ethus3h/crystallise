@@ -10,10 +10,10 @@ fi
 source ember_bash_setup &> /dev/null
 #set -x
 
-export crystallizeVersion='3.1.2.5.13.43'
+export crystallizeVersion='3.1.2.5.13.44'
 
 # The update script shown here requires there to be only one ebuild of crystallize in the wreathe-overlay overlay.
-# ( sudo true; newVersion="3.1.2.5.13.43"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo layman -s wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
+# ( sudo true; newVersion="3.1.2.5.13.44"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo layman -s wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
 
 ((EUID)) && exec sudo -- "$0" "$@"
 
@@ -101,7 +101,7 @@ if [[ -t 1 ]]; then
     warn-timeout "Be careful that you don't crystallize your current working directory, the crystallize temp dir, or the crystallize scripts themselves. Either could cause problems. (It's more likely to be OK if you use --keep, but still not guaranteed.) Successful completion will be indicated by crystallize printing a message beginning with \"Done! The new crystal's address is:\", and by an exit status of 0." &
 fi
 
-dig +short myip.opendns.com @resolver1.opendns.com > /dev/null || die "Could not connect to OpenDNS. Is UDP traffic being blocked by a firewall?"
+retryUntilSuccess 100 30 5 5 dig +short myip.opendns.com @resolver1.opendns.com > /dev/null || die "Could not connect to OpenDNS. Is UDP traffic being blocked by a firewall?"
 
 wait
 
@@ -230,7 +230,7 @@ fi
 echo "Retrieving remote index..."
 
 rm -f "$crystalWorkdir/$CrystalID".json.xz
-{ wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" > "$crystalWorkdir/$CrystalID.json"; } 2>&1
+{ retryUntilSuccess 100 30 5 5 wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" > "$crystalWorkdir/$CrystalID.json"; } 2>&1
 checkedxz "$crystalWorkdir/$CrystalID".json -C sha256 -9 -e -v 2>&1
 
 rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.json.xz" "$crystalWorkdir/$CrystalID.checksums" "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/

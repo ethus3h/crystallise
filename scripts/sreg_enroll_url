@@ -7,13 +7,11 @@ source ember_bash_setup &> /dev/null
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
 finish() {
-    (
-        cd "/${crystalWorkdir:?}/" || die
-        if [[ -e ".${streamId:?}" ]]; then
-            rm -r ".${streamId:?}"
-        fi
-    )
+    if [[ -e "${tempData:?}" ]]; then
+        rm -f "${tempData:?}"
+    fi
 }
+
 sregDir=""
 if [[ "$1" == "--sreg-dir" ]]; then
     shift

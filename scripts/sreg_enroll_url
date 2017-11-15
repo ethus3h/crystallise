@@ -19,7 +19,11 @@ tempData="$(tempFile)"
 wget -t 150 -qO "$tempData" "$url"
 [[ "$(sha1sum "$tempData" | awk '{print $1;}')" == "$(iasha1 "$url")" ]] || die "Checksum of retrieved file did not match checksum reported by the Internet Archive!"
 
-ptrHash="$(sha512sum < "$tempData" | awk '{print $1;}')"
+hashFull="$(sha512sum < "$tempData" | awk '{print $1;}')"
+
+hashA="${hashFull:0:1}"
+hashB="${hashFull:1:1}"
+hashC="${hashFull:2:1}"
 
 # Output the pointer
 {

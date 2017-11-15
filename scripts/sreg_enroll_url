@@ -6,6 +6,14 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
+finish() {
+    (
+        cd "/${crystalWorkdir:?}/" || die
+        if [[ -e ".${streamId:?}" ]]; then
+            rm -r ".${streamId:?}"
+        fi
+    )
+}
 sregDir=""
 if [[ "$1" == "--sreg-dir" ]]; then
     shift
@@ -24,6 +32,9 @@ hashFull="$(sha512sum < "$tempData" | awk '{print $1;}')"
 hashA="${hashFull:0:1}"
 hashB="${hashFull:1:1}"
 hashC="${hashFull:2:1}"
+hashSubpath="$hashA/$hashB/$hashC/$hashFull"
+
+dbFilePath="$sregDir/$hashSubpath"
 
 # Output the pointer
 {

@@ -14,8 +14,20 @@ if [[ "$1" == "--sreg-dir" ]]; then
 fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 
+url="$(iaurl "$1")"
+tempData="$(tempFile)"
+wget -t 150 -qO "$tempData" "$url"
+[[ "$(sha1sum "$tempData" | awk '{print $1;}')" == "$(iasha1 "$url")" ]] || die "Checksum of retrieved file did not match checksum reported by the Internet Archive!"
+say '45baff46-8db7-46f6-aad9-de5f713b02fe'
+sha512sum < "$tempData" | awk '{print $1;}'
+iaident "$url"
+print "/"
+iapath "$url"
+print $'\n'
+stat --printf='%s\n' "$tempData"
+
 iaUrl="$1"
 isIaUrl "$iaUrl" || die "The value specified does not appear to be an Internet Archive URL!"
-temp="$(tempFile)"
+tempPtr="$(tempFile)"
 sregi_url_pointer "$iaUrl" > "$temp"
 ptrHash="$(sregi_hash_from_file "$temp")"

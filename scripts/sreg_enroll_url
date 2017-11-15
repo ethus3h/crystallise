@@ -11,6 +11,7 @@ finish() {
         rm -f "${tempData:?}"
     fi
 }
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; finish; exit 1' ERR
 
 sregDir=""
 if [[ "$1" == "--sreg-dir" ]]; then
@@ -44,3 +45,5 @@ dbFilePath="$sregDir/$hashSubpath"
     print $'\n'
     stat --printf='%s\n' "$tempData"
 } > "$dbFilePath"
+
+finish

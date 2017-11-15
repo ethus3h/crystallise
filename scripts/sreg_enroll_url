@@ -5,8 +5,6 @@ source ember_bash_setup &> /dev/null
 
 ((EUID)) && exec sudo -- "$0" "$@"
 
-echo "Running sreg_flush_localstore..."
-
 sregDir=""
 if [[ "$1" == "--sreg-dir" ]]; then
     shift

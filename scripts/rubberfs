@@ -212,7 +212,7 @@ freeze)
     echo "Done verifying replication stream."
     (
         cd "$crystalWorkdir"
-        crystallize --leave-pointer "$name@$freezeId.$freezeUuid.zfsrepl"
+        retryUntilSuccess 3 crystallize --leave-pointer "$name@$freezeId.$freezeUuid.zfsrepl"
     )
     rsync -av --progress --checksum "$crystalWorkdir/pointers/$name@$freezeId.$freezeUuid.zfsrepl.xz.crystal" "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.zfsrepl.xz.crystal-data" "$name/.rubberfs/history/"
     freezeCrystal="$(cat "$crystalWorkdir/pointers/.$name@$freezeId.$freezeUuid.zfsrepl.xz.crystal-data/identifier")"
@@ -256,7 +256,7 @@ delta)
     echo "Done verifying replication stream."
     (
         cd "$crystalWorkdir"
-        crystallize --leave-pointer "$name@$freezeId.inc.zfsrepl.xz"
+        retryUntilSuccess 3 crystallize --leave-pointer "$name@$freezeId.inc.zfsrepl.xz"
     )
     rsync -av --progress --checksum "$crystalWorkdir/pointers/$name@$freezeId.inc.zfsrepl.xz.crystal" "$crystalWorkdir/pointers/.$name@$freezeId.inc.zfsrepl.xz.crystal-data" "$name/.rubberfs/history/"
     freezeCrystal="$(cat "$crystalWorkdir/pointers/.$name@$freezeId.inc.zfsrepl.xz.crystal-data/identifier")"
@@ -400,7 +400,7 @@ destroy)
     rsync -av --checksum --progress --no-i-r "/$name" "/$rubberfsDestroyId"
     zpool export "$name"
     rm -v "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
-    crystallize "/$rubberfsDestroyId" "/Wreathe/.Resources/RubberFS/$name"
+    retryUntilSuccess 3 crystallize "/$rubberfsDestroyId" "/Wreathe/.Resources/RubberFS/$name"
     printf '\033c'
     echo "Done removing RubberFS named $name."
     ;;
@@ -432,7 +432,7 @@ destroy-no-upload)
     rsync -av --checksum --progress --no-i-r "/$name" "/$rubberfsDestroyId"
     zpool export "$name"
     rm -v "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2" "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
-    crystallize "/$rubberfsDestroyId" "/Wreathe/.Resources/RubberFS/$name"
+    retryUntilSuccess 3 crystallize "/$rubberfsDestroyId" "/Wreathe/.Resources/RubberFS/$name"
     printf '\033c'
     echo "Done removing RubberFS named $name."
     ;;
@@ -457,7 +457,7 @@ stash)
 historybak)
     #provides a history id
     rsync -av --checksum --progress "$name/.rubberfs" "$name/.rubberfs/.rubberfs"
-    crystallize "$name/.rubberfs/.rubberfs"
+    retryUntilSuccess 3 crystallize "$name/.rubberfs/.rubberfs"
     ;;
 historypull)
     #rubberfs historypull poolname historyId

@@ -13,3 +13,7 @@ if [[ "$1" == "--sreg-dir" ]]; then
     shift
 fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
+
+iaUrl="$1"
+isIaUrl "$iaUrl" || die "The value specified does not appear to be an Internet Archive URL!"
+pointerContents="$(sregi_url_pointer "$iaUrl")"

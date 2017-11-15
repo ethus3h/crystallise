@@ -38,7 +38,7 @@ dbFilePath="$sregDir/$hashSubpath"
 # Output the pointer
 {
     say '45baff46-8db7-46f6-aad9-de5f713b02fe'
-    say "$ptrHash"
+    say "$hashFull"
     iaident "$url"
     print "/"
     iapath "$url"

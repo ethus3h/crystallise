@@ -25,7 +25,8 @@ if [[ -f "$pointer" ]] && [[ ! -h "$pointer" ]]; then
     if [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]] || # Standard remote pointer
         [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]] || # LocalStore pointer
         [[ "$pointerTypeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]] || # Remote pack pointer
-        [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] # Remote pack pointer, with pointer data in the pointer
+        [[ "$pointerTypeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] || # Remote pack pointer, with pointer data in the pointer
+        [[ "$pointerTypeSignature" == "45baff46-8db7-46f6-aad9-de5f713b02fe" ]] # URL pointer
     then
         # Not a hash pointer, so we can't easily embed the size in the pointer itself
         if ! [[ -e "$pointer.length" ]]; then

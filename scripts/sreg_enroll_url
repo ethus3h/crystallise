@@ -16,4 +16,6 @@ sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 
 iaUrl="$1"
 isIaUrl "$iaUrl" || die "The value specified does not appear to be an Internet Archive URL!"
-pointerContents="$(sregi_url_pointer "$iaUrl")"
+temp="$(tempFile)"
+sregi_url_pointer "$iaUrl" > "$temp"
+ptrHash="$(sregi_hash_from_file "$temp")"

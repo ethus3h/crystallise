@@ -80,7 +80,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvai
     if isIaUrl "$requestUrl"; then
         ia downloadAsStream "$requestUrl" > "$dbFilePath"
         iaIdentifier="$(iaident "$requestUrl")"
-        retryUntilSuccess 100 30 5 5 iasha1 "$iaIdentifier/$iaIdentifier.coal5" || die "Number of allowed retries exceeded without success."
+        retryUntilSuccess 100 30 5 5 iasha1 "$iaIdentifier/$iaIdentifier.coal5" > /dev/null || die "Number of allowed retries exceeded without success."
         [[ "$(sha1sum "$dbFilePath" | awk '{print $1;}')" == "$(iasha1 "$iaIdentifier/$iaIdentifier.coal5")" ]] || die "Checksum known by Internet Archive did not match the retrieved file! Was it corrupted in transit?"
     else
         retryUntilSuccess 100 30 5 5 wget -t 150 -qO "$dbFilePath" "$requestUrl"

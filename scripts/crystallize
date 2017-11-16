@@ -169,34 +169,8 @@ done
 
 knownChecksum="$(grep ",stdin" "$crystalWorkdir/$CrystalID.checksums" | awk -F',' '{print $3}')"
 
-getChecksumOuterRetries=0
-getChecksumRetries=0
-retryOuterDelayTime=5
-retryDelayTime=5
-until [[ "$getChecksumOuterRetries" -ge 15 ]]; do
-    until [[ "$getChecksumRetries" -ge 100 ]]; do
-        if checksumLine="$(ia downloadAsStream https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F -A 6 "<file name=\"$CrystalID.coal5\" source=\"original\">" | grep "<sha1>" | head -n 1)"; then
-            postUploadCheckFailHandler
-            break
-        fi
-        getChecksumRetries=$((getChecksumRetries+1))
-        sleep "$retryDelayTime"
-        if [[ "$retryDelayTime" -lt 30 ]]; then
-            retryDelayTime=$((retryDelayTime + 5))
-        fi
-    done
-    checksumLine="${checksumLine/    <sha1>/}"
-    checksumLine="${checksumLine/<\/sha1>/}"
-    if [[ "$checksumLine" == "$knownChecksum" ]]; then
-        break
-    else
-        getChecksumOuterRetries=$((getChecksumOuterRetries+1))
-    fi
-    sleep "$retryOuterDelayTime"
-    if [[ "$retryOuterDelayTime" -lt 30 ]]; then
-        retryOuterDelayTime=$((retryOuterDelayTime + 5))
-    fi
-done
+retryUntilSuccess 100 30 5 5 iasha1 "$CrystalID/$CrystalID.coal5" || die "Number of allowed retries exceeded without success."
+checksumLine="$(iasha1 "$CrystalID/$CrystalID.coal5")"
 
 # First, check against the stored checksum
 if [[ "$checksumLine" != "$knownChecksum" ]]; then

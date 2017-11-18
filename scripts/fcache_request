@@ -77,7 +77,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvai
         warn "$dbFilePath already seems to exist. Huh? Removing it."
         rm "$dbFilePath"
     fi
-    if isIaUrl "$requestUrl"; then
+    if isIaName "$requestUrl"; then
         ia downloadAsStream "$requestUrl" > "$dbFilePath"
         iaIdentifier="$(iaident "$requestUrl")"
         retryUntilSuccess 100 30 5 5 iasha1 "$iaIdentifier/$iaIdentifier.coal5" > /dev/null || die "Number of allowed retries exceeded without success."

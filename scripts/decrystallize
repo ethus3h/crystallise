@@ -66,44 +66,48 @@ if ! [[ -e "$crystalWorkdir/.CrystalCache/" ]]; then
     fcache_init "$crystalWorkdir/.CrystalCache/" 5000000000
 fi
 
-fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5" "$lockOverride" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - | tar -xvf - -C "$tempId/"
+decrystInner() (
+    fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5" "$lockOverride" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - | tar -xvf - -C "$tempId/"
 
-trap - ERR
-{ fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-csum" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - > "$tempId.csum"; } 2>/dev/null
-exitStatus="$?"
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+    trap - ERR
+    { fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-csum" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - > "$tempId.csum"; } 2>/dev/null
+    exitStatus="$?"
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
-if [[ "$exitStatus" == "0" ]]; then
-    mkdir "$tempId.tempDir"
-    (
-        cd "$tempId"
-        find . -name "$CrystalID"'*' -exec bash -c 'dir="$(dirname "$0")"; mkdir -p "../'"$tempId"'.tempDir/$dir/"; mv "$0" "../'"$tempId"'.tempDir/$dir/"' {} \; || die
-    ) || die
+    if [[ "$exitStatus" == "0" ]]; then
+        mkdir "$tempId.tempDir"
+        (
+            cd "$tempId"
+            find . -name "$CrystalID"'*' -exec bash -c 'dir="$(dirname "$0")"; mkdir -p "../'"$tempId"'.tempDir/$dir/"; mv "$0" "../'"$tempId"'.tempDir/$dir/"' {} \; || die
+        ) || die
 
-    (
-        cd "$tempId"
-        shopt -s dotglob
-        csum --check ./* "../$tempId.csum" || die
-    ) || die
+        (
+            cd "$tempId"
+            shopt -s dotglob
+            csum --check ./* "../$tempId.csum" || die
+        ) || die
 
-    (
-        cd "$tempId.tempDir"
-        find . -name "$CrystalID"'*' -exec bash -c 'dir="$(dirname "$0")"; mv "$0" "../'"$tempId"'/$dir/"' {} \; || die
-    ) || die
-    rm -r "${tempId:?}.tempDir"
-else
-    metadata="$(fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID"_meta.xml)"
-    regex='<subject>Uploaded using Crystallize ([\d\.]+)<\/subject>'
-    if [[ "$metadata" =~ $regex ]]; then
-        crystalCrystallizeVersion="${BASH_REMATCH[1]}"
+        (
+            cd "$tempId.tempDir"
+            find . -name "$CrystalID"'*' -exec bash -c 'dir="$(dirname "$0")"; mv "$0" "../'"$tempId"'/$dir/"' {} \; || die
+        ) || die
+        rm -r "${tempId:?}.tempDir"
+    else
+        metadata="$(fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID"_meta.xml)"
+        regex='<subject>Uploaded using Crystallize ([\d\.]+)<\/subject>'
+        if [[ "$metadata" =~ $regex ]]; then
+            crystalCrystallizeVersion="${BASH_REMATCH[1]}"
+        fi
+        if version_gt "$crystalCrystallizeVersion" "3.1.2.5.13"; then
+            # This crystal was made by a version that supports checksumming
+            die "Error retrieving csum file for this crystal, and checksumming was specified as being required!"
+        fi
+        warn "(Couldn't retrieve csum file for this crystal as the version of crystallize it was created using is too old; contents will not be checked for checksum errors.)"
     fi
-    if version_gt "$crystalCrystallizeVersion" "3.1.2.5.13"; then
-        # This crystal was made by a version that supports checksumming
-        die "Error retrieving csum file for this crystal, and checksumming was specified as being required!"
-    fi
-    warn "(Couldn't retrieve csum file for this crystal as the version of crystallize it was created using is too old; contents will not be checked for checksum errors.)"
-fi
-rm -f "${tempId:?}.csum"
+    rm -f "${tempId:?}.csum"
+)
+
+retryUntilSuccess 100 checkedxzInner "$@"
 
 destination="$tempId in "
 if [[ "$decrystallizeHere" == "true" ]]; then

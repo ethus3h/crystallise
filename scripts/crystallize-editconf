@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 #set -x
 
-nanoLocation="$(which "nano")"
-nanoFileToEdit="$(crystallize-getconf ConfigLocation)"
-if [[ -w "$nanoFileToEdit" ]]; then
-    "$nanoLocation" -wLN "$nanoFileToEdit"
+defaultEditor="$(getDefaultEditorPath)"
+configLocation="$(crystallize-getconf ConfigLocation)"
+if [[ -w "$configLocation" ]]; then
+    "$defaultEditor" -wLN "$configLocation"
 else
-    sudo -k "$nanoLocation" -wLN "$nanoFileToEdit"
+    sudo -k "$defaultEditor" -wLN "$configLocation"
 fi

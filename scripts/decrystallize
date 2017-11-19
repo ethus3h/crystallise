@@ -67,12 +67,9 @@ if ! [[ -e "$crystalWorkdir/.CrystalCache/" ]]; then
 fi
 
 decrystInner() (
-    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
-    fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5" "$lockOverride" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - | tar -xvf - -C "$tempId/"
-    false
-    trap
-    false
-    false
+    # FIXME: Why the actual fuck does execution continue past the next line when tar exits with a nonzero exit status?! The ERR trap gets printed out correctly when running "trap" with no arguments right after it, but for some reason doesn't get called here. Weird.
+    fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5" "$lockOverride" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - | tar -xvf - -C "$tempId/" || die "Failed to retrieve Crystal data."
+    #trap
 
     trap - ERR
     exitStatus=""

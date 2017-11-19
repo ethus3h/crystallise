@@ -95,9 +95,11 @@ decrystInner() (
     else
         metadata="$(fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID"_meta.xml)"
         regex='<subject>Uploaded using Crystallize ([\d\.]+)<\/subject>'
+        crystalCrystallizeVersion=""
         if [[ "$metadata" =~ $regex ]]; then
             crystalCrystallizeVersion="${BASH_REMATCH[1]}"
         fi
+        [[ -n "$crystalCrystallizeVersion" ]] || warn "Could not get version of Crystallize used for this crystal."
         if version_gt "$crystalCrystallizeVersion" "3.1.2.5.13"; then
             # This crystal was made by a version that supports checksumming
             die "Error retrieving csum file for this crystal, and checksumming was specified as being required!"

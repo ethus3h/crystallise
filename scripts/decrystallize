@@ -112,7 +112,7 @@ decrystInner() (
     rm -f "${tempId:?}.csum"
 )
 
-retryUntilSuccess 20 decrystInner "$@"
+retryUntilSuccess 3 decrystInner "$@"
 
 destination="$tempId in "
 if [[ "$decrystallizeHere" == "true" ]]; then

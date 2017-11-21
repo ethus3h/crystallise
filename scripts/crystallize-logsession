@@ -213,6 +213,22 @@ fi
 pipecheck "${exitCodes[@]:1}"
 set -o pipefail
 
+echo "Please wait, pre-testing item before upload..."
+testDecrystDir="$(tempDir)"
+(
+    cd "$testDecrystDir" || die "cd failed"
+    tempId="unpack-test-$(date-uuid)"
+    mkdir "$tempId"
+    crystalXzFileSize="$(disk-size-in-bytes "$CrystalTmpUploadFile")"
+    pv -tparbIfei 0.1 -s "$crystalXzFileSize" < "$CrystalTmpUploadFile" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - | tar -xvf - -C "$tempId/" || die "Could not extract the local packed crystal!"
+
+    cp "$crystalWorkdir/$CrystalID.csum" "$tempId.csum"
+    cd "$tempId" || die "cd failed"
+    find . -name "$CrystalID"'*' -delete || die
+    csum --check ./* "../$tempId.csum" || die
+)
+rm -r "${testDecrystDir:?}"
+
 unset opt
 unset optb
 

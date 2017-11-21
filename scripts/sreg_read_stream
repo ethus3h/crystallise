@@ -93,7 +93,7 @@ mkdir "$streamId"
 (
     trap 'releaseLocks; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
     cd "$streamId" || exit 1
-    sponge "$streamId.xz"
+    cat "$streamId.xz"
     # Get the hash of the stream
     hashFull="$(sregi_hash_from_file "$streamId.xz")"
     if [[ -n "$knownChecksum" ]]; then

@@ -37,7 +37,7 @@ streamId="scache-$(date-uuid)"
 mkdir -p "$crystalWorkdir/.$streamId/$streamId"
 (
     cd "$crystalWorkdir/.$streamId/$streamId" || die
-    sponge "$streamId.tmp"
+    cat "$streamId.tmp"
     streamLength="$(stat --printf='%s\n' "$streamId.tmp")"
     # Calculate hash
     if [[ "$1" == "--assume-checksum" ]]; then

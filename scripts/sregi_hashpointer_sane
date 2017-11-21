@@ -42,7 +42,7 @@ if [[ "$1" == "-" ]]; then
     # read from stdin
     streamId="sregi_hashpointer_sane-$(date-uuid)"
     inputFile="/tmp/$streamId.tmp"
-    cat "$inputFile"
+    cat > "$inputFile"
 fi
 
 fsckIdList="$2"

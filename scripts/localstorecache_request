@@ -67,6 +67,7 @@ trap - ERR
 oldFilePath="$(readlink "$dbLinkPath")"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; rm -rf "${dbLinkPath:?}" "$(readlink -e "$dbLinkPath")"' ERR
 
+# no guarantee that localStoreMatchArray will match anything, I guess.
 localStoreMatchArray=("$oldFilePath"/sreg_flush_localstore-*.LocalStore)
 if ( ! [[ -e "${localStoreMatchArray[0]}" ]] ) || [[ -z "${localStoreMatchArray[0]}" ]]; then
     localStoreMatchArray=("$oldFilePath"/scache-*.LocalStore)

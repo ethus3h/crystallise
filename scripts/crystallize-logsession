@@ -102,18 +102,39 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
     #Resolve relative paths in the arguments, since GNU tar's -P doesn't
     CrystallizePaths=( "$@" )
     echo "First entry in array: ${CrystallizePaths[0]}"
+    splitForksTarLocation="$crystalWorkdir/$CrystalID".forkdir
+    echo "$OSTYPE" > "$crystalWorkdir/$CrystalID".ostype
+    if [[ "$OSTYPE" = darwin* ]]; then
+        mkdir -p "$splitForksTarLocation"
+    fi
     for i in "${!CrystallizePaths[@]}"; do
         #resolve path
         echo "Trying to resolve ${CrystallizePaths[$i]}..."
         setVariableToCommandOutput "abspath" "emreadlink" "${CrystallizePaths[$i]}"
         [[ -h "${abspath:?}" ]] || [[ -e "${abspath:?}" ]] || die "The file ${abspath:?} requested to be crystallized does not exist."
         CrystallizePaths[$i]="${abspath:?}"
+        if [[ "$OSTYPE" = darwin* ]]; then
+            # Tar on macOS will merge resource forks into their corresponding files even if they were separate (split into AppleDouble files in __MACOSX folders) at creation time. To work around this, we need to find any pre-split resource forks and tar them separately.
+            pathToFindResourceForks="${CrystallizePaths[$i]}"
+            echo "Looking for pre-split resource forks in $pathToFindResourceForks"
+            find "$pathToFindResourceForks" -name "__MACOSX" -type d -exec bash -c 'tar -cv -P -S --format pax "$0" > "$1/$(date-uuid)".pax' {} "$splitForksTarLocation" \;
+        fi
     done
-
 } &>> "$logfile"
 
-echo "Creating checksum file..." 2>&1 | tee -a "$logfile"
 {
+    echo "Creating checksum file for split resource forks, if any..."
+    csum "$splitForksTarLocation" - > "$crystalWorkdir/$CrystalID.forks-csum"
+    CrystallizePaths+=("$crystalWorkdir/$CrystalID.forks-csum")
+
+    echo "Packing split resource forks, if any..."
+    tar -cv -P -S --format pax "$splitForksTarLocation" > "$crystalWorkdir/$CrystalID.forks"
+    rm -r "${splitForksTarLocation:?}"
+    CrystallizePaths+=("$crystalWorkdir/$CrystalID.forks")
+
+    CrystallizePaths+=("$crystalWorkdir/$CrystalID.ostype")
+
+    echo "Creating checksum file..."
     csum "${CrystallizePaths[@]}" - > "$crystalWorkdir/$CrystalID.csum"
 } 2>&1 | tee -a "$logfile"
 

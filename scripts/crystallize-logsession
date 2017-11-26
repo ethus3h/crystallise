@@ -220,11 +220,11 @@ memlimit="$((memlimit - 1073741824))"
 CrystalTmpUploadFile="$crystalWorkdir/$CrystalID.coal5"
 export CrystalTmpUploadFile
 
-# GNU tar requires backslashes to be escaped in file names
-if [[ "$OSTYPE" != darwin* ]]; then
-    tarCrystallizePaths=("${CrystallizePaths[@]//\\/\\\\}")
-else
+# macOS tar doesn't want backslashes to be escaped in file names
+if [[ "$OSTYPE" == darwin* ]]; then
     tarCrystallizePaths=("${CrystallizePaths[@]}")
+else
+    tarCrystallizePaths=("${CrystallizePaths[@]//\\/\\\\}")
 fi
 
 set +o pipefail
@@ -297,11 +297,6 @@ script ${optb+/dev/null} ${opt+-e} ${opt+-q} ${opt+-c} crystallize-internal-ia $
 
     #Clear the screen
     printf "\\033c"
-
-    #Delete everything except log
-    #echo "Cleaning up..."
-    #yes | rm -rv "${CrystallizePaths[@]}"
-    #echo "Done cleaning up..."
 
     echo "Time (log stage 3) locally:"
 

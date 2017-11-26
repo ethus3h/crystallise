@@ -113,11 +113,12 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
 } &>> "$logfile"
 
 echo "Creating checksum file..." 2>&1 | tee -a "$logfile"
-{ csum "${CrystallizePaths[@]}" - > "$crystalWorkdir/$CrystalID.csum"; } 2>&1 | tee -a "$logfile"
+{
+    csum "${CrystallizePaths[@]}" - > "$crystalWorkdir/$CrystalID.csum"
+} 2>&1 | tee -a "$logfile"
 
 {
     CrystallizePaths+=("$crystalWorkdir/$CrystalID.csum")
-
     echo "Building local index..."
 } &>> "$logfile"
 

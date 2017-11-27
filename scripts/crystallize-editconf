@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 #set -x
 
+# Should work without ember-shared, just in case, so don't set traps or source ember_bash_setup
+
 defaultEditor="$(getDefaultEditorPath)"
 configLocation="$(crystallize-getconf ConfigLocation)"
 if [[ -w "$configLocation" ]]; then

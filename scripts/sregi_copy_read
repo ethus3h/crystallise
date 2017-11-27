@@ -61,6 +61,12 @@ if [[ "$1" == "--sreg-dir" ]]; then
 fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir")"
 
+sregNoVerify=""
+if [[ "$1" == "--no-verify" ]]; then
+    #echo "(Not verifying pointers.)"
+    sregNoVerify="true"
+    shift
+fi
 if ! [[ -f "$1" ]]; then
     error-notify "Item must be a regular file."
     exit 1

@@ -32,7 +32,6 @@ releaseLocks() (
 
 finish() {
     trap - ERR
-    releaseLocks
     if [[ $1 == "ok" ]]; then
         (
             cd "/${crystalWorkdir:?}/" || die
@@ -92,8 +91,8 @@ fi
 # Get stream
 mkdir "$streamId"
 (
-    trap 'releaseLocks; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
-    trap 'releaseLocks' EXIT
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+    # Don't trap for releaseLocks until we've checked if the lock has actually been set by us
     cd "$streamId" || exit 1
     cat > "$streamId.xz"
     # Get the hash of the stream
@@ -144,9 +143,9 @@ mkdir "$streamId"
     mkdir -p "$hashDir"
     dbLinkPath="$hashDir/$hashFull"
 
-    trap 'releaseLocks; warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate) while reading $hashFull."' ERR
+    trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate) while reading $hashFull."' ERR
     while [[ "$numRetries" -gt 0 ]] && [[ "$successfulRetrieval" -eq 0 ]]; do
-        trap 'releaseLocks; warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate) while reading $hashFull."; continue' ERR
+        trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate) while reading $hashFull."; continue' ERR
         if [[ "$numRetries" -lt "$numTotalRetries" ]]; then
             sleep 30
             warn "Beginning retry of reading stream $hashFull. $numRetries retries remaining."
@@ -182,6 +181,9 @@ mkdir "$streamId"
                     echo "locked on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)" > "$dbLinkPath.locked"
                 fi
             fi
+
+            trap 'releaseLocks; warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate) while reading $hashFull."' ERR
+            trap 'releaseLocks' EXIT
 
             # Item is not in the cache (or --skip-cache was specified), so add it
 

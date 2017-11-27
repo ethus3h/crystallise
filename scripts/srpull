@@ -15,9 +15,12 @@ if [[ "$1" == "--skip" ]]; then
     shift
 fi
 
-sregReplace="false"
+sregReplace="true"
 if [[ "$1" == "--replace" ]]; then
     sregReplace="true"
+    shift
+elif [[ "$1" == "--no-replace" ]]; then
+    sregReplace="false"
     shift
 fi
 

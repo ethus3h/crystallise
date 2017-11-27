@@ -43,8 +43,8 @@ finish() {
     fi
     trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate) while finishing $hashFull."' ERR
 }
-trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; finish error; exit 1' ERR
-trap 'finish ok' EXIT
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; finish "error"; exit 1' ERR
+trap 'finish "ok"' EXIT
 
 ignoreLock=""
 if [[ "$1" == "--ignore-lock" ]]; then
@@ -93,6 +93,7 @@ fi
 mkdir "$streamId"
 (
     trap 'releaseLocks; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+    trap 'releaseLocks' EXIT
     cd "$streamId" || exit 1
     cat > "$streamId.xz"
     # Get the hash of the stream

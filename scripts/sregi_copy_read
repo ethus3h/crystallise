@@ -113,6 +113,7 @@ destinationName="$2/${sourceNameReplaced:destinationRootLength:targetLength}"
 #echo "$destinationName"
 sourceChecksum="$(sha512sum < "$1" | awk '{print $1;}')"
 if [[ -f "$destinationName" ]]; then
+    # There are three possibilities. 1: The file already exists and matches checksum. 2: The file already exists and doesn't match checksum. 3: The file does not exist. In the second and theird cases, we want to overwrite, otherwise just exit OK.
     pointerTypeSignature="$(head -c 36 "$destinationName")"
     destinationChecksum=""
     hasEncounteredError="0"

@@ -27,23 +27,10 @@ finish() {
     if [[ -e "$crystalWorkdir/$instanceId" ]]; then
         rm -r "${crystalWorkdir:?}/${instanceId:?}"
     fi
-    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate) while finishing srsync."' ERR
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate) while finishing srpull."' ERR
 }
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; finish; exit 1' ERR
 trap finish EXIT
-
-sregNoVerify="true"
-if [[ "$1" == "--no-verify" ]]; then
-    sregNoVerify="true"
-    shift
-fi
-if [[ "$1" == "--verify" ]]; then
-    sregNoVerify="false"
-    shift
-fi
-if [[ "$sregNoVerify" == "true" ]]; then
-    warn "(Not verifying pointers: use sreg_fsck to test the entire stream registry.)"
-fi
 
 if [[ "$#" == "1" ]]; then
     # There's only one path specified, so use the current directory as the destination
@@ -58,19 +45,20 @@ fi
 if ! [[ -d "$destinationParameter" ]]; then
     die "Destination is not a directory."
 fi
-echo "Counting items..."
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
-instanceId=".srsync-$(date-uuid)"
+instanceId=".srpull-$(date-uuid)"
 mkdir -p "$crystalWorkdir/$instanceId"
-statusFile="/tmp/$instanceId.srsync.status"
-failCheckFile="/tmp/$instanceId.srsync.running"
+statusFile="/tmp/$instanceId.srpull.status"
+failCheckFile="/tmp/$instanceId.srpull.running"
 skipFile="$failCheckFile.skip"
 echo "0" > "$skipFile"
 
+echo "Counting items..."
 find "${pathsToCopy[@]}" -type f -printf '.' | wc -c > "$statusFile"
+
 # FIXME: Why replace this in the destination parameter?! Won't this make it copy into the wrong folder?
-destinationReplaced="${destinationParameter/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"
-destinationReplaced="${destinationReplaced//\/.git\//\/.git.686fc528-0e8e-4724-91bb-c103cdcdd592\/}"
+destinationReplaced="${destinationParameter/%.git.686fc528-0e8e-4724-91bb-c103cdcdd592/.git}"
+destinationReplaced="${destinationReplaced//\/.git.686fc528-0e8e-4724-91bb-c103cdcdd592\//\/.git\/}"
 
 for path in "${pathsToCopy[@]}"; do
     destinationSuffix=""

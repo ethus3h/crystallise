@@ -65,7 +65,6 @@ fi
 if ! [[ -d "$destinationParameter" ]]; then
     die "Destination is not a directory."
 fi
-echo "Counting items..."
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 instanceId=".srsync-$(date-uuid)"
 mkdir -p "$crystalWorkdir/$instanceId"
@@ -74,7 +73,9 @@ failCheckFile="/tmp/$instanceId.srsync.running"
 skipFile="$failCheckFile.skip"
 echo "0" > "$skipFile"
 
+echo "Counting items..."
 find "${pathsToCopy[@]}" -type f -printf '.' | wc -c > "$statusFile"
+
 # FIXME: Why replace this in the destination parameter?! Won't this make it copy into the wrong folder?
 destinationReplaced="${destinationParameter/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"
 destinationReplaced="${destinationReplaced//\/.git\//\/.git.686fc528-0e8e-4724-91bb-c103cdcdd592\/}"

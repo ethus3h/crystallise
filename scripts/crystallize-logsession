@@ -115,6 +115,7 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
         CrystallizePaths[$i]="${abspath:?}"
         if [[ "$OSTYPE" = darwin* ]]; then
             # Tar on macOS will merge resource forks into their corresponding files even if they were separate (split into AppleDouble files in __MACOSX folders) at creation time. To work around this, we need to find any pre-split resource forks and tar them separately. (Otherwise, the files won't be the same after being decrystallized.)
+            # FIXME: The non-split resource forks of files should be checksummed as well.
              pathToFindResourceForks="${CrystallizePaths[$i]}"
             echo "Looking for pre-split resource forks in $pathToFindResourceForks"
             find "$pathToFindResourceForks" -name "__MACOSX" -exec bash -c 'tar -cv -P -S --format pax "$0" > "$1/$(date-uuid)".pax' {} "$splitForksTarLocation" \;

@@ -262,14 +262,14 @@ set -o pipefail
         cp "$crystalWorkdir/$CrystalID.forks-csum" "$tempId.forks-csum"
         (
             cd "$tempId.forks" || die "cd failed"
-            csum --check ./* "../$tempId.forks-csum" || die
+            csum --check ./* "$tempId.forks-csum" || die
         )
         find "$tempId.forks" -type f -exec bash -c 'tar -xvf - -C "$1/" < "$0"' {} "$tempId" \;
 
         cp "$crystalWorkdir/$CrystalID.csum" "$tempId.csum"
         cd "$tempId" || die "cd failed"
         find . -name "$CrystalID"'*' -delete || die
-        csum --check ./* "../$tempId.csum" || die
+        csum --check ./* "$tempId.csum" || die
     )
     rm -r "${testDecrystDir:?}"
     echo "Please wait..."

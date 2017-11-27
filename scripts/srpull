@@ -5,13 +5,7 @@ source ember_bash_setup &> /dev/null
 
 ((EUID)) && exec sudo -- "$0" "$@"
 
-sregDir=""
-if [[ "$1" == "--sreg-dir" ]]; then
-    shift
-    sregDir="$1"
-    shift
-fi
-sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check "$1")"
+# Don't bother finding sregDir here, because it can be inferred from each of the source parameters (and may be different for them, so whatever we got here might not be accurate anyway).
 
 skipCount="0"
 if [[ "$1" == "--skip" ]]; then

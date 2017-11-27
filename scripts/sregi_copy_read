@@ -76,12 +76,6 @@ if [[ "$1" == "--sreg-dir" ]]; then
 fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir")"
 
-if [[ "$1" == "--no-verify" ]]; then
-    #echo "(Not verifying pointers.)"
-    sregNoVerify=true
-    shift
-fi
-#echo "$@"
 if ! [[ -f "$1" ]]; then
     error-notify "Item must be a regular file."
     exit 1
@@ -111,8 +105,8 @@ fi
 destinationRootLength="$4"
 # FIXME: This shellcheck directive is only needed for outdated shellcheck versions. Once CodeClimate's shellcheck gets updated (which probably means when Debian stable updates shellcheck), it can be removed.
 # shellcheck disable=SC2034
-sourceNameReplaced="${1/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"
-sourceNameReplaced="${sourceNameReplaced//\/.git\//\/.git.686fc528-0e8e-4724-91bb-c103cdcdd592\/}"
+sourceNameReplaced="${1/%.git.686fc528-0e8e-4724-91bb-c103cdcdd592/.git}"
+sourceNameReplaced="${sourceNameReplaced//\/.git.686fc528-0e8e-4724-91bb-c103cdcdd592\//\/.git\/}"
 targetLength=${#sourceNameReplaced}
 #echo "$destinationRootLength - $targetLength"
 destinationName="$2/${sourceNameReplaced:destinationRootLength:targetLength}"

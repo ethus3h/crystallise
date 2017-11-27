@@ -4,7 +4,7 @@ source ember_bash_setup &> /dev/null
 #set -x
 
 ((EUID)) && exec sudo -- "$0" "$@"
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; if [[ -n "${tempDirectoryName:?}" ]]; then if [[ -d "${tempDirectoryName:?}" ]]; then rm -r "${tempDirectoryName:?}"; fi; fi' ERR
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; if [[ -n "${tempDirectoryName:?}" ]]; then if [[ -d "${tempDirectoryName:?}" ]]; then rm -r "${tempDirectoryName:?}"; fi; fi; exit 1' ERR
 
 sregDir=""
 if [[ "$1" == "--sreg-dir" ]]; then

@@ -3,7 +3,7 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
-die "This script has dangerous problems and is disabled until they are fixed."
+die "This script has a dangerous problem and is disabled until it is fixed."
 
 if [[ "$(whoami)" == "root" ]]; then
     [[ -e "/tmp/depbz.lock" ]] && die "depbz is already running! Only one depbz instance can be running at a time."

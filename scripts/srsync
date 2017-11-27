@@ -106,6 +106,7 @@ for path in "${pathsToCopy[@]}"; do
         find "$path" -type f -exec sregi_copy_write "$failCheckFile" --skip "$skipCount" --sreg-dir "$sregDir" {} "$destinationReplaced" "$statusFile" "$destinationRootLength" \;
     fi
     # This NEEDS to skip regular files, because otherwise files that don't exist in the directory will be copied and take up space!
+    # FIXME: WTF? The regular files that don't exist should already have been copied by sregi_copy_write.
     # rsync -a --ignore-existing --no-i-r "${pathsToCopy[@]}" "$destinationParameter/"
     find "$destinationFindTarget" -type d -empty -exec touch {}/.keep \;
 done

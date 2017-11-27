@@ -92,7 +92,8 @@ sregi_hash_from_file() (
         sregi_hash_from_file_pipecheck
         set -o pipefail
     else
-        # Should this have pipefail? Should the general pipecheck be used for it? What about other pipes in crystallize, and in bash scripts in general?
+        # It's a regular file, not a pointer, so just get its sha512sum.
+        # FIXME: Should this have pipefail? Should the general pipecheck be used for it? What about other pipes in crystallize, and in bash scripts in general?
         set +o pipefail
         sha512sum < "$file" | awk '{print $1;}'
         set -o pipefail

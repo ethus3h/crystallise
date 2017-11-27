@@ -113,9 +113,10 @@ destinationName="$2/${sourceNameReplaced:destinationRootLength:targetLength}"
 #echo "$destinationName"
 sourceChecksum="$(sregi_hash_from_file "$1")"
 
-destinationChecksum=""
 
 # There are three possibilities. 1: The file already exists and matches checksum. 2: The file already exists and doesn't match checksum. 3: The file does not exist. In the first case, skip the file; in the second and third cases, copy the file.
+
+destinationChecksum=""
 if [[ -f "$destinationName" ]]; then
     destinationChecksum="$(sha512sum < "$destinationName" | awk '{print $1;}')"
 fi
@@ -123,6 +124,8 @@ fi
 if [[ "$sourceChecksum" == "$destinationChecksum" ]]; then
     echo "(Skipping matching normal file $destinationName)"
     success
+fi
+
     if [[ -e ]]
     if [[ "$sourceChecksum" == "$(sha512sum < "$destinationName" | awk '{print $1;}')" ]]; then
     fi

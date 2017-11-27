@@ -118,7 +118,8 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
              pathToFindResourceForks="${CrystallizePaths[$i]}"
             echo "Looking for pre-split resource forks in $pathToFindResourceForks"
             find "$pathToFindResourceForks" -name "__MACOSX" -type d -exec bash -c 'tar -cv -P -S --format pax "$0" > "$1/$(date-uuid)".pax' {} "$splitForksTarLocation" \;
-            find "$pathToFindResourceForks" -name "__MACOSX" -type d -exec bash -c 'find "$0" -type f -exec truncate -s 0 {} \;' {} \;
+            # find "$pathToFindResourceForks" -name "__MACOSX" -type d -exec bash -c 'find "$0" -type f -exec truncate -s 0 {} \;' {} \;
+            # Ugh, this isn't easy to restore to its original state afterwards. Exclude these from the main tar file entirely instead?
         fi
     done
 } &>> "$logfile"

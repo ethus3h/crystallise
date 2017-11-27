@@ -85,9 +85,8 @@ for path in "${pathsToCopy[@]}"; do
     else
         find "$path" -type f -exec sregi_copy_read "$failCheckFile" --skip "$skipCount" --sreg-dir "$sregDir" {} "$destinationReplaced" "$statusFile" "$destinationRootLength" \;
     fi
-    # This NEEDS to skip regular files, because otherwise files that don't exist in the directory will be copied and take up space!
-    # rsync -a --ignore-existing --no-i-r "${pathsToCopy[@]}" "$destinationParameter/"
-    find "$destinationFindTarget" -type d -empty -exec touch {}/.keep \;
+    rsync -a --ignore-existing --no-i-r "${pathsToCopy[@]}" "$destinationParameter/"
+    find "$destinationFindTarget" -type d -empty -exec bash -c 'echo "d61b6a4f-525b-458a-b8d2-4a9592e22caa" > "$0/.keep"' {} \;
 done
 
 if [[ -e "$failCheckFile" ]]; then

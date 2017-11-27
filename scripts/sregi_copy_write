@@ -56,13 +56,13 @@ fi
 finish() {
     trap - ERR
     (
-    crystalWorkdir="$(crystallize-getconf WorkDirectory)"
-    cd "/${crystalWorkdir:?}/" || die
-    if [[ -n "$streamId" ]]; then
-        if [[ -e "/$crystalWorkdir/${streamId:?}" ]]; then
-            rm -r "/$crystalWorkdir/${streamId:?}"
+        crystalWorkdir="$(crystallize-getconf WorkDirectory)"
+        cd "/${crystalWorkdir:?}/" || die
+        if [[ -n "$streamId" ]]; then
+            if [[ -e "/$crystalWorkdir/${streamId:?}" ]]; then
+                rm -r "/$crystalWorkdir/${streamId:?}"
+            fi
         fi
-    fi
     )
     trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate) while finishing sregi_copy_write."' ERR
 }

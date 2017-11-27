@@ -117,12 +117,14 @@ destinationChecksum=""
 
 # There are three possibilities. 1: The file already exists and matches checksum. 2: The file already exists and doesn't match checksum. 3: The file does not exist. In the first case, skip the file; in the second and third cases, copy the file.
 if [[ -f "$destinationName" ]]; then
+    destinationChecksum="$(sha512sum < "$destinationName" | awk '{print $1;}')"
+fi
+
+if [[ "$sourceChecksum" == "$destinationChecksum" ]]; then
+    echo "(Skipping matching normal file $destinationName)"
+    success
     if [[ -e ]]
     if [[ "$sourceChecksum" == "$(sha512sum < "$destinationName" | awk '{print $1;}')" ]]; then
-    destinationChecksum="$(sha512sum < "$destinationName" | awk '{print $1;}')"
-    if [[ "$sourceChecksum" == "$(sha512sum < "$destinationName" | awk '{print $1;}')" ]]; then
-        echo "(Skipping matching normal file $destinationName)"
-        success
     fi
     sourceChecksum="$(sha512sum < "$1" | awk '{print $1;}')"
     if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then

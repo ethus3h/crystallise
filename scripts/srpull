@@ -27,12 +27,6 @@ finish() {
 }
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; finish; exit 1' ERR
 
-srpullReplace="false"
-if [[ "$1" == "--replace" ]]; then
-    srpullReplace="true"
-    shift
-fi
-
 if [[ "$#" == "1" ]]; then
     # There's only one path specified, so use the current directory as the destination
     destinationParameter="."
@@ -41,14 +35,6 @@ else
     # Multiple paths are specified, so use the last one as the destination
     destinationParameter="${!#}" # last argument
     pathsToCopy=("${@:1:$(($#-1))}") # all but last argument
-fi
-
-if [[ "$srpullReplace" == "true" ]]; then
-    rsync -av --checksum --progress --no-i-r "${pathsToCopy[@]}" "$destinationParameter/"
-    rsync -av --checksum --progress --no-i-r "${pathsToCopy[@]}" "$destinationParameter/"
-else
-    rsync -av --checksum --progress --no-i-r --ignore-existing "${pathsToCopy[@]}" "$destinationParameter/"
-    rsync -av --checksum --progress --no-i-r --ignore-existing "${pathsToCopy[@]}" "$destinationParameter/"
 fi
 
 if [[ -z "$destinationParameter" ]]; then

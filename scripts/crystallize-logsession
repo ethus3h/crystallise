@@ -253,6 +253,11 @@ set -o pipefail
     (
         cd "$testDecrystDir" || die "cd failed"
 
+        mkdir "$tempId"
+        crystalXzFileSize="$(disk-size-in-bytes "$CrystalTmpUploadFile")"
+        pv -tparbIfei 0.1 -s "$crystalXzFileSize" < "$CrystalTmpUploadFile" | gpg --yes --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - | unxz --stdout - | tar -xvf - -C "$tempId/" || die "Could not extract the local packed crystal!"
+
+        # Extract split forks
         mkdir "$tempId.forks"
         tar -xvf - -C "$tempId.forks/" < "$crystalWorkdir/$CrystalID.forks" || die "Could not extract the local packed split forks!"
         cp "$crystalWorkdir/$CrystalID.forks-csum" "$tempId.forks-csum"
@@ -260,11 +265,6 @@ set -o pipefail
             cd "$tempId.forks" || die "cd failed"
             csum --check ./* "../$tempId.forks-csum" || die
         )
-
-        mkdir "$tempId"
-        crystalXzFileSize="$(disk-size-in-bytes "$CrystalTmpUploadFile")"
-        pv -tparbIfei 0.1 -s "$crystalXzFileSize" < "$CrystalTmpUploadFile" | gpg --yes --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - | unxz --stdout - | tar -xvf - -C "$tempId/" || die "Could not extract the local packed crystal!"
-
         find "$tempId.forks" -type f -exec bash -c 'tar -xvf - -C "$1/" < "$0"' {} "$tempId" \;
 
         cp "$crystalWorkdir/$CrystalID.csum" "$tempId.csum"

@@ -71,6 +71,20 @@ decrystInner() (
     fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5" "$lockOverride" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - | tar -xvf - -C "$tempId/" || die "Failed to retrieve Crystal data."
     #trap
 
+    (
+        # Extract split forks
+        tempDecrystDir="$(tempDir)"
+        trap 'rm -r ${tempDir:?}; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+        tar -xvf - -C "$tempId.forks/" < "$crystalWorkdir/$CrystalID.forks" || die "Could not extract the local packed split forks!"
+        cp "$crystalWorkdir/$CrystalID.forks-csum" "$tempId.forks-csum"
+        (
+            cd "$tempId.forks" || die "cd failed"
+            csum --check ./* "../$tempId.forks-csum" || die
+        )
+        find "$tempId.forks" -type f -exec bash -c 'tar -xvf - -C "$1/" < "$0"' {} "$tempId" \;
+
+    )
+
     trap - ERR
     exitStatus=""
     {

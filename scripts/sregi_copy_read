@@ -57,11 +57,6 @@ finish() {
     (
     crystalWorkdir="$(crystallize-getconf WorkDirectory)"
     cd "/${crystalWorkdir:?}/" || die
-    if [[ -n "$streamId" ]]; then
-        if [[ -e "/$crystalWorkdir/${streamId:?}" ]]; then
-            rm -r "/$crystalWorkdir/${streamId:?}"
-        fi
-    fi
     )
     trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate) while finishing sregi_copy_write."' ERR
 }
@@ -129,10 +124,6 @@ sreg_read_stream < "$1" > "$destinationName" || die "Failed to read pointer at $
 
 # a+r gives (a)ll users (r)ead permission
 chmod a+r "$destinationName"
-rm -r "${crystalSubdir:?}"
-if [[ -e "${streamId:?}" ]]; then
-    rm -r "${streamId:?}"
-fi
 
 finish
 

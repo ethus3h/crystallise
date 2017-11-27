@@ -22,17 +22,17 @@ if [[ "$1" == "--sreg-dir" ]]; then
 fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 
-releaseLocks() {
+releaseLocks() (
     if [[ -n "$dbLinkPath" ]]; then
         rm -f "${dbLinkPath:?}.locked"
     fi
     rm -f "${dbDir:?}/.locked"
     rm -f "${dbDir:?}/.LocalStore.lock"
-}
+)
 
 finish() {
-    releaseLocks
     trap - ERR
+    releaseLocks
     if [[ $1 == "ok" ]]; then
         (
             cd "/${crystalWorkdir:?}/" || die
@@ -43,8 +43,8 @@ finish() {
     fi
     trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate) while finishing $hashFull."' ERR
 }
-trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; finish "error"; exit 1' ERR
-trap 'finish "ok"' EXIT
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; finish error; exit 1' ERR
+trap 'finish ok' EXIT
 
 ignoreLock=""
 if [[ "$1" == "--ignore-lock" ]]; then

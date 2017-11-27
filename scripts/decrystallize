@@ -75,7 +75,7 @@ decrystInner() (
         # Extract split forks
         tempDecrystDir="$(tempDir)"
         trap 'rm -r ${tempDir:?}; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
-        tar -xvf - -C "$tempId.forks/" < "$crystalWorkdir/$CrystalID.forks" || die "Could not extract the local packed split forks!"
+        tar -xvf - -C "." < "$crystalWorkdir/$CrystalID.forks" || die "Could not extract the local packed split forks!"
         cp "$crystalWorkdir/$CrystalID.forks-csum" "$tempId.forks-csum"
         (
             cd "$tempId.forks" || die "cd failed"

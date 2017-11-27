@@ -122,31 +122,31 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
     done
 } &>> "$logfile"
 
+CrystallizePaths+=("$crystalWorkdir/$CrystalID.forks-csum")
+CrystallizePaths+=("$crystalWorkdir/$CrystalID.forks")
+CrystallizePaths+=("$crystalWorkdir/$CrystalID.ostype")
+
 {
     echo "Creating checksum file for split resource forks, if any..."
     csum "$splitForksTarLocation" - > "$crystalWorkdir/$CrystalID.forks-csum"
-    CrystallizePaths+=("$crystalWorkdir/$CrystalID.forks-csum")
 
     echo "Packing split resource forks, if any..."
     tar -cv -P -S --format pax "$splitForksTarLocation" > "$crystalWorkdir/$CrystalID.forks"
     rm -r "${splitForksTarLocation:?}"
-    CrystallizePaths+=("$crystalWorkdir/$CrystalID.forks")
-
-    CrystallizePaths+=("$crystalWorkdir/$CrystalID.ostype")
 
     echo "Creating checksum file..."
     csum "${CrystallizePaths[@]}" - > "$crystalWorkdir/$CrystalID.csum"
 } 2>&1 | tee -a "$logfile"
 
-{
-    CrystallizePaths+=("$crystalWorkdir/$CrystalID.csum")
-    echo "Building local index..."
-} &>> "$logfile"
+CrystallizePaths+=("$crystalWorkdir/$CrystalID.csum")
+
+echo "Building local index..." | tee -a "$logfile"
 
 hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -e -o fbsd "$crystalWorkdir/""${CrystallizeFirstArg:?}" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.local.idx" 2>&1 | tee -a "$logfile" &
 localIndexPid="$!"
 
-echo "Building deep index..."
+echo "Building deep index..." | tee -a "$logfile"
+
 hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -e -o fbsd -r "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.deep.idx" 2>&1 | tee -a "$logfile"
 
 {

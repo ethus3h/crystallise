@@ -67,24 +67,53 @@ if ! [[ -e "$crystalWorkdir/.CrystalCache/" ]]; then
 fi
 
 decrystInner() (
+    knownCrystalCrystallizeVersion=""
+    getCrystalVersion() {
+        metadata="$(fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID"_meta.xml)"
+        regex='<subject>Uploaded using Crystallize ([0-9\.]+)<\/subject>'
+        [[ -n "$metadata" ]] || die "Could not get metadata for this crystal."
+        knownCrystalCrystallizeVersion=""
+        if [[ "$metadata" =~ $regex ]]; then
+            knownCrystalCrystallizeVersion="${BASH_REMATCH[1]}"
+        fi
+        [[ -n "$knownCrystalCrystallizeVersion" ]] || warn "Could not get version of Crystallize used for this crystal."
+    }
+
     # FIXME: Why the actual fuck does execution continue past the next line when tar exits with a nonzero exit status?! The ERR trap gets printed out correctly when running "trap" with no arguments right after it, but for some reason doesn't get called here. Weird.
     fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5" "$lockOverride" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - | tar -xvf - -C "$tempId/" || die "Failed to retrieve Crystal data."
     #trap
 
     # Extract split forks
+    forkFetchStatus=""
+    forkCsumFetchStatus=""
     tempDecrystForksDir="$(tempDir)"
     (
+        trap 'rm -r ${tempDecrystForksDir:?}; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
         cd "$tempDecrystForksDir" || die
         mkdir ".forks"
-        trap 'rm -r ${tempDecrystForksDir:?}; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+
+        trap - ERR
         fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-forks" | pv -tparbIfei 0.1 | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - | tar -xvf - -C ".forks" || die "Could not extract the local packed split forks!"
+        forkFetchStatus="$?"
         fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-forks-csum" | pv -tparbIfei 0.1 | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - > ".forks-csum"
+        forkCsumFetchStatus="$?"
+        trap 'rm -r ${tempDecrystForksDir:?}; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+
+        if [[ "$forkFetchStatus" != "0" ]] || [[ "$forkCsumFetchStatus" != "0" ]]; then
+            [[ -n $knownCrystalCrystallizeVersion ]] || getCrystalVersion
+            if version_gt "$knownCrystalCrystallizeVersion" "3.1.2.5.13.61"; then
+                # This crystal was made by a version that supports split fork storage
+                die "Error retrieving split forks for this crystal!"
+            fi
+            warn "(Couldn't retrieve split forks file for this crystal as the version of crystallize it was created using is too old.)"
+        fi
+
         (
             cd ".forks" || die "cd failed"
             csum --check ./* "../.forks-csum" || die
-        )
+        ) || die
         find ".forks" -type f -exec bash -c 'tar -xvf - -C "$1/" < "$0"' {} "$tempId" \;
-    )
+    ) || die
     rm -r "$tempDecrystForksDir"
 
     trap - ERR
@@ -114,15 +143,8 @@ decrystInner() (
         ) || die
         rm -r "${tempId:?}.tempDir"
     else
-        metadata="$(fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID"_meta.xml)"
-        regex='<subject>Uploaded using Crystallize ([0-9\.]+)<\/subject>'
-        [[ -n "$metadata" ]] || die "Could not get metadata for this crystal."
-        crystalCrystallizeVersion=""
-        if [[ "$metadata" =~ $regex ]]; then
-            crystalCrystallizeVersion="${BASH_REMATCH[1]}"
-        fi
-        [[ -n "$crystalCrystallizeVersion" ]] || warn "Could not get version of Crystallize used for this crystal."
-        if version_gt "$crystalCrystallizeVersion" "3.1.2.5.13"; then
+        [[ -n $knownCrystalCrystallizeVersion ]] || getCrystalVersion
+        if version_gt "$knownCrystalCrystallizeVersion" "3.1.2.5.13"; then
             # This crystal was made by a version that supports checksumming
             die "Error retrieving csum file for this crystal!"
         fi

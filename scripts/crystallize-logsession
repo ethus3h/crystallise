@@ -104,9 +104,8 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
     echo "First entry in array: ${CrystallizePaths[0]}"
     splitForksTarLocation="$crystalWorkdir/$CrystalID".forkdir
     echo "$OSTYPE" > "$crystalWorkdir/$CrystalID".ostype
-    if [[ "$OSTYPE" = darwin* ]]; then
-        mkdir -p "$splitForksTarLocation"
-    fi
+    # We make the folder for split forks on all platforms so it won't be missing when decrystallizing.
+    mkdir -p "$splitForksTarLocation"
     for i in "${!CrystallizePaths[@]}"; do
         #resolve path
         echo "Trying to resolve ${CrystallizePaths[$i]}..."

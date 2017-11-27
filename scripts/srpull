@@ -4,6 +4,7 @@ source ember_bash_setup &> /dev/null
 #set -x
 
 ((EUID)) && exec sudo -- "$0" "$@"
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
 # Don't bother finding sregDir here, because it can be inferred from each of the source parameters (and may be different for them, so whatever we got here might not be accurate anyway).
 

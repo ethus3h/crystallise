@@ -113,7 +113,6 @@ destinationName="$2/${sourceNameReplaced:destinationRootLength:targetLength}"
 #echo "$destinationName"
 sourceChecksum="$(sregi_hash_from_file "$1")"
 
-
 # There are three possibilities. 1: The file already exists and matches checksum. 2: The file already exists and doesn't match checksum. 3: The file does not exist. In the first case, skip the file; in the second and third cases, copy the file.
 
 destinationChecksum=""
@@ -122,75 +121,12 @@ if [[ -f "$destinationName" ]]; then
 fi
 
 if [[ "$sourceChecksum" == "$destinationChecksum" ]]; then
-    echo "(Skipping matching normal file $destinationName)"
+    echo "(Skipping already-existing, matching file $destinationName)"
     success
 fi
 
-    if [[ -e ]]
-    if [[ "$sourceChecksum" == "$(sha512sum < "$destinationName" | awk '{print $1;}')" ]]; then
-    fi
-    sourceChecksum="$(sha512sum < "$1" | awk '{print $1;}')"
-    if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
-        trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; hasEncounteredError="1"' ERR
-        assumePointerDbEntryFileExists="true"
-        if [[ "$sregNoVerify" == "true" ]]; then
-            destinationChecksum="$(tail -c +38 "$destinationName" | head -c 129)"
-            pointerDbEntryFile="$sregDir/${destinationChecksum:0:1}/${destinationChecksum:1:1}/${destinationChecksum:2:1}/$destinationChecksum"
-            if ! [[ -e "$pointerDbEntryFile" ]]; then
-                assumePointerDbEntryFileExists="pointerDbEntryFile $pointerDbEntryFile missing!"
-            else
-                innerPointerTypeSignature="$(head -c 36 "$pointerDbEntryFile")"
-                if [[ "$innerPointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then
-                    localStoreToTest="$sregDir/LocalStore/${destinationChecksum:0:1}/${destinationChecksum:1:1}/${destinationChecksum:2:1}/$destinationChecksum"
-                    if ! [[ -e "$localStoreToTest" ]]; then
-                        assumePointerDbEntryFileExists="LocalStore $localStoreToTest missing!"
-                    fi
-                fi
-            fi
-        else
-            destinationChecksum="$(tail -c +38 "$destinationName" | head -c 129)"
-            sreg_read_stream --sreg-dir "$sregDir" < "$destinationName" > /dev/null || hasEncounteredError="1"
-        fi
-        if [[ "$destinationChecksum" == "$sourceChecksum" && "$hasEncounteredError" == "0" && "$assumePointerDbEntryFileExists" == "true" ]]; then
-            # The file is already present, pointerized, and readable, so exit without doing anything.
-            echo "(Nothing done for $1.)"
-            success
-        else
-            warn "(Note: Destination pointer $destinationName did not match source checksum or could not be read (source checksum: $sourceChecksum / destinationChecksum: $destinationChecksum /  stream read status: $hasEncounteredError / quick check status: $assumePointerDbEntryFileExists / destination pointer contents: $(<"$destinationName")): the source file has probably been changed. Removing and recreating.)"
-            # cat "$destinationName"
-            rm "${destinationName:?}"
-        fi
-    else
-        if [[ "$pointerTypeSignature" != "760fa662-89cf-4ebd-9664-150b7637ddd4" ]] && # Hash pointer
-            [[ "$pointerTypeSignature" != "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]] && # Standard remote pointer
-            [[ "$pointerTypeSignature" != "c39f8657-384b-438b-a5a2-eece17147589" ]] && # LocalStore pointer
-            [[ "$pointerTypeSignature" != "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] && # Remote pack pointer
-            [[ "$pointerTypeSignature" != "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]] && # Also remote pack pointer
-            [[ "$pointerTypeSignature" != "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]] && # Pack pointer data is in the pointer
-            [[ "$pointerTypeSignature" != "45baff46-8db7-46f6-aad9-de5f713b02fe" ]] # URL pointer
-        then
-            if [[ "$sourceChecksum" == "$(sha512sum < "$destinationName" | awk '{print $1;}')" ]]; then
-                echo "(Skipping matching normal file $destinationName)"
-                success
-            fi
-        fi
-    fi
-fi
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
-crystalWorkdir="$(crystallize-getconf WorkDirectory)"
-streamId=".sreg-$(date-uuid)"
-crystalSubdir="$crystalWorkdir/$streamId"
-mkdir -p "$crystalSubdir"
-rsync -a --checksum --no-i-r "$1" "$crystalSubdir/"
-setVariableToCommandOutput "basename" "embasename" "$1"
-fileToStash="$crystalSubdir/${basename:?}"
-if [[ -f "$fileToStash" ]]; then
-    sreg_store_stream --sreg-dir "$sregDir" --assume-checksum "$sourceChecksum" --verbose < "$fileToStash" | sponge "$fileToStash"
-else
-    die "Skipping item $fileToStash: not a regular file."
-fi
-mkdir -p "$(dirname "$destinationName")"
-rsync -a --checksum --no-i-r "$fileToStash" "$destinationName"
+sreg_read_stream < "$1" > "$destinationName" || die "Failed to read pointer at $1!"
+
 # a+r gives (a)ll users (r)ead permission
 chmod a+r "$destinationName"
 rm -r "${crystalSubdir:?}"

@@ -15,11 +15,35 @@ if [[ "$1" == "--skip" ]]; then
 fi
 
 finish() {
-    if [[ -e "${fsckId:?}" ]]; then
-        rm -r "${fsckId:?}" "/tmp/${fsckId:?}.status"
+    save_traps="$(trap)"
+    trap - ERR
+    rm -f "${failCheckFile:?}"
+    eval "$save_traps"
+
+    trap - ERR
+    if [[ -e "$statusFile" ]]; then
+        rm "$statusFile"
     fi
+    if [[ -e "$crystalWorkdir/$instanceId" ]]; then
+        rm -r "${crystalWorkdir:?}/${instanceId:?}"
+    fi
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate) while finishing srsync."' ERR
 }
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; finish; exit 1' ERR
+trap finish EXIT
+
+sregNoVerify="true"
+if [[ "$1" == "--no-verify" ]]; then
+    sregNoVerify="true"
+    shift
+fi
+if [[ "$1" == "--verify" ]]; then
+    sregNoVerify="false"
+    shift
+fi
+if [[ "$sregNoVerify" == "true" ]]; then
+    warn "(Not verifying pointers: use sreg_fsck to test the entire stream registry.)"
+fi
 
 if [[ "$#" == "1" ]]; then
     # There's only one path specified, so use the current directory as the destination
@@ -31,30 +55,55 @@ else
     pathsToCopy=("${@:1:$(($#-1))}") # all but last argument
 fi
 
-if [[ -z "$destinationParameter" ]]; then
-    destinationParameter="."
+if ! [[ -d "$destinationParameter" ]]; then
+    die "Destination is not a directory."
 fi
+echo "Counting items..."
+crystalWorkdir="$(crystallize-getconf WorkDirectory)"
+instanceId=".srsync-$(date-uuid)"
+mkdir -p "$crystalWorkdir/$instanceId"
+statusFile="/tmp/$instanceId.srsync.status"
+failCheckFile="/tmp/$instanceId.srsync.running"
+skipFile="$failCheckFile.skip"
+echo "0" > "$skipFile"
+
+find "${pathsToCopy[@]}" -type f -printf '.' | wc -c > "$statusFile"
+# FIXME: Why replace this in the destination parameter?! Won't this make it copy into the wrong folder?
+destinationReplaced="${destinationParameter/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"
+destinationReplaced="${destinationReplaced//\/.git\//\/.git.686fc528-0e8e-4724-91bb-c103cdcdd592\/}"
 
 for path in "${pathsToCopy[@]}"; do
+    destinationSuffix=""
+    sourceReplaced="${path/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"
+    sourceReplaced="${path/%.git\//.git.686fc528-0e8e-4724-91bb-c103cdcdd592\/}"
     if [[ -d "$path" ]]; then
-        destinationFindTarget="$destinationParameter/$(basename "$path")/"
-        if [[ "$path" =~ '/'$ ]]; then
-            destinationFindTarget="$destinationParameter/"
-        fi
-    else
-        destinationFindTarget="$destinationParameter/$(basename "$path")"
+        destinationSuffix="/"
     fi
-
-    fsckId=".srpull-$(date-uuid)"
-    fsckStatusFile="/tmp/$fsckId.status"
-
-    itemCount="$(find "$destinationFindTarget" -type f -printf '.' | wc -c)"
-    if [[ -d "$path" ]]; then
-        # Add 1 to the item count to account for the target folder itself
-        echo "$((itemCount + 1))" > "$fsckStatusFile"
+    if [[ "$path" =~ '/'$ ]]; then
+        destinationRoot="$sourceReplaced"
+        destinationFindTarget="$destinationReplaced$destinationSuffix"
     else
-        echo "$itemCount" > "$fsckStatusFile"
+        destinationRoot="$(dirname "$sourceReplaced")"
+        destinationFindTarget="$destinationReplaced/$(basename "$sourceReplaced")$destinationSuffix"
     fi
-one
+    if [[ "$destinationRoot" == "." ]]; then
+        destinationRootLength="0"
+    else
+        destinationRootLength=${#destinationRoot}
+    fi
+    # Use $path in find commands rather than sourceReplaced because sourceReplaced is used for the target computation and post-processing (post-processing with find, that is).
+    if [[ "$sregNoVerify" == "true" ]]; then
+        find "$path" -type f -exec sregi_copy_write "$failCheckFile" --skip "$skipCount" --sreg-dir "$sregDir" --no-verify {} "$destinationReplaced" "$statusFile" "$destinationRootLength" \;
+    else
+        find "$path" -type f -exec sregi_copy_write "$failCheckFile" --skip "$skipCount" --sreg-dir "$sregDir" {} "$destinationReplaced" "$statusFile" "$destinationRootLength" \;
+    fi
+    # This NEEDS to skip regular files, because otherwise files that don't exist in the directory will be copied and take up space!
+    # rsync -a --ignore-existing --no-i-r "${pathsToCopy[@]}" "$destinationParameter/"
+    find "$destinationFindTarget" -type d -empty -exec touch {}/.keep \;
+done
+
+if [[ -e "$failCheckFile" ]]; then
+    die "An invocation of sregi_copy_write (called from $0) failed with the message \"$(<"$failCheckFile")\"!"
+fi
 
 finish

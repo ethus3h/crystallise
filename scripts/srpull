@@ -65,7 +65,7 @@ for path in "${pathsToCopy[@]}"; do
         destinationFindTarget="$destinationParameter/$(basename "$path")"
     fi
 
-    fsckId="srpull-$(date-uuid)"
+    fsckId=".srpull-$(date-uuid)"
     fsckStatusFile="/tmp/$fsckId.status"
 
     itemCount="$(find "$destinationFindTarget" -type f -printf '.' | wc -c)"

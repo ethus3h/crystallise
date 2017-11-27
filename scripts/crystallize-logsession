@@ -244,9 +244,10 @@ set -o pipefail
 {
     echo "Please wait, pre-testing item before upload..."
     testDecrystDir="$(tempDir)"
+    tempId="$crystalWorkdir/.unpack-test-$(date-uuid)"
+    trap 'rm -r ${tempId:?}; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
     (
         cd "$testDecrystDir" || die "cd failed"
-        tempId="unpack-test-$(date-uuid)"
         mkdir "$tempId"
         crystalXzFileSize="$(disk-size-in-bytes "$CrystalTmpUploadFile")"
         pv -tparbIfei 0.1 -s "$crystalXzFileSize" < "$CrystalTmpUploadFile" | gpg --yes --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - | unxz --stdout - | tar -xvf - -C "$tempId/" || die "Could not extract the local packed crystal!"

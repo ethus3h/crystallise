@@ -112,7 +112,7 @@ decrystInner() (
             cd ".forks" || die "cd failed"
             csum --check ./* "../.forks-csum" || die
         ) || die
-        find ".forks" -type f -exec bash -c 'tar -xvf - -C "$1/" < "$0"' {} "$tempId" \;
+        find ".forks" -type f -not -name '06968986-7c96-406f-b7b2-a90fe40293bd' -exec bash -c 'tar -xvf - -C "$1/" < "$0"' {} "$tempId" \;
     ) || die
     rm -r "$tempDecrystForksDir"
 

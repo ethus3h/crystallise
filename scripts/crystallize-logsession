@@ -106,6 +106,7 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
     echo "$OSTYPE" > "$crystalWorkdir/$CrystalID".ostype
     # We make the folder for split forks on all platforms so it won't be missing when decrystallizing.
     mkdir -p "$splitForksTarLocation"
+    touch "$splitForksTarLocation/06968986-7c96-406f-b7b2-a90fe40293bd" # need at least one file in the folder so hashdeep will work on it
     for i in "${!CrystallizePaths[@]}"; do
         #resolve path
         echo "Trying to resolve ${CrystallizePaths[$i]}..."
@@ -264,7 +265,7 @@ set -o pipefail
             cd "$tempId.forks" || die "cd failed"
             csum --check ./* "$tempId.forks-csum" || die
         )
-        find "$tempId.forks" -type f -exec bash -c 'tar -xvf - -C "$1/" < "$0"' {} "$tempId" \;
+        find "$tempId.forks" -type f -not -name '06968986-7c96-406f-b7b2-a90fe40293bd' -exec bash -c 'tar -xvf - -C "$1/" < "$0"' {} "$tempId" \;
 
         cp "$crystalWorkdir/$CrystalID.csum" "$tempId.csum"
         cd "$tempId" || die "cd failed"

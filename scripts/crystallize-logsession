@@ -269,7 +269,7 @@ set -o pipefail
 
         cp "$crystalWorkdir/$CrystalID.csum" "$tempId.csum"
         cd "$tempId" || die "cd failed"
-        find . -name "$CrystalID"'*' -delete || die
+        find . -name "$CrystalID"'*' -not -name "$CrystalID.ostype" -not -name "$CrystalID.forks" -not -name "$CrystalID.forks-csum" -delete || die
         csum --check ./* "$tempId.csum" || die
     )
     rm -r "${testDecrystDir:?}"

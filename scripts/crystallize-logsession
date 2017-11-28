@@ -248,35 +248,38 @@ set -o pipefail
 {
     echo "Please wait, pre-testing item before upload..."
     testDecrystDir="$(tempDir)"
-    tempId="$crystalWorkdir/.unpack-test-$(date-uuid)"
-    trap 'rm -r "${tempId:?}"; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+    tempTestDecrystId="$crystalWorkdir/.unpack-test-$(date-uuid)"
+    trap 'rm -r "${tempTestDecrystId:?}"; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
     (
         cd "$testDecrystDir" || die "cd failed"
 
-        mkdir "$tempId"
+        mkdir "$tempTestDecrystId"
+        trap 'rm -r "${tempTestDecrystId:?}"; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+        trap 'rm -r "${tempTestDecrystId:?}"' EXIT
         crystalXzFileSize="$(disk-size-in-bytes "$CrystalTmpUploadFile")"
-        pv -tparbIfei 0.1 -s "$crystalXzFileSize" < "$CrystalTmpUploadFile" | gpg --yes --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - | unxz --stdout - | tar -xvf - -C "$tempId/" || die "Could not extract the local packed crystal!"
+        pv -tparbIfei 0.1 -s "$crystalXzFileSize" < "$CrystalTmpUploadFile" | gpg --yes --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - | unxz --stdout - | tar -xvf - -C "$tempTestDecrystId/" || die "Could not extract the local packed crystal!"
 
         # Extract split forks
-        mkdir "$tempId.forks"
-        tar -xvf - -C "$tempId.forks/" < "$crystalWorkdir/$CrystalID.forks" || die "Could not extract the local packed split forks!"
-        cp "$crystalWorkdir/$CrystalID.forks-csum" "$tempId.forks-csum"
+        mkdir "$tempTestDecrystId.forks"
+        tar -xvf - -C "$tempTestDecrystId.forks/" < "$crystalWorkdir/$CrystalID.forks" || die "Could not extract the local packed split forks!"
+        cp "$crystalWorkdir/$CrystalID.forks-csum" "$tempTestDecrystId.forks-csum"
         (
-            cd "$tempId.forks" || die "cd failed"
-            csum --check ./* "$tempId.forks-csum" || die
-        )
+            cd "$tempTestDecrystId.forks" || die "cd failed"
+            csum --check ./* "$tempTestDecrystId.forks-csum" || die
+        ) || die
         splitForksTarWanted="tar"
         if [[ "$OSTYPE" == darwin* ]]; then
             splitForksTarWanted="gtar"
         fi
-        find "$tempId.forks" -type f -not -name '06968986-7c96-406f-b7b2-a90fe40293bd' -exec bash -c "$splitForksTarWanted"' -xvf - -C "$1/" < "$0"' {} "$tempId" \;
+        find "$tempTestDecrystId.forks" -type f -not -name '06968986-7c96-406f-b7b2-a90fe40293bd' -exec bash -c "$splitForksTarWanted"' -xvf - -C "$1/" < "$0"' {} "$tempTestDecrystId" \;
 
-        cp "$crystalWorkdir/$CrystalID.csum" "$tempId.csum"
-        cd "$tempId" || die "cd failed"
+        cp "$crystalWorkdir/$CrystalID.csum" "$tempTestDecrystId.csum"
+        cd "$tempTestDecrystId" || die "cd failed"
         find . -name "$CrystalID"'*' -not -name "$CrystalID.ostype" -not -name "$CrystalID.forks" -not -name "$CrystalID.forks-csum" -delete || die
-        csum --check ./* "$tempId.csum" || die
+        csum --check ./* "$tempTestDecrystId.csum" || die
     )
     rm -r "${testDecrystDir:?}"
+    rm -rf "${tempTestDecrystId:?}"
     echo "Please wait..."
 } &>> "$logfile"
 

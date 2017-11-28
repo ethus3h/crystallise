@@ -10,10 +10,10 @@ fi
 source ember_bash_setup &> /dev/null
 #set -x
 
-export crystallizeVersion='3.1.2.5.13.72'
+export crystallizeVersion='3.1.2.5.13.73'
 
 # The update script shown here requires there to be only one ebuild of crystallize in the wreathe-overlay overlay.
-# ( sudo true; newVersion="3.1.2.5.13.72"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo layman -s wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
+# ( sudo true; newVersion="3.1.2.5.13.73"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo layman -s wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
 
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
@@ -131,7 +131,7 @@ gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$Cr
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.cmd"
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.cwd"
 gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp "$crystalWorkdir/$CrystalID.ostype"
-rm "$crystalWorkdir/$CrystalID.csum.xz" "$crystalWorkdir/$CrystalID.local.idx.xz" "$crystalWorkdir/$CrystalID.deep.idx.xz" "$crystalWorkdir/$CrystalID.cmd" "$crystalWorkdir/$CrystalID.cwd" "$crystalWorkdir/$CrystalID.time-done.warc.gz.xz" "$crystalWorkdir/$CrystalID.time-env.warc.gz" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.xz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.passphrase" "$crystalWorkdir/$CrystalID.ostype" "$crystalWorkdir/$CrystalID.forks" "$crystalWorkdir/$CrystalID.forks-csum"
+rm "$crystalWorkdir/$CrystalID.csum.xz" "$crystalWorkdir/$CrystalID.local.idx.xz" "$crystalWorkdir/$CrystalID.deep.idx.xz" "$crystalWorkdir/$CrystalID.cmd" "$crystalWorkdir/$CrystalID.cwd" "$crystalWorkdir/$CrystalID.time-done.warc.gz.xz" "$crystalWorkdir/$CrystalID.time-env.warc.gz" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.xz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.passphrase" "$crystalWorkdir/$CrystalID.ostype" "$crystalWorkdir/$CrystalID.forks.xz" "$crystalWorkdir/$CrystalID.forks-csum.xz"
 mv "$crystalWorkdir/$CrystalID.xz.gpg" "$crystalWorkdir/$CrystalID.coal5-log"
 mv "$crystalWorkdir/$CrystalID.time-done.warc.gz.xz.gpg" "$crystalWorkdir/$CrystalID.coal5-timestamp"
 mv "$crystalWorkdir/$CrystalID.csum.xz.gpg" "$crystalWorkdir/$CrystalID.coal5-csum"

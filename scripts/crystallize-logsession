@@ -249,7 +249,7 @@ set -o pipefail
     echo "Please wait, pre-testing item before upload..."
     testDecrystDir="$(tempDir)"
     tempId="$crystalWorkdir/.unpack-test-$(date-uuid)"
-    trap 'rm -r ${tempId:?}; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+    trap 'rm -r "${tempId:?}"; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
     (
         cd "$testDecrystDir" || die "cd failed"
 
@@ -265,7 +265,11 @@ set -o pipefail
             cd "$tempId.forks" || die "cd failed"
             csum --check ./* "$tempId.forks-csum" || die
         )
-        find "$tempId.forks" -type f -not -name '06968986-7c96-406f-b7b2-a90fe40293bd' -exec bash -c 'tar -xvf - -C "$1/" < "$0"' {} "$tempId" \;
+        splitForksTarWanted="tar"
+        if [[ "$OSTYPE" == darwin* ]]; then
+            splitForksTarWanted="gtar"
+        fi
+        find "$tempId.forks" -type f -not -name '06968986-7c96-406f-b7b2-a90fe40293bd' -exec bash -c "$splitForksTarWanted"' -xvf - -C "$1/" < "$0"' {} "$tempId" \;
 
         cp "$crystalWorkdir/$CrystalID.csum" "$tempId.csum"
         cd "$tempId" || die "cd failed"

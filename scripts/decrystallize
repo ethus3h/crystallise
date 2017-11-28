@@ -89,7 +89,7 @@ decrystInner() (
     tempDecrystForksDir="$(tempDir)"
     tempIdAbspath="$(readlink -f "$tempId")"
     (
-        trap 'rm -r ${tempDecrystForksDir:?}; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+        trap 'rm -r "${tempDecrystForksDir:?}"; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
         cd "$tempDecrystForksDir" || die
         mkdir ".forks"
 
@@ -98,7 +98,7 @@ decrystInner() (
         forkFetchStatus="$?"
         fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-forks-csum" | pv -tparbIfei 0.1 | gpg --yes --batch --passphrase-file "$tempIdAbspath.tmp" - | unxz --stdout - > ".forks-csum"
         forkCsumFetchStatus="$?"
-        trap 'rm -r ${tempDecrystForksDir:?}; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+        trap 'rm -r "${tempDecrystForksDir:?}"; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
         if [[ "$forkFetchStatus" != "0" ]] || [[ "$forkCsumFetchStatus" != "0" ]]; then
             [[ -n $knownCrystalCrystallizeVersion ]] || getCrystalVersion
@@ -113,7 +113,11 @@ decrystInner() (
             cd ".forks" || die "cd failed"
             csum --check ./* "../.forks-csum" || die
         ) || die
-        find ".forks" -type f -not -name '06968986-7c96-406f-b7b2-a90fe40293bd' -exec bash -c 'tar -xvf - -C "$1/" < "$0"' {} "$tempIdAbspath" \;
+        splitForksTarWanted="tar"
+        if [[ "$OSTYPE" == darwin* ]]; then
+            splitForksTarWanted="gtar"
+        fi
+        find ".forks" -type f -not -name '06968986-7c96-406f-b7b2-a90fe40293bd' -exec bash -c "$splitForksTarWanted"' -xvf - -C "$1/" < "$0"' {} "$tempIdAbspath" \;
     ) || die
     rm -r "$tempDecrystForksDir"
 

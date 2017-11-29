@@ -100,7 +100,12 @@ decrystInner() (
         forkCsumFetchStatus="$?"
         trap 'rm -r "${tempDecrystForksDir:?}"; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
-        if [[ "$forkFetchStatus" != "0" ]] || [[ "$forkCsumFetchStatus" != "0" ]]; then
+        if [[ "$forkFetchStatus" == "0" ]] && [[ "$forkCsumFetchStatus" == "0" ]]; then
+            (
+                cd ".forks" || die "cd failed"
+                csum --check ./* "../.forks-csum" || die "csum reported an error for split forks"
+            ) || die "Failed split forks checksum"
+        else
             [[ -n $knownCrystalCrystallizeVersion ]] || getCrystalVersion
             if version_gt "$knownCrystalCrystallizeVersion" "3.1.2.5.13.61"; then
                 # This crystal was made by a version that supports split fork storage
@@ -109,10 +114,6 @@ decrystInner() (
             warn "(Couldn't retrieve split forks file for this crystal as the version of crystallize it was created using is too old.)"
         fi
 
-        (
-            cd ".forks" || die "cd failed"
-            csum --check ./* "../.forks-csum" || die
-        ) || die
         splitForksTarWanted="tar"
         if [[ "$OSTYPE" == darwin* ]]; then
             splitForksTarWanted="gtar"

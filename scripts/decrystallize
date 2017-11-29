@@ -94,7 +94,7 @@ decrystInner() (
         mkdir ".forks"
 
         trap - ERR
-        fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-forks" | pv -tparbIfei 0.1 | gpg --yes --batch --passphrase-file "$tempIdAbspath.tmp" - | unxz --stdout - | tar -xvf - -C ".forks" || die "Could not extract the local packed split forks!"
+        fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-forks" | pv -tparbIfei 0.1 | gpg --yes --batch --passphrase-file "$tempIdAbspath.tmp" - | unxz --stdout - | tar -xvf - -C ".forks"
         forkFetchStatus="$?"
         fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-forks-csum" | pv -tparbIfei 0.1 | gpg --yes --batch --passphrase-file "$tempIdAbspath.tmp" - | unxz --stdout - > ".forks-csum"
         forkCsumFetchStatus="$?"

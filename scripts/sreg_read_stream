@@ -261,7 +261,14 @@ mkdir "$streamId"
                 else
                     localStoreMatchedFolder="${localStoreMatchArray[0]}/LocalStore"
                 fi
+                trap - ERR
                 unxz --stdout - < "$localStoreMatchedFolder/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
+                unxzLocalStoreEntryStatus="$?"
+                trap 'releaseLocks; warn "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate) while attempting to read a remote pack pointer $hashFull (stream was not in the pack given). Giving up now: retrying would likely not help in this situation."; numRetries=0; break' ERR
+                if [[ "$unxzLocalStoreEntryStatus" != "0" ]]; then
+                    rm -r "$localstoreLocation"
+                    localstoreErrorBreak
+                fi
                 trap 'releaseLocks; warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate) while reading $hashFull."' ERR
             elif [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
                 # Hash pointer

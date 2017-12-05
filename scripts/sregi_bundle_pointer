@@ -93,27 +93,32 @@ printf "2fae2004-94bb-4aa8-a01a-fc44298efc2c\\n%s\\n%s" "$hashFull" "$(basename 
 # Switch over to variable values for cache editing
 cacheDbDir="$crystalWorkdir/.StreamCache/"
 dbLinkPath="$cacheDbDir/$hashA/$hashB/$hashC/$hashFull"
-cacheDbFilePath="$(readlink -e "$dbLinkPath")"
+cacheDbFilePath="$(readlink -e "$dbLinkPath")" || true
 
-# Remove cache entry to allow re-testing
-# First, make sure the link is good and fix it up if it's not.
-if ! [[ -f "$cacheDbFilePath" ]]; then
-    find "$cacheDbDir/ByCount" -mindepth 5 -maxdepth 5 -type f -name "$hashFull" -exec ln -sf {} "$dbLinkPath" \;
-    cacheDbFilePath="$(readlink -e "$dbLinkPath")"
-fi
-
-requestCount="1"
-if [[ -f "$cacheDbFilePath" ]]; then
-    dbFileDir="$(dirname "$cacheDbFilePath")"
-    rm "${cacheDbFilePath:?}"
-    # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
-    oldCount="$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")"
-    if [[ -n "$oldCount" ]]; then
-        requestCount="$oldCount"
+if [[ -n "$cacheDbFilePath" ]]; then
+    # Remove cache entry to allow re-testing
+    # First, make sure the link is good and fix it up if it's not.
+    if ! [[ -f "$cacheDbFilePath" ]]; then
+        find "$cacheDbDir/ByCount" -mindepth 5 -maxdepth 5 -type f -name "$hashFull" -exec ln -sf {} "$dbLinkPath" \;
+        cacheDbFilePath="$(readlink -e "$dbLinkPath")"
     fi
+
+    requestCount="1"
+    if [[ -f "$cacheDbFilePath" ]]; then
+        dbFileDir="$(dirname "$cacheDbFilePath")"
+        rm "${cacheDbFilePath:?}"
+        # Get the requestCount. There are three path components after it. I suspect there's a better way to do this.
+        oldCount="$(basename "$(dirname "$(dirname "$(dirname "$dbFileDir")")")")"
+        if [[ -n "$oldCount" ]]; then
+            requestCount="$oldCount"
+        fi
+    fi
+    rm -f "$dbLinkPath"
+    echo "$requestCount" > "$dbLinkPath"
+else
+    # Cache entry exists already
+    true
 fi
-rm -f "$dbLinkPath"
-echo "$requestCount" > "$dbLinkPath"
 
 # Clean up empty directories. Kind of expensive, so commented out here. This will be taken care of by scache_gc when it's run, anyway.
 # find "$cacheDbDir" -type d -not -name "ByCount" -empty -delete

@@ -30,6 +30,12 @@ sregDir="$(sregi_find_dir --sreg-dir "$sregDir")"
 
 fsckStatusFile="$1"
 shift
+
+packPointerName="$1"
+dbDir="$sregDir"
+hashFull="$(basename "$2")"
+crystalWorkdir="$3"
+
 if [[ -n "$fsckStatusFile" ]]; then
     numberExpected="$(<"$fsckStatusFile")"
     numberProcessedFile="$fsckStatusFile.done"
@@ -45,16 +51,12 @@ if [[ -n "$fsckStatusFile" ]]; then
         numberExpected="-1"
     fi
     numberProcessedPercentage="$(printf "%.3f\\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
-    echo "Working on bundling item #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
+    echo "Working on bundling item #$numberProcessed of $numberExpected ($numberProcessedPercentage%): $hashFull"
 else
     # Don't bother mentioning anything, since we don't really have anything interesting to say
     true
 fi
 
-packPointerName="$1"
-dbDir="$sregDir"
-hashFull="$(basename "$2")"
-crystalWorkdir="$3"
 # can't use \d in POSIX regex
 hashPatternMatch='^[0-9a-f]{128}$'
 # $hashPatternMatch not quoted because that makes it "match literally rather than as a regex" (—SC2076)

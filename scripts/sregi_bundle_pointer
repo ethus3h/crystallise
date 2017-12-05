@@ -88,6 +88,8 @@ fi
 # 2fa... is the remote bundle pointer type signature
 printf "2fae2004-94bb-4aa8-a01a-fc44298efc2c\\n%s\\n%s" "$hashFull" "$(basename "$packPointerName")" > "$dbFilePath"
 
+# This cache code is a trainwreck
+
 # Switch over to variable values for cache editing
 cacheDbDir="$crystalWorkdir/.StreamCache/"
 dbLinkPath="$cacheDbDir/$hashA/$hashB/$hashC/$hashFull"

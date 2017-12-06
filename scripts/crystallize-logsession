@@ -238,7 +238,7 @@ set +o pipefail
 } 2>&1
 
 # Detect case in which tee got corrupt data, or it was corrupted during tee/hashdeep.
-# If this happened, get a new checksum and use that one: indi
+# If this happened, get a new checksum and use that one: corruption in the file between tarring and now should be caught by the faux-decrystallize pre-check.
 knownHashdeepChecksum="$(grep ",stdin" "$crystalWorkdir/$CrystalID.checksums" | awk -F',' '{print $3}')"
 newFileChecksum="$(hashdeep -c sha1 -j0 -o fbcpsde < "$crystalWorkdir/$CrystalID.coal5" | grep ",stdin" | awk -F',' '{print $2}')"
 

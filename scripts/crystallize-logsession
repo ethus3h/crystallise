@@ -239,9 +239,21 @@ set +o pipefail
 
 # Detect case in which tee got corrupt data, or it was corrupted during tee/hashdeep.
 # If this happened, get a new checksum and use that one: corruption in the file between tarring and now should be caught by the faux-decrystallize pre-check.
-knownHashdeepChecksum="$(grep ",stdin" "$crystalWorkdir/$CrystalID.checksums" | awk -F',' '{print $3}')"
-newFileChecksum="$(hashdeep -c sha1 -j0 -o fbcpsde < "$crystalWorkdir/$CrystalID.coal5" | grep ",stdin" | awk -F',' '{print $2}')"
-
+knownHashdeepChecksum="$(<"$crystalWorkdir/$CrystalID.checksums")"
+echo "Initial logsession checksums: $(<"$crystalWorkdir/$CrystalID.checksums")" >> "$logfile"
+newFileChecksum="$(hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -o fbcpsde < "$crystalWorkdir/$CrystalID.coal5")"
+echo "New logsession checksums: $newFileChecksum" >> "$logfile"
+if [[ "$newFileChecksum" != "$knownHashdeepChecksum" ]]; then
+    # Checksumming the file twice gave two different results, so try to get something reproducible.
+    newFileChecksumB="$(hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -o fbcpsde < "$crystalWorkdir/$CrystalID.coal5")"
+    echo "Recovery logsession checksums: $newFileChecksum" >> "$logfile"
+    if [[ "$newFileChecksumB" == "$knownHashdeepChecksum" ]] || [[ "$newFileChecksumB" == "$newFileChecksum" ]]; then
+        # The recovery checksum matches one of the previously stored checksums, so it's probably right. Save it to the file instead.
+        print "$newFileChecksumB" > "$crystalWorkdir/$CrystalID.checksums"
+    else
+        die "Could not get a stable checksum for the packed file. Is your computer's memory bad? (Possible bug in Crystallize, also.)"
+    fi
+fi
 
 exitCodes=("${PIPESTATUS[@]}") # this pattern for copying an array doesn't "work for associative arrays, or for arrays with non-contiguous indices". (quotation from https://stackoverflow.com/questions/19417015/how-to-copy-an-array-in-bash)
 exitcode="${exitCodes[0]}"

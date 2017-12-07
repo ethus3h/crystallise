@@ -187,6 +187,10 @@ mkdir -p "$(dirname "$destinationName")"
 rsync -a --checksum --no-i-r "$fileToStash" "$destinationName"
 # a+r gives (a)ll users (r)ead permission
 chmod a+r "$destinationName"
+
+destinationNewChecksum="$(tail -c +38 "$destinationName" | head -c 129)"
+sourceChecksum="$(sha512sum < "$1" | awk '{print $1;}')"
+
 rm -r "${crystalSubdir:?}"
 if [[ -e "${streamId:?}" ]]; then
     rm -r "${streamId:?}"

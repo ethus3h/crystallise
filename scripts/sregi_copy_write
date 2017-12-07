@@ -188,8 +188,8 @@ rsync -a --checksum --no-i-r "$fileToStash" "$destinationName"
 # a+r gives (a)ll users (r)ead permission
 chmod a+r "$destinationName"
 
-destinationNewChecksum="$(tail -c +38 "$destinationName" | head -c 129)"
-sourceChecksum="$(sha512sum < "$1" | awk '{print $1;}')"
+# Checksum the source once again, and compare it to the stored pointer, just to make sure.
+[[ "$(tail -c +38 "$destinationName" | head -c 129)" == "$(sha512sum < "$1" | awk '{print $1;}')" ]] || die
 
 rm -r "${crystalSubdir:?}"
 if [[ -e "${streamId:?}" ]]; then

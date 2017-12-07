@@ -189,8 +189,8 @@ rsync -a --checksum --no-i-r "$fileToStash" "$destinationName"
 chmod a+r "$destinationName"
 
 # Checksum the source once again, and compare it to the stored pointer, just to make sure.
-storedChecksum="$(tail -c +38 "$destinationName" | head -c 129)"
-if [[ "$storedChecksum" != "$(sha512sum < "$1" | awk '{print $1;}')" ]] || [[ "$storedChecksum" != "$sourceChecksum" ]]; then
+pointerChecksum="$(tail -c +38 "$destinationName" | head -c 129)"
+if [[ "$pointerChecksum" != "$(sha512sum < "$1" | awk '{print $1;}')" ]] || [[ "$pointerChecksum" != "$sourceChecksum" ]]; then
     die
 fi
 

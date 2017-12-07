@@ -19,11 +19,18 @@ fi
 pattern="$1"
 
 cd "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/ || die "cd failed"
-for file in ./*.deep.idx; do
+shopt -u failglob
+for file in ./*.deep.idx ./*.csum; do
+    shopt -s failglob
     if grep -q "$pattern" "$file"; then
         filePassedSingle="0"
         fileName="${file/\.\/}"
-        fileNamePrefix="${fileName%\.deep\.idx}"
+        fileNamePrefix=""
+        if [[ "$fileName" == *".csum" ]]; then
+            fileNamePrefix="${fileName%\.csum}"
+        else
+            fileNamePrefix="${fileName%\.deep\.idx}"
+        fi
         grep -v '^#' "$file" | grep "$pattern" | cut -d ',' -f 5- - | while IFS="" read -r line; do
             if [[ "$filePassedSingle" != "1" ]] || [[ "$singleResultOnly" != "true" ]]; then
                 echo "Crystal $fileNamePrefix contains:"

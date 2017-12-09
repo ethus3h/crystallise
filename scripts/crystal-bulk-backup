@@ -31,3 +31,9 @@ rsync -a --checksum "${EmberLibrary:?}"/.cbb.idents ".cbb.idx/idents"
 rsync -a --checksum "${EmberLibrary:?}"/.cbb.repos ".cbb.idx/repos"
 echo "${EmberLibrary:?}" >  ".cbb.idx/sreg-core/EmberLibrary"
 echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbb.idx/sreg-core/EmberLibrary"
+
+# Take care of git now
+(
+    mkdir git
+    cd git
+    

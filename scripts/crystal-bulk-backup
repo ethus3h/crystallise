@@ -7,7 +7,7 @@ source ember_bash_setup &> /dev/null
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
 # Will back up the Ember Library by default.
-# Can optionally add additional things to back up: put a file for each other sreg repo to back up in [ConfigDir]/.cbb.sreg/, a list of Crystal IDs to back up in [ConfigDir]/.cbb.crystals, a list of other IA identifiers to back up in [ConfigDir]/.cbb.idents, and a list of other git repositories to back up in [ConfigDir]/.cbb.repos.
+# Can optionally add additional things to back up: put a file for each other sreg repo (the .sreg folder, not the root) to back up in [ConfigDir]/.cbb.sreg/, a list of Crystal IDs to back up in [ConfigDir]/.cbb.crystals, a list of other IA identifiers to back up in [ConfigDir]/.cbb.idents, and a list of other git repositories to back up in [ConfigDir]/.cbb.repos.
 
 backupLocation="crystallize-getconf BackupLocation"
 
@@ -31,9 +31,9 @@ rsync -a --checksum "$cbbConfigDir"/.cbb.crystals ".cbb.idx/crystals"
 rsync -a --checksum "$cbbConfigDir"/.cbb.idents ".cbb.idx/idents"
 rsync -a --checksum "$cbbConfigDir"/.cbb.repos ".cbb.idx/repos"
 
-echo "${EmberLibrary:?}" >  ".cbb.idx/sreg-core/EmberLibrary"
-echo "${EmberLibrary:?}/Ember satellite projects/ember-history" >  ".cbb.idx/sreg-core/EmberHistory"
-echo "${EmberLibrary:?}/Ember satellite projects/wreathe-packages" >  ".cbb.idx/sreg-core/WreathePackages"
+echo "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" >  ".cbb.idx/sreg-core/EmberLibrary"
+echo "${EmberLibrary:?}/Ember satellite projects/ember-history/.sreg" >  ".cbb.idx/sreg-core/EmberHistory"
+echo "${EmberLibrary:?}/Ember satellite projects/wreathe-packages/.sreg" >  ".cbb.idx/sreg-core/WreathePackages"
 
 echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbb.idx/repos"
 
@@ -48,5 +48,10 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbb.idx/repos"
 ) || die
 
 for file in .cbb.idx/sreg-core/* .cbb.idx/sreg-extra/*; do
-    
+    bakDir="sregbak/${file:1}"
+    mkdir -p "$bakDir"
+    pathToSreg="$(<"$file")"
+    mkdir -p "$pathToSreg/LocalStore"
+    rsync -av --checksum "$pathToSreg/LocalStore" "$pathToSreg/passphrase" "$bakDir/"
+    # Go through this sreg and add all the crystals it uses 
 done

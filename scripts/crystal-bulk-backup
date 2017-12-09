@@ -23,7 +23,7 @@ touch "$cbbConfigDir"/.cbb.crystals
 touch "$cbbConfigDir"/.cbb.idents
 touch "$cbbConfigDir"/.cbb.repos
 
-# Build backup indices (this won't finish building the sreg indices because they need the git repos cloned to make them)
+# Build backup indices (this won't finish building the sreg/crystal indices because they need the git repos cloned to make them)
 mkdir -p ".cbb.idx/sreg-core"
 rm -r ".cbb.idx/sreg-extra"
 rsync -a --checksum "$cbbConfigDir"/.cbb.sreg ".cbb.idx/sreg-extra"
@@ -42,3 +42,5 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbb.idx/sreg-core/Em
         git clone --recursive "$repo"
     done <<< "$cbbRepos"
 ) || die
+
+# We have the git repos now, so it's time to poke through them and find any missing 

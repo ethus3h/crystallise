@@ -70,6 +70,7 @@ statusFile="/tmp/$streamId.sreg_flush_localstore.status"
         pointerName="$(readlink -f "$streamId.bundle.pointer")"
         mkdir -p "$dbDir/Packs/"
         rsync -q --checksum "$pointerName" "$dbDir/Packs/"
+        cp "$streamId.LocalStore.crystal" "$dbDir/Packs/$streamId.identifier"
         find "$streamId.LocalStore" -type f -printf '.' | wc -c > "$statusFile"
         find "$streamId.LocalStore" -type f -exec sregi_bundle_pointer "$failCheckFile" --sreg-dir "$sregDir" "$statusFile" "$pointerName" {} "$crystalWorkdir" \; || die "Failed running sregi_bundle_pointer!"
         

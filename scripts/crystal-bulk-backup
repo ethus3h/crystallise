@@ -44,3 +44,4 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbb.idx/sreg-core/Em
 ) || die
 
 # We have the git repos now, so it's time to poke through them and find all the desired crystal IDs
+find git -name ".sreg" -exec bash -c 'basename $0 > .cbb.idx/sreg-core'

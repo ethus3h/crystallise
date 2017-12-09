@@ -62,6 +62,8 @@ for file in .cbb.idx/sreg-core/* .cbb.idx/sreg-extra/*; do
     done
 
     # Remote pack pointers, with pointer data in the pointer [209fcfdf-d1ad-4345-8ef7-1fdc2d583d49]
+    # Like the normal remote pack pointers, we need to get the identifier out of the pointer as a tar file.
+
     # Standard remote pointers [a5e2f296-3085-49c0-8f48-24ea436b7a8b]
     # URL pointers [45baff46-8db7-46f6-aad9-de5f713b02fe]
     shopt -s globstar

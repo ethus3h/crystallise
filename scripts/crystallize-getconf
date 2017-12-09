@@ -10,6 +10,11 @@ if [[ "$1" == "ConfigLocation" ]]; then
     exit
 fi
 
+if [[ "$1" == "ConfigDir" ]]; then
+    echo "$(dirname "$(readlink -f "$(crystallize-getconf ConfigLocation)")")"
+    exit
+fi
+
 if [[ "$1" == "crystallizeVersion" ]]; then
     crystallizeVersionA="$(sed '18q;d' "$(which crystallize)")"
     crystallizeVersionB="${crystallizeVersionA%\'*}"

@@ -30,8 +30,12 @@ rsync -a --checksum "$cbbConfigDir"/.cbb.sreg ".cbb.idx/sreg-extra"
 rsync -a --checksum "$cbbConfigDir"/.cbb.crystals ".cbb.idx/crystals"
 rsync -a --checksum "$cbbConfigDir"/.cbb.idents ".cbb.idx/idents"
 rsync -a --checksum "$cbbConfigDir"/.cbb.repos ".cbb.idx/repos"
+
 echo "${EmberLibrary:?}" >  ".cbb.idx/sreg-core/EmberLibrary"
-echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbb.idx/sreg-core/EmberLibrary"
+echo "${EmberLibrary:?}/Ember satellite projects/ember-history" >  ".cbb.idx/sreg-core/EmberHistory"
+echo "${EmberLibrary:?}/Ember satellite projects/wreathe-packages" >  ".cbb.idx/sreg-core/WreathePackages"
+
+echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbb.idx/repos"
 
 # Take care of git now
 (

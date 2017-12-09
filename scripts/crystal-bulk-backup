@@ -6,7 +6,8 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
-# Expects a list of sreg repos to back up in [Ember Library]/.cbb.sreg, a list of Crystal IDs to back up in [Ember Library]/.cbb.crystals, and a list of other IA identifiers to back up in [Ember Library]/.cbb.idents
+# Will back up the Ember Library by default.
+# Can optionally add additional things to back up: put a file for each other sreg repo to back up in [Ember Library]/.cbb.sreg/, a list of Crystal IDs to back up in [Ember Library]/.cbb.crystals, a list of other IA identifiers to back up in [Ember Library]/.cbb.idents, and a list of other git repositories to back up in [Ember Library]/.cbb.repos.
 
 backupLocation="crystallize-getconf BackupLocation"
 
@@ -14,3 +15,14 @@ mkdir -p "$backupLocation"
 
 cd "$backupLocation"
 touch ".cbb.isBackupDir"
+
+mkdir -p "${EmberLibrary:?}"/.cbb.sreg
+touch "${EmberLibrary:?}"/.cbb.sreg/.keep
+touch "${EmberLibrary:?}"/.cbb.crystals
+touch "${EmberLibrary:?}"/.cbb.idents
+touch "${EmberLibrary:?}"/.cbb.repos
+
+# Build backup indices
+mkdir -p ".cbb.idx/sreg-core"
+rm -r ".cbb.idx/sreg-extra"
+rsync -a --checksum "${EmberLibrary:?}"/.cbb.sreg ".cbb.idx/sreg-extra"

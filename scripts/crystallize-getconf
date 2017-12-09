@@ -11,7 +11,7 @@ if [[ "$1" == "ConfigLocation" ]]; then
 fi
 
 if [[ "$1" == "ConfigDir" ]]; then
-    echo "$(dirname "$(readlink -f "$(crystallize-getconf ConfigLocation)")")"
+    dirname "$(readlink -f "$(crystallize-getconf ConfigLocation)")"
     exit
 fi
 

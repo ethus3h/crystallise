@@ -26,10 +26,10 @@ touch "$cbbConfigDir"/.cbb.repos
 # Build backup indices (this won't finish building the sreg indices because they need the git repos cloned to make them)
 mkdir -p ".cbb.idx/sreg-core"
 rm -r ".cbb.idx/sreg-extra"
-rsync -a --checksum "${EmberLibrary:?}"/.cbb.sreg ".cbb.idx/sreg-extra"
-rsync -a --checksum "${EmberLibrary:?}"/.cbb.crystals ".cbb.idx/crystals"
-rsync -a --checksum "${EmberLibrary:?}"/.cbb.idents ".cbb.idx/idents"
-rsync -a --checksum "${EmberLibrary:?}"/.cbb.repos ".cbb.idx/repos"
+rsync -a --checksum "$cbbConfigDir"/.cbb.sreg ".cbb.idx/sreg-extra"
+rsync -a --checksum "$cbbConfigDir"/.cbb.crystals ".cbb.idx/crystals"
+rsync -a --checksum "$cbbConfigDir"/.cbb.idents ".cbb.idx/idents"
+rsync -a --checksum "$cbbConfigDir"/.cbb.repos ".cbb.idx/repos"
 echo "${EmberLibrary:?}" >  ".cbb.idx/sreg-core/EmberLibrary"
 echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbb.idx/sreg-core/EmberLibrary"
 
@@ -37,4 +37,8 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbb.idx/sreg-core/Em
 (
     mkdir git
     cd git
-    
+    cbbRepos="$(<.cbb.idx/repos)"
+    while read -r repo; do
+        git clone --recursive "$repo"
+    done <<< "$cbbRepos"
+) || die

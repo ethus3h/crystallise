@@ -48,10 +48,10 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbb.idx/repos"
 ) || die
 
 for file in .cbb.idx/sreg-core/* .cbb.idx/sreg-extra/*; do
-    bakDir="sregbak/${file:1}"
+    bakDir="sregbak/${file:9}"
     mkdir -p "$bakDir"
     pathToSreg="$(<"$file")"
     mkdir -p "$pathToSreg/LocalStore"
     rsync -av --checksum "$pathToSreg/LocalStore" "$pathToSreg/passphrase" "$bakDir/"
-    # Go through this sreg and add all the crystals it uses 
+    # Go through this sreg and add all the crystals it uses to the index
 done

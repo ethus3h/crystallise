@@ -22,7 +22,12 @@ touch "${EmberLibrary:?}"/.cbb.crystals
 touch "${EmberLibrary:?}"/.cbb.idents
 touch "${EmberLibrary:?}"/.cbb.repos
 
-# Build backup indices
+# Build backup indices (this won't finish building the sreg indices because they need the git repos cloned to make them)
 mkdir -p ".cbb.idx/sreg-core"
 rm -r ".cbb.idx/sreg-extra"
 rsync -a --checksum "${EmberLibrary:?}"/.cbb.sreg ".cbb.idx/sreg-extra"
+rsync -a --checksum "${EmberLibrary:?}"/.cbb.crystals ".cbb.idx/crystals"
+rsync -a --checksum "${EmberLibrary:?}"/.cbb.idents ".cbb.idx/idents"
+rsync -a --checksum "${EmberLibrary:?}"/.cbb.repos ".cbb.idx/repos"
+echo "${EmberLibrary:?}" >  ".cbb.idx/sreg-core/EmberLibrary"
+echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbb.idx/sreg-core/EmberLibrary"

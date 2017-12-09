@@ -6,49 +6,11 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
-shopt -s extglob
+# Expects a list of sreg repos to back up in [Ember Library]/.cbb.sreg, a list of Crystal IDs to back up in [Ember Library]/.cbb.crystals, and a list of other IA identifiers to back up in [Ember Library]/.cbb.idents
 
-useCustomPassphrase="false"
-customPassphrase=""
-if [[ "$1" == "--passphrase" ]]; then
-    useCustomPassphrase="true"
-    shift
-    customPassphrase="$1"
-    shift
-fi
+backupLocation="crystallize-getconf BackupLocation"
 
-#Remove URL
-CrystalAddress="${1#https://archive.org/@(details|download)/}"
-#Remove trailing path(s) from identifier
-CrystalAddress="${CrystalAddress%%/*}"
-CrystalAddress="${CrystalAddress%\.coal5*}"
+mkdir -p "$backupLocation"
 
-if [[ "$CrystalAddress" == "" ]]; then
-    echo "Please specify a crystal address to back up."
-    exit 1
-fi
-
-CrystalID="$CrystalAddress"
-
-echo "Crystal address: $CrystalID"
-
-if [[ -e "$CrystalID" ]]; then
-    exit 1
-fi
-mkdir "$CrystalID"
-(
-    cd "$CrystalID" || die "Could not cd to newly created folder! This should never happen."
-    [[ "$useCustomPassphrase" != "true" ]] && customPassphrase="$(crystallize-getconf Passphrase)"
-    printf "%s" "$customPassphrase" > "$CrystalID.passphrase"
-    ia downloadHere "https://archive.org/download/$CrystalID/$CrystalID.coal5"
-    ia downloadHere "https://archive.org/download/$CrystalID/$CrystalID.coal5-cmd"
-    ia downloadHere "https://archive.org/download/$CrystalID/$CrystalID.coal5-cwd"
-    ia downloadHere "https://archive.org/download/$CrystalID/$CrystalID.coal5-idx-d"
-    ia downloadHere "https://archive.org/download/$CrystalID/$CrystalID.coal5-idx-l"
-    ia downloadHere "https://archive.org/download/$CrystalID/$CrystalID.coal5-log"
-    ia downloadHere "https://archive.org/download/$CrystalID/$CrystalID.coal5-timestamp"
-    ia downloadHere "https://archive.org/download/$CrystalID/$CrystalID"_files.xml
-    ia downloadHere "https://archive.org/download/$CrystalID/$CrystalID"_meta.sqlite
-    ia downloadHere "https://archive.org/download/$CrystalID/$CrystalID"_meta.xml
-)
-echo "Done! The crystal has been backed up to $CrystalID."
+cd "$backupLocation"
+touch ".cbb.isBackupDir"

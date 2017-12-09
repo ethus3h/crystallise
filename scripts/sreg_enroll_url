@@ -24,7 +24,7 @@ sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 url="$(iaurl "$1")"
 tempData="$(tempFile)"
 retryUntilSuccess 100 30 5 5 wget -t 150 -qO "$tempData" "$url"
-[[ "$(sha1sum "$tempData" | awk '{print $1;}')" == "$(1000 60 5 5 iasha1 "$url")" ]] || die "Checksum of retrieved file did not match checksum reported by the Internet Archive!"
+[[ "$(sha1sum "$tempData" | awk '{print $1;}')" == "$(5000 60 5 5 iasha1 "$url")" ]] || die "Checksum of retrieved file did not match checksum reported by the Internet Archive!"
 
 hashFull="$(sha512sum < "$tempData" | awk '{print $1;}')"
 

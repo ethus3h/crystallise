@@ -81,8 +81,8 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvai
     iaPath="$(iapath "$requestUrl")"
     if isIaName "$requestUrl" && [[ "$iaPath" != "$iaIdentifier/$iaIdentifier""_files.xml" ]]; then
         ia downloadAsStream "$requestUrl" > "$dbFilePath"
-        retryUntilSuccess 100 30 5 5 iasha1 "$iaIdentifier/$iaPath" > /dev/null || die "Number of allowed retries exceeded without success."
-        [[ "$(sha1sum "$dbFilePath" | awk '{print $1;}')" == "$(retryUntilSuccess 100 30 5 5 iasha1 "$iaIdentifier/$iaPath")" ]] || die "Checksum known by Internet Archive did not match the retrieved file! Was it corrupted in transit?"
+        retryUntilSuccess 1000 60 5 5 iasha1 "$iaIdentifier/$iaPath" > /dev/null || die "Number of allowed retries exceeded without success."
+        [[ "$(sha1sum "$dbFilePath" | awk '{print $1;}')" == "$(retryUntilSuccess 1000 60 5 5 iasha1 "$iaIdentifier/$iaPath")" ]] || die "Checksum known by Internet Archive did not match the retrieved file! Was it corrupted in transit?"
     else
         retryUntilSuccess 100 30 5 5 wget -t 150 -qO "$dbFilePath" "$requestUrl"
     fi

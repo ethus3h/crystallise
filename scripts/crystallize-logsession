@@ -122,7 +122,7 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
         if [[ "$OSTYPE" == darwin* ]]; then
             splitForksTarWanted="gtar"
         fi
-        find "$pathToFindResourceForks" -name "__MACOSX" -or -name ".AppleDouble" -or -name "._*" -exec bash -c "$splitForksTarWanted"' -cv -P -S --format pax "$0" > "$1/$(date-uuid)".pax' {} "$splitForksTarLocation" \;
+        find "$pathToFindResourceForks" \( \( -name "__MACOSX" -or -name ".AppleDouble" \) -or -name "._*" \) -exec bash -c "$splitForksTarWanted"' -cv -P -S --format pax "$0" > "$1/$(date-uuid)".pax' {} "$splitForksTarLocation" \;
     done
 } &>> "$logfile"
 

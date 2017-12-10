@@ -35,6 +35,7 @@ echo "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" >  ".cbb.idx
 echo "${EmberLibrary:?}/Ember satellite projects/ember-history/.sreg" >  ".cbb.idx/sreg-core/EmberHistory"
 echo "${EmberLibrary:?}/Ember satellite projects/wreathe-packages/.sreg" >  ".cbb.idx/sreg-core/WreathePackages"
 
+# FIXME: Recursively cloning ember-meta doesn't seem to work, for some reason.
 echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbb.idx/repos"
 
 # Take care of git now

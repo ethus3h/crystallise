@@ -142,6 +142,8 @@ CrystallizePaths+=("$crystalWorkdir/$CrystalID.ostype")
     csum "${CrystallizePaths[@]}" - > "$crystalWorkdir/$CrystalID.csum"
 } 2>&1 | tee -a "$logfile"
 
+laterCheckCrystallizePaths=("${CrystallizePaths[@]}")
+
 CrystallizePaths+=("$crystalWorkdir/$CrystalID.csum")
 
 echo "Building local index..." | tee -a "$logfile"

@@ -27,7 +27,6 @@ releaseLocks() (
         rm -f "${dbLinkPath:?}.locked"
     fi
     rm -f "${dbDir:?}/.locked"
-    rm -f "${dbDir:?}/.LocalStore.lock"
 )
 
 finish() {

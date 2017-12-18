@@ -23,8 +23,6 @@ releaseLock() {
 finish() {
     rm -f "${failCheckFile:?}"
 
-    releaseLock
-
     if cd "$crystalWorkdir"; then
         if [[ -e "${streamId:?}" ]]; then
             rm -r "${streamId:?}"
@@ -38,8 +36,6 @@ finishExit() {
     trap - ERR
     rm -f "${failCheckFile:?}"
     eval "$save_traps"
-
-    releaseLock
 
     if [[ -e "$crystalWorkdir/.${streamId:?}" ]]; then
         rm -rf "$crystalWorkdir/.${streamId:?}"
@@ -57,6 +53,8 @@ statusFile="/tmp/$streamId.sreg_flush_localstore.status"
 (
     cd "$crystalWorkdir/.$streamId/$streamId" || exit 1
     if ! [[ -e "$dbDir"/.LocalStore.lock ]]; then
+        trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; rm -f "${dbDir:?}"/.LocalStore.lock; finish; releaseLock; exit 1' ERR
+        trap 'finishExit; releaseLock' EXIT
         echo "locked on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)" > "$dbDir"/.LocalStore.lock
         rsync -aq --checksum --no-i-r "$dbDir"/LocalStore "$streamId.LocalStore"
         rsync -aq --checksum --no-i-r "$streamId.LocalStore" "$streamId.LocalStore.tmp"
@@ -85,7 +83,7 @@ statusFile="/tmp/$streamId.sreg_flush_localstore.status"
         fi
 
         rm -r "$dbDir"/LocalStore
-        rm "$dbDir"/.LocalStore.lock || warn "FIXME: Couldn't remove $dbDir/.LocalStore.lock. This is a weird bug, and should be looked into, but I'm just ignoring it for now..."
+        rm "$dbDir"/.LocalStore.lock || die "Couldn't remove $dbDir/.LocalStore.lock. This is/was a weird bug, and I think it is fixed now but apparently it isn't because this code is being run."
         mkdir -p "$dbDir"/LocalStore
     fi
     finish

@@ -16,10 +16,15 @@ if [[ "$1" == "--sreg-dir" ]]; then
 fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 
+releaseLock() {
+    rm -f "${dbDir:?}"/.LocalStore.lock
+}
+
 finish() {
     rm -f "${failCheckFile:?}"
 
-    rm -f "${dbDir:?}"/.LocalStore.lock
+    releaseLock
+
     if cd "$crystalWorkdir"; then
         if [[ -e "${streamId:?}" ]]; then
             rm -r "${streamId:?}"
@@ -34,7 +39,8 @@ finishExit() {
     rm -f "${failCheckFile:?}"
     eval "$save_traps"
 
-    rm -f "${dbDir:?}"/.LocalStore.lock
+    releaseLock
+
     if [[ -e "$crystalWorkdir/.${streamId:?}" ]]; then
         rm -rf "$crystalWorkdir/.${streamId:?}"
     fi

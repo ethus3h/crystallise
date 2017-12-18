@@ -142,7 +142,8 @@ CrystallizePaths+=("$crystalWorkdir/$CrystalID.ostype")
     csum "${CrystallizePaths[@]}" - > "$crystalWorkdir/$CrystalID.csum"
 } 2>&1 | tee -a "$logfile"
 
-laterCheckCrystallizePaths=("${CrystallizePaths[@]}")
+# TODO: Check right before deleting that no changes have been made to the files being crystallized, to avoid losing those changes.
+# laterCheckCrystallizePaths=("${CrystallizePaths[@]}")
 
 CrystallizePaths+=("$crystalWorkdir/$CrystalID.csum")
 

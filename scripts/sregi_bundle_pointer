@@ -142,4 +142,7 @@ failCleanup() {
 { sregi_verify_entry --sreg-dir "$sregDir" "$dbFilePath" --quick || failCleanup; } > /dev/null
 rm "$dbTempFileDir/$hashFull"
 
+# Remove the LocalStore cache entry now its corresponding pointer has been successfully bundled
+rm "$dbDir/LocalStore/$hashA/$hashB/$hashC/$hashFull"
+
 success

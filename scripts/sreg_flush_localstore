@@ -53,10 +53,10 @@ statusFile="/tmp/$streamId.sreg_flush_localstore.status"
 (
     cd "$crystalWorkdir/.$streamId/$streamId" || exit 1
     if ! [[ -e "$dbDir"/.LocalStore.lock ]]; then
-        trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; rm -f "${dbDir:?}"/.LocalStore.lock; finish; releaseLock; exit 1' ERR
+        trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; rm -f "${dbDir:?}/.LocalStore.lock"; finish; releaseLock; exit 1' ERR
         trap 'finishExit; releaseLock' EXIT
         echo "locked on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)" > "$dbDir"/.LocalStore.lock
-        rsync -aq --checksum --no-i-r "$dbDir"/LocalStore "$streamId.LocalStore"
+        rsync -aq --checksum --no-i-r "$dbDir/LocalStore" "$streamId.LocalStore"
         rsync -aq --checksum --no-i-r "$streamId.LocalStore" "$streamId.LocalStore.tmp"
         if [[ "$1" == "--verbose" ]]; then
             crystallize --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.LocalStore" | cat
@@ -82,9 +82,8 @@ statusFile="/tmp/$streamId.sreg_flush_localstore.status"
             die "An invocation of sregi_bundle_pointer (called from $0) failed with the message \"$(<"$failCheckFile")\"!"
         fi
 
-        rm -r "$dbDir"/LocalStore
-        rm "$dbDir"/.LocalStore.lock || die "Couldn't remove $dbDir/.LocalStore.lock. This is/was a weird bug, and I think it is fixed now but apparently it isn't because this code is being run."
         mkdir -p "$dbDir"/LocalStore
+        rm "$dbDir"/.LocalStore.lock || die "Couldn't remove $dbDir/.LocalStore.lock. This is/was a weird bug, and I think it is fixed now but apparently it isn't because this code is being run."
     fi
     finish
 ) || die

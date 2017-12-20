@@ -10,13 +10,7 @@ sudo echo
 installDir="$(tempDir)"
 cd "$installDir" || die "cd failed"
 
-# update ember-shared
-git clone https://github.com/ethus3h/ember-shared.git
-(
-    cd ember-shared || die "cd failed"
-    make
-    sudo make install
-)
+ember-shared-update
 
 # update crystallize
 git clone https://github.com/ethus3h/crystallize.git

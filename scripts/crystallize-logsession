@@ -99,7 +99,7 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
     CrystallizeFirstArg="$1"
     shift
 
-    #Resolve relative paths in the arguments, since GNU tar's -P doesn't
+    # Resolve relative paths in the arguments, since GNU tar's -P doesn't
     CrystallizePaths=( "$@" )
     echo "First entry in array: ${CrystallizePaths[0]}"
     splitForksTarLocation="$crystalWorkdir/$CrystalID".forkdir
@@ -108,14 +108,14 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
     mkdir -p "$splitForksTarLocation"
     touch "$splitForksTarLocation/06968986-7c96-406f-b7b2-a90fe40293bd" # need at least one file in the folder so hashdeep will work on it
     for i in "${!CrystallizePaths[@]}"; do
-        #resolve path
+        # resolve path
         echo "Trying to resolve ${CrystallizePaths[$i]}..."
         setVariableToCommandOutput "abspath" "emreadlink" "${CrystallizePaths[$i]}"
         [[ -h "${abspath:?}" ]] || [[ -e "${abspath:?}" ]] || die "The file ${abspath:?} requested to be crystallized does not exist."
         CrystallizePaths[$i]="${abspath:?}"
         # Tar on macOS will merge resource forks into their corresponding files even if they were separate (split into AppleDouble files in __MACOSX folders) at creation time. To work around this, we need to find any pre-split resource forks and tar them separately. (Otherwise, the files won't be the same after being decrystallized.)
         # We need to do this on all platforms since the later main tar command unconditionally excludes all items named __MACOSX.
-        # FIXME: The non-split resource forks of files should be checksummed as well.
+        # TODO: The non-split resource forks of files should be checksummed as well.
         pathToFindResourceForks="${CrystallizePaths[$i]}"
         echo "Looking for pre-split resource forks in $pathToFindResourceForks"
         splitForksTarWanted="tar"

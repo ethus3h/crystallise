@@ -16,6 +16,7 @@ sregDir="$(sregi_find_dir --sreg-dir "$sregDir")"
 
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 dbDir="$1"
+mkdir -p "$dbDir"
 crystalIdentifier="$2"
 if [[ -z "$crystalIdentifier" ]]; then
     echo "Please specify a directory and a crystal identifier."

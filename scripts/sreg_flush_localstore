@@ -82,7 +82,9 @@ statusFile="/tmp/$streamId.sreg_flush_localstore.status"
             die "An invocation of sregi_bundle_pointer (called from $0) failed with the message \"$(<"$failCheckFile")\"!"
         fi
 
+        find "$dbDir"/LocalStore -type d -not -name "ByCount" -not -path "$dbDir"/LocalStore -empty -delete
         mkdir -p "$dbDir"/LocalStore
+
         rm "$dbDir"/.LocalStore.lock || die "Couldn't remove $dbDir/.LocalStore.lock. This is/was a weird bug, and I think it is fixed now but apparently it isn't because this code is being run."
     fi
     finish

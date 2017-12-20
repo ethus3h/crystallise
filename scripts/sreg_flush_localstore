@@ -56,6 +56,7 @@ statusFile="/tmp/$streamId.sreg_flush_localstore.status"
         trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; rm -f "${dbDir:?}/.LocalStore.lock"; finish; releaseLock; exit 1' ERR
         trap 'finishExit; releaseLock' EXIT
         echo "locked on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)" > "$dbDir"/.LocalStore.lock
+        mkdir -p "$dbDir"/LocalStore
         rsync -aq --checksum --no-i-r "$dbDir/LocalStore" "$streamId.LocalStore"
         rsync -aq --checksum --no-i-r "$streamId.LocalStore" "$streamId.LocalStore.tmp"
         if [[ "$1" == "--verbose" ]]; then
@@ -83,7 +84,6 @@ statusFile="/tmp/$streamId.sreg_flush_localstore.status"
         fi
 
         find "$dbDir"/LocalStore -type d -not -name "ByCount" -not -path "$dbDir"/LocalStore -empty -delete
-        mkdir -p "$dbDir"/LocalStore
 
         rm "$dbDir"/.LocalStore.lock || die "Couldn't remove $dbDir/.LocalStore.lock. This is/was a weird bug, and I think it is fixed now but apparently it isn't because this code is being run."
     fi

@@ -79,11 +79,15 @@ find "${pathsToCopy[@]}" -type f -printf '.' | wc -c > "$statusFile"
 # FIXME: Why replace this in the destination parameter?! Won't this make it copy into the wrong folder?
 destinationReplaced="${destinationParameter/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"
 destinationReplaced="${destinationReplaced//\/.git\//\/.git.686fc528-0e8e-4724-91bb-c103cdcdd592\/}"
+destinationReplaced="${destinationReplaced/%.gitignore/.gitignore.24355e64-bfd5-4cb7-92f9-4417fb55ccfd}"
+destinationReplaced="${destinationReplaced//\/.gitignore\//\/.gitignore.24355e64-bfd5-4cb7-92f9-4417fb55ccfd\/}"
 
 for path in "${pathsToCopy[@]}"; do
     destinationSuffix=""
     sourceReplaced="${path/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"
-    sourceReplaced="${path/%.git\//.git.686fc528-0e8e-4724-91bb-c103cdcdd592\/}"
+    sourceReplaced="${sourceReplaced/%.git\//.git.686fc528-0e8e-4724-91bb-c103cdcdd592\/}"
+    sourceReplaced="${sourceReplaced/%.gitignore/.gitignore.24355e64-bfd5-4cb7-92f9-4417fb55ccfd}"
+    sourceReplaced="${sourceReplaced/%.gitignore\//.gitignore.24355e64-bfd5-4cb7-92f9-4417fb55ccfd\/}"
     if [[ -d "$path" ]]; then
         destinationSuffix="/"
     fi

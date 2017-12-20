@@ -115,6 +115,8 @@ destinationRootLength="$4"
 # shellcheck disable=SC2034
 sourceNameReplaced="${1/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"
 sourceNameReplaced="${sourceNameReplaced//\/.git\//\/.git.686fc528-0e8e-4724-91bb-c103cdcdd592\/}"
+sourceNameReplaced="${sourceNameReplaced/%.gitignore/.gitignore.24355e64-bfd5-4cb7-92f9-4417fb55ccfd}"
+sourceNameReplaced="${sourceNameReplaced//\/.gitignore\//\/.gitignore.24355e64-bfd5-4cb7-92f9-4417fb55ccfd\/}"
 targetLength=${#sourceNameReplaced}
 #echo "$destinationRootLength - $targetLength"
 destinationName="$2/${sourceNameReplaced:destinationRootLength:targetLength}"

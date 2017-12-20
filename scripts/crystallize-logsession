@@ -255,7 +255,7 @@ if [[ "$newFileChecksum" != "$knownHashdeepChecksum" ]]; then
         # The recovery checksum matches one of the previously stored checksums, so it's probably right. Save it to the file instead.
         print "$newFileChecksumB" > "$crystalWorkdir/$CrystalID.checksums"
     else
-        die "Could not get a stable checksum for the packed file. Is your computer's memory bad? (Possible bug in Crystallize, also.)"
+        die "Could not get a stable checksum for the packed file. Is your computer's memory bad? (Or this could be a bug in Crystallize, but I haven't seen it be.)"
     fi
 fi
 echo "Selected logsession checksums: $(<"$crystalWorkdir/$CrystalID.checksums")" >> "$logfile"

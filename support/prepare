@@ -20,6 +20,7 @@ if [[ "$OSTYPE" = darwin* ]]; then
         fail
     fi
     find scripts -type f -exec perl -0777 -p -i -e 's/readlink /greadlink /g' {} \;
+    find scripts -type f -exec perl -0777 -p -i -e 's/dirname /gdirname /g' {} 
     find scripts -type f -exec perl -0777 -p -i -e 's/sort /gsort /g' {} \;
     find scripts -type f -exec perl -0777 -p -i -e 's/sha256sum /gsha256sum /g' {} \;
     find scripts -type f -exec perl -0777 -p -i -e 's/sha512sum /gsha512sum /g' {} \;

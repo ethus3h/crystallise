@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+#Ember Git UPdater for single repository
+# shellcheck disable=SC1091
+source ember_bash_setup &> /dev/null
+
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd)."' ERR
+# set -x
+
+if [[ "$1" == "--offline" ]]; then
+    offline="true"
+    shift
+fi
+
+cd "$1" || exit 1
+
+egup-env
+
+if [[ -f .egup.git-native-excludes ]]; then
+    echo "(Applying native Git excludes)"
+    cp .egup.git-native-excludes .git/info/exclude # instead of using $GIT_DIR, because then it would get applied to the elen environment git dir too
+fi
+
+# Back up the .gitignore in preparation for the next step
+git add .gitignore || true # It's ok if this fails — it probably means there is no .gitignore
+git commit -m "Update Ember tree" || true #It's ok if this fails — it probably means there is nothing to commit
+
+if [[ -f .egup.git-native-excludes ]] && [[ "$(readlink -f .git/info/exclude)" == "$(readlink -f "$GIT_DIR"/info/exclude)" ]]; then
+    # Not in an elen environment, so make sure the .gitignore hasn't gotten screwed up before running anything else
+    cp .egup.git-native-excludes .gitignore
+fi
+
+branch="$(git branch | grep -E "^\* " | cut -c 3-)"
+git checkout "$branch"
+git add -A || die "Error adding changes."
+git add -A . || die "Error adding changes."
+git commit -a -m "Update Ember tree" || echo "(Note: Repository appears to have no changes to commit.)"
+if [[ -f .egup.hooks ]]; then
+    echo "Beginning running hooks..."
+    ./.egup.hooks || warn "WARNING! pre-build-hooks failed; continuing anyway."
+    echo "Done running hooks."
+    git commit -a -m "Update Ember tree" || true #It's ok if this fails — it probably means there is nothing to commit, and the user was already notified by saying "no changes to commit" earlier.
+fi
+
+status=""
+while [[ "$status" != "completed" ]]; do
+    # Do this part of the process twice to make reasonably sure remote changes to branches/refs/tags are correctly reflected in the .egup.{branches/refs/tags} files
+
+    git branch --list -a -v > .egup.branches
+    sed -i '/^\* master /d' .egup.branches
+    sed -i '/^  remotes\/origin\/master /d' .egup.branches
+    git show-ref -d > .egup.refs
+    sed -i '/^[a-f0-9]\{40\} refs\/heads\/master$/d' .egup.refs
+    sed -i '/^[a-f0-9]\{40\} refs\/remotes\/origin\/HEAD$/d' .egup.refs
+    sed -i '/^[a-f0-9]\{40\} refs\/remotes\/origin\/master$/d' .egup.refs
+    git show-ref -d --tags > .egup.tags || echo "(Note: Repository appears to have no tags.)"
+
+    git add -A || die "Error adding tag changes."
+    trap - ERR
+    git commit -a -m "Update Ember tree" || true
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd)."' ERR
+
+    if [[ "$offline" != "true" ]]; then
+        retryUntilSuccess 100 30 5 5 git pull --all || die "Error pulling."
+        retryUntilSuccess 100 30 5 5 git submodule update --remote || warn "Error updating submodules. Maybe a remote server is down?"
+        if ! [[ -f .egup.nopush ]]; then
+            retryUntilSuccess 100 30 5 5 git push --verbose --tags -u origin master || die "Error pushing changes."
+            retryUntilSuccess 100 30 5 5 git push --verbose --all -u origin || die "Error pushing changes."
+        fi
+    fi
+    
+    if [[ "$status" == "partial" ]]; then
+        status="completed"
+    else
+        status="partial"
+    fi
+done
+
+egup-exit

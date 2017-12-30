@@ -193,6 +193,11 @@ fi
 
 memlimit="$((memlimit - 1073741824))"
 
+if [[ "$memlimit" -lt 1073741824 ]]; then
+    warn "Could only get $memlimit available bytes of memory. Trying with a 1GB limit anyway."
+    memlimit="1073741824"
+fi
+
 {
     echo "cd \"$(pwd)\""
     echo "CrystalID=\"$CrystalID\""

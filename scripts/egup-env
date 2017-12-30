@@ -43,7 +43,7 @@ egup-env() {
         fi
 
         touch .egup.environment
-        
+
         local pwdPath="$(readlink -f "$(pwd)")"
         local egupDirPath="$(readlink -f "$egupDir")"
 
@@ -218,6 +218,6 @@ elen() {
     }
 
 elex() {
-        egup-exit
-        cd "$originalDir"
+    egup-exit
+    cd "$originalDir"
 }

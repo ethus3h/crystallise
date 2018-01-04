@@ -5,7 +5,7 @@
 # Because of that, we need to inline getDefaultEditorPath here because it is normally provided by ember_bash_setup.
 
 getDefaultEditor() {
-    print "${FCEDIT:-${VISUAL:-${EDITOR:-nano}}}"
+    printf '%s' "${FCEDIT:-${VISUAL:-${EDITOR:-nano}}}"
 }
 
 getDefaultEditorPath() {

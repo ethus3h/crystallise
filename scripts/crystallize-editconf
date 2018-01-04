@@ -2,6 +2,15 @@
 #set -x
 
 # Should work without ember-shared, just in case, so don't set traps or source ember_bash_setup
+# Because of that, we need to inline getDefaultEditorPath here because it is normally provided by ember_bash_setup.
+
+getDefaultEditor() {
+    print "${FCEDIT:-${VISUAL:-${EDITOR:-nano}}}"
+}
+
+getDefaultEditorPath() {
+    which "$(getDefaultEditor)"
+}
 
 defaultEditor="$(getDefaultEditorPath)"
 configLocation="$(crystallize-getconf ConfigLocation)"

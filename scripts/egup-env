@@ -6,7 +6,7 @@ egup-env-catch() {
     while true; do
         read -rsn1 char < "$1"
         if [[ "$char" == $'\cd' ]]; then
-            declare -f egup-exit > "$1"
+            declare -f egupexit > "$1"
         fi
     done
 }
@@ -14,7 +14,7 @@ egup-env-catch() {
 egup-env() {
     if [[ -f .egup.useOverrides ]]; then
         if [[ -f .egup.environment ]]; then
-            egup-exit
+            egupexit
         fi
 
         egupDir="$(pwd)"
@@ -122,7 +122,7 @@ egup-env() {
     fi
 }
 
-egup-exit() {
+egupexit() {
     if ! [[ -f .egup.environment ]]; then
         true
     else
@@ -223,6 +223,6 @@ elen() {
     }
 
 elex() {
-    egup-exit
+    egupexit
     cd "$originalDir"
 }

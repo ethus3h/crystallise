@@ -67,7 +67,7 @@ while [[ "$status" != "completed" ]]; do
             retryUntilSuccess 100 30 5 5 git push --verbose --all -u origin || die "Error pushing changes."
         fi
     fi
-    
+
     if [[ "$status" == "partial" ]]; then
         status="completed"
     else
@@ -75,4 +75,4 @@ while [[ "$status" != "completed" ]]; do
     fi
 done
 
-egup-exit
+egupexit

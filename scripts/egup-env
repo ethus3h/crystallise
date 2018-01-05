@@ -204,12 +204,12 @@ egup-exit() {
         fi
     fi
 }
-
-# Old versions of bash, sometimes used as /bin/sh, will blow up if function names have - in them. So, we only export this alternative name without the - in it to 
-egupexit() {
-    egup-exit "$@"
-}
 export -f egupexit
+
+# Used to be called this. Alias for compatibility. Not exported though, unlike it used to be, because some systems (ahem macos ahem) use ancient bash as /bin/sh and so blow up when importing functions with - in the name. Apple needs to get their shit updated (and relased under a libre license) already, it's a royal pain in the ass to support and I'd ditch it if I could.
+egup-exit() {
+    egupexit "$@"
+}
 
 elen() {
     # set -x

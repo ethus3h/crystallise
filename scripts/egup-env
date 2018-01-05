@@ -204,7 +204,12 @@ egup-exit() {
         fi
     fi
 }
-export -f egup-exit
+
+# Old versions of bash, sometimes used as /bin/sh, will blow up if function names have - in them. So, we only export this alternative name without the - in it to 
+egupexit() {
+    egup-exit "$@"
+}
+export -f egupexit
 
 elen() {
     # set -x

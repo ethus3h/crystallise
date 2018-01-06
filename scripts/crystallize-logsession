@@ -312,8 +312,11 @@ set -o pipefail
     ) || die
     rm -r "${testDecrystDir:?}"
     rm -rf "${tempTestDecrystId:?}"
+    rm -rf "${tempTestDecrystId:?}.forks"
+    rm "${tempTestDecrystId:?}.csum"
+    rm "${tempTestDecrystId:?}.forks-csum"
     echo "Please wait..."
-} &>> "$logfile"
+} 2>&1 | tee -a "$logfile"
 
 unset opt
 unset optb

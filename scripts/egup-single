@@ -48,6 +48,7 @@ while [[ "$status" != "completed" ]]; do
     git branch --list -a -v > .egup.branches
     sed -i '/^\* master /d' .egup.branches
     sed -i '/^  remotes\/origin\/master /d' .egup.branches
+    git remote -v > .egup.remotes
     git show-ref -d > .egup.refs
     sed -i '/^[a-f0-9]\{40\} refs\/heads\/master$/d' .egup.refs
     sed -i '/^[a-f0-9]\{40\} refs\/remotes\/origin\/HEAD$/d' .egup.refs

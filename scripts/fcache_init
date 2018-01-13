@@ -9,9 +9,34 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 if [[ -e "$1"/.fcache.limit ]]; then
     exit 0
 elif [[ -d "$1" ]]; then
-    error-notify "Directory already exists and is not a cache directory."
-    exit 1
+    if ! isSubdirOf "$(crystallize-getconf WorkDirectory)" "$1"; then
+        error-notify "Directory already exists and is not a cache directory."
+        exit 1
+    fi
 fi
 mkdir -p "$1/ByCount"
+
+cacheLimit=""
+# Test if the 2nd argument is a whole positive integer
+
+if [[ "$2" == +([0-9]) ]]; then
+    cacheLimit="$2"
+else
+    case $2 in
+    s)
+        cacheLimit=""
+        ;;
+    f)
+        cacheLimit=""
+        ;;
+    localstore)
+        cacheLimit=""
+        ;;
+    *
+        die "The 2nd argument must be "
+        ;;
+    ;;
+    esac
+fi
 echo "$2" > "$1"/.fcache.limit
 echo "Done creating cache directory."

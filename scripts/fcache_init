@@ -8,11 +8,14 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 
 # note that this may be overridden by parsing the limit argument later
 cacheType="f"
+cacheLimit="5000000000"
 if [[ "$1" == "--localstore" ]]; then
     cacheType="localstore"
+    cacheLimit="5000000000"
     shift
 elif [[ "$1" == "--scache" ]]; then
     cacheType="s"
+    cacheLimit="5000000000"
     shift
 fi
 
@@ -30,27 +33,8 @@ if [[ "$2" == +([0-9]) ]]; then
     # The 2nd argument is a positive integer
     cacheLimit="$2"
 else
-    case $2 in
-    s)
-        cacheLimit="5000000000"
-        [[ "$cacheType" == "localstore" ]] && die "--localstore was specified but scache default limit was requested."
-        cacheType="s"
-        ;;
-    f)
-        cacheLimit="5000000000"
-        { [[ "$cacheType" == "localstore" ]] || [[ "$cacheType" == "s" ]]; } && die "--localstore or --scache was specified but fcache default limit was requested."
-        cacheType="f"
-        ;;
-    localstore)
-        cacheLimit="5000000000"
-        [[ "$cacheType" == "scache" ]] && die "--scache was specified but localstorecache default limit was requested."
-        cacheType="localstore"
-        ;;
-    *
-        die "The 2nd argument must be either a positive integer or a cache type (s, f, or localstore)."
-        ;;
+    die "If given, the 2nd argument to fcache_init must be a positive integer."
     ;;
-    esac
 fi
 
 mkdir -p "$1/ByCount"

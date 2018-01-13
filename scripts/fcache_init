@@ -35,7 +35,6 @@ if [[ "$2" == +([0-9]) ]]; then
     cacheLimit="$2"
 else
     die "If given, the 2nd argument to fcache_init must be a positive integer."
-    ;;
 fi
 
 mkdir -p "$1/ByCount"

@@ -125,7 +125,7 @@ fi
 
 mkdir -p "$(dirname "$destinationName")"
 
-sreg_read_stream < "$1" > "$destinationName" || die "Failed to read pointer at $1!"
+sreg_read_stream --sreg-dir "$sregDir" --checksum "$sourceChecksum" < "$1" > "$destinationName" || die "Failed to read pointer at $1!"
 
 # a+r gives (a)ll users (r)ead permission
 chmod a+r "$destinationName"

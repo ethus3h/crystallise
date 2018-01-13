@@ -6,7 +6,6 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
-# note that this may be overridden by parsing the limit argument later
 cacheType="f"
 cacheLimit="5000000000"
 if [[ "$1" == "--localstore" ]]; then
@@ -19,7 +18,7 @@ elif [[ "$1" == "--scache" ]]; then
     shift
 fi
 
-if [[ -e "$1"/.fcache.limit ]]; then
+if [[ -e "$1"/."$cacheType"cache.limit ]]; then
     exit 0
 elif [[ -d "$1" ]]; then
     if ! isSubdirOf "$(crystallize-getconf WorkDirectory)" "$1"; then

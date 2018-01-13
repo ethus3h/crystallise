@@ -28,7 +28,7 @@ else
         cacheLimit="5000000000"
         ;;
     localstore)
-        cacheLimit=""
+        cacheLimit="5000000000"
         ;;
     *
         die "The 2nd argument must be either a positive integer or a cache type (s, f, or localstore)."
@@ -39,5 +39,5 @@ fi
 
 mkdir -p "$1/ByCount"
 
-echo "$2" > "$1"/.fcache.limit
+echo "$cacheLimit" > "$1"/.fcache.limit
 echo "Done creating cache directory."

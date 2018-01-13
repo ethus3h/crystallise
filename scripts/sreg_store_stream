@@ -104,7 +104,7 @@ mkdir -p "$crystalWorkdir/.$streamId/$streamId"
     fi
     # Upload a pack of the LocalStore items if there are enough, and update the pointers accordingly.
     if ! [[ -e "$crystalWorkdir/.LocalStoreCache/" ]]; then
-        localstorecache_init "$crystalWorkdir/.LocalStoreCache/" 5000000000
+        localstorecache_init "$crystalWorkdir/.LocalStoreCache/" "f"
     fi
     if ! [[ -e "$dbDir"/LocalStore ]]; then
         mkdir -p "$dbDir"/LocalStore

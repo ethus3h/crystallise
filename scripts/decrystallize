@@ -63,7 +63,7 @@ fi
 printf "%s" "$crystallizePassphrase" > "$tempId.tmp"
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 if ! [[ -e "$crystalWorkdir/.CrystalCache/" ]]; then
-    fcache_init "$crystalWorkdir/.CrystalCache/" 5000000000
+    fcache_init "$crystalWorkdir/.CrystalCache/" "f"
 fi
 
 decrystInner() (

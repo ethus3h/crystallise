@@ -25,7 +25,7 @@ else
         cacheLimit=""
         ;;
     f)
-        cacheLimit=""
+        cacheLimit="5000000000"
         ;;
     localstore)
         cacheLimit=""

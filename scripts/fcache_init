@@ -21,10 +21,13 @@ elif [[ "$1" == "--f" ]]; then
 fi
 
 if [[ -e "$1"/."$cacheType"cache.limit ]]; then
-diskUsageLimit="$(<"$dbDir/.$cacheType""cache.limit")"
-[[ -n "$diskUsageLimit" ]] || fcache_init "--$cacheType" "$dbDir" # The configured limit is blank, so update it
-[[ "$diskUsageLimit" == +([0-9]) ]] || die "The configured disk usage limit, $diskUsageLimit, is not a nonnegative integer!"
-    exit 0
+    diskUsageLimit="$(<"$1"/."$cacheType"cache.limit)"
+    if [[ -z "$diskUsageLimit" ]]; then
+        true # The limit file is empty, so keep going and thereby update it
+    else
+        [[ "$diskUsageLimit" == +([0-9]) ]] || die "A disk usage limit, $diskUsageLimit, is configured, but it is not a nonnegative integer!"
+        exit 0
+    fi
 elif [[ -d "$1" ]]; then
     if ! isSubdirOf "$(crystallize-getconf WorkDirectory)" "$1"; then
         error-notify "Directory already exists and is not a cache directory."
@@ -32,7 +35,6 @@ elif [[ -d "$1" ]]; then
     fi
 fi
 
-cacheLimit=""
 if [[ "$2" == +([0-9]) ]]; then
     # The 2nd argument is a positive integer
     cacheLimit="$2"
@@ -40,7 +42,7 @@ elif [[ -z "$2" ]]; then
     # No 2nd argument was given, so leave default cache limit
     true
 else
-    die "If given, the 2nd argument to fcache_init must be a positive integer."
+    die "If given, the 2nd argument to fcache_init must be a nonnegative integer."
 fi
 
 mkdir -p "$1/ByCount"

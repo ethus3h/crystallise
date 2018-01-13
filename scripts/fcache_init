@@ -14,12 +14,10 @@ elif [[ -d "$1" ]]; then
         exit 1
     fi
 fi
-mkdir -p "$1/ByCount"
 
 cacheLimit=""
-# Test if the 2nd argument is a whole positive integer
-
 if [[ "$2" == +([0-9]) ]]; then
+    # The 2nd argument is a positive integer
     cacheLimit="$2"
 else
     case $2 in
@@ -33,10 +31,13 @@ else
         cacheLimit=""
         ;;
     *
-        die "The 2nd argument must be "
+        die "The 2nd argument must be either a positive integer or a cache type (s, f, or localstore)."
         ;;
     ;;
     esac
 fi
+
+mkdir -p "$1/ByCount"
+
 echo "$2" > "$1"/.fcache.limit
 echo "Done creating cache directory."

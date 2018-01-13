@@ -16,6 +16,8 @@ elif [[ "$1" == "--s" ]]; then
     cacheType="s"
     cacheLimit="5000000000"
     shift
+elif [[ "$1" == "--f" ]]; then
+    shift
 fi
 
 if [[ -e "$1"/."$cacheType"cache.limit ]]; then

@@ -21,6 +21,9 @@ elif [[ "$1" == "--f" ]]; then
 fi
 
 if [[ -e "$1"/."$cacheType"cache.limit ]]; then
+diskUsageLimit="$(<"$dbDir/.$cacheType""cache.limit")"
+[[ -n "$diskUsageLimit" ]] || fcache_init "--$cacheType" "$dbDir" # The configured limit is blank, so update it
+[[ "$diskUsageLimit" == +([0-9]) ]] || die "The configured disk usage limit, $diskUsageLimit, is not a nonnegative integer!"
     exit 0
 elif [[ -d "$1" ]]; then
     if ! isSubdirOf "$(crystallize-getconf WorkDirectory)" "$1"; then

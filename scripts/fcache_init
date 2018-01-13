@@ -6,6 +6,16 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
+# note that this may be overridden by parsing the limit argument later
+cacheType="f"
+if [[ "$1" == "--localstore" ]]; then
+    cacheType="localstore"
+    shift
+elif [[ "$1" == "--scache" ]]; then
+    cacheType="s"
+    shift
+fi
+
 if [[ -e "$1"/.fcache.limit ]]; then
     exit 0
 elif [[ -d "$1" ]]; then
@@ -23,12 +33,16 @@ else
     case $2 in
     s)
         cacheLimit=""
+        [[ "$cacheType" == "s" ]] || [[ "$cacheType" == "f" ]] || die # Fail if localstore was manually s
+        cacheType="s"
         ;;
     f)
         cacheLimit="5000000000"
+        cacheType="f"
         ;;
     localstore)
         cacheLimit="5000000000"
+        cacheType="localstore"
         ;;
     *
         die "The 2nd argument must be either a positive integer or a cache type (s, f, or localstore)."
@@ -39,5 +53,5 @@ fi
 
 mkdir -p "$1/ByCount"
 
-echo "$cacheLimit" > "$1"/.fcache.limit
+echo "$cacheLimit" > "$1"/."$cacheType"cache.limit
 echo "Done creating cache directory."

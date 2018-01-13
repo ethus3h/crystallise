@@ -6,12 +6,4 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
-if [[ -e "$1"/.localstorecache.limit ]]; then
-    exit 0
-elif [[ -d "$1" ]]; then
-    error-notify "Directory already exists and is not a cache directory."
-    exit 1
-fi
-mkdir -p "$1/ByCount"
-echo "$2" > "$1"/.localstorecache.limit
-echo "Done creating cache directory."
+fcache_init --localstore "$@"

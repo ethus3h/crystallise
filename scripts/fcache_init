@@ -33,6 +33,9 @@ cacheLimit=""
 if [[ "$2" == +([0-9]) ]]; then
     # The 2nd argument is a positive integer
     cacheLimit="$2"
+elif [[ -z "$2" ]]; then
+    # No 2nd argument was given, so leave default cache limit
+    true
 else
     die "If given, the 2nd argument to fcache_init must be a positive integer."
 fi

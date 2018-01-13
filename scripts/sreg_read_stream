@@ -83,6 +83,7 @@ if [[ -z "$overrideEntryPath" ]]; then
 fi
 # Set up cache directory
 cacheDbDir="$crystalWorkdir/.StreamCache/"
+fcache_init --scache "$cacheDbDir"
 if ! [[ -e "$cacheDbDir" ]]; then
     mkdir -p "$cacheDbDir"
     echo "5000000000" > "$cacheDbDir/.scache.limit"

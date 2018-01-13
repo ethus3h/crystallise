@@ -84,7 +84,7 @@ fi
 # Set up cache directory
 cacheDbDir="$crystalWorkdir/.StreamCache/"
 if ! [[ -e "$cacheDbDir" ]]; then
-    fcache_init --scache "$cacheDbDir"
+    fcache_init --s "$cacheDbDir"
 fi
 # Get stream
 mkdir "$streamId"

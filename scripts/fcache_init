@@ -32,7 +32,7 @@ if [[ "$2" == +([0-9]) ]]; then
 else
     case $2 in
     s)
-        cacheLimit=""
+        cacheLimit="5000000000"
         [[ "$cacheType" == "localstore" ]] && die "--localstore was specified but scache default limit was requested."
         cacheType="s"
         ;;

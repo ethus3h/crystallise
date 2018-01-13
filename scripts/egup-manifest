@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-egup
-repoman -x fix
-repoman -x manifest-check
-repoman -x full
+find . -name '*.ebuild' -exec ebuild {} fetch \;
+repoman manifest
+repoman manifest-check

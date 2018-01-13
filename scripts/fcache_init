@@ -33,17 +33,17 @@ else
     case $2 in
     s)
         cacheLimit=""
-        [[ "$cacheType" == "localstore" ]] && die # Fail if --localstore was specified but scache default limit was requested
+        [[ "$cacheType" == "localstore" ]] && die "--localstore was specified but scache default limit was requested."
         cacheType="s"
         ;;
     f)
         cacheLimit="5000000000"
-        { [[ "$cacheType" == "localstore" ]] || [[ "$cacheType" == "s" ]]; } && die # Fail if --localstore or --scache was specified but fcache default limit was requested
+        { [[ "$cacheType" == "localstore" ]] || [[ "$cacheType" == "s" ]]; } && die "--localstore or --scache was specified but fcache default limit was requested."
         cacheType="f"
         ;;
     localstore)
         cacheLimit="5000000000"
-        [[ "$cacheType" == "scache" ]] && die # Fail if --scache was specified but localstorecache default limit was requested
+        [[ "$cacheType" == "scache" ]] && die "--scache was specified but localstorecache default limit was requested."
         cacheType="localstore"
         ;;
     *

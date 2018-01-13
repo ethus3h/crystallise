@@ -47,5 +47,7 @@ fi
 
 mkdir -p "$1/ByCount"
 
+assert true [[ "$diskUsageLimit" == +([0-9]) ]]
+
 echo "$cacheLimit" > "$1"/."$cacheType"cache.limit
 echo "Done creating cache directory."

@@ -5,6 +5,7 @@ source ember_bash_setup &> /dev/null
 
 trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
+repoman manifest
 find . -name '*.ebuild' -exec ebuild {} fetch \;
 repoman manifest
 repoman manifest-check

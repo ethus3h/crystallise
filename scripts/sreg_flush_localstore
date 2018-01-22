@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
-#set -x
+set -x
 
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
@@ -73,6 +73,7 @@ statusFile="/tmp/$streamId.sreg_flush_localstore.status"
         [[ "$(xxd "$streamId.bundle.pointer.tar" | head -c 12)" == "00000000: 00" ]] && { mkdir -p "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/"; rsync -a "$streamId.LocalStore.crystal" ".$streamId.LocalStore.crystal-data" "$streamId.bundle.pointer.tar" "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/"; die "Pointer pax was corrupt!"; }
         checkedxz --quiet - -k -C sha256 -T 0 -9 -e < "$streamId.bundle.pointer.tar" > "$streamId.bundle.pointer"
         pointerName="$(readlink -f "$streamId.bundle.pointer")" || die "Readlink -f of $streamId.bundle.pointer failed: returned \"$pointerName\""
+        sleep 3600
         mkdir -p "$dbDir/Packs/"
         rsync -q --checksum "$pointerName" "$dbDir/Packs/"
         cp "$streamId.LocalStore.crystal" "$dbDir/Packs/$streamId.identifier"

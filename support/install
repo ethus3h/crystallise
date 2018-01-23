@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
+set -x
 
 #NOTE: MAINTENANCE: Manual error printing
 if [[ -z "$(ember-getconf emberSharedVersion)" ]]; then
@@ -11,7 +12,6 @@ if [[ -z "$(ember-getconf emberSharedVersion)" ]]; then
 fi
 
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd)."' ERR
-# set -x
 
 skipConfigFile="false"
 if [[ "$1" == "--skip-config-file" ]]; then

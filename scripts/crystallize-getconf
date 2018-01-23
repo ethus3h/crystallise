@@ -16,6 +16,12 @@ if [[ "$1" == "ConfigDir" ]]; then
 fi
 
 if [[ "$1" == "crystallizeVersion" ]]; then
+    if [[ ! -z ${CrystalWorkdirOverride54ae685dc782437c99bc46c7a1211377+x} ]]; then
+        if [[ -n "${CrystalWorkdirOverride54ae685dc782437c99bc46c7a1211377:?}" ]]; then
+            printf '%s' "$CrystalWorkdirOverride54ae685dc782437c99bc46c7a1211377"
+            exit 0
+        fi
+    fi
     crystallizeVersionA="$(sed '18q;d' "$(which crystallize)")" || exit 1
     crystallizeVersionB="${crystallizeVersionA%\'*}"
     echo "${crystallizeVersionB##*\'}"

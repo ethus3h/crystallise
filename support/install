@@ -97,13 +97,16 @@ crystallizeEmberdir="$crystallizePrefix"/Ember\ Library
 
 mkdir -p "$crystallizeEmberdir"
 mkdir -p "$crystallizeBindir"
-mkdir -p "$crystallizeSharedstatedir"/crystallize
 chmod +x scripts/*
 cp scripts/* "$crystallizeBindir/"
 mkdir -p "$crystallizeSysconfdir"
-if [[ "$skipConfigFile" != "false" ]]; then
-    if [[ ! -h "$crystallizeSysconfdir/crystallize.conf" ]] && [[ -f "$crystallizeSysconfdir/crystallize.conf" ]]; then
-        mv "$crystallizeSysconfdir/crystallize.conf" "$crystallizeSysconfdir/ember.conf"
-    fi
+
+if [[ ! -h "$crystallizeSharedstatedir/crystallize" ]] && [[ -d "$crystallizeSharedstatedir/crystallize" ]]; then
+    mv "$crystallizeSharedstatedir/crystallize" "$crystallizeSharedstatedir/ember"
+fi
+ln -s "$crystallizeSharedstatedir/ember" "$crystallizeSharedstatedir/crystallize"
+
+if [[ ! -h "$crystallizeSysconfdir/crystallize.conf" ]] && [[ -f "$crystallizeSysconfdir/crystallize.conf" ]]; then
+    mv "$crystallizeSysconfdir/crystallize.conf" "$crystallizeSysconfdir/ember.conf"
 fi
 ln -s "$crystallizeSysconfdir/ember.conf" "$crystallizeSysconfdir/crystallize.conf"

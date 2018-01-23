@@ -85,14 +85,6 @@ if ! [[ -n "$crystallizeSharedstatedir" ]]; then
 fi
 echo "crystallizeSharedstatedir: $crystallizeSharedstatedir"
 
-crystallizeEmberdir="$crystallizePrefix"/Ember\ Library
-
-ereplace "73FAB73B-EEE4-4992-8622-4F3FCEC9823A" "$(date-uuid)" support/crystallize.conf
-ereplace "/usr/local/var" "$crystallizeSharedstatedir" support/crystallize.conf
-ereplace "/Ember\ Library/" "$crystallizeEmberdir" support/crystallize.conf
-ereplace "/usr/local/etc" "$crystallizeSysconfdir" scripts/crystallize-getconf
-ereplace "/usr/local/etc" "$crystallizeSysconfdir" scripts/crystallize-logsession
-
 mkdir -p "$crystallizeBindir"
 chmod +x scripts/*
 cp scripts/* "$crystallizeBindir/"

@@ -16,7 +16,7 @@ if [[ "$1" == "ConfigDir" ]]; then
 fi
 
 if [[ "$1" == "crystallizeVersion" ]]; then
-    crystallizeVersionA="$(sed '18q;d' "$(which crystallize)")"
+    crystallizeVersionA="$(sed '18q;d' "$(which crystallize)")" || exit 1
     crystallizeVersionB="${crystallizeVersionA%\'*}"
     echo "${crystallizeVersionB##*\'}"
     exit

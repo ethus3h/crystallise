@@ -95,6 +95,8 @@ echo "crystallizeSharedstatedir: $crystallizeSharedstatedir"
 
 crystallizeEmberdir="$crystallizePrefix"/Ember\ Library
 
+ereplace "/usr/local/etc" "$crystallizeSysconfdir" scripts/ember-logsession
+
 mkdir -p "$crystallizeEmberdir"
 mkdir -p "$crystallizeBindir"
 chmod +x scripts/*

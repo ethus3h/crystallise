@@ -9,4 +9,4 @@ if [[ -z "$(ember-getconf emberSharedVersion)" ]]; then
     exit 1
 fi
 
-crystallize-editconf "$@"
+ember-editconf "$@"

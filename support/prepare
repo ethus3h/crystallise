@@ -6,11 +6,18 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 #set -x
 
 fail() {
-    printf '%b' '\033[1;31m' >&2
-    echo "Please install the current version of ember-shared before installing crystallize."
-    printf '%b' '\033[0m' >&2
-    exit 1
+    #NOTE: MAINTENANCE: Manual error printing
+    if [[ -z "$(ember-getconf emberSharedVersion)" ]]; then
+        printf '%b' '\033[1;31m' >&2
+        echo "ERROR: ember-shared is not properly installed! It must be installed before installing Crystallize." >&2
+        printf '%b' '\033[0m' >&2
+        exit 1
+    fi
 }
+
+if [[ -z "$(ember-getconf emberSharedVersion)" ]]; then
+    fail
+fi
 
 if [[ "$OSTYPE" = darwin* ]]; then
     if ! type "greadlink"; then

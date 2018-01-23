@@ -1,21 +1,12 @@
 #!/usr/bin/env bash
 #set -x
 
-# Should work without ember-shared, just in case, so don't set traps or source ember_bash_setup
-# Because of that, we need to inline getDefaultEditorPath here (tweaked to replace the call to print with printf) because it is normally provided by ember_bash_setup.
-
-getDefaultEditor() {
-    printf '%s' "${FCEDIT:-${VISUAL:-${EDITOR:-nano}}}"
-}
-
-getDefaultEditorPath() {
-    which "$(getDefaultEditor)"
-}
-
-defaultEditor="$(getDefaultEditorPath)"
-configLocation="$(crystallize-getconf ConfigLocation)"
-if [[ -w "$configLocation" ]]; then
-    "$defaultEditor" -wLN "$configLocation"
-else
-    sudo -k "$defaultEditor" -wLN "$configLocation"
+#NOTE: MAINTENANCE: Manual error printing
+if [[ -z "$(ember-getconf emberSharedVersion)" ]]; then
+    printf '%b' '\033[1;31m' >&2
+    echo "ERROR: ember-shared is not properly installed! It must be installed to use Crystallize." >&2
+    printf '%b' '\033[0m' >&2
+    exit 1
 fi
+
+crystallize-editconf "$@"

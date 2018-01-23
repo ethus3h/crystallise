@@ -102,6 +102,7 @@ mkdir -p "$crystallizeBindir"
 chmod +x scripts/*
 cp scripts/* "$crystallizeBindir/"
 mkdir -p "$crystallizeSysconfdir"
+mkdir -p "$crystallizeSharedstatedir"
 
 if [[ ! -h "$crystallizeSharedstatedir/crystallize" ]] && [[ -d "$crystallizeSharedstatedir/crystallize" ]]; then
     mv "$crystallizeSharedstatedir/crystallize" "$crystallizeSharedstatedir/ember"

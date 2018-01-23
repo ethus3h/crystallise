@@ -2,6 +2,10 @@
 # shellcheck disable=SC1091
 source ember_bash_setup &> /dev/null
 
+#NOTE: MAINTENANCE: Manual error printing
+trap 'printf '\''%b'\'' '\''\033[1;31m'\'' >&2; echo "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd)." >&2; printf '\''%b'\'' '\''\033[0m'\'' >&2; exit 1' ERR
+if [[ -z "$(ember-getconf emberSharedVersion)" ]] || { printf '%b' '\033[1;31m' >&2; echo "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd)." >&2; printf '\''%b'\'' '\''\033[0m'\'' >&2; exit 1; }
+
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd)."' ERR
 # set -x
 
@@ -85,11 +89,14 @@ if ! [[ -n "$crystallizeSharedstatedir" ]]; then
 fi
 echo "crystallizeSharedstatedir: $crystallizeSharedstatedir"
 
+crystallizeEmberdir="$crystallizePrefix"/Ember\ Library
+
+mkdir -p "$crystallizeEmberdir"
 mkdir -p "$crystallizeBindir"
+mkdir -p "$crystallizeSharedstatedir"/crystallize
 chmod +x scripts/*
 cp scripts/* "$crystallizeBindir/"
 if [[ "$skipConfigFile" == "false" ]]; then
     mkdir -p "$crystallizeSysconfdir"
     cp -v support/crystallize.conf "$crystallizeSysconfdir/"
 fi
-mkdir -p "$crystallizeSharedstatedir"/crystallize

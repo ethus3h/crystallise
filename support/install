@@ -102,6 +102,8 @@ chmod +x scripts/*
 cp scripts/* "$crystallizeBindir/"
 mkdir -p "$crystallizeSysconfdir"
 if [[ "$skipConfigFile" != "false" ]]; then
-    mv "$crystallizeSysconfdir/crystallize.conf" "$crystallizeSysconfdir/ember.conf"
+    if [[ ! -h "$crystallizeSysconfdir/crystallize.conf" ]] && [[ -f "$crystallizeSysconfdir/crystallize.conf" ]]; then
+        mv "$crystallizeSysconfdir/crystallize.conf" "$crystallizeSysconfdir/ember.conf"
+    fi
 fi
 ln -s "$crystallizeSysconfdir/ember.conf" "$crystallizeSysconfdir/crystallize.conf"

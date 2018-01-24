@@ -245,12 +245,11 @@ mkdir "$streamId"
                     numRetries="0"
                     break
                 fi
-                localstoreErrorBreak() {
+                localStoreCrystalIdentifier="$(<"$localStoreCrystalName"/identifier)"
+                if ! localstoreLocation="$(localstorecache_request --sreg-dir "$sregDir" "$crystalWorkdir/.LocalStoreCache/" "$localStoreCrystalIdentifier")"; then
                     warn "localstorecache_request failed for the pointer $hashFull, so stopping this attempt."
                     break
-                }
-                localStoreCrystalIdentifier="$(<"$localStoreCrystalName"/identifier)"
-                localstoreLocation="$(localstorecache_request --sreg-dir "$sregDir" "$crystalWorkdir/.LocalStoreCache/" "$localStoreCrystalIdentifier")" || localstoreErrorBreak
+                fi
                 trap 'releaseLocks; warn "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate) while attempting to read a remote pack pointer $hashFull (stream was not in the pack given). Giving up now: retrying would likely not help in this situation."; numRetries=0; break' ERR
                 localStoreMatchArray=("$localstoreLocation"/sreg_flush_localstore-*.LocalStore)
                 if ( ! [[ -e "${localStoreMatchArray[0]}" ]] ) || [[ -z "${localStoreMatchArray[0]}" ]]; then
@@ -265,7 +264,8 @@ mkdir "$streamId"
                 trap 'releaseLocks; warn "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate) while attempting to read a remote pack pointer $hashFull (stream was not in the pack given). Giving up now: retrying would likely not help in this situation."; numRetries=0; break' ERR
                 if [[ "$unxzLocalStoreEntryStatus" != "0" ]]; then
                     rm -r "$localstoreLocation"
-                    localstoreErrorBreak
+                    warn "localstorecache_request failed for the pointer $hashFull, so stopping this attempt."
+                    break
                 fi
                 trap 'releaseLocks; warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate) while reading $hashFull."' ERR
             elif [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then

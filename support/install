@@ -112,4 +112,4 @@ ln -s "$crystallizeSharedstatedir/ember" "$crystallizeSharedstatedir/crystallize
 if [[ ! -h "$crystallizeSysconfdir/crystallize.conf" ]] && [[ -f "$crystallizeSysconfdir/crystallize.conf" ]]; then
     mv "$crystallizeSysconfdir/crystallize.conf" "$crystallizeSysconfdir/ember.conf"
 fi
-ln -s "$crystallizeSysconfdir/ember.conf" "$crystallizeSysconfdir/crystallize.conf"
+[[ -h "$crystallizeSysconfdir/crystallize.conf" ]] || ln -s "$crystallizeSysconfdir/ember.conf" "$crystallizeSysconfdir/crystallize.conf"

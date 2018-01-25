@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
+source ember_bash_setup &> /dev/null
+#set -x
+
+((EUID)) && exec sudo -- "$0" "$@"
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+
+singleResultOnly="false"
+if [[ "$1" == "--single" ]]; then
+    singleResultOnly="true"
+    shift
+fi
+
+if [[ "$1" == "--" ]]; then
+    shift
+fi
+
+pattern="$1"
+
+cd "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/ || die "cd failed"
+shopt -u failglob
+for file in ./*.deep.idx ./*.csum; do
+    shopt -s failglob
+    if grep -q "$pattern" "$file"; then
+        filePassedSingle="0"
+        fileName="${file/\.\/}"
+        fileNamePrefix=""
+        if [[ "$fileName" == *".csum" ]]; then
+            fileNamePrefix="${fileName%\.csum}"
+        else
+            fileNamePrefix="${fileName%\.deep\.idx}"
+        fi
+        grep -v '^#' "$file" | grep "$pattern" | cut -d ',' -f 5- - | while IFS="" read -r line; do
+            if [[ "$filePassedSingle" != "1" ]] || [[ "$singleResultOnly" != "true" ]]; then
+                echo "Crystal $fileNamePrefix contains:"
+                echo "    $line"
+                filePassedSingle="1"
+            fi
+        done
+    fi
+done

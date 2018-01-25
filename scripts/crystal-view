@@ -3,7 +3,5 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
-((EUID)) && exec sudo -- "$0" "$@"
-
 pathPrefix="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/"$1"
 less "$pathPrefix".deep.idx 2>/dev/null || less "$pathPrefix".csum

@@ -322,6 +322,8 @@ if [[ $crystallizeLeavePointer == true ]]; then
     #echo "Pointer name: $crystallizePointerName"
 fi
 
+chmod -R 644 "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
+
 if rm -v "$crystalWorkdir/$CrystalID.coal5-timestamp"; then
     #Clear the screen
     printf "\\033c"

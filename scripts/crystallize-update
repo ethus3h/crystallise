@@ -3,6 +3,10 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
+trap - ERR
+sudo echo
+sudo chmod 777 "$(ember-getconf WorkDirectory)" &> /dev/null
+
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
 sudo echo

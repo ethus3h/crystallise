@@ -107,7 +107,7 @@ mkdir -p "$crystallizeSharedstatedir"
 if [[ ! -h "$crystallizeSharedstatedir/crystallize" ]] && [[ -d "$crystallizeSharedstatedir/crystallize" ]]; then
     mv "$crystallizeSharedstatedir/crystallize" "$crystallizeSharedstatedir/ember"
 fi
-ln -s "$crystallizeSharedstatedir/ember" "$crystallizeSharedstatedir/crystallize"
+[[ -h "$crystallizeSharedstatedir/crystallize" ]] || ln -s "$crystallizeSharedstatedir/ember" "$crystallizeSharedstatedir/crystallize"
 
 if [[ ! -h "$crystallizeSysconfdir/crystallize.conf" ]] && [[ -f "$crystallizeSysconfdir/crystallize.conf" ]]; then
     mv "$crystallizeSysconfdir/crystallize.conf" "$crystallizeSysconfdir/ember.conf"

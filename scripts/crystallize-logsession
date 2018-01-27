@@ -46,6 +46,7 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
     cat /usr/local/etc/crystallize.conf
 
     crystalTitle="$(crystallize-getconf InstallationIdentifier)"
+    assert true [[ -n "$crystalTitle" ]]
     export crystalTitle
     crystalCollection="$(crystallize-getconf Collection)"
     export crystalCollection

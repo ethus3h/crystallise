@@ -4,7 +4,8 @@ source ember_bash_setup &> /dev/null
 #set -x
 
 ((EUID)) && exec sudo -- "$0" "$@"
-trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; if [[ -n "${tempDirectoryName:?}" ]]; then if [[ -d "${tempDirectoryName:?}" ]]; then rm -r "${tempDirectoryName:?}"; fi; fi; exit 1' ERR
+# Clean up if there's an error to avoid leaving a broken cache entry or temporary files
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; rm -rf "${dbLinkPath:?}" "$(readlink -e "${dbLinkPath:?}")"; if [[ -n "${tempDirectoryName:?}" ]]; then if [[ -d "${tempDirectoryName:?}" ]]; then rm -r "${tempDirectoryName:?}"; fi; fi; exit 1' ERR
 
 sregDir=""
 if [[ "$1" == "--sreg-dir" ]]; then
@@ -27,9 +28,6 @@ hashA="${hashFull:0:1}"
 hashB="${hashFull:1:1}"
 hashC="${hashFull:2:1}"
 hashSubdir="$hashA/$hashB/$hashC"
-
-# Clean up if there's an error to avoid leaving a broken cache entry
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; rm -rf "${dbLinkPath:?}" "$(readlink -e "$dbLinkPath")"' ERR
 
 if [[ "$RANDOM" -lt 500 ]]; then
     scache_gc "$dbDir" "localstore"
@@ -64,9 +62,10 @@ if [[ -e "$dbLinkPath.locked" ]]; then
     fi
 fi
 
+save_traps="$(trap)"
 trap - ERR
 oldFilePath="$(readlink "$dbLinkPath")"
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; rm -rf "${dbLinkPath:?}" "$(readlink -e "$dbLinkPath")"' ERR
+eval "$save_traps"
 
 # no guarantee that localStoreMatchArray will match anything, I guess.
 shopt -u failglob

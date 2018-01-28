@@ -25,7 +25,7 @@ if [[ -e "$1"/."$cacheType"cache.limit ]]; then
     if [[ -z "$diskUsageLimit" ]]; then
         true # The limit file is empty, so keep going and thereby update it
     else
-        [[ "$diskUsageLimit" == +([0-9]) ]] || die "A disk usage limit, $diskUsageLimit, is configured, but it is not a nonnegative integer!"
+        isNonnegativeInteger "$diskUsageLimit" || die "A disk usage limit, $diskUsageLimit, is configured, but it is not a nonnegative integer!"
         exit 0
     fi
 elif [[ -d "$1" ]]; then
@@ -35,7 +35,7 @@ elif [[ -d "$1" ]]; then
     fi
 fi
 
-if [[ "$2" == +([0-9]) ]]; then
+if isNonnegativeInteger "$2"; then
     # The 2nd argument is a positive integer
     cacheLimit="$2"
 elif [[ -z "$2" ]]; then
@@ -47,7 +47,7 @@ fi
 
 mkdir -p "$1/ByCount"
 
-assert true [[ "$diskUsageLimit" == +([0-9]) ]]
+assert true isNonnegativeInteger "$diskUsageLimit"
 
 echo "$cacheLimit" > "$1"/."$cacheType"cache.limit
 echo "Done creating cache directory."

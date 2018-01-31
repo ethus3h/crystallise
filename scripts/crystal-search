@@ -17,7 +17,13 @@ fi
 
 pattern="$1"
 
-cd "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/ || die "cd failed"
+if ! cd "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/; then
+    sudo chown -R root:root "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
+    sudo chmod -R 644 "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
+    sudo chmod 755 "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
+    cd "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
+fi
+
 shopt -u failglob
 for file in ./*.deep.idx ./*.csum; do
     shopt -s failglob

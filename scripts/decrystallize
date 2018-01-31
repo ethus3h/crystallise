@@ -8,6 +8,8 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 
 shopt -s extglob
 
+# TODO (maybe): Automatically add crystal metadata to the local Crystal Index folder when decrystallizing if it's missing
+
 useCustomPassphrase="false"
 crystallizePassphrase=""
 if [[ "$1" == "--passphrase" ]]; then

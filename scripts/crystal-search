@@ -17,11 +17,13 @@ fi
 
 pattern="$1"
 
-if ! cd "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/; then
-    sudo chown -R root:root "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
-    sudo chmod -R 644 "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
-    sudo chmod 755 "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
-    cd "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
+CrystalIndexDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
+
+if ! cd "$CrystalIndexDir"; then
+    sudo chown -R root:root "$CrystalIndexDir"
+    sudo chmod -R 644 "$CrystalIndexDir"
+    sudo chmod 755 "$CrystalIndexDir"
+    cd "$CrystalIndexDir"
 fi
 
 shopt -u failglob

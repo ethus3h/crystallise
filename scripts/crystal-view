@@ -3,5 +3,8 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
+# TODO: Detect if output is not to a terminal and cat instead of less
+# TODO: Add support for fetching index files for crystals that aren't available in the index
+
 pathPrefix="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/"$1"
 less "$pathPrefix".deep.idx 2>/dev/null || less "$pathPrefix".csum

@@ -19,12 +19,13 @@ pattern="$1"
 
 CrystalIndexDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
 
-if ! cd "$CrystalIndexDir"; then
+if ! cd "$CrystalIndexDir" &> /dev/null; then
     sudo chown -R root:root "$CrystalIndexDir"
     sudo chmod -R 644 "$CrystalIndexDir"
     sudo chmod 755 "$CrystalIndexDir"
-    cd "$CrystalIndexDir"
 fi
+
+cd "$CrystalIndexDir"
 
 shopt -u failglob
 for file in ./*.deep.idx ./*.csum; do

@@ -45,7 +45,7 @@ status=""
 while [[ "$status" != "completed" ]]; do
     # Do this part of the process twice to make reasonably sure remote changes to branches/refs/tags are correctly reflected in the .egup.{branches/refs/tags} files
 
-    git branch --list -a -v | sort > .egup.branches
+    git branch --list -a -v > .egup.branches
     sed -i '/^\* master /d' .egup.branches
     sed -i '/^  remotes\/origin\/master /d' .egup.branches
     git remote -v > .egup.remotes

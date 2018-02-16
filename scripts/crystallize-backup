@@ -17,6 +17,12 @@ if [[ "$1" == "--passphrase" ]]; then
     shift
 fi
 
+check="true"
+if [[ "$1" == "--no-check-existing" ]]; then
+    check="false"
+    shift
+fi
+
 #Remove URL
 CrystalAddress="${1#https://archive.org/@(details|download)/}"
 #Remove trailing path(s) from identifier
@@ -33,7 +39,22 @@ CrystalID="$CrystalAddress"
 echo "Crystal address: $CrystalID"
 
 if [[ -e "$CrystalID" ]]; then
-    exit 1
+    if [[ "$check" == "true" ]]; then
+        succeeded="false"
+        shopt -s dotglob
+        shopt -s globstar
+        for file in "$CrystalID"/**; do
+            if [[ "$(sha1sum "$file")" == "$(iasha1 "$file")" ]]; then
+                if [[ "$succeeded" == "true" ]] || [[ -z "$succeeded" ]]; then
+                    succeeded="true"
+                else
+                    succeeded="false"
+                fi
+            fi
+        done
+        [[ "$succeeded" == "true" ]] || die "Item failed integrity check!"
+    fi
+    exit 0
 fi
 ia checkeddl "$CrystalID"
 echo "Done! The crystal has been backed up to $CrystalID."

@@ -44,8 +44,16 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbk.3165cbaa-0540-47
     cbbRepos="$(<.cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/repos)"
     cd .cbk.3165cbaa-0540-4735-9aba-d34848246367/git
     while read -r repo; do
-        if [[]]
-        [[ -n "$repo" ]] && git clone --recursive "$repo"
+        if [[ -n "$repo" ]]; then
+            if [[ -e "$repo" ]]; then
+                git clone --recursive "$repo"
+            else
+                (
+                    cd "$repo"
+                    git pull
+                )
+            fi
+        fi
     done <<< "$cbbRepos"
 ) || die
 

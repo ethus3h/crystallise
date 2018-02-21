@@ -82,11 +82,21 @@ for file in .cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core/* .cbk.
     # URL pointers [45baff46-8db7-46f6-aad9-de5f713b02fe]
     shopt -s globstar
     for potentialPointer in "$pathToSreg"/**; do
-        typeSignature="$(head -c 36 "$potentialPointer" | tr -d '\0')"
-        if [[ "$typeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then # Standard remote pointer
-            true # TODO: Not implemented
-        elif [[ "$typeSignature" == "45baff46-8db7-46f6-aad9-de5f713b02fe" ]]; then # URL pointer
-            true # TODO: Not implemented
+        if [[ -f "$potentialPointer" ]]; then
+            typeSignature="$(head -c 36 "$potentialPointer" | tr -d '\0')"
+            if [[ "$typeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then # Standard remote pointer
+                true # TODO: Not implemented
+            elif [[ "$typeSignature" == "45baff46-8db7-46f6-aad9-de5f713b02fe" ]]; then # URL pointer
+                true # TODO: Not implemented
+            fi
         fi
     done
 done
+
+# Actually download and/or check the selected crystals now
+cbbCrystals="$(<.cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/crystals)"
+while read -r crystal; do
+    if [[ -n "$crystal" ]]; then
+        crystallize-backup "$crystal"
+    fi
+done <<< "$cbbCrystals"

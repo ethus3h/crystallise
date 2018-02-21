@@ -40,9 +40,9 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbk.3165cbaa-0540-47
 
 # Take care of git now
 (
-    mkdir git
-    cd git
+    mkdir -p .cbk.3165cbaa-0540-4735-9aba-d34848246367/git
     cbbRepos="$(<.cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/repos)"
+    cd .cbk.3165cbaa-0540-4735-9aba-d34848246367/git
     while read -r repo; do
         git clone --recursive "$repo"
     done <<< "$cbbRepos"

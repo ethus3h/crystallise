@@ -9,8 +9,8 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 dbDir="$1"
 requestUrl="$2"
 if [[ -z "$requestUrl" ]]; then
-    dbDir="$(crystallize-getconf WorkDirectory)/.CrystalCache"
     requestUrl="$dbDir"
+    dbDir="$(crystallize-getconf WorkDirectory)/.CrystalCache"
 fi
 hashFull="$(sha512sum <<< "$requestUrl" | awk '{print $1;}')"
 hashA="${hashFull:0:1}"

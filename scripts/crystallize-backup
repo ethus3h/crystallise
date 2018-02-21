@@ -30,7 +30,11 @@ if [[ "$1" == "--here" ]]; then
 fi
 
 if [[ "$here" != "true" ]]; then
-    backupLocation="$(crystallize-getconf BackupLocation)"
+    if [[ "$(crystallize-getconf BackupInWorkdir)" == "true" ]]; then
+        backupLocation="$(crystallize-getconf WorkDirectory)/$(crystallize-getconf BackupLocation)"
+    else
+        backupLocation="$(crystallize-getconf BackupLocation)"
+    fi
 
     mkdir -p "$backupLocation"
 

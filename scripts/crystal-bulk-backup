@@ -24,31 +24,31 @@ touch "$cbbConfigDir"/.cbb.idents
 touch "$cbbConfigDir"/.cbb.repos
 
 # Build backup indices (this won't finish building the sreg/crystal indices because they need the git repos cloned to make them)
-mkdir -p ".cbb.idx/sreg-core"
-rm -r ".cbb.idx/sreg-extra"
-rsync -a --checksum "$cbbConfigDir"/.cbb.sreg ".cbb.idx/sreg-extra"
-rsync -a --checksum "$cbbConfigDir"/.cbb.crystals ".cbb.idx/crystals"
-rsync -a --checksum "$cbbConfigDir"/.cbb.idents ".cbb.idx/idents"
-rsync -a --checksum "$cbbConfigDir"/.cbb.repos ".cbb.idx/repos"
+mkdir -p ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core"
+rm -rf ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-extra"
+rsync -a --checksum "$cbbConfigDir"/.cbb.sreg ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-extra"
+rsync -a --checksum "$cbbConfigDir"/.cbb.crystals ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/crystals"
+rsync -a --checksum "$cbbConfigDir"/.cbb.idents ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/idents"
+rsync -a --checksum "$cbbConfigDir"/.cbb.repos ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/repos"
 
-echo "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" >  ".cbb.idx/sreg-core/EmberLibrary"
-echo "${EmberLibrary:?}/Ember satellite projects/ember-history/.sreg" >  ".cbb.idx/sreg-core/EmberHistory"
-echo "${EmberLibrary:?}/Ember satellite projects/wreathe-packages/.sreg" >  ".cbb.idx/sreg-core/WreathePackages"
+echo "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" >  ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core/EmberLibrary"
+echo "${EmberLibrary:?}/Ember satellite projects/ember-history/.sreg" >  ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core/EmberHistory"
+echo "${EmberLibrary:?}/Ember satellite projects/wreathe-packages/.sreg" >  ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core/WreathePackages"
 
 # FIXME: Recursively cloning ember-meta doesn't seem to work, for some reason.
-echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbb.idx/repos"
+echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/repos"
 
 # Take care of git now
 (
     mkdir git
     cd git
-    cbbRepos="$(<.cbb.idx/repos)"
+    cbbRepos="$(<.cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/repos)"
     while read -r repo; do
         git clone --recursive "$repo"
     done <<< "$cbbRepos"
 ) || die
 
-for file in .cbb.idx/sreg-core/* .cbb.idx/sreg-extra/*; do
+for file in .cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core/* .cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-extra/*; do
     bakDir="sregbak/${file:9}"
     mkdir -p "$bakDir"
     pathToSreg="$(<"$file")"
@@ -58,7 +58,7 @@ for file in .cbb.idx/sreg-core/* .cbb.idx/sreg-extra/*; do
 
     # Normal remote pack pointers
     for identFile in "$pathToSreg/Packs/"*.identifier; do
-        echo "$(<"$identFile")" >> ".cbb.idx/crystals"
+        echo "$(<"$identFile")" >> ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/crystals"
         # FIXME: won't work for packs that don't have a .identifier file (older ones just have a pointer file)
     done
 
@@ -69,6 +69,7 @@ for file in .cbb.idx/sreg-core/* .cbb.idx/sreg-extra/*; do
     # URL pointers [45baff46-8db7-46f6-aad9-de5f713b02fe]
     shopt -s globstar
     for potentialPointer in "$pathToSreg"/**; do
+        typeSignature="$(head -c 36 "$potentialPointer" | tr -d '\0')"
         # : Standard remote pointer
             [[ "$pointerTypeSignature" != "45baff46-8db7-46f6-aad9-de5f713b02fe" ]] # URL pointer
         [[ "$(sha1sum "$file")" == "$(iasha1 "$file")" ]] && succeeded="true"

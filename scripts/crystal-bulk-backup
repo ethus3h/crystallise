@@ -9,11 +9,11 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 # Will back up the Ember Library by default.
 # Can optionally add additional things to back up: put a file for each other sreg repo (the .sreg folder, not the root) to back up in [ConfigDir]/.cbb.sreg/, a list of Crystal IDs to back up in [ConfigDir]/.cbb.crystals, a list of other IA identifiers to back up in [ConfigDir]/.cbb.idents, and a list of other git repositories to back up in [ConfigDir]/.cbb.repos.
 
-backupLocation="crystallize-getconf BackupLocation"
+backupLocation="$(crystallize-getconf BackupLocation)"
 
 mkdir -p "$backupLocation"
 
-cd "$backupLocation"
+cd "$backupLocation" || die "Could not cd to newly created directory! This should never happen."
 touch ".cbb.isBackupDir"
 
 cbbConfigDir="$(crystallize-getconf ConfigDir)"

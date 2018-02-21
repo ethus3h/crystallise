@@ -23,6 +23,21 @@ if [[ "$1" == "--no-check-existing" ]]; then
     shift
 fi
 
+here="false"
+if [[ "$1" == "--here" ]]; then
+    here="true"
+    shift
+fi
+
+if [[ "$here" != "true" ]]; then
+    backupLocation="$(crystallize-getconf BackupLocation)"
+
+    mkdir -p "$backupLocation"
+
+    cd "$backupLocation" || die "Could not cd to newly created directory! This should never happen."
+    touch ".cbb.isBackupDir"
+fi
+
 #Remove URL
 CrystalAddress="${1#https://archive.org/@(details|download)/}"
 #Remove trailing path(s) from identifier

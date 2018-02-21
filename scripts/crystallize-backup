@@ -61,12 +61,11 @@ if [[ -e "$CrystalID" ]]; then
         #NOTE: MAINTENANCE: Copy of code from "ia checkeddl" in ember_bash_setup
         for file in "$CrystalID"/**; do
             if [[ -f "$file" ]]; then
-                if [[ "$(sha1sum "$file")" == "$(iasha1 "$file")" ]]; then
-                    if [[ "$succeeded" == "true" ]] || [[ -z "$succeeded" ]]; then
+                if [[ "$(sha1sum "$file")" == "$(iasha1 "$file")" ]] && ( [[ "$succeeded" == "true" ]] || [[ -z "$succeeded" ]] ); then
                         succeeded="true"
-                    else
-                        succeeded="false"
-                    fi
+                else
+                    succeeded="false"
+                    continue
                 fi
             fi
         done

@@ -59,7 +59,7 @@ fi
 
 CrystalID="$CrystalAddress"
 
-echo "Crystal address: $CrystalID"
+echo "Backing up crystal: $CrystalID"
 
 if [[ -e "$CrystalID" ]]; then
     if [[ "$check" == "true" ]]; then
@@ -78,8 +78,9 @@ if [[ -e "$CrystalID" ]]; then
                 fi
             fi
         done
-        [[ "$succeeded" == "true" ]] || die "Item failed integrity check!"
+        [[ "$succeeded" == "true" ]] || die "Item $CrystalID failed integrity check!"
     fi
+    echo "(Backup of $CrystalID passed check.)"
     exit 0
 fi
 ia checkeddl "$CrystalID"

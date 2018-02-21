@@ -27,6 +27,7 @@ touch "$cbbConfigDir"/.cbb.repos
 mkdir -p ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core"
 touch ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core/.keep"
 rm -rf ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-extra"
+rsync -a --checksum "$(crystallize-getconf ConfigLocation)" ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/ember.conf"
 rsync -a --checksum "$cbbConfigDir"/.cbb.sreg ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-extra"
 rsync -a --checksum "$cbbConfigDir"/.cbb.crystals ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/crystals"
 rsync -a --checksum "$cbbConfigDir"/.cbb.idents ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/idents"
@@ -66,7 +67,8 @@ for file in .cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core/* .cbk.
     mkdir -p "$bakDir"
     pathToSreg="$(<"$file")"
     mkdir -p "$pathToSreg/LocalStore"
-    rsync -av --checksum "$pathToSreg/LocalStore" "$pathToSreg/passphrase" "$bakDir/"
+    rsync -av --checksum "$pathToSreg/LocalStore" "$bakDir/"
+    rsync -av --checksum "$pathToSreg/passphrase" "$bakDir/" || true # There isn't necessarily a passphrase file if it uses the default one.
     # Go through this sreg and add all the crystals it uses to the index
 
     # Normal remote pack pointers

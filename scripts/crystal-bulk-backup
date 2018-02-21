@@ -19,8 +19,6 @@ touch ".cbb.isBackupDir"
 cbbConfigDir="$(crystallize-getconf ConfigDir)"
 mkdir -p "$cbbConfigDir"/.cbb.sreg
 touch "$cbbConfigDir"/.cbb.sreg/.keep
-mkdir -p "$cbbConfigDir"/.cbb.extra
-touch "$cbbConfigDir"/.cbb.extra/.keep
 touch "$cbbConfigDir"/.cbb.crystals
 touch "$cbbConfigDir"/.cbb.idents
 touch "$cbbConfigDir"/.cbb.repos
@@ -46,7 +44,8 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbk.3165cbaa-0540-47
     cbbRepos="$(<.cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/repos)"
     cd .cbk.3165cbaa-0540-4735-9aba-d34848246367/git
     while read -r repo; do
-        git clone --recursive "$repo"
+        if [[]]
+        [[ -n "$repo" ]] && git clone --recursive "$repo"
     done <<< "$cbbRepos"
 ) || die
 

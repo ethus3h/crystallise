@@ -25,6 +25,7 @@ touch "$cbbConfigDir"/.cbb.repos
 
 # Build backup indices (this won't finish building the sreg/crystal indices because they need the git repos cloned to make them)
 mkdir -p ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core"
+touch ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core/.keep"
 rm -rf ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-extra"
 rsync -a --checksum "$cbbConfigDir"/.cbb.sreg ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-extra"
 rsync -a --checksum "$cbbConfigDir"/.cbb.crystals ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/crystals"
@@ -57,6 +58,8 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbk.3165cbaa-0540-47
         fi
     done <<< "$cbbRepos"
 ) || die
+
+shopt -s dotglob
 
 for file in .cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core/* .cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-extra/*; do
     bakDir="sregbak/${file:9}"

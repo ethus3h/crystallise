@@ -43,8 +43,7 @@ if [[ "$useCustomPassphrase" != "true" ]]; then
     customPassphrase="$(crystallize-getconf Passphrase)"
 fi
 mkdir ".cbb.3165cbaa-0540-4735-9aba-d34848246367/.cbb.passphrases"
-targetName=$(print "$customPassphrase" | sha512sum | awk '{print $1;}')
-print "$customPassphrase" > ".cbb.3165cbaa-0540-4735-9aba-d34848246367/.cbb.passphrases/"
+print "$customPassphrase" > ".cbb.3165cbaa-0540-4735-9aba-d34848246367/.cbb.passphrases/$(print "$customPassphrase" | sha512sum | awk '{print $1;}')"
 
 #Remove URL
 CrystalAddress="${1#https://archive.org/@(details|download)/}"

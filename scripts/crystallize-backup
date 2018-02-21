@@ -59,11 +59,13 @@ if [[ -e "$CrystalID" ]]; then
         shopt -s dotglob
         shopt -s globstar
         for file in "$CrystalID"/**; do
-            if [[ "$(sha1sum "$file")" == "$(iasha1 "$file")" ]]; then
-                if [[ "$succeeded" == "true" ]] || [[ -z "$succeeded" ]]; then
-                    succeeded="true"
-                else
-                    succeeded="false"
+            if [[ -f "$file" ]]; then
+                if [[ "$(sha1sum "$file")" == "$(iasha1 "$file")" ]]; then
+                    if [[ "$succeeded" == "true" ]] || [[ -z "$succeeded" ]]; then
+                        succeeded="true"
+                    else
+                        succeeded="false"
+                    fi
                 fi
             fi
         done

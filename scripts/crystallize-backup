@@ -36,8 +36,8 @@ if [[ "$here" != "true" ]]; then
 
     cd "$backupLocation" || die "Could not cd to newly created directory! This should never happen."
 
-    mkdir ".cbk.3165cbaa-0540-4735-9aba-d34848246367"
-    touch ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.isBackupDir"
+    mkdir -p ".cbk.3165cbaa-0540-4735-9aba-d34848246367"
+    [[ -e ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.isBackupDir" ]] || touch ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.isBackupDir"
 fi
 
 if [[ "$useCustomPassphrase" != "true" ]]; then
@@ -69,7 +69,7 @@ if [[ -e "$CrystalID" ]]; then
         #NOTE: MAINTENANCE: Copy of code from "ia checkeddl" in ember_bash_setup
         for file in "$CrystalID"/**; do
             if [[ -f "$file" ]]; then
-                if [[ "$(sha1sum "$file")" == "$(iasha1 "$file")" ]] && ( [[ "$succeeded" == "true" ]] || [[ -z "$succeeded" ]] ); then
+                if [[ "$(sha1sum "$file" | awk '{print $1;}')" == "$(iasha1 "$file")" ]] && ( [[ "$succeeded" == "true" ]] || [[ -z "$succeeded" ]] ); then
                         succeeded="true"
                 else
                     succeeded="false"

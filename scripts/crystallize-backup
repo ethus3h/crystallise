@@ -35,6 +35,7 @@ if [[ "$here" != "true" ]]; then
     mkdir -p "$backupLocation"
 
     cd "$backupLocation" || die "Could not cd to newly created directory! This should never happen."
+
     mkdir ".cbb.3165cbaa-0540-4735-9aba-d34848246367"
     touch ".cbb.3165cbaa-0540-4735-9aba-d34848246367/.cbb.isBackupDir"
 fi
@@ -42,7 +43,7 @@ fi
 if [[ "$useCustomPassphrase" != "true" ]]; then
     customPassphrase="$(crystallize-getconf Passphrase)"
 fi
-mkdir ".cbb.3165cbaa-0540-4735-9aba-d34848246367/.cbb.passphrases"
+mkdir ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbk.3165cbaa-0540-4735-9aba-d34848246367.passphrases"
 print "$customPassphrase" > ".cbb.3165cbaa-0540-4735-9aba-d34848246367/.cbb.passphrases/$(print "$customPassphrase" | sha512sum | awk '{print $1;}')"
 
 #Remove URL

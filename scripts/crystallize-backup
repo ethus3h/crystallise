@@ -66,7 +66,7 @@ if [[ -e "$CrystalID" ]]; then
         succeeded=""
         shopt -s dotglob
         shopt -s globstar
-        #NOTE: MAINTENANCE: Copy of code from "ia checkeddl" in ember_bash_setup
+        #NOTE: MAINTENANCE: Copy of code from "ia checkeddl" in ember_bash_setup. Does this code really need to be duplicated?
         for file in "$CrystalID"/**; do
             if [[ -f "$file" ]]; then
                 if [[ "$(sha1sum "$file" | awk '{print $1;}')" == "$(iasha1 "$file")" ]] && ( [[ "$succeeded" == "true" ]] || [[ -z "$succeeded" ]] ); then

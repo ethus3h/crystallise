@@ -19,6 +19,8 @@ touch ".cbb.isBackupDir"
 cbbConfigDir="$(crystallize-getconf ConfigDir)"
 mkdir -p "$cbbConfigDir"/.cbb.sreg
 touch "$cbbConfigDir"/.cbb.sreg/.keep
+mkdir -p "$cbbConfigDir"/.cbb.extra
+touch "$cbbConfigDir"/.cbb.extra/.keep
 touch "$cbbConfigDir"/.cbb.crystals
 touch "$cbbConfigDir"/.cbb.idents
 touch "$cbbConfigDir"/.cbb.repos

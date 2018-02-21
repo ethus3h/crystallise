@@ -72,8 +72,8 @@ for file in .cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core/* .cbk.
         typeSignature="$(head -c 36 "$potentialPointer" | tr -d '\0')"
         if [[ "$typeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then # Standard remote pointer
             true # TODO: Not implemented
+        elif [[ "$typeSignature" == "45baff46-8db7-46f6-aad9-de5f713b02fe" ]]; then # URL pointer
+            true # TODO: Not implemented
         fi
-            [[ "$pointerTypeSignature" != "45baff46-8db7-46f6-aad9-de5f713b02fe" ]] # URL pointer
-        [[ "$(sha1sum "$file")" == "$(iasha1 "$file")" ]] && succeeded="true"
     done
 done

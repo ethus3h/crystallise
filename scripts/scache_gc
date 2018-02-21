@@ -50,6 +50,7 @@ if [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
         rm -f "$dbDir"/Failed\ Checksum/*
         shopt -s failglob
         # Remove the least-used item from the cache
+        # TODO: Should handle the case where the largest least-used item is small (e.g. <20kb or something), indicating that the cache consists of a large number of small items. In that case, it should just drop larger, more arbitrary batches of entries from the cache at once, so it doesn't take forever to get within the desired amount of space used.
         largestLeastUsedItem=""
         findType="f"
         if [[ "$cacheType" == "localstore" ]]; then

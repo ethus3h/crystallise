@@ -55,9 +55,10 @@ echo "Crystal address: $CrystalID"
 
 if [[ -e "$CrystalID" ]]; then
     if [[ "$check" == "true" ]]; then
-        succeeded="false"
+        succeeded=""
         shopt -s dotglob
         shopt -s globstar
+        #NOTE: MAINTENANCE: Copy of code from "ia checkeddl" in ember_bash_setup
         for file in "$CrystalID"/**; do
             if [[ -f "$file" ]]; then
                 if [[ "$(sha1sum "$file")" == "$(iasha1 "$file")" ]]; then

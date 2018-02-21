@@ -44,13 +44,13 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbk.3165cbaa-0540-47
     cbbRepos="$(<.cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/repos)"
     cd .cbk.3165cbaa-0540-4735-9aba-d34848246367/git
     while read -r repo; do
-        repoName="$(basename "$url" ".${url##*.}")" #  from https://serverfault.com/questions/417241/extract-repository-name-from-github-url-in-bash
-        if [[ -n "$repo" ]]; then
-            if [[ -e "$repo" ]]; then
+        repoName="$(basename "$url" ".${url##*.}")"
+        if [[ -n "$repoName" ]]; then
+            if [[ -e "$repoName" ]]; then
                 git clone --recursive "$repo"
             else
                 (
-                    cd "$repo"
+                    cd "$repoName"
                     git pull
                 )
             fi

@@ -60,7 +60,8 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbk.3165cbaa-0540-47
     cbbRepos="https://github.com/ethus3h/personal.git"
     cd .cbk.3165cbaa-0540-4735-9aba-d34848246367/git
     while read -r repo; do
-        repoName="$(basename "$repo" ".${repo##*.}")"
+        repoName="$(basename "$repo")"
+        repoName="${repoName%.*}"
         if [[ -n "$repoName" ]]; then
             if [[ -e "$repoName" ]]; then
                 git clone --recursive "$repo"

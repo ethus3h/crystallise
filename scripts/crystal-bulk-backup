@@ -21,7 +21,7 @@ touch ".cbb.isBackupDir"
 [[ -e '.git' ]] || git init
 print $'items\n' >> .gitignore
 print $'sregbak\n' >> .gitignore
-removeDuplicateLines .gitignore
+removeDuplicateLines .gitignore | sponge .gitignore
 git add .gitignore
 git commit -m "Update" || true
 git add -A .
@@ -57,10 +57,10 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbk.3165cbaa-0540-47
 (
     mkdir -p .cbk.3165cbaa-0540-4735-9aba-d34848246367/git
     #cbbRepos="$(<.cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/repos)"
-    cbbRepos="personal"
+    cbbRepos="https://github.com/ethus3h/personal.git"
     cd .cbk.3165cbaa-0540-4735-9aba-d34848246367/git
     while read -r repo; do
-        repoName="$(basename "$url" ".${url##*.}")"
+        repoName="$(basename "$repo" ".${repo##*.}")"
         if [[ -n "$repoName" ]]; then
             if [[ -e "$repoName" ]]; then
                 git clone --recursive "$repo"

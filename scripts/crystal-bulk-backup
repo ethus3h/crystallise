@@ -59,7 +59,8 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbk/cbb-index/repos"
 (
     mkdir -p .cbk/git
     #cbbRepos="$(<.cbk/cbb-index/repos)"
-    cbbRepos="https://github.com/ethus3h/personal.git"
+    #cbbRepos="https://github.com/ethus3h/personal.git"
+    cbbRepos=""
     cd .cbk/git
     while read -r repo; do
         repoName="$(basename "$repo")"

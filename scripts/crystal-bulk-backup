@@ -113,7 +113,7 @@ for file in .cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core/* .cbk.
     # done
 done
 
-removeDuplicateLines '../.cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/crystals' | sponge '../.cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/crystals'
+removeDuplicateLines '.cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/crystals' | sponge '.cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/crystals'
 
 git add -A .
 git commit -m "Update" || true

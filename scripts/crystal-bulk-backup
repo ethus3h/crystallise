@@ -21,9 +21,9 @@ touch ".cbb.isBackupDir"
 [[ -e '.git' ]] || git init
 print $'items\n' >> .gitignore
 git add .gitignore
-git commit -m "Update"
+git commit -m "Update" || true
 git add -A .
-git commit -m "Update"
+git commit -m "Update" || true
 
 cbbConfigDir="$(crystallize-getconf ConfigDir)"
 mkdir -p "$cbbConfigDir"/.cbb.sreg
@@ -35,7 +35,7 @@ touch "$cbbConfigDir"/.cbb.repos
 # Build backup indices (this won't finish building the sreg/crystal indices because they need the git repos cloned to make them)
 mkdir -p ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core"
 touch ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core/.keep"
-rm -rf ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-extra"
+mkdir -p ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-extra"
 
 echo 'Syncing configuration...'
 rsync -a --checksum "$(crystallize-getconf ConfigLocation)" ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/ember.conf"
@@ -118,4 +118,4 @@ while read -r crystal; do
 done <<< "$cbbCrystals"
 
 git add -A .
-git commit -m "Update"
+git commit -m "Update" || true

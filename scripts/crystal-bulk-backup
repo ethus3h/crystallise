@@ -21,7 +21,7 @@ touch ".cbb.isBackupDir"
 [[ -e '.git' ]] || git init
 print $'items\n' >> .gitignore
 print $'sregbak\n' >> .gitignore
-removeDuplicateLines .gitignore # remove duplicate lines
+removeDuplicateLines .gitignore
 git add .gitignore
 git commit -m "Update" || true
 git add -A .

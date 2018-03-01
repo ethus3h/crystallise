@@ -59,8 +59,7 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbk/cbb-index/repos"
 (
     mkdir -p .cbk/git
     #cbbRepos="$(<.cbk/cbb-index/repos)"
-    #cbbRepos="https://github.com/ethus3h/personal.git"
-    cbbRepos=""
+    cbbRepos="https://github.com/ethus3h/personal.git"
     cd .cbk/git
     while read -r repo; do
         repoName="$(basename "$repo")"
@@ -91,7 +90,8 @@ for file in .cbk/cbb-index/sreg-core/* .cbk/cbb-index/sreg-extra/*; do
 
     # Normal remote pack pointers
     for identFile in "$pathToSreg/Packs/"*.identifier; do
-        echo "$(<"$identFile")" >> ".cbk/cbb-index/crystals"
+        #echo "$(<"$identFile")" >> ".cbk/cbb-index/crystals"
+        echo "(Skipping ident file since this is disabled right now to make testing faster)"
         # FIXME: won't work for packs that don't have a .identifier file (older ones just have a pointer file)
     done
 

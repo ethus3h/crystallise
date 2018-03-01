@@ -44,7 +44,7 @@ mkdir -p ".cbk/cbb-index/sreg-extra"
 echo 'Syncing configuration...'
 rsync -a --checksum "$(crystallize-getconf ConfigLocation)" ".cbk/cbb-index/ember.conf"
 rsync -a --checksum "$cbbConfigDir"/.cbb.sreg/ ".cbk/cbb-index/sreg-extra"
-print '\n' >> ".cbk/cbb-index/crystals"
+print $'\n' >> ".cbk/cbb-index/crystals"
 cat "$cbbConfigDir"/.cbb.crystals >> ".cbk/cbb-index/crystals"
 rsync -a --checksum "$cbbConfigDir"/.cbb.repos ".cbk/cbb-index/repos"
 

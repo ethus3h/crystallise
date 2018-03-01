@@ -90,6 +90,8 @@ if [[ -e "$CrystalID" ]]; then
     exit 0
 fi
 
+isEmptyDir "../items.failed-check/" && rm -r "../items.failed-check/"
+
 ia checkeddl "$CrystalID"
 
 cd ..

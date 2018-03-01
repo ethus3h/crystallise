@@ -20,6 +20,7 @@ touch ".cbb.isBackupDir"
 
 [[ -e '.git' ]] || git init
 print $'items\n' >> .gitignore
+print $'items.failed-check\n' >> .gitignore
 print $'sregbak\n' >> .gitignore
 print $'.cbk.3165cbaa-0540-4735-9aba-d34848246367/git\n' >> .gitignore
 removeDuplicateLines .gitignore | sponge .gitignore

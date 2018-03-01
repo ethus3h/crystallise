@@ -37,28 +37,28 @@ touch "$cbbConfigDir"/.cbb.crystals
 touch "$cbbConfigDir"/.cbb.repos
 
 # Build backup indices (this won't finish building the sreg/crystal indices because they need the git repos cloned to make them)
-mkdir -p ".cbk/.cbb.idx/sreg-core"
-touch ".cbk/.cbb.idx/sreg-core/.keep"
-mkdir -p ".cbk/.cbb.idx/sreg-extra"
+mkdir -p ".cbk/cbb-index/sreg-core"
+touch ".cbk/cbb-index/sreg-core/.keep"
+mkdir -p ".cbk/cbb-index/sreg-extra"
 
 echo 'Syncing configuration...'
-rsync -a --checksum "$(crystallize-getconf ConfigLocation)" ".cbk/.cbb.idx/ember.conf"
-rsync -a --checksum "$cbbConfigDir"/.cbb.sreg/ ".cbk/.cbb.idx/sreg-extra"
-print '\n' >> ".cbk/.cbb.idx/crystals"
-cat "$cbbConfigDir"/.cbb.crystals >> ".cbk/.cbb.idx/crystals"
-rsync -a --checksum "$cbbConfigDir"/.cbb.repos ".cbk/.cbb.idx/repos"
+rsync -a --checksum "$(crystallize-getconf ConfigLocation)" ".cbk/cbb-index/ember.conf"
+rsync -a --checksum "$cbbConfigDir"/.cbb.sreg/ ".cbk/cbb-index/sreg-extra"
+print '\n' >> ".cbk/cbb-index/crystals"
+cat "$cbbConfigDir"/.cbb.crystals >> ".cbk/cbb-index/crystals"
+rsync -a --checksum "$cbbConfigDir"/.cbb.repos ".cbk/cbb-index/repos"
 
-echo "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" >  ".cbk/.cbb.idx/sreg-core/EmberLibrary"
-echo "${EmberLibrary:?}/Ember satellite projects/ember-history/.sreg" >  ".cbk/.cbb.idx/sreg-core/EmberHistory"
-echo "${EmberLibrary:?}/Ember satellite projects/wreathe-packages/.sreg" >  ".cbk/.cbb.idx/sreg-core/WreathePackages"
+echo "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" >  ".cbk/cbb-index/sreg-core/EmberLibrary"
+echo "${EmberLibrary:?}/Ember satellite projects/ember-history/.sreg" >  ".cbk/cbb-index/sreg-core/EmberHistory"
+echo "${EmberLibrary:?}/Ember satellite projects/wreathe-packages/.sreg" >  ".cbk/cbb-index/sreg-core/WreathePackages"
 
 # FIXME: Recursively cloning ember-meta doesn't seem to work, for some reason.
-echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbk/.cbb.idx/repos"
+echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbk/cbb-index/repos"
 
 # Take care of git now
 (
     mkdir -p .cbk/git
-    #cbbRepos="$(<.cbk/.cbb.idx/repos)"
+    #cbbRepos="$(<.cbk/cbb-index/repos)"
     cbbRepos="https://github.com/ethus3h/personal.git"
     cd .cbk/git
     while read -r repo; do
@@ -79,7 +79,7 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbk/.cbb.idx/repos"
 
 shopt -s dotglob
 
-for file in .cbk/.cbb.idx/sreg-core/* .cbk/.cbb.idx/sreg-extra/*; do
+for file in .cbk/cbb-index/sreg-core/* .cbk/cbb-index/sreg-extra/*; do
     bakDir="sregbak/${file:9}"
     mkdir -p "$bakDir"
     pathToSreg="$(<"$file")"
@@ -90,7 +90,7 @@ for file in .cbk/.cbb.idx/sreg-core/* .cbk/.cbb.idx/sreg-extra/*; do
 
     # Normal remote pack pointers
     for identFile in "$pathToSreg/Packs/"*.identifier; do
-        echo "$(<"$identFile")" >> ".cbk/.cbb.idx/crystals"
+        echo "$(<"$identFile")" >> ".cbk/cbb-index/crystals"
         # FIXME: won't work for packs that don't have a .identifier file (older ones just have a pointer file)
     done
 
@@ -112,7 +112,7 @@ for file in .cbk/.cbb.idx/sreg-core/* .cbk/.cbb.idx/sreg-extra/*; do
     # done
 done
 
-removeDuplicateLines '.cbk/.cbb.idx/crystals' | sponge '.cbk/.cbb.idx/crystals'
+removeDuplicateLines '.cbk/cbb-index/crystals' | sponge '.cbk/cbb-index/crystals'
 
 git add -A .
 git commit -m "Update" || true
@@ -120,7 +120,7 @@ git commit -m "Update" || true
 # Actually download and/or check the selected crystals now
 mkdir -p "items"
 cd items || die "Could not cd to newly created items directory"
-cbbCrystals="$(<../.cbk/.cbb.idx/crystals)"
+cbbCrystals="$(<../.cbk/cbb-index/crystals)"
 while read -r crystal; do
     if [[ -n "$crystal" ]]; then
         crystallize-backup "$crystal"

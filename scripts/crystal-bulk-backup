@@ -7,7 +7,7 @@ set -x
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
 # Will back up the Ember Library by default.
-# Can optionally add additional things to back up: put a file for each other sreg repo (the .sreg folder, not the root) to back up in [ConfigDir]/.cbb.sreg/, a list of Crystal IDs / IA identifiers to back up in [ConfigDir]/.cbb.crystals, and a list of other git repositories to back up in [ConfigDir]/.cbb.repos.
+# Can optionally add additional things to back up: put a file for each other sreg repo (the .sreg folder, not the root) to back up in [ConfigDir]/cbb/sreg/, a list of Crystal IDs / IA identifiers to back up in [ConfigDir]/cbb/crystals, and a list of other git repositories to back up in [ConfigDir]/cbb/repos.
 
 backupLocation="$(crystallize-getconf BackupLocation)"
 
@@ -31,10 +31,10 @@ git add -A .
 git commit -m "Update" || true
 
 cbbConfigDir="$(crystallize-getconf ConfigDir)"
-mkdir -p "$cbbConfigDir"/.cbb.sreg
-touch "$cbbConfigDir"/.cbb.sreg/.keep
-touch "$cbbConfigDir"/.cbb.crystals
-touch "$cbbConfigDir"/.cbb.repos
+mkdir -p "$cbbConfigDir"/cbb/sreg
+touch "$cbbConfigDir"/cbb/sreg/.keep
+touch "$cbbConfigDir"/cbb/crystals
+touch "$cbbConfigDir"/cbb/repos
 
 # Build backup indices (this won't finish building the sreg/crystal indices because they need the git repos cloned to make them)
 mkdir -p ".cbk/cbb-index/sreg-core"
@@ -43,10 +43,10 @@ mkdir -p ".cbk/cbb-index/sreg-extra"
 
 echo 'Syncing configuration...'
 rsync -a --checksum "$(crystallize-getconf ConfigLocation)" ".cbk/cbb-index/ember.conf"
-rsync -a --checksum "$cbbConfigDir"/.cbb.sreg/ ".cbk/cbb-index/sreg-extra"
+rsync -a --checksum "$cbbConfigDir"/cbb/sreg/ ".cbk/cbb-index/sreg-extra"
 print $'\n' >> ".cbk/cbb-index/crystals"
-cat "$cbbConfigDir"/.cbb.crystals >> ".cbk/cbb-index/crystals"
-rsync -a --checksum "$cbbConfigDir"/.cbb.repos ".cbk/cbb-index/repos"
+cat "$cbbConfigDir"/cbb/crystals >> ".cbk/cbb-index/crystals"
+rsync -a --checksum "$cbbConfigDir"/cbb/repos ".cbk/cbb-index/repos"
 
 echo "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" >  ".cbk/cbb-index/sreg-core/EmberLibrary"
 echo "${EmberLibrary:?}/Ember satellite projects/ember-history/.sreg" >  ".cbk/cbb-index/sreg-core/EmberHistory"

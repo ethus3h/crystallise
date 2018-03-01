@@ -20,6 +20,8 @@ touch ".cbb.isBackupDir"
 
 [[ -e '.git' ]] || git init
 print $'items\n' >> .gitignore
+print $'sregbak\n' >> .gitignore
+awk '!seen[$0]++' .gitignore # remove duplicate lines: from https://unix.stackexchange.com/questions/30173/how-to-remove-duplicate-lines-inside-a-text-file
 git add .gitignore
 git commit -m "Update" || true
 git add -A .

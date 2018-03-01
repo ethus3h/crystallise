@@ -64,12 +64,12 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  ".cbk.3165cbaa-0540-47
         repoName="${repoName%.*}"
         if [[ -n "$repoName" ]]; then
             if [[ -e "$repoName" ]]; then
-                git clone --recursive "$repo"
-            else
                 (
                     cd "$repoName"
                     git pull
                 )
+            else
+                git clone --recursive "$repo"
             fi
         fi
     done <<< "$cbbRepos"

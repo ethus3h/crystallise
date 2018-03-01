@@ -23,7 +23,7 @@ print $'items\n' >> .gitignore
 print $'items.failed-check\n' >> .gitignore
 print $'sregbak\n' >> .gitignore
 print $'.cbk.3165cbaa-0540-4735-9aba-d34848246367/git\n' >> .gitignore
-removeDuplicateLines .gitignore | sponge .gitignore
+removeDuplicateLines '.gitignore' | sponge '.gitignore'
 
 git add .gitignore
 git commit -m "Update" || true
@@ -112,6 +112,11 @@ for file in .cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core/* .cbk.
     #     fi
     # done
 done
+
+removeDuplicateLines '../.cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/crystals' | sponge '../.cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/crystals'
+
+git add -A .
+git commit -m "Update" || true
 
 # Actually download and/or check the selected crystals now
 mkdir -p "items"

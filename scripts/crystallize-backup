@@ -33,6 +33,7 @@ if [[ "$here" != "true" ]]; then
     backupLocation="$(crystallize-getconf BackupLocation)"
 
     mkdir -p "$backupLocation/items"
+    mkdir -p "$backupLocation/items.failed-check"
 
     cd "$backupLocation" || die "Could not cd to newly created directory! This should never happen."
 
@@ -80,7 +81,10 @@ if [[ -e "$CrystalID" ]]; then
                 fi
             fi
         done
-        [[ "$succeeded" == "true" ]] || die "Item $CrystalID failed integrity check!"
+        if [[ "$succeeded" != "true" ]]; then
+            mv "$CrystalID" "../items.failed-check/"
+            die "Item $CrystalID failed integrity check!"
+        fi
     fi
     echo "(Backup of $CrystalID passed check.)"
     exit 0

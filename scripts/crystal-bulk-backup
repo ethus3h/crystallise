@@ -40,7 +40,7 @@ mkdir -p ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-extra"
 echo 'Syncing configuration...'
 rsync -a --checksum "$(crystallize-getconf ConfigLocation)" ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/ember.conf"
 rsync -a --checksum "$cbbConfigDir"/.cbb.sreg/ ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-extra"
-rsync -a --checksum "$cbbConfigDir"/.cbb.crystals/ ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/crystals"
+rsync -a --checksum "$cbbConfigDir"/.cbb.crystals ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/crystals"
 rsync -a --checksum "$cbbConfigDir"/.cbb.idents/ ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/idents"
 rsync -a --checksum "$cbbConfigDir"/.cbb.repos/ ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/repos"
 

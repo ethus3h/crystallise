@@ -36,15 +36,15 @@ if [[ "$here" != "true" ]]; then
 
     cd "$backupLocation" || die "Could not cd to newly created directory! This should never happen."
 
-    mkdir -p ".cbk.3165cbaa-0540-4735-9aba-d34848246367"
-    [[ -e ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.isBackupDir" ]] || touch ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.isBackupDir"
+    mkdir -p ".cbk"
+    [[ -e ".cbk/.cbb.isBackupDir" ]] || touch ".cbk/.cbb.isBackupDir"
 fi
 
 if [[ "$useCustomPassphrase" != "true" ]]; then
     customPassphrase="$(crystallize-getconf Passphrase)"
 fi
-mkdir -p ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbk.passphrases"
-print "$customPassphrase" > ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbk.passphrases/$(print "$customPassphrase" | sha512sum | awk '{print $1;}')"
+mkdir -p ".cbk/.cbk.passphrases"
+print "$customPassphrase" > ".cbk/.cbk.passphrases/$(print "$customPassphrase" | sha512sum | awk '{print $1;}')"
 
 #Remove URL
 CrystalAddress="${1#https://archive.org/@(details|download)/}"

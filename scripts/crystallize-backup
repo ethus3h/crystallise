@@ -32,7 +32,7 @@ fi
 if [[ "$here" != "true" ]]; then
     backupLocation="$(crystallize-getconf BackupLocation)"
 
-    mkdir -p "$backupLocation"
+    mkdir -p "$backupLocation/items"
 
     cd "$backupLocation" || die "Could not cd to newly created directory! This should never happen."
 
@@ -61,6 +61,8 @@ CrystalID="$CrystalAddress"
 
 echo "Backing up crystal: $CrystalID"
 
+cd 'items' || die "Could not cd to items directory!"
+
 if [[ -e "$CrystalID" ]]; then
     if [[ "$check" == "true" ]]; then
         succeeded=""
@@ -83,5 +85,9 @@ if [[ -e "$CrystalID" ]]; then
     echo "(Backup of $CrystalID passed check.)"
     exit 0
 fi
+
 ia checkeddl "$CrystalID"
-echo "Done! The crystal has been backed up to $CrystalID."
+
+cd ..
+
+echo "Done! The crystal has been backed up to $backupLocation/items/$CrystalID."

@@ -13,8 +13,15 @@ backupLocation="$(crystallize-getconf BackupLocation)"
 
 mkdir -p "$backupLocation"
 
+echo 'Building backup indices'
+
 cd "$backupLocation" || die "Could not cd to newly created directory! This should never happen."
 touch ".cbb.isBackupDir"
+
+git init
+print $'items\n' > .gitignore
+git add .gitignore
+git commit -m "Update"
 
 cbbConfigDir="$(crystallize-getconf ConfigDir)"
 mkdir -p "$cbbConfigDir"/.cbb.sreg
@@ -27,11 +34,13 @@ touch "$cbbConfigDir"/.cbb.repos
 mkdir -p ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core"
 touch ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core/.keep"
 rm -rf ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-extra"
+
+echo 'Syncing configuration...'
 rsync -a --checksum "$(crystallize-getconf ConfigLocation)" ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/ember.conf"
-rsync -a --checksum "$cbbConfigDir"/.cbb.sreg ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-extra"
-rsync -a --checksum "$cbbConfigDir"/.cbb.crystals ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/crystals"
-rsync -a --checksum "$cbbConfigDir"/.cbb.idents ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/idents"
-rsync -a --checksum "$cbbConfigDir"/.cbb.repos ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/repos"
+rsync -a --checksum "$cbbConfigDir"/.cbb.sreg/ ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-extra"
+rsync -a --checksum "$cbbConfigDir"/.cbb.crystals/ ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/crystals"
+rsync -a --checksum "$cbbConfigDir"/.cbb.idents/ ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/idents"
+rsync -a --checksum "$cbbConfigDir"/.cbb.repos/ ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/repos"
 
 echo "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" >  ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core/EmberLibrary"
 echo "${EmberLibrary:?}/Ember satellite projects/ember-history/.sreg" >  ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core/EmberHistory"
@@ -97,7 +106,9 @@ for file in .cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core/* .cbk.
 done
 
 # Actually download and/or check the selected crystals now
-cbbCrystals="$(<.cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/crystals)"
+mkdir -p "items"
+cd items || die "Could not cd to newly created items directory"
+cbbCrystals="$(<../.cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/crystals)"
 while read -r crystal; do
     if [[ -n "$crystal" ]]; then
         crystallize-backup "$crystal"

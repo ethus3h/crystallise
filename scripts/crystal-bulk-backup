@@ -18,8 +18,8 @@ echo 'Building backup indices'
 cd "$backupLocation" || die "Could not cd to newly created directory! This should never happen."
 touch ".cbb.isBackupDir"
 
-git init
-print $'items\n' > .gitignore
+[[ -e '.git' ]] || git init
+print $'items\n' >> .gitignore
 git add .gitignore
 git commit -m "Update"
 git add -A .

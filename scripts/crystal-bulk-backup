@@ -46,7 +46,6 @@ rsync -a --checksum "$(crystallize-getconf ConfigLocation)" ".cbk.3165cbaa-0540-
 rsync -a --checksum "$cbbConfigDir"/.cbb.sreg/ ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-extra"
 print '\n' >> ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/crystals"
 cat "$cbbConfigDir"/.cbb.crystals >> ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/crystals"
-rsync -a --checksum "$cbbConfigDir"/.cbb.crystals ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/crystals"
 rsync -a --checksum "$cbbConfigDir"/.cbb.repos ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/repos"
 
 echo "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" >  ".cbk.3165cbaa-0540-4735-9aba-d34848246367/.cbb.idx/sreg-core/EmberLibrary"

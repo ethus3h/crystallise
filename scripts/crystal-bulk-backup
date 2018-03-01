@@ -22,6 +22,8 @@ git init
 print $'items\n' > .gitignore
 git add .gitignore
 git commit -m "Update"
+git add -A .
+git commit -m "Update"
 
 cbbConfigDir="$(crystallize-getconf ConfigDir)"
 mkdir -p "$cbbConfigDir"/.cbb.sreg
@@ -114,3 +116,6 @@ while read -r crystal; do
         crystallize-backup "$crystal"
     fi
 done <<< "$cbbCrystals"
+
+git add -A .
+git commit -m "Update"

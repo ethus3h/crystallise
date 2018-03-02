@@ -103,8 +103,8 @@ while read -r streamRegistryPath; do
 
         # Normal remote pack pointers
         for identFile in "$streamRegistryPath/Packs/"*.identifier; do
-            #echo "$(<"$identFile")" >> "crystal-backup-meta/cbb-index/items"
-            true # (Skipping ident file since this is disabled right now to make testing faster)
+            echo "$(<"$identFile")" >> "crystal-backup-meta/cbb-index/items"
+            # true # (Skipping ident file since this is disabled right now to make testing faster)
             # FIXME: won't work for packs that don't have a .identifier file (older ones just have a pointer file)
         done
 

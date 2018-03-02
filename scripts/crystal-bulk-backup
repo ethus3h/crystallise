@@ -128,8 +128,11 @@ cbbCrystals="$(<../.cbk/cbb-index/crystals)"
 while read -r crystal; do
     if [[ -n "$crystal" ]]; then
         if [[ -e "$CrystalID" ]]; then
-            if [[ "$check" == "true" ]]; then
-            crystallize-backup "$crystal"
+            if [[ "$check" != "true" ]]; then
+                continue
+            fi
+        fi
+        crystallize-backup "$crystal"
     fi
 done <<< "$cbbCrystals"
 

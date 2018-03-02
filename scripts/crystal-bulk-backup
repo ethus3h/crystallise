@@ -36,22 +36,22 @@ git commit -m "Update" > /dev/null || true
 cbbConfigDir="$(crystallize-getconf ConfigDir)"
 touch "$cbbConfigDir"/crystallize/cbb/stream-registries
 touch "$cbbConfigDir"/crystallize/cbb/crystals
-touch "$cbbConfigDir"/crystallize/cbb/repos
+touch "$cbbConfigDir"/crystallize/cbb/repositories
 
 # Build backup indices (this won't finish building the sreg/crystal indices because they need the git repos cloned to make them)
-mkdir -p "bulk-backup/cbb-index/sreg-core"
-touch "bulk-backup/cbb-index/sreg-core/.keep"
-mkdir -p "bulk-backup/cbb-index/sreg-extra"
-
 echo 'Syncing configuration...'
 
 rsync -a --checksum "$(crystallize-getconf ConfigLocation)" "bulk-backup/cbb-index/ember.conf" &> /dev/null
 crystallize-getconf 'passphrase' > "bulk-backup/cbb-index/passphrase.default"
 
-rsync -a --checksum "$cbbConfigDir"/crystallize/cbb/sreg/ "bulk-backup/cbb-index/sreg-extra" &> /dev/null
-
 print $'\n' >> "bulk-backup/cbb-index/crystals"
 cat "$cbbConfigDir"/crystallize/cbb/crystals >> "bulk-backup/cbb-index/crystals"
+removeDuplicateLines 'bulk-backup/cbb-index/crystals' | sponge 'bulk-backup/cbb-index/crystals'
+
+print $'\n' >> "bulk-backup/cbb-index/repositories"
+cat "$cbbConfigDir"/crystallize/cbb/repositories >> "bulk-backup/cbb-index/repositories"
+removeDuplicateLines 'bulk-backup/cbb-index/repositories' | sponge 'bulk-backup/cbb-index/repositories'
+
 rsync -a --checksum "$cbbConfigDir"/crystallize/cbb/repos "bulk-backup/cbb-index/repos" &> /dev/null
 
 echo "ember-library-2/Futuramerlin Projects/Data/Stream Registry" >  "bulk-backup/cbb-index/sreg-core/EmberLibrary"

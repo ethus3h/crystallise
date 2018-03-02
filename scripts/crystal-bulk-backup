@@ -81,10 +81,10 @@ removeDuplicateLines 'bulk-backup/cbb-index/stream-registries' | sponge 'bulk-ba
                 (
                     cd "$repoName"
                     echo "Updating clone of the \"$repoName\" git repository..."
-                    git pull
+                    git pull || die
                 )
             else
-                git clone --recursive "$repo"
+                git clone --recursive "$repo" || die
             fi
         fi
     done <<< "$cbbRepos"

@@ -85,20 +85,9 @@ shopt -s dotglob
 
 cbbStreamRegistries="$(<../bulk-backup/cbb-index/stream-registries)"
 while read -r streamRegistry; do
-    if [[ -n "$crystal" ]]; then
-        if [[ -e "$crystal" ]]; then
-            if [[ "$check" == "false" ]]; then
-                continue
-            fi
-        fi
-        crystallize-backup "$crystal"
-    fi
-done <<< "$cbbStreamRegistries"
-
-for file in bulk-backup/cbb-index/sreg-core/* bulk-backup/cbb-index/sreg-extra/*; do
-    destinationDir="stream-registries/$(basename "$file")"
+    destinationDir="stream-registries/$(basename "$streamRegistry")"
     mkdir -p "$destinationDir"
-    sourceSregDir="repositories/$(<"$file")"
+    sourceSregDir="repositories/$(<"$streamRegistry")"
     mkdir -p "$pathToSreg/LocalStore"
     rsync -av --checksum "$pathToSreg/LocalStore" "$bakDir/" &> /dev/null
     rsync -av --checksum "$pathToSreg/passphrase" "$bakDir/" &> /dev/null || true # There isn't necessarily a passphrase file if it uses the default one.
@@ -127,7 +116,7 @@ for file in bulk-backup/cbb-index/sreg-core/* bulk-backup/cbb-index/sreg-extra/*
     #         fi
     #     fi
     # done
-done
+done <<< "$cbbStreamRegistries"
 
 removeDuplicateLines 'bulk-backup/cbb-index/crystals' | sponge 'bulk-backup/cbb-index/crystals'
 

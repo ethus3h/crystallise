@@ -52,11 +52,9 @@ print $'\n' >> "bulk-backup/cbb-index/repositories"
 cat "$cbbConfigDir"/crystallize/cbb/repositories >> "bulk-backup/cbb-index/repositories"
 removeDuplicateLines 'bulk-backup/cbb-index/repositories' | sponge 'bulk-backup/cbb-index/repositories'
 
-rsync -a --checksum "$cbbConfigDir"/crystallize/cbb/repos "bulk-backup/cbb-index/repos" &> /dev/null
-
-echo "ember-library-2/Futuramerlin Projects/Data/Stream Registry" >  "bulk-backup/cbb-index/sreg-core/EmberLibrary"
-echo "${EmberLibrary:?}/Ember satellite projects/ember-history/.sreg" >  "bulk-backup/cbb-index/sreg-core/EmberHistory"
-echo "${EmberLibrary:?}/Ember satellite projects/wreathe-packages/.sreg" >  "bulk-backup/cbb-index/sreg-core/WreathePackages"
+print $'\n' >> "bulk-backup/cbb-index/stream-registries"
+cat "$cbbConfigDir"/crystallize/cbb/stream-registries >> "bulk-backup/cbb-index/stream-registries"
+removeDuplicateLines 'bulk-backup/cbb-index/stream-registries' | sponge 'bulk-backup/cbb-index/stream-registries'
 
 # FIXME: Recursively cloning ember-meta doesn't seem to work, for some reason.
 echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  "bulk-backup/cbb-index/repos"

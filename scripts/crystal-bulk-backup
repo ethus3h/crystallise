@@ -52,7 +52,7 @@ print $'\n' >> "bulk-backup/cbb-index/crystals"
 cat "$cbbConfigDir"/crystallize/cbb/crystals >> "bulk-backup/cbb-index/crystals"
 rsync -a --checksum "$cbbConfigDir"/crystallize/cbb/repos "bulk-backup/cbb-index/repos" &> /dev/null
 
-echo "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" >  "bulk-backup/cbb-index/sreg-core/EmberLibrary"
+echo "ember-library-2/Futuramerlin Projects/Data/Stream Registry" >  "bulk-backup/cbb-index/sreg-core/EmberLibrary"
 echo "${EmberLibrary:?}/Ember satellite projects/ember-history/.sreg" >  "bulk-backup/cbb-index/sreg-core/EmberHistory"
 echo "${EmberLibrary:?}/Ember satellite projects/wreathe-packages/.sreg" >  "bulk-backup/cbb-index/sreg-core/WreathePackages"
 
@@ -84,9 +84,9 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  "bulk-backup/cbb-index
 shopt -s dotglob
 
 for file in bulk-backup/cbb-index/sreg-core/* bulk-backup/cbb-index/sreg-extra/*; do
-    bakDir="stream-registry-repos/$(basename "$file")"
-    mkdir -p "$bakDir"
-    pathToSreg="$(<"$file")"
+    destinationDir="stream-registry-repos/$(basename "$file")"
+    mkdir -p "$destinationDir"
+    sourceSregDir="repositories/$(<"$file")"
     mkdir -p "$pathToSreg/LocalStore"
     rsync -av --checksum "$pathToSreg/LocalStore" "$bakDir/" &> /dev/null
     rsync -av --checksum "$pathToSreg/passphrase" "$bakDir/" &> /dev/null || true # There isn't necessarily a passphrase file if it uses the default one.

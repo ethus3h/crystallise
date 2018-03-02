@@ -98,7 +98,8 @@ shopt -s dotglob
 cbbStreamRegistries="$(<crystal-backup-meta/cbb-index/stream-registries)"
 while read -r streamRegistryPath; do
     if [[ -n "$streamRegistryPath" ]]; then
-        [[ -h "stream-registries/$(basename "$streamRegistryPath")" ]] && rm "stream-registries/$(basename "$streamRegistryPath")"
+        linkTarget="stream-registries/$(basename "$streamRegistryPath")"
+        [[ -h "$linkTarget" ]] && rm "$linkTarget"
         ln -s "$streamRegistryPath" "stream-registries/$(basename "$streamRegistryPath")"
         # Go through this sreg and add all the crystals it uses to the index
 

@@ -61,10 +61,10 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  "bulk-backup/cbb-index
 
 # Take care of git now
 (
-    mkdir -p bulk-backup/git
+    mkdir -p repositories
     #cbbRepos="$(<bulk-backup/cbb-index/repos)"
     cbbRepos="https://github.com/ethus3h/personal.git"
-    cd bulk-backup/git
+    cd repositories
     while read -r repo; do
         repoName="$(basename "$repo")"
         repoName="${repoName%.*}"

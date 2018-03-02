@@ -28,10 +28,10 @@ print $'repositories\n' >> .gitignore
 print $'stream-registries\n' >> .gitignore
 removeDuplicateLines '.gitignore' | sponge '.gitignore'
 
-git add .gitignore &> /dev/null
-git commit -m "Update" &> /dev/null || true
-git add -A . &> /dev/null
-git commit -m "Update" &> /dev/null || true
+git add .gitignore
+git commit -m "Update" > /dev/null || true
+git add -A .
+git commit -m "Update" > /dev/null || true
 
 cbbConfigDir="$(crystallize-getconf ConfigDir)"
 touch "$cbbConfigDir"/crystallize/cbb/crystals
@@ -76,6 +76,7 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  "bulk-backup/cbb-index
             if [[ -e "$repoName" ]]; then
                 (
                     cd "$repoName"
+                    echo "Updating clone of the git repository $repoName..."
                     git pull
                 )
             else
@@ -121,8 +122,8 @@ done <<< "$cbbStreamRegistries"
 
 removeDuplicateLines 'bulk-backup/cbb-index/crystals' | sponge 'bulk-backup/cbb-index/crystals'
 
-git add -A . &> /dev/null
-git commit -m "Update" &> /dev/null || true
+git add -A .
+git commit -m "Update" > /dev/null || true
 
 # Actually download and/or check the selected crystals now
 mkdir -p "crystals"
@@ -139,5 +140,5 @@ while read -r crystal; do
     fi
 done <<< "$cbbCrystals"
 
-git add -A . &> /dev/null
-git commit -m "Update" &> /dev/null || true
+git add -A .
+git commit -m "Update" > /dev/null || true

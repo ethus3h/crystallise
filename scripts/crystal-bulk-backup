@@ -83,8 +83,20 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  "bulk-backup/cbb-index
 
 shopt -s dotglob
 
+cbbStreamRegistries="$(<../bulk-backup/cbb-index/stream-registries)"
+while read -r streamRegistry; do
+    if [[ -n "$crystal" ]]; then
+        if [[ -e "$crystal" ]]; then
+            if [[ "$check" == "false" ]]; then
+                continue
+            fi
+        fi
+        crystallize-backup "$crystal"
+    fi
+done <<< "$cbbStreamRegistries"
+
 for file in bulk-backup/cbb-index/sreg-core/* bulk-backup/cbb-index/sreg-extra/*; do
-    destinationDir="stream-registry-repos/$(basename "$file")"
+    destinationDir="stream-registries/$(basename "$file")"
     mkdir -p "$destinationDir"
     sourceSregDir="repositories/$(<"$file")"
     mkdir -p "$pathToSreg/LocalStore"

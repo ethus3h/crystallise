@@ -129,9 +129,8 @@ mkdir -p "crystals"
 cd crystals || die "Could not cd to newly created crystals directory"
 cbbCrystals="$(<../bulk-backup/cbb-index/crystals)"
 while read -r crystal; do
-    crystalPathToDo="crystals/$crystal"
-    if [[ -n "$crystalPathToDo" ]]; then
-        if [[ -e "$crystalPathToDo" ]]; then
+    if [[ -n "$crystal" ]]; then
+        if [[ -e "crystals/$crystal" ]]; then
             if [[ "$check" == "false" ]]; then
                 continue
             fi

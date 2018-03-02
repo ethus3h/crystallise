@@ -77,6 +77,8 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  "bulk-backup/cbb-index
                 (
                     cd "$repoName"
                     git pull
+                    git submodule update --init --recursive || true
+                    git submodule update --recursive
                 )
             else
                 git clone --recursive "$repo"

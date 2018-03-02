@@ -49,6 +49,9 @@ echo 'Syncing configuration...'
 rsync -a --checksum "$(crystallize-getconf ConfigLocation)" "bulk-backup/cbb-index/ember.conf" &> /dev/null
 crystallize-getconf 'passphrase' > "bulk-backup/cbb-index/passphrase.default"
 
+# FIXME: Recursively cloning ember-meta doesn't seem to work, for some reason.
+echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  "bulk-backup/cbb-index/repositories"
+
 print $'\n' >> "bulk-backup/cbb-index/items"
 cat "$cbbConfigDir"/crystallize/cbb/items >> "bulk-backup/cbb-index/items"
 removeDuplicateLines 'bulk-backup/cbb-index/items' | sponge 'bulk-backup/cbb-index/items'
@@ -60,9 +63,6 @@ removeDuplicateLines 'bulk-backup/cbb-index/repositories' | sponge 'bulk-backup/
 print $'\n' >> "bulk-backup/cbb-index/stream-registries"
 cat "$cbbConfigDir"/crystallize/cbb/stream-registries >> "bulk-backup/cbb-index/stream-registries"
 removeDuplicateLines 'bulk-backup/cbb-index/stream-registries' | sponge 'bulk-backup/cbb-index/stream-registries'
-
-# FIXME: Recursively cloning ember-meta doesn't seem to work, for some reason.
-echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  "bulk-backup/cbb-index/repositories"
 
 # Clone git repositories
 (

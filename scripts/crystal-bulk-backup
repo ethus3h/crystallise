@@ -29,9 +29,9 @@ print $'stream-registries\n' >> .gitignore
 removeDuplicateLines '.gitignore' | sponge '.gitignore'
 
 git add .gitignore
-git commit -m "Update" > /dev/null || true
+git commit -m "Update" &> /dev/null || true
 git add -A .
-git commit -m "Update" > /dev/null || true
+git commit -m "Update" &> /dev/null || true
 
 cbbConfigDir="$(crystallize-getconf ConfigDir)"
 touch "$cbbConfigDir"/crystallize/cbb/crystals
@@ -122,7 +122,7 @@ done <<< "$cbbStreamRegistries"
 removeDuplicateLines 'bulk-backup/cbb-index/crystals' | sponge 'bulk-backup/cbb-index/crystals'
 
 git add -A .
-git commit -m "Update" > /dev/null || true
+git commit -m "Update" &> /dev/null || true
 
 # Actually download and/or check the selected crystals now
 mkdir -p "crystals"
@@ -140,4 +140,4 @@ while read -r crystal; do
 done <<< "$cbbCrystals"
 
 git add -A .
-git commit -m "Update" > /dev/null || true
+git commit -m "Update" &> /dev/null || true

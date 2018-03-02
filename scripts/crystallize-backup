@@ -42,7 +42,7 @@ fi
 if [[ "$useCustomPassphrase" != "true" ]]; then
     customPassphrase="$(crystallize-getconf Passphrase)"
 fi
-mkdir -p ".cbk/.cbk.passphrases"
+mkdir -p "bulk-backup/.cbk/.cbk.passphrases"
 print "$customPassphrase" > "bulk-backup/.cbk/.cbk.passphrases/$(print "$customPassphrase" | sha512sum | awk '{print $1;}')"
 
 #Remove URL

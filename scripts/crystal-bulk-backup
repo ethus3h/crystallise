@@ -45,11 +45,11 @@ touch ".cbk/cbb-index/sreg-core/.keep"
 mkdir -p ".cbk/cbb-index/sreg-extra"
 
 echo 'Syncing configuration...'
-rsync -a --checksum "$(crystallize-getconf ConfigLocation)" ".cbk/cbb-index/ember.conf" > /dev/null
-rsync -a --checksum "$cbbConfigDir"/crystallize/cbb/sreg/ ".cbk/cbb-index/sreg-extra" > /dev/null
+rsync -a --checksum "$(crystallize-getconf ConfigLocation)" ".cbk/cbb-index/ember.conf" &> /dev/null
+rsync -a --checksum "$cbbConfigDir"/crystallize/cbb/sreg/ ".cbk/cbb-index/sreg-extra" &> /dev/null
 print $'\n' >> ".cbk/cbb-index/crystals"
 cat "$cbbConfigDir"/crystallize/cbb/crystals >> ".cbk/cbb-index/crystals"
-rsync -a --checksum "$cbbConfigDir"/crystallize/cbb/repos ".cbk/cbb-index/repos" > /dev/null
+rsync -a --checksum "$cbbConfigDir"/crystallize/cbb/repos ".cbk/cbb-index/repos" &> /dev/null
 
 echo "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" >  ".cbk/cbb-index/sreg-core/EmberLibrary"
 echo "${EmberLibrary:?}/Ember satellite projects/ember-history/.sreg" >  ".cbk/cbb-index/sreg-core/EmberHistory"
@@ -94,7 +94,7 @@ for file in .cbk/cbb-index/sreg-core/* .cbk/cbb-index/sreg-extra/*; do
     # Normal remote pack pointers
     for identFile in "$pathToSreg/Packs/"*.identifier; do
         #echo "$(<"$identFile")" >> ".cbk/cbb-index/crystals"
-        echo "(Skipping ident file since this is disabled right now to make testing faster)"
+        true # (Skipping ident file since this is disabled right now to make testing faster)
         # FIXME: won't work for packs that don't have a .identifier file (older ones just have a pointer file)
     done
 

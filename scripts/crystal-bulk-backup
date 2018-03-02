@@ -136,7 +136,7 @@ while read -r crystal; do
                 continue
             fi
         fi
-        crystallize-backup "$crystalPathToDo"
+        crystallize-backup "$crystal"
     fi
 done <<< "$cbbCrystals"
 

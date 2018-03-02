@@ -80,8 +80,14 @@ removeDuplicateLines 'bulk-backup/cbb-index/stream-registries' | sponge 'bulk-ba
             if [[ -e "$repoName" ]]; then
                 (
                     cd "$repoName"
+<<<<<<< HEAD
                     echo "Updating clone of the \"$repoName\" git repository..."
                     git pull || die
+=======
+                    git pull
+                    git submodule update --init --recursive || true
+                    git submodule update --recursive
+>>>>>>> 2018mar01n2-head-detached
                 )
             else
                 git clone --recursive "$repo" || die

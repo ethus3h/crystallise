@@ -22,8 +22,8 @@ cd "$backupLocation" || die "Could not cd to newly created directory! This shoul
 touch ".cbb.isBackupDir"
 
 [[ -e '.git' ]] || git init
-print $'crystals\n' >> .gitignore
-print $'crystals.failed-check\n' >> .gitignore
+print $'items\n' >> .gitignore
+print $'items.failed-check\n' >> .gitignore
 print $'repositories\n' >> .gitignore
 print $'stream-registries\n' >> .gitignore
 removeDuplicateLines '.gitignore' | sponge '.gitignore'
@@ -34,12 +34,12 @@ git add -A .
 git commit -m "Update" > /dev/null || true
 
 cbbConfigDir="$(crystallize-getconf ConfigDir)"
-touch "$cbbConfigDir"/crystallize/cbb/crystals
+touch "$cbbConfigDir"/crystallize/cbb/items
 touch "$cbbConfigDir"/crystallize/cbb/repositories
 touch "$cbbConfigDir"/crystallize/cbb/stream-registries
 
 mkdir -p 'bulk-backup/cbb-index'
-mkdir -p 'crystals'
+mkdir -p 'items'
 mkdir -p 'repositories'
 mkdir -p 'stream-registries'
 
@@ -49,9 +49,9 @@ echo 'Syncing configuration...'
 rsync -a --checksum "$(crystallize-getconf ConfigLocation)" "bulk-backup/cbb-index/ember.conf" &> /dev/null
 crystallize-getconf 'passphrase' > "bulk-backup/cbb-index/passphrase.default"
 
-print $'\n' >> "bulk-backup/cbb-index/crystals"
-cat "$cbbConfigDir"/crystallize/cbb/crystals >> "bulk-backup/cbb-index/crystals"
-removeDuplicateLines 'bulk-backup/cbb-index/crystals' | sponge 'bulk-backup/cbb-index/crystals'
+print $'\n' >> "bulk-backup/cbb-index/items"
+cat "$cbbConfigDir"/crystallize/cbb/items >> "bulk-backup/cbb-index/items"
+removeDuplicateLines 'bulk-backup/cbb-index/items' | sponge 'bulk-backup/cbb-index/items'
 
 print $'\n' >> "bulk-backup/cbb-index/repositories"
 cat "$cbbConfigDir"/crystallize/cbb/repositories >> "bulk-backup/cbb-index/repositories"
@@ -96,7 +96,7 @@ while read -r streamRegistryPath; do
 
         # Normal remote pack pointers
         for identFile in "$pathToSreg/Packs/"*.identifier; do
-            #echo "$(<"$identFile")" >> "bulk-backup/cbb-index/crystals"
+            #echo "$(<"$identFile")" >> "bulk-backup/cbb-index/items"
             true # (Skipping ident file since this is disabled right now to make testing faster)
             # FIXME: won't work for packs that don't have a .identifier file (older ones just have a pointer file)
         done
@@ -120,18 +120,18 @@ while read -r streamRegistryPath; do
     fi
 done <<< "$cbbStreamRegistries"
 
-removeDuplicateLines 'bulk-backup/cbb-index/crystals' | sponge 'bulk-backup/cbb-index/crystals'
+removeDuplicateLines 'bulk-backup/cbb-index/items' | sponge 'bulk-backup/cbb-index/items'
 
 git add -A .
 git commit -m "Update" > /dev/null || true
 
 # Actually download and/or check the selected crystals now
-mkdir -p "crystals"
-cd crystals || die "Could not cd to newly created crystals directory"
-cbbCrystals="$(<../bulk-backup/cbb-index/crystals)"
+mkdir -p "items"
+cd items || die "Could not cd to newly created items directory"
+cbbCrystals="$(<../bulk-backup/cbb-index/items)"
 while read -r crystal; do
     if [[ -n "$crystal" ]]; then
-        if [[ -e "crystals/$crystal" ]]; then
+        if [[ -e "items/$crystal" ]]; then
             if [[ "$check" == "false" ]]; then
                 continue
             fi

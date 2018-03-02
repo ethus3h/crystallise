@@ -77,7 +77,7 @@ if [[ -e "$CrystalID" ]]; then
                 succeeded="false"
                 continue
             fi
-        done < <(ia list "$ident")
+        done < <(ia list "$CrystalID")
         if [[ "$succeeded" != "true" ]]; then
             mkdir -p "../items.failed-check/"
             [[ -e "../items.failed-check/$CrystalID" ]]  && die "Item $CrystalID failed integrity check, and there is already a failed copy!"

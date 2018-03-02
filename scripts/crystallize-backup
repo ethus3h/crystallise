@@ -71,15 +71,15 @@ if [[ -e "$CrystalID" ]]; then
         shopt -s globstar
         # NOTE: MAINTENANCE: Copy of code from "ia checkeddl" in ember_bash_setup.
         # FIXME: Does this code really need to be duplicated?
-        while read -r file; do
-            file="$CrystalID/$fileNameToCheck"
+        while read -r fileNameToCheck; do
+            file="$ident/$fileNameToCheck"
             if [[ -f "$file" ]] && [[ "$(sha1sum "$file" | awk '{print $1;}')" == "$(iasha1 "$file")" ]] && ( [[ "$succeeded" == "true" ]] || [[ -z "$succeeded" ]] ); then
                     succeeded="true"
             else
                 succeeded="false"
                 continue
             fi
-        done < <(ia list "$CrystalID")
+        done < <(ia list "$ident")
         if [[ "$succeeded" != "true" ]]; then
             mkdir -p "../items.failed-check/"
             [[ -e "../items.failed-check/$CrystalID" ]]  && die "Item $CrystalID failed integrity check, and there is already a failed copy!"

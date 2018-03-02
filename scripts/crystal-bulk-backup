@@ -6,9 +6,6 @@ set -x
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
-# Will back up the Ember Library by default.
-# Can optionally add additional things to back up: put a file for each other sreg repo (the .sreg folder, not the root) to back up in [ConfigDir]/crystallize/cbb/sreg/, a list of Crystal IDs / IA identifiers to back up in [ConfigDir]/crystallize/cbb/crystals, and a list of other git repositories to back up in [ConfigDir]/crystallize/cbb/repos.
-
 check="true"
 if [[ "$1" == "--no-check-existing" ]]; then
     check="false"

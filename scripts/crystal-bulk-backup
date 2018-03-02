@@ -127,7 +127,7 @@ cd items || die "Could not cd to newly created items directory"
 cbbCrystals="$(<../.cbk/cbb-index/crystals)"
 while read -r crystal; do
     if [[ -n "$crystal" ]]; then
-        if [[ -e "$CrystalID" ]]; then
+        if [[ -e "$crystal" ]]; then
             if [[ "$check" == "false" ]]; then
                 continue
             fi

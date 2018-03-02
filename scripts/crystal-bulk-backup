@@ -28,9 +28,9 @@ print $'repositories\n' >> .gitignore
 print $'stream-registries\n' >> .gitignore
 removeDuplicateLines '.gitignore' | sponge '.gitignore'
 
-git add .gitignore
+git add .gitignore &> /dev/null
 git commit -m "Update" &> /dev/null || true
-git add -A .
+git add -A . &> /dev/null
 git commit -m "Update" &> /dev/null || true
 
 cbbConfigDir="$(crystallize-getconf ConfigDir)"
@@ -121,7 +121,7 @@ done <<< "$cbbStreamRegistries"
 
 removeDuplicateLines 'bulk-backup/cbb-index/crystals' | sponge 'bulk-backup/cbb-index/crystals'
 
-git add -A .
+git add -A . &> /dev/null
 git commit -m "Update" &> /dev/null || true
 
 # Actually download and/or check the selected crystals now
@@ -129,15 +129,16 @@ mkdir -p "crystals"
 cd crystals || die "Could not cd to newly created crystals directory"
 cbbCrystals="$(<../bulk-backup/cbb-index/crystals)"
 while read -r crystal; do
-    if [[ -n "$crystal" ]]; then
-        if [[ -e "$crystal" ]]; then
+    crystalPathToDo="crystals/$crystal"
+    if [[ -n "$crystalPathToDo" ]]; then
+        if [[ -e "$crystalPathToDo" ]]; then
             if [[ "$check" == "false" ]]; then
                 continue
             fi
         fi
-        crystallize-backup "$crystal"
+        crystallize-backup "$crystalPathToDo"
     fi
 done <<< "$cbbCrystals"
 
-git add -A .
+git add -A . &> /dev/null
 git commit -m "Update" &> /dev/null || true

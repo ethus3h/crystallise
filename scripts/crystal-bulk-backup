@@ -34,9 +34,9 @@ git add -A .
 git commit -m "Update" > /dev/null || true
 
 cbbConfigDir="$(crystallize-getconf ConfigDir)"
-touch "$cbbConfigDir"/crystallize/cbb/stream-registries
 touch "$cbbConfigDir"/crystallize/cbb/crystals
 touch "$cbbConfigDir"/crystallize/cbb/repositories
+touch "$cbbConfigDir"/crystallize/cbb/stream-registries
 
 # Build backup indices (this won't finish building the sreg/crystal indices because they need the git repos cloned to make them)
 echo 'Syncing configuration...'
@@ -57,13 +57,12 @@ cat "$cbbConfigDir"/crystallize/cbb/stream-registries >> "bulk-backup/cbb-index/
 removeDuplicateLines 'bulk-backup/cbb-index/stream-registries' | sponge 'bulk-backup/cbb-index/stream-registries'
 
 # FIXME: Recursively cloning ember-meta doesn't seem to work, for some reason.
-echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  "bulk-backup/cbb-index/repos"
+echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  "bulk-backup/cbb-index/repositories"
 
-# Take care of git now
+# Clone git repositories
 (
     mkdir -p repositories
-    #cbbRepos="$(<bulk-backup/cbb-index/repos)"
-    cbbRepos="https://github.com/ethus3h/personal.git"
+    cbbRepos="$(<bulk-backup/cbb-index/repos)"
     cd repositories
     while read -r repo; do
         repoName="$(basename "$repo")"

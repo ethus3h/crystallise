@@ -51,6 +51,7 @@ crystallize-getconf 'passphrase' > "bulk-backup/cbb-index/passphrase.default"
 
 # FIXME: Recursively cloning ember-meta doesn't seem to work, for some reason.
 echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  "bulk-backup/cbb-index/repositories"
+echo $'\n'"https://github.com/ethus3h/ember-library-2.git" >>  "bulk-backup/cbb-index/repositories"
 
 echo $'\n'"ember-library-2/Futuramerlin Projects/Data/Stream Registry" >>  "bulk-backup/cbb-index/stream-registries"
 echo $'\n'"ember-history/.sreg" >>  "bulk-backup/cbb-index/stream-registries"

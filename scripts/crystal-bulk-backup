@@ -128,7 +128,7 @@ cbbCrystals="$(<../.cbk/cbb-index/crystals)"
 while read -r crystal; do
     if [[ -n "$crystal" ]]; then
         if [[ -e "$CrystalID" ]]; then
-            if [[ "$check" != "true" ]]; then
+            if [[ "$check" == "false" ]]; then
                 continue
             fi
         fi

@@ -89,33 +89,34 @@ shopt -s dotglob
 
 cbbStreamRegistries="$(<bulk-backup/cbb-index/stream-registries)"
 while read -r streamRegistryPath; do
-    if [[ -n "$repoName" ]]; then
-    ln -s "$streamRegistryPath" "stream-registries/$(basename "$streamRegistryPath")"
-    # Go through this sreg and add all the crystals it uses to the index
+    if [[ -n "$streamRegistryPath" ]]; then
+        ln -s "$streamRegistryPath" "stream-registries/$(basename "$streamRegistryPath")"
+        # Go through this sreg and add all the crystals it uses to the index
 
-    # Normal remote pack pointers
-    for identFile in "$pathToSreg/Packs/"*.identifier; do
-        #echo "$(<"$identFile")" >> "bulk-backup/cbb-index/crystals"
-        true # (Skipping ident file since this is disabled right now to make testing faster)
-        # FIXME: won't work for packs that don't have a .identifier file (older ones just have a pointer file)
-    done
+        # Normal remote pack pointers
+        for identFile in "$pathToSreg/Packs/"*.identifier; do
+            #echo "$(<"$identFile")" >> "bulk-backup/cbb-index/crystals"
+            true # (Skipping ident file since this is disabled right now to make testing faster)
+            # FIXME: won't work for packs that don't have a .identifier file (older ones just have a pointer file)
+        done
 
-    # Remote pack pointers, with pointer data in the pointer [209fcfdf-d1ad-4345-8ef7-1fdc2d583d49]
-    # Like the normal remote pack pointers, we need to get the identifier out of the pointer as a tar file.
+        # Remote pack pointers, with pointer data in the pointer [209fcfdf-d1ad-4345-8ef7-1fdc2d583d49]
+        # Like the normal remote pack pointers, we need to get the identifier out of the pointer as a tar file.
 
-    # Standard remote pointers [a5e2f296-3085-49c0-8f48-24ea436b7a8b]
-    # URL pointers [45baff46-8db7-46f6-aad9-de5f713b02fe]
-    shopt -s globstar
-    # for potentialPointer in "$pathToSreg"/**; do
-    #     if [[ -f "$potentialPointer" ]]; then
-    #         typeSignature="$(head -c 36 "$potentialPointer" | tr -d '\0')"
-    #         if [[ "$typeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then # Standard remote pointer
-    #             true # TODO: Not implemented
-    #         elif [[ "$typeSignature" == "45baff46-8db7-46f6-aad9-de5f713b02fe" ]]; then # URL pointer
-    #             true # TODO: Not implemented
-    #         fi
-    #     fi
-    # done
+        # Standard remote pointers [a5e2f296-3085-49c0-8f48-24ea436b7a8b]
+        # URL pointers [45baff46-8db7-46f6-aad9-de5f713b02fe]
+        shopt -s globstar
+        # for potentialPointer in "$pathToSreg"/**; do
+        #     if [[ -f "$potentialPointer" ]]; then
+        #         typeSignature="$(head -c 36 "$potentialPointer" | tr -d '\0')"
+        #         if [[ "$typeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then # Standard remote pointer
+        #             true # TODO: Not implemented
+        #         elif [[ "$typeSignature" == "45baff46-8db7-46f6-aad9-de5f713b02fe" ]]; then # URL pointer
+        #             true # TODO: Not implemented
+        #         fi
+        #     fi
+        # done
+    fi
 done <<< "$cbbStreamRegistries"
 
 removeDuplicateLines 'bulk-backup/cbb-index/crystals' | sponge 'bulk-backup/cbb-index/crystals'

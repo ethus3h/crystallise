@@ -24,8 +24,8 @@ touch ".cbb.isBackupDir"
 [[ -e '.git' ]] || git init
 print $'items\n' >> .gitignore
 print $'items.failed-check\n' >> .gitignore
-print $'sregbak\n' >> .gitignore
-print $'bulk-backup/git\n' >> .gitignore
+print $'repositories\n' >> .gitignore
+print $'stream-registry-repos\n' >> .gitignore
 removeDuplicateLines '.gitignore' | sponge '.gitignore'
 
 git add .gitignore
@@ -34,8 +34,7 @@ git add -A .
 git commit -m "Update" > /dev/null || true
 
 cbbConfigDir="$(crystallize-getconf ConfigDir)"
-mkdir -p "$cbbConfigDir"/crystallize/cbb/sreg
-touch "$cbbConfigDir"/crystallize/cbb/sreg/.keep
+touch "$cbbConfigDir"/crystallize/cbb/stream-registries
 touch "$cbbConfigDir"/crystallize/cbb/crystals
 touch "$cbbConfigDir"/crystallize/cbb/repos
 
@@ -45,9 +44,12 @@ touch "bulk-backup/cbb-index/sreg-core/.keep"
 mkdir -p "bulk-backup/cbb-index/sreg-extra"
 
 echo 'Syncing configuration...'
+
 rsync -a --checksum "$(crystallize-getconf ConfigLocation)" "bulk-backup/cbb-index/ember.conf" &> /dev/null
 crystallize-getconf 'passphrase' > "bulk-backup/cbb-index/passphrase.default"
+
 rsync -a --checksum "$cbbConfigDir"/crystallize/cbb/sreg/ "bulk-backup/cbb-index/sreg-extra" &> /dev/null
+
 print $'\n' >> "bulk-backup/cbb-index/crystals"
 cat "$cbbConfigDir"/crystallize/cbb/crystals >> "bulk-backup/cbb-index/crystals"
 rsync -a --checksum "$cbbConfigDir"/crystallize/cbb/repos "bulk-backup/cbb-index/repos" &> /dev/null

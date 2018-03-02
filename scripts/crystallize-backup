@@ -36,14 +36,14 @@ if [[ "$here" != "true" ]]; then
 
     cd "$backupLocation" || die "Could not cd to newly created directory! This should never happen."
 
-    mkdir -p "bulk-backup/.cbk"
+    mkdir -p "crystal-backup-meta/.cbk"
 fi
 
 if [[ "$useCustomPassphrase" != "true" ]]; then
     customPassphrase="$(crystallize-getconf Passphrase)"
 fi
-mkdir -p "bulk-backup/.cbk/.cbk.passphrases"
-print "$customPassphrase" > "bulk-backup/.cbk/.cbk.passphrases/$(print "$customPassphrase" | sha512sum | awk '{print $1;}')"
+mkdir -p "crystal-backup-meta/.cbk/.cbk.passphrases"
+print "$customPassphrase" > "crystal-backup-meta/.cbk/.cbk.passphrases/$(print "$customPassphrase" | sha512sum | awk '{print $1;}')"
 
 #Remove URL
 CrystalAddress="${1#https://archive.org/@(details|download)/}"

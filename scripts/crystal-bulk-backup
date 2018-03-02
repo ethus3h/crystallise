@@ -22,10 +22,10 @@ cd "$backupLocation" || die "Could not cd to newly created directory! This shoul
 touch ".cbb.isBackupDir"
 
 [[ -e '.git' ]] || git init
-print $'items\n' >> .gitignore
-print $'items.failed-check\n' >> .gitignore
+print $'crystals\n' >> .gitignore
+print $'crystals.failed-check\n' >> .gitignore
 print $'repositories\n' >> .gitignore
-print $'stream-registry-repos\n' >> .gitignore
+print $'stream-registries\n' >> .gitignore
 removeDuplicateLines '.gitignore' | sponge '.gitignore'
 
 git add .gitignore
@@ -37,6 +37,11 @@ cbbConfigDir="$(crystallize-getconf ConfigDir)"
 touch "$cbbConfigDir"/crystallize/cbb/crystals
 touch "$cbbConfigDir"/crystallize/cbb/repositories
 touch "$cbbConfigDir"/crystallize/cbb/stream-registries
+
+mkdir -p 'bulk-backup/cbb-index'
+mkdir -p 'crystals'
+mkdir -p 'repositories'
+mkdir -p 'stream-registries'
 
 # Build backup indices (this won't finish building the sreg/crystal indices because they need the git repos cloned to make them)
 echo 'Syncing configuration...'
@@ -118,8 +123,8 @@ git add -A .
 git commit -m "Update" > /dev/null || true
 
 # Actually download and/or check the selected crystals now
-mkdir -p "items"
-cd items || die "Could not cd to newly created items directory"
+mkdir -p "crystals"
+cd crystals || die "Could not cd to newly created crystals directory"
 cbbCrystals="$(<../bulk-backup/cbb-index/crystals)"
 while read -r crystal; do
     if [[ -n "$crystal" ]]; then

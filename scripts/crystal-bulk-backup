@@ -54,8 +54,8 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  "crystal-backup-meta/c
 echo $'\n'"https://github.com/ethus3h/ember-library-2.git" >>  "crystal-backup-meta/cbb-index/repositories"
 
 echo $'\n'"ember-library-2/Futuramerlin Projects/Data/Stream Registry" >>  "crystal-backup-meta/cbb-index/stream-registries"
-echo $'\n'"ember-history/.sreg" >>  "crystal-backup-meta/cbb-index/stream-registries"
-echo $'\n'"wreathe-packages/.sreg" >>  "crystal-backup-meta/cbb-index/stream-registries"
+echo $'\n'"ember-meta/Ember satellite projects/ember-history/.sreg" >>  "crystal-backup-meta/cbb-index/stream-registries"
+echo $'\n'"ember-meta/Ember satellite projects/wreathe-packages/.sreg" >>  "crystal-backup-meta/cbb-index/stream-registries"
 
 print $'\n' >> "crystal-backup-meta/cbb-index/items"
 cat "$cbbConfigDir"/crystallize/cbb/items >> "crystal-backup-meta/cbb-index/items"

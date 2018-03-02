@@ -29,9 +29,9 @@ print $'.cbk/git\n' >> .gitignore
 removeDuplicateLines '.gitignore' | sponge '.gitignore'
 
 git add .gitignore
-git commit -m "Update" || true
+git commit -m "Update" > /dev/null || true
 git add -A .
-git commit -m "Update" || true
+git commit -m "Update" > /dev/null || true
 
 cbbConfigDir="$(crystallize-getconf ConfigDir)"
 mkdir -p "$cbbConfigDir"/crystallize/cbb/sreg
@@ -45,11 +45,11 @@ touch ".cbk/cbb-index/sreg-core/.keep"
 mkdir -p ".cbk/cbb-index/sreg-extra"
 
 echo 'Syncing configuration...'
-rsync -a --checksum "$(crystallize-getconf ConfigLocation)" ".cbk/cbb-index/ember.conf"
-rsync -a --checksum "$cbbConfigDir"/crystallize/cbb/sreg/ ".cbk/cbb-index/sreg-extra"
+rsync -a --checksum "$(crystallize-getconf ConfigLocation)" ".cbk/cbb-index/ember.conf" > /dev/null
+rsync -a --checksum "$cbbConfigDir"/crystallize/cbb/sreg/ ".cbk/cbb-index/sreg-extra" > /dev/null
 print $'\n' >> ".cbk/cbb-index/crystals"
 cat "$cbbConfigDir"/crystallize/cbb/crystals >> ".cbk/cbb-index/crystals"
-rsync -a --checksum "$cbbConfigDir"/crystallize/cbb/repos ".cbk/cbb-index/repos"
+rsync -a --checksum "$cbbConfigDir"/crystallize/cbb/repos ".cbk/cbb-index/repos" > /dev/null
 
 echo "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" >  ".cbk/cbb-index/sreg-core/EmberLibrary"
 echo "${EmberLibrary:?}/Ember satellite projects/ember-history/.sreg" >  ".cbk/cbb-index/sreg-core/EmberHistory"
@@ -119,7 +119,7 @@ done
 removeDuplicateLines '.cbk/cbb-index/crystals' | sponge '.cbk/cbb-index/crystals'
 
 git add -A .
-git commit -m "Update" || true
+git commit -m "Update" > /dev/null || true
 
 # Actually download and/or check the selected crystals now
 mkdir -p "items"
@@ -137,4 +137,4 @@ while read -r crystal; do
 done <<< "$cbbCrystals"
 
 git add -A .
-git commit -m "Update" || true
+git commit -m "Update" > /dev/null || true

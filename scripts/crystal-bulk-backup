@@ -84,7 +84,7 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  "bulk-backup/cbb-index
 shopt -s dotglob
 
 for file in bulk-backup/cbb-index/sreg-core/* bulk-backup/cbb-index/sreg-extra/*; do
-    bakDir="sregbak/${file:9}"
+    bakDir="stream-registry-repos/${file:9}"
     mkdir -p "$bakDir"
     pathToSreg="$(<"$file")"
     mkdir -p "$pathToSreg/LocalStore"

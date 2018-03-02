@@ -67,7 +67,7 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  "bulk-backup/cbb-index
 # Clone git repositories
 (
     mkdir -p repositories
-    cbbRepos="$(<bulk-backup/cbb-index/repos)"
+    cbbRepos="$(<bulk-backup/cbb-index/repositories)"
     cd repositories
     while read -r repo; do
         repoName="$(basename "$repo")"

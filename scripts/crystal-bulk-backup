@@ -101,6 +101,7 @@ while read -r streamRegistryPath; do
         linkTarget="stream-registries/$(basename "$streamRegistryPath")"
         [[ -h "$linkTarget" ]] && rm "$linkTarget"
         ln -s "$streamRegistryPath" "stream-registries/$(basename "$streamRegistryPath")"
+        streamRegistryPath="$linkTarget"
         # Go through this sreg and add all the crystals it uses to the index
 
         # Normal remote pack pointers

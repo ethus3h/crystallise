@@ -104,7 +104,7 @@ while read -r streamRegistryPath; do
         # Go through this sreg and add all the crystals it uses to the index
 
         # Normal remote pack pointers
-        for identFile in "$pathToSreg/Packs/"*.identifier; do
+        for identFile in "$streamRegistryPath/Packs/"*.identifier; do
             #echo "$(<"$identFile")" >> "crystal-backup-meta/cbb-index/items"
             true # (Skipping ident file since this is disabled right now to make testing faster)
             # FIXME: won't work for packs that don't have a .identifier file (older ones just have a pointer file)
@@ -117,7 +117,7 @@ while read -r streamRegistryPath; do
         # Standard remote pointers [a5e2f296-3085-49c0-8f48-24ea436b7a8b]
         # URL pointers [45baff46-8db7-46f6-aad9-de5f713b02fe]
         shopt -s globstar
-        # for potentialPointer in "$pathToSreg"/**; do
+        # for potentialPointer in "$streamRegistryPath"/**; do
         #     if [[ -f "$potentialPointer" ]]; then
         #         typeSignature="$(head -c 36 "$potentialPointer" | tr -d '\0')"
         #         if [[ "$typeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then # Standard remote pointer
@@ -143,7 +143,6 @@ while read -r crystal; do
     if [[ -n "$crystal" ]]; then
         if [[ -e "$crystal" ]]; then
             if [[ "$check" == "false" ]]; then
-                warn "Skipping check for already-existing crystal backup "
                 continue
             fi
         fi

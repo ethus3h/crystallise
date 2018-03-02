@@ -84,11 +84,11 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  "bulk-backup/cbb-index
 shopt -s dotglob
 
 cbbStreamRegistries="$(<../bulk-backup/cbb-index/stream-registries)"
-while read -r streamRegistry; do
+while read -r streamRegistryPath; do
+    streamRegistryName="$(basename "$streamRegistryPath")"
     destinationDir="stream-registries/$(basename "$streamRegistry")"
     mkdir -p "$destinationDir"
-    sourceSregDir="repositories/$(<"$streamRegistry")"
-    mkdir -p "$pathToSreg/LocalStore"
+    sourceSregDir="repositories/$streamRegistry"
     rsync -av --checksum "$pathToSreg/LocalStore" "$bakDir/" &> /dev/null
     rsync -av --checksum "$pathToSreg/passphrase" "$bakDir/" &> /dev/null || true # There isn't necessarily a passphrase file if it uses the default one.
     # Go through this sreg and add all the crystals it uses to the index

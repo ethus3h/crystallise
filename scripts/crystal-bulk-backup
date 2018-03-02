@@ -38,7 +38,7 @@ touch "$cbbConfigDir"/crystallize/cbb/items
 touch "$cbbConfigDir"/crystallize/cbb/repositories
 touch "$cbbConfigDir"/crystallize/cbb/stream-registries
 
-mkdir -p 'crystal-backup-meta/cbb-index'
+mkdir -p 'bulk-backup/cbb-index'
 mkdir -p 'items'
 mkdir -p 'repositories'
 mkdir -p 'stream-registries'
@@ -46,33 +46,33 @@ mkdir -p 'stream-registries'
 # Build backup indices (this won't finish building the sreg/crystal indices because they need the git repos cloned to make them)
 echo 'Syncing configuration...'
 
-rsync -a --checksum "$(crystallize-getconf ConfigLocation)" "crystal-backup-meta/cbb-index/ember.conf" &> /dev/null
-crystallize-getconf 'passphrase' > "crystal-backup-meta/cbb-index/passphrase.default"
+rsync -a --checksum "$(crystallize-getconf ConfigLocation)" "bulk-backup/cbb-index/ember.conf" &> /dev/null
+crystallize-getconf 'passphrase' > "bulk-backup/cbb-index/passphrase.default"
 
 # FIXME: Recursively cloning ember-meta doesn't seem to work, for some reason.
-echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  "crystal-backup-meta/cbb-index/repositories"
-echo $'\n'"https://github.com/ethus3h/ember-library-2.git" >>  "crystal-backup-meta/cbb-index/repositories"
+echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  "bulk-backup/cbb-index/repositories"
+echo $'\n'"https://github.com/ethus3h/ember-library-2.git" >>  "bulk-backup/cbb-index/repositories"
 
-echo $'\n'"ember-library-2/Futuramerlin Projects/Data/Stream Registry" >>  "crystal-backup-meta/cbb-index/stream-registries"
-echo $'\n'"ember-history/.sreg" >>  "crystal-backup-meta/cbb-index/stream-registries"
-echo $'\n'"wreathe-packages/.sreg" >>  "crystal-backup-meta/cbb-index/stream-registries"
+echo $'\n'"ember-library-2/Futuramerlin Projects/Data/Stream Registry" >>  "bulk-backup/cbb-index/stream-registries"
+echo $'\n'"ember-history/.sreg" >>  "bulk-backup/cbb-index/stream-registries"
+echo $'\n'"wreathe-packages/.sreg" >>  "bulk-backup/cbb-index/stream-registries"
 
-print $'\n' >> "crystal-backup-meta/cbb-index/items"
-cat "$cbbConfigDir"/crystallize/cbb/items >> "crystal-backup-meta/cbb-index/items"
-removeDuplicateLines 'crystal-backup-meta/cbb-index/items' | sponge 'crystal-backup-meta/cbb-index/items'
+print $'\n' >> "bulk-backup/cbb-index/items"
+cat "$cbbConfigDir"/crystallize/cbb/items >> "bulk-backup/cbb-index/items"
+removeDuplicateLines 'bulk-backup/cbb-index/items' | sponge 'bulk-backup/cbb-index/items'
 
-print $'\n' >> "crystal-backup-meta/cbb-index/repositories"
-cat "$cbbConfigDir"/crystallize/cbb/repositories >> "crystal-backup-meta/cbb-index/repositories"
-removeDuplicateLines 'crystal-backup-meta/cbb-index/repositories' | sponge 'crystal-backup-meta/cbb-index/repositories'
+print $'\n' >> "bulk-backup/cbb-index/repositories"
+cat "$cbbConfigDir"/crystallize/cbb/repositories >> "bulk-backup/cbb-index/repositories"
+removeDuplicateLines 'bulk-backup/cbb-index/repositories' | sponge 'bulk-backup/cbb-index/repositories'
 
-print $'\n' >> "crystal-backup-meta/cbb-index/stream-registries"
-cat "$cbbConfigDir"/crystallize/cbb/stream-registries >> "crystal-backup-meta/cbb-index/stream-registries"
-removeDuplicateLines 'crystal-backup-meta/cbb-index/stream-registries' | sponge 'crystal-backup-meta/cbb-index/stream-registries'
+print $'\n' >> "bulk-backup/cbb-index/stream-registries"
+cat "$cbbConfigDir"/crystallize/cbb/stream-registries >> "bulk-backup/cbb-index/stream-registries"
+removeDuplicateLines 'bulk-backup/cbb-index/stream-registries' | sponge 'bulk-backup/cbb-index/stream-registries'
 
 # Clone git repositories
 (
     mkdir -p repositories
-    cbbRepos="$(<crystal-backup-meta/cbb-index/repositories)"
+    cbbRepos="$(<bulk-backup/cbb-index/repositories)"
     cd repositories
     while read -r repo; do
         repoName="$(basename "$repo")"
@@ -95,7 +95,7 @@ removeDuplicateLines 'crystal-backup-meta/cbb-index/stream-registries' | sponge 
 
 shopt -s dotglob
 
-cbbStreamRegistries="$(<crystal-backup-meta/cbb-index/stream-registries)"
+cbbStreamRegistries="$(<bulk-backup/cbb-index/stream-registries)"
 while read -r streamRegistryPath; do
     if [[ -n "$streamRegistryPath" ]]; then
         ln -s "$streamRegistryPath" "stream-registries/$(basename "$streamRegistryPath")"
@@ -103,7 +103,7 @@ while read -r streamRegistryPath; do
 
         # Normal remote pack pointers
         for identFile in "$pathToSreg/Packs/"*.identifier; do
-            #echo "$(<"$identFile")" >> "crystal-backup-meta/cbb-index/items"
+            #echo "$(<"$identFile")" >> "bulk-backup/cbb-index/items"
             true # (Skipping ident file since this is disabled right now to make testing faster)
             # FIXME: won't work for packs that don't have a .identifier file (older ones just have a pointer file)
         done
@@ -128,7 +128,7 @@ while read -r streamRegistryPath; do
     fi
 done <<< "$cbbStreamRegistries"
 
-removeDuplicateLines 'crystal-backup-meta/cbb-index/items' | sponge 'crystal-backup-meta/cbb-index/items'
+removeDuplicateLines 'bulk-backup/cbb-index/items' | sponge 'bulk-backup/cbb-index/items'
 
 git add -A .
 git commit -m "Update" > /dev/null || true
@@ -136,7 +136,7 @@ git commit -m "Update" > /dev/null || true
 # Actually download and/or check the selected crystals now
 mkdir -p "items"
 cd items || die "Could not cd to newly created items directory"
-cbbCrystals="$(<../crystal-backup-meta/cbb-index/items)"
+cbbCrystals="$(<../bulk-backup/cbb-index/items)"
 while read -r crystal; do
     if [[ -n "$crystal" ]]; then
         if [[ -e "$crystal" ]]; then

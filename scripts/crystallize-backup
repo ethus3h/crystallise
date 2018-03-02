@@ -66,11 +66,13 @@ cd 'items' || die "Could not cd to items directory!"
 if [[ -e "$CrystalID" ]]; then
     if [[ "$check" == "true" ]]; then
         succeeded=""
+        ident="$CrystalID"
         shopt -s dotglob
         shopt -s globstar
         # NOTE: MAINTENANCE: Copy of code from "ia checkeddl" in ember_bash_setup.
         # FIXME: Does this code really need to be duplicated?
         while read -r file; do
+            file="$CrystalID/$fileNameToCheck"
             if [[ -f "$file" ]] && [[ "$(sha1sum "$file" | awk '{print $1;}')" == "$(iasha1 "$file")" ]] && ( [[ "$succeeded" == "true" ]] || [[ -z "$succeeded" ]] ); then
                     succeeded="true"
             else

@@ -87,7 +87,7 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  "bulk-backup/cbb-index
 
 shopt -s dotglob
 
-cbbStreamRegistries="$(<../bulk-backup/cbb-index/stream-registries)"
+cbbStreamRegistries="$(<bulk-backup/cbb-index/stream-registries)"
 while read -r streamRegistryPath; do
     ln -s "$streamRegistryPath" "stream-registries/$(basename "$streamRegistryPath")"
     # Go through this sreg and add all the crystals it uses to the index

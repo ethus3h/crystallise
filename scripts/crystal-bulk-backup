@@ -25,7 +25,7 @@ touch ".cbb.isBackupDir"
 print $'items\n' >> .gitignore
 print $'items.failed-check\n' >> .gitignore
 print $'sregbak\n' >> .gitignore
-print $'cbk/git\n' >> .gitignore
+print $'bulk-backup/git\n' >> .gitignore
 removeDuplicateLines '.gitignore' | sponge '.gitignore'
 
 git add .gitignore
@@ -40,31 +40,31 @@ touch "$cbbConfigDir"/crystallize/cbb/crystals
 touch "$cbbConfigDir"/crystallize/cbb/repos
 
 # Build backup indices (this won't finish building the sreg/crystal indices because they need the git repos cloned to make them)
-mkdir -p "cbk/cbb-index/sreg-core"
-touch "cbk/cbb-index/sreg-core/.keep"
-mkdir -p "cbk/cbb-index/sreg-extra"
+mkdir -p "bulk-backup/cbb-index/sreg-core"
+touch "bulk-backup/cbb-index/sreg-core/.keep"
+mkdir -p "bulk-backup/cbb-index/sreg-extra"
 
 echo 'Syncing configuration...'
-rsync -a --checksum "$(crystallize-getconf ConfigLocation)" "cbk/cbb-index/ember.conf" &> /dev/null
-crystallize-getconf 'passphrase' > "cbk/cbb-index/passphrase.default"
-rsync -a --checksum "$cbbConfigDir"/crystallize/cbb/sreg/ "cbk/cbb-index/sreg-extra" &> /dev/null
-print $'\n' >> "cbk/cbb-index/crystals"
-cat "$cbbConfigDir"/crystallize/cbb/crystals >> "cbk/cbb-index/crystals"
-rsync -a --checksum "$cbbConfigDir"/crystallize/cbb/repos "cbk/cbb-index/repos" &> /dev/null
+rsync -a --checksum "$(crystallize-getconf ConfigLocation)" "bulk-backup/cbb-index/ember.conf" &> /dev/null
+crystallize-getconf 'passphrase' > "bulk-backup/cbb-index/passphrase.default"
+rsync -a --checksum "$cbbConfigDir"/crystallize/cbb/sreg/ "bulk-backup/cbb-index/sreg-extra" &> /dev/null
+print $'\n' >> "bulk-backup/cbb-index/crystals"
+cat "$cbbConfigDir"/crystallize/cbb/crystals >> "bulk-backup/cbb-index/crystals"
+rsync -a --checksum "$cbbConfigDir"/crystallize/cbb/repos "bulk-backup/cbb-index/repos" &> /dev/null
 
-echo "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" >  "cbk/cbb-index/sreg-core/EmberLibrary"
-echo "${EmberLibrary:?}/Ember satellite projects/ember-history/.sreg" >  "cbk/cbb-index/sreg-core/EmberHistory"
-echo "${EmberLibrary:?}/Ember satellite projects/wreathe-packages/.sreg" >  "cbk/cbb-index/sreg-core/WreathePackages"
+echo "${EmberLibrary:?}/Futuramerlin Projects/Data/Stream Registry" >  "bulk-backup/cbb-index/sreg-core/EmberLibrary"
+echo "${EmberLibrary:?}/Ember satellite projects/ember-history/.sreg" >  "bulk-backup/cbb-index/sreg-core/EmberHistory"
+echo "${EmberLibrary:?}/Ember satellite projects/wreathe-packages/.sreg" >  "bulk-backup/cbb-index/sreg-core/WreathePackages"
 
 # FIXME: Recursively cloning ember-meta doesn't seem to work, for some reason.
-echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  "cbk/cbb-index/repos"
+echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  "bulk-backup/cbb-index/repos"
 
 # Take care of git now
 (
-    mkdir -p cbk/git
-    #cbbRepos="$(<cbk/cbb-index/repos)"
+    mkdir -p bulk-backup/git
+    #cbbRepos="$(<bulk-backup/cbb-index/repos)"
     cbbRepos="https://github.com/ethus3h/personal.git"
-    cd cbk/git
+    cd bulk-backup/git
     while read -r repo; do
         repoName="$(basename "$repo")"
         repoName="${repoName%.*}"
@@ -83,7 +83,7 @@ echo $'\n'"https://github.com/ethus3h/ember-meta.git" >>  "cbk/cbb-index/repos"
 
 shopt -s dotglob
 
-for file in cbk/cbb-index/sreg-core/* cbk/cbb-index/sreg-extra/*; do
+for file in bulk-backup/cbb-index/sreg-core/* bulk-backup/cbb-index/sreg-extra/*; do
     bakDir="sregbak/${file:9}"
     mkdir -p "$bakDir"
     pathToSreg="$(<"$file")"
@@ -94,7 +94,7 @@ for file in cbk/cbb-index/sreg-core/* cbk/cbb-index/sreg-extra/*; do
 
     # Normal remote pack pointers
     for identFile in "$pathToSreg/Packs/"*.identifier; do
-        #echo "$(<"$identFile")" >> "cbk/cbb-index/crystals"
+        #echo "$(<"$identFile")" >> "bulk-backup/cbb-index/crystals"
         true # (Skipping ident file since this is disabled right now to make testing faster)
         # FIXME: won't work for packs that don't have a .identifier file (older ones just have a pointer file)
     done
@@ -117,7 +117,7 @@ for file in cbk/cbb-index/sreg-core/* cbk/cbb-index/sreg-extra/*; do
     # done
 done
 
-removeDuplicateLines 'cbk/cbb-index/crystals' | sponge 'cbk/cbb-index/crystals'
+removeDuplicateLines 'bulk-backup/cbb-index/crystals' | sponge 'bulk-backup/cbb-index/crystals'
 
 git add -A .
 git commit -m "Update" > /dev/null || true
@@ -125,7 +125,7 @@ git commit -m "Update" > /dev/null || true
 # Actually download and/or check the selected crystals now
 mkdir -p "items"
 cd items || die "Could not cd to newly created items directory"
-cbbCrystals="$(<../cbk/cbb-index/crystals)"
+cbbCrystals="$(<../bulk-backup/cbb-index/crystals)"
 while read -r crystal; do
     if [[ -n "$crystal" ]]; then
         if [[ -e "$crystal" ]]; then

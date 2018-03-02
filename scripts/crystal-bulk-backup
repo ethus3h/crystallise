@@ -143,6 +143,7 @@ while read -r crystal; do
     if [[ -n "$crystal" ]]; then
         if [[ -e "$crystal" ]]; then
             if [[ "$check" == "false" ]]; then
+                warn "Skipping check for already-existing crystal backup "
                 continue
             fi
         fi

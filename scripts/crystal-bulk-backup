@@ -82,12 +82,12 @@ removeDuplicateLines 'crystal-backup-meta/cbb-index/stream-registries' | sponge 
                 (
                     cd "$repoName.git"
                     echo "Updating clone of the \"$repoName\" git repository..."
-                    git pull || die
+                    git fetch --all || die
                     git submodule update --init --recursive || true
                     git submodule update --recursive
                 )
             else
-                git clone --bare --recursive "$repo" || die
+                git clone --mirror --recursive "$repo" || die
             fi
         fi
     done <<< "$cbbRepos"

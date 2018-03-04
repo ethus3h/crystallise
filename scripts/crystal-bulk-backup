@@ -102,16 +102,17 @@ while read -r streamRegistryPath; do
         streamRegistryRepoName="${streamRegistryPath%%\/*}"
         streamRegistryPathInRepo="${streamRegistryPath#*\/}"
         if ! [[ -d "$streamRegistryRepoName" ]]; then
-            mkdir "$streamRegistryRepoName"
-            cd "$streamRegistryRepoName"
-            git init
-            git config core.sparseCheckout true
-            git remote add -f origin "$streamRegistryRepoName.git"
-            echo "$streamRegistryPathInRepo*" > .git/info/sparse-checkout
-            git checkout "$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')"
-            cd ..
+            (
+                mkdir "$streamRegistryRepoName"
+                cd "$streamRegistryRepoName" || die "Could not cd to newly created directory $(pwd)/$streamRegistryRepoName!"
+                git init
+                git config core.sparseCheckout true
+                git remote add -f origin "$streamRegistryRepoName.git"
+                echo "$streamRegistryPathInRepo*" > .git/info/sparse-checkout
+                git checkout "$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')"
+            )
         fi
-        cd "$streamRegistryRepoName"
+        cd "$streamRegistryRepoName" || die "Could not cd to repository directory $(pwd)/$streamRegistryRepoName!"
         git pull
         cd ..
         # Go through this sreg and add all the crystals it uses to the index

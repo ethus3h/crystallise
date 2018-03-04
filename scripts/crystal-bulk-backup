@@ -78,16 +78,16 @@ removeDuplicateLines 'crystal-backup-meta/cbb-index/stream-registries' | sponge 
         repoName="$(basename "$repo")"
         repoName="${repoName%.*}"
         if [[ -n "$repoName" ]]; then
-            if [[ -e "$repoName" ]]; then
+            if [[ -e "$repoName.git" ]]; then
                 (
-                    cd "$repoName"
+                    cd "$repoName.git"
                     echo "Updating clone of the \"$repoName\" git repository..."
                     git pull || die
                     git submodule update --init --recursive || true
                     git submodule update --recursive
                 )
             else
-                git clone --recursive "$repo" || die
+                git clone --bare --recursive "$repo" || die
             fi
         fi
     done <<< "$cbbRepos"

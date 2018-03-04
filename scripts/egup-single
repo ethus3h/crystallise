@@ -13,6 +13,13 @@ fi
 
 cd "$1" || exit 1
 
+commitMessage="Update Ember tree"
+commitMessageAppendable=""
+if [[ -n "$2" ]]; then
+    commitMessage="$2"
+    commitMessageAppendable=" (associated commit: $commitMessage)"
+fi
+
 egup-env
 
 if [[ -f .egup.git-native-excludes ]]; then
@@ -22,7 +29,7 @@ fi
 
 # Back up the .gitignore in preparation for the next step
 git add .gitignore || true # It's ok if this fails — it probably means there is no .gitignore
-git commit -m "Update Ember tree" || true #It's ok if this fails — it probably means there is nothing to commit
+git commit -m "[egup] Update .gitignore$commitMessageAppendable" || true #It's ok if this fails — it probably means there is nothing to commit
 
 if [[ -f .egup.git-native-excludes ]] && [[ "$(readlink -f .git/info/exclude)" == "$(readlink -f "$GIT_DIR"/info/exclude)" ]]; then
     # Not in an elen environment, so make sure the .gitignore hasn't gotten screwed up before running anything else
@@ -33,12 +40,12 @@ branch="$(git branch | grep -E "^\* " | cut -c 3-)"
 git checkout "$branch"
 git add -A || die "Error adding changes."
 git add -A . || die "Error adding changes."
-git commit -a -m "Update Ember tree" || echo "(Note: Repository appears to have no changes to commit.)"
+git commit -a -m "$commitMessage" || echo "(Note: Repository appears to have no changes to commit.)"
 if [[ -f .egup.hooks ]]; then
     echo "Beginning running hooks..."
     ./.egup.hooks || warn "WARNING! pre-build-hooks failed; continuing anyway."
     echo "Done running hooks."
-    git commit -a -m "Update Ember tree" || true #It's ok if this fails — it probably means there is nothing to commit, and the user was already notified by saying "no changes to commit" earlier.
+    git commit -a -m "[egup] Update hooks$commitMessageAppendable" || true #It's ok if this fails — it probably means there is nothing to commit, and the user was already notified by saying "no changes to commit" earlier.
 fi
 
 status=""
@@ -57,7 +64,7 @@ while [[ "$status" != "completed" ]]; do
 
     git add -A || die "Error adding tag changes."
     trap - ERR
-    git commit -a -m "Update Ember tree" || true
+    git commit -a -m "[egup] Update repository metadata$commitMessageAppendable" || true
     trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd)."' ERR
 
     if [[ "$offline" != "true" ]]; then

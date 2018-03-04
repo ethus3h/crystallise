@@ -89,7 +89,12 @@ if [[ -e "$CrystalID" ]]; then
             mkdir -p "../items.failed-check/"
             [[ -e "../items.failed-check/$CrystalID" ]]  && die "Item $CrystalID failed integrity check, and there is already a failed copy!"
             mv "$CrystalID" "../items.failed-check/"
-            die "Item $CrystalID failed integrity check!"
+            if [[ "$recurse" == "false" ]]; then
+                die "Item $CrystalID failed integrity check!"
+            else
+                warn "Item $CrystalID failed integrity check!"
+                crystallize-backup --no-recurse "$@" || die "Retried backing up and failed twice."
+            fi
         fi
     fi
     echo "(Backup of $CrystalID passed check.)"

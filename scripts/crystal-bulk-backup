@@ -113,7 +113,7 @@ while read -r streamRegistryPath; do
             )
         fi
         cd "$streamRegistryRepoName" || die "Could not cd to repository directory $(pwd)/$streamRegistryRepoName!"
-        git pull
+        git pull origin
         cd ..
         # Go through this sreg and add all the crystals it uses to the index
 

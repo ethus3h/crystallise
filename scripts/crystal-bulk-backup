@@ -108,9 +108,8 @@ while read -r streamRegistryPath; do
                 cd "$streamRegistryRepoName" || die "Could not cd to repository directory $(pwd)/repositories/$streamRegistryRepoName!"
                 git init
                 git config core.sparseCheckout true
-                git remote add -f origin "../$streamRegistryRepoName.git"
                 echo "$streamRegistryPathInRepo*" > .git/info/sparse-checkout
-                git checkout "$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')"
+                git checkout
             else
                 cd "repositories/$streamRegistryRepoName" || die "Could not cd to repository directory $(pwd)/repositories/$streamRegistryRepoName!"
             fi

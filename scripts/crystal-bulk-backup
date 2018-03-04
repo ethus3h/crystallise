@@ -76,21 +76,7 @@ removeDuplicateLines 'crystal-backup-meta/cbb-index/stream-registries' | sponge 
     mkdir -p repositories
     cbbRepos="$(<crystal-backup-meta/cbb-index/repositories)"
     cd repositories
-    while read -r repo; do
-        repoName="$(basename "$repo")"
-        repoName="${repoName%.*}"
-        if [[ -n "$repoName" ]]; then
-            if [[ -e "$repoName.git" ]]; then
-                (
-                    cd "$repoName.git"
-                    echo "Updating clone of the \"$repoName\" git repository..."
-                    git fetch --all || die
-                )
-            else
-                git clone --mirror "$repo" || die
-            fi
-        fi
-    done <<< "$cbbRepos"
+    git-bulk-clone <<< "$cbbRepos"
 ) || die
 
 shopt -s dotglob

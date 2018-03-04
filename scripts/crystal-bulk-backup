@@ -74,9 +74,8 @@ removeDuplicateLines 'crystal-backup-meta/cbb-index/stream-registries' | sponge 
 # Clone git repositories
 (
     mkdir -p repositories
-    cbbRepos="$(<crystal-backup-meta/cbb-index/repositories)"
     cd repositories
-    git-bulk-clone <<< "$cbbRepos"
+    git-bulk-clone < "crystal-backup-meta/cbb-index/repositories"
 ) || die
 
 shopt -s dotglob

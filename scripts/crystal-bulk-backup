@@ -102,16 +102,16 @@ while read -r streamRegistryPath; do
         streamRegistryRepoName="${streamRegistryPath%%\/*}"
         streamRegistryPathInRepo="${streamRegistryPath#*\/}"
         (
-            if ! [[ -d "$streamRegistryRepoName" ]]; then
-                mkdir "$streamRegistryRepoName"
+            if ! [[ -d "repositories/$streamRegistryRepoName" ]]; then
+                mkdir "repositories/$streamRegistryRepoName"
                 cd "repositories/$streamRegistryRepoName" || die "Could not cd to newly created directory $(pwd)/repositories/$streamRegistryRepoName!"
                 git init
                 git config core.sparseCheckout true
-                git remote add -f origin "$streamRegistryRepoName.git"
+                git remote add -f origin "../$streamRegistryRepoName.git"
                 echo "$streamRegistryPathInRepo*" > .git/info/sparse-checkout
                 git checkout "$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')"
             else
-                cd "repositories/$streamRegistryRepoName" || die "Could not cd to repository directory $(pwd)/$streamRegistryPath!"
+                cd "repositories/$streamRegistryRepoName" || die "Could not cd to repository directory $(pwd)/repositories/$streamRegistryPath!"
             fi
             git pull origin
         )

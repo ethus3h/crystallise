@@ -48,7 +48,7 @@ mkdir -p 'stream-registries'
 echo 'Syncing configuration...'
 
 rsync -a --checksum "$(crystallize-getconf ConfigLocation)" "crystal-backup-meta/cbb-index/ember.conf" &> /dev/null
-crystallize-getconf 'passphrase' > "crystal-backup-meta/cbb-index/passphrase.default"
+crystallize-getconf 'Passphrase' > "crystal-backup-meta/cbb-index/passphrase.default"
 
 repoPattern="$(<"$(ember-getconf DataDir)/repository-url-pattern.txt")"
 cat "$(ember-getconf DataDir)/repositories"{,-nonpublic}.lst | while read -r "repo"; do

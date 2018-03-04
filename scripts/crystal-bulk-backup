@@ -34,6 +34,7 @@ git add -A .
 git commit -m "Update" > /dev/null || true
 
 cbbConfigDir="$(crystallize-getconf ConfigDir)"
+mkdir -p "$cbbConfigDir"/crystallize/cbb
 touch "$cbbConfigDir"/crystallize/cbb/items
 touch "$cbbConfigDir"/crystallize/cbb/repositories
 touch "$cbbConfigDir"/crystallize/cbb/stream-registries
@@ -54,9 +55,9 @@ cat "$(ember-getconf DataDir)/repositories"{,-nonpublic}.lst | while read -r "re
     echo $'\n'"${repoPattern/\@REPOSITORY\@/$repo}" >> "crystal-backup-meta/cbb-index/repositories"
 done
 
-echo $'\n'"ember-library-2/Futuramerlin Projects/Data/Stream Registry" >>  "crystal-backup-meta/cbb-index/stream-registries"
-echo $'\n'"ember-meta/Ember satellite projects/ember-history/.sreg" >>  "crystal-backup-meta/cbb-index/stream-registries"
-echo $'\n'"ember-meta/Ember satellite projects/wreathe-packages/.sreg" >>  "crystal-backup-meta/cbb-index/stream-registries"
+echo $'\n'"ember-library-2/Futuramerlin Projects/Data/Stream Registry" >> "crystal-backup-meta/cbb-index/stream-registries"
+echo $'\n'"ember-meta/Ember satellite projects/ember-history/.sreg" >> "crystal-backup-meta/cbb-index/stream-registries"
+echo $'\n'"ember-meta/Ember satellite projects/wreathe-packages/.sreg" >> "crystal-backup-meta/cbb-index/stream-registries"
 
 print $'\n' >> "crystal-backup-meta/cbb-index/items"
 cat "$cbbConfigDir"/crystallize/cbb/items >> "crystal-backup-meta/cbb-index/items"
@@ -98,6 +99,17 @@ cbbStreamRegistries="$(<crystal-backup-meta/cbb-index/stream-registries)"
 while read -r streamRegistryPath; do
     if [[ -n "$streamRegistryPath" ]]; then
         streamRegistryPath="repositories/$streamRegistryPath"
+        streamRegistryRepoName="${streamRegistryPath%%\/*}"
+        if ! [[ -d "$streamRegistryRepoName" ]]; then
+            mkdir "$streamRegistryRepoName"
+            cd "$streamRegistryRepoName"
+            git init
+            git config core.sparseCheckout true
+            git remote add -f origin git://...
+            
+echo "path/within_repo/to/desired_subdir/*" > .git/info/sparse-checkout
+git checkout [branchname] # ex: master
+        fi
         # Go through this sreg and add all the crystals it uses to the index
 
         # Normal remote pack pointers

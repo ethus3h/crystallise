@@ -100,14 +100,20 @@ while read -r streamRegistryPath; do
     if [[ -n "$streamRegistryPath" ]]; then
         streamRegistryPath="repositories/$streamRegistryPath"
         streamRegistryRepoName="${streamRegistryPath%%\/*}"
+        streamRegistryPathInRepo="${streamRegistryPath#*\/}"
         if ! [[ -d "$streamRegistryRepoName" ]]; then
             mkdir "$streamRegistryRepoName"
             cd "$streamRegistryRepoName"
-            git init #from https://stackoverflow.com/questions/4114887/is-it-possible-to-do-a-sparse-checkout-without-checking-out-the-whole-repository
+            git init
             git config core.sparseCheckout true
-            git remote add -f origin git://...
-            
-echo "path/within_repo/to/desired_subdir/*" > .git/info/sparse-checkout
+            git remote add -f origin "$streamRegistryRepoName.git"
+            echo "$streamRegistryPathInRepo*" > .git/info/sparse-checkout
+            git checkout "$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')" # from https://stackoverflow.com/questions/28666357/git-how-to-get-default-branch
+            cd ..
+        fi
+        cd "$streamRegistryRepoName"
+        git pull
+        cd ..
 git checkout [branchname] # ex: master
         fi
         # Go through this sreg and add all the crystals it uses to the index

@@ -29,6 +29,12 @@ if [[ "$1" == "--here" ]]; then
     shift
 fi
 
+recurse="true"
+if [[ "$1" == "--no-recurse" ]]; then
+    recurse="false"
+    shift
+fi
+
 if [[ "$here" != "true" ]]; then
     backupLocation="$(crystallize-getconf BackupLocation)"
 

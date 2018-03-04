@@ -49,9 +49,6 @@ echo 'Syncing configuration...'
 rsync -a --checksum "$(crystallize-getconf ConfigLocation)" "crystal-backup-meta/cbb-index/ember.conf" &> /dev/null
 crystallize-getconf 'passphrase' > "crystal-backup-meta/cbb-index/passphrase.default"
 
-# FIXME: Recursively cloning ember-meta doesn't seem to work, for some reason.
-echo $'\n'"https://github.com/ethus3h/ember-meta.git" >> "crystal-backup-meta/cbb-index/repositories"
-echo $'\n'"https://github.com/ethus3h/ember-library-2.git" >> "crystal-backup-meta/cbb-index/repositories"
 repoPattern="$(<"$(ember-getconf DataDir)/repository-url-pattern.txt")"
 cat "$(ember-getconf DataDir)/repositories"{,-nonpublic}.lst | while read -r "repo"; do
     echo $'\n'"${repoPattern/\@REPOSITORY\@/$repo}" >> "crystal-backup-meta/cbb-index/repositories"

@@ -103,7 +103,7 @@ while read -r streamRegistryPath; do
         if ! [[ -d "$streamRegistryRepoName" ]]; then
             mkdir "$streamRegistryRepoName"
             cd "$streamRegistryRepoName"
-            git init
+            git init #from https://stackoverflow.com/questions/4114887/is-it-possible-to-do-a-sparse-checkout-without-checking-out-the-whole-repository
             git config core.sparseCheckout true
             git remote add -f origin git://...
             

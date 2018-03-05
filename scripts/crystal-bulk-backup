@@ -75,7 +75,7 @@ removeDuplicateLines 'crystal-backup-meta/cbb-index/stream-registries' | sponge 
 (
     mkdir -p repositories
     cd repositories
-    git-bulk-sync < "crystal-backup-meta/cbb-index/repositories"
+    git-bulk-sync < "../crystal-backup-meta/cbb-index/repositories"
     mkdir -p submodules
     cd submodules
     git-bulk-sync < "$(ember-getconf DataDir)/repositories-submodules.lst"

@@ -92,7 +92,7 @@ while read -r streamRegistryPath; do
         streamRegistryPathInRepo="${streamRegistryPath#*\/}"
         (
             if ! [[ -d "repositories/$streamRegistryRepoName" ]]; then
-                cd repositories
+                cd repositories || die "Could not cd to repositories directory!"
                 git clone --no-checkout "$streamRegistryRepoName.git"
                 cd "$streamRegistryRepoName" || die "Could not cd to repository directory $(pwd)/repositories/$streamRegistryRepoName!"
                 git init
@@ -130,12 +130,12 @@ while read -r streamRegistryPath; do
                 [[ -e "$localStoreCrystalName" ]] || die "Crystal info could not be found in the pointer for $packTempDir, so giving up immediately (retrying probably wouldn't help this)."
                 echo "$(<"$localStoreCrystalName"/identifier)" >> "crystal-backup-meta/cbb-index/items"
                 touch "crystal-backup-meta/cbb-index/items.packs-done/${pointerFile%.bundle.pointer}"
-                popd
+                popd || die "Could not popd!"
                 rm -r "$packTempDir"
             fi
         done
 
-        popd
+        popd || die "Could not popd!"
 
         # TODO: Not implemented
         # Remote pack pointers, with pointer data in the pointer [209fcfdf-d1ad-4345-8ef7-1fdc2d583d49]

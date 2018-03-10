@@ -106,18 +106,19 @@ while read -r streamRegistryPath; do
         )
         # Go through this sreg and add all the crystals it uses to the index
 
+        backupsFullDir="$PWD"
         pushd "$streamRegistryFullPath/Packs/" || die "Could not pushd to Packs directory!"
 
         # Normal remote pack pointers
         echo "Getting identifiers for packs in $streamRegistryPath"
         for identFile in *.identifier; do
-            echo "$(<"$identFile")" >> "crystal-backup-meta/cbb-index/items"
-            touch "crystal-backup-meta/cbb-index/items.packs-done/${identFile%.identifier}"
+            echo "$(<"$identFile")" >> "$backupsFullDir/crystal-backup-meta/cbb-index/items"
+            touch "$backupsFullDir/crystal-backup-meta/cbb-index/items.packs-done/${identFile%.identifier}"
             # true # (Skipping ident file since this is disabled right now to make testing faster)
         done
 
         for pointerFile in *.bundle.pointer; do
-            if ! [[ -e "crystal-backup-meta/cbb-index/items.packs-done/${pointerFile%.bundle.pointer}" ]]; then
+            if ! [[ -e "$backupsFullDir/crystal-backup-meta/cbb-index/items.packs-done/${pointerFile%.bundle.pointer}" ]]; then
                 # This pack doesn't have a .identifier file, so it needs to be extracted separately
                 packTempDir="$(tempDir)"
                 packDir="$PWD"
@@ -128,8 +129,8 @@ while read -r streamRegistryPath; do
                 crystalFilePatternMatches=( $crystalFilePattern )
                 localStoreCrystalName="${crystalFilePatternMatches[0]}"
                 [[ -e "$localStoreCrystalName" ]] || die "Crystal info could not be found in the pointer for $packTempDir, so giving up immediately (retrying probably wouldn't help this)."
-                echo "$(<"$localStoreCrystalName"/identifier)" >> "crystal-backup-meta/cbb-index/items"
-                touch "crystal-backup-meta/cbb-index/items.packs-done/${pointerFile%.bundle.pointer}"
+                echo "$(<"$localStoreCrystalName"/identifier)" >> "$backupsFullDir/crystal-backup-meta/cbb-index/items"
+                touch "$backupsFullDir/crystal-backup-meta/cbb-index/items.packs-done/${pointerFile%.bundle.pointer}"
                 popd || die "Could not popd!"
                 rm -r "$packTempDir"
             fi

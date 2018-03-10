@@ -119,13 +119,16 @@ while read -r streamRegistryPath; do
 
         for pointerFile in *.bundle.pointer; do
             if ! [[ -e "crystal-backup-meta/cbb-index/items.packs-done/${pointerFile%.bundle.pointer}" ]]; then
-                # This pack file doesn't have a .identifier file, so it needs to be extracted separately
+                # This pack doesn't have a .identifier file, so it needs to be extracted separately
                 packTempDir="$(tempDir)"
                 cp "$pointerFile" "$packTempDir"
                 pushd "$packTempDir"
                 unxz --stdout - < "$packfileBasename" | tar -xf -
+                popd
             fi
         done
+
+        popd
 
         # TODO: Not implemented
         # Remote pack pointers, with pointer data in the pointer [209fcfdf-d1ad-4345-8ef7-1fdc2d583d49]

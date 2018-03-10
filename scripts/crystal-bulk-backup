@@ -112,12 +112,12 @@ while read -r streamRegistryPath; do
             rm -f "crystal-backup-meta/cbb-index/items.pack-idents-done"
             packfileBasename="$(basename "$identFile")"
             mkdir -p "crystal-backup-meta/cbb-index/items.packs-done"
-            touch "crystal-backup-meta/cbb-index/items.packs-done/${packfileBasename%.*}"
+            touch "crystal-backup-meta/cbb-index/items.packs-done/${packfileBasename%.identifier}"
             # true # (Skipping ident file since this is disabled right now to make testing faster)
         done
 
-        for pointerFile in "$streamRegistryFullPath/Packs/"*.pointer; do
-            if [[ -e ]]
+        for pointerFile in "$streamRegistryFullPath/Packs/"*.bundle.pointer; do
+            if ! [[ -e "crystal-backup-meta/cbb-index/items.packs-done/${packfileBasename%.bundle.pointer}" ]]; then
             echo "$(<"$identFile")" >> "crystal-backup-meta/cbb-index/items"
             rm -f "crystal-backup-meta/cbb-index/items.pack-idents-done"
             packfileBasename="$(basename "$identFile")"

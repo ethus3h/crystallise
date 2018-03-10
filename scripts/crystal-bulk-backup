@@ -119,12 +119,17 @@ while read -r streamRegistryPath; do
         for pointerFile in "$streamRegistryFullPath/Packs/"*.bundle.pointer; do
             if ! [[ -e "crystal-backup-meta/cbb-index/items.packs-done/${packfileBasename%.bundle.pointer}" ]]; then
                 # This pack file doesn't have a .identifier file, so it needs to be extracted separately
+                (
+                    packTempDir="$(tempDir)"
+                    cp "$pointerFile" "$packTempDir"
+                )
                 
             echo "$(<"$identFile")" >> "crystal-backup-meta/cbb-index/items"
             rm -f "crystal-backup-meta/cbb-index/items.pack-idents-done"
             packfileBasename="$(basename "$identFile")"
             mkdir -p "crystal-backup-meta/cbb-index/items.packs-done"
             touch "crystal-backup-meta/cbb-index/items.packs-done/${packfileBasename%.*}"
+            
             # true # (Skipping ident file since this is disabled right now to make testing faster)
         done
 

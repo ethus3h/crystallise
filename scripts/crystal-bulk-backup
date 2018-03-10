@@ -128,11 +128,10 @@ while read -r streamRegistryPath; do
                 crystalFilePattern=".*.crystal-data"
                 crystalFilePatternMatches=( $crystalFilePattern )
                 localStoreCrystalName="${crystalFilePatternMatches[0]}"
-                if ! [[ -e "$localStoreCrystalName" ]]; then
-                    error-notify "Crystal info could not be found in the pointer for $packTempDir, so giving up immediately (retrying probably wouldn't help this)."
-                    break
-                fi
-                localStoreCrystalIdentifier="$(<"$localStoreCrystalName"/identifier)"
+                [[ -e "$localStoreCrystalName" ]]; then
+                    die "Crystal info could not be found in the pointer for $packTempDir, so giving up immediately (retrying probably wouldn't help this)."
+                else
+                    localStoreCrystalIdentifier="$(<"$localStoreCrystalName"/identifier)"
                 popd
             fi
         done

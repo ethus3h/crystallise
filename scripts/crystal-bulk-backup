@@ -124,13 +124,12 @@ while read -r streamRegistryPath; do
                 packDir="$PWD"
                 pushd "$packTempDir"
                 unxz --stdout - < "$packDir/$pointerFile" | tar -xf -
-                # MAINTENANCE: Code copied from sreg_read_stream
+                # MAINTENANCE: Code copied and tweaked from sreg_read_stream
                 crystalFilePattern=".*.crystal-data"
                 crystalFilePatternMatches=( $crystalFilePattern )
                 localStoreCrystalName="${crystalFilePatternMatches[0]}"
                 if ! [[ -e "$localStoreCrystalName" ]]; then
-                    error-notify "Crystal info could not be found in the pointer $hashFull, so giving up immediately (retrying probably wouldn't help this)."
-                    numRetries="0"
+                    error-notify "Crystal info could not be found in the pointer for $packTempDir, so giving up immediately (retrying probably wouldn't help this)."
                     break
                 fi
                 localStoreCrystalIdentifier="$(<"$localStoreCrystalName"/identifier)"

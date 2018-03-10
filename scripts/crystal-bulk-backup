@@ -117,12 +117,13 @@ while read -r streamRegistryPath; do
         done
 
         for pointerFile in "$streamRegistryFullPath/Packs/"*.bundle.pointer; do
+            packfileBasename="$(basename "$pointerFile")"
             if ! [[ -e "crystal-backup-meta/cbb-index/items.packs-done/${packfileBasename%.bundle.pointer}" ]]; then
                 # This pack file doesn't have a .identifier file, so it needs to be extracted separately
-                (
-                    packTempDir="$(tempDir)"
-                    cp "$pointerFile" "$packTempDir"
-                )
+                packTempDir="$(tempDir)"
+                cp "$pointerFile" "$packTempDir"
+                pushd "$packTempDir"
+                unxz --stdout - < "$packfileBasename" | tar -xf -
             fi
         done
 

@@ -106,12 +106,13 @@ while read -r streamRegistryPath; do
         # Go through this sreg and add all the crystals it uses to the index
 
         # Normal remote pack pointers
+        echo "Getting identifiers for packs in $streamRegistryPath"
         for identFile in "$streamRegistryFullPath/Packs/"*.identifier; do
             echo "$(<"$identFile")" >> "crystal-backup-meta/cbb-index/items"
             rm -f "crystal-backup-meta/cbb-index/items.pack-idents-done"
             packfileBasename="$(basename "$identFile")"
-            mkdir -p "crystal-backup-meta/cbb-index/items.packs-done/"
-            touch "${packfileBasename%.*}" >> "crystal-backup-meta/cbb-index/items.packs-done/"
+            mkdir -p "crystal-backup-meta/cbb-index/items.packs-done"
+            touch "crystal-backup-meta/cbb-index/items.packs-done/${packfileBasename%.*}"
             # true # (Skipping ident file since this is disabled right now to make testing faster)
             # FIXME: won't work for packs that don't have a .identifier file (older ones just have a pointer file)
         done

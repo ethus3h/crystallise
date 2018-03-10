@@ -128,9 +128,8 @@ while read -r streamRegistryPath; do
                 crystalFilePatternMatches=( $crystalFilePattern )
                 localStoreCrystalName="${crystalFilePatternMatches[0]}"
                 [[ -e "$localStoreCrystalName" ]] || die "Crystal info could not be found in the pointer for $packTempDir, so giving up immediately (retrying probably wouldn't help this)."
-                localStoreCrystalIdentifier="$(<)"
                 echo "$(<"$localStoreCrystalName"/identifier)" >> "crystal-backup-meta/cbb-index/items"
-                touch "crystal-backup-meta/cbb-index/items.packs-done/${identFile%.identifier}"
+                touch "crystal-backup-meta/cbb-index/items.packs-done/${pointerFile%.bundle.pointer}"
                 popd
             fi
         done

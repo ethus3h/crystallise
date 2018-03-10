@@ -109,18 +109,16 @@ while read -r streamRegistryPath; do
 
         # Normal remote pack pointers
         echo "Getting identifiers for packs in $streamRegistryPath"
-        for identFile in "$streamRegistryFullPath/Packs/"*.identifier; do
+        for identFile in *.identifier; do
             echo "$(<"$identFile")" >> "crystal-backup-meta/cbb-index/items"
             rm -f "crystal-backup-meta/cbb-index/items.pack-idents-done"
-            packfileBasename="$(basename "$identFile")"
             mkdir -p "crystal-backup-meta/cbb-index/items.packs-done"
-            touch "crystal-backup-meta/cbb-index/items.packs-done/${packfileBasename%.identifier}"
+            touch "crystal-backup-meta/cbb-index/items.packs-done/${identFile%.identifier}"
             # true # (Skipping ident file since this is disabled right now to make testing faster)
         done
 
-        for pointerFile in "$streamRegistryFullPath/Packs/"*.bundle.pointer; do
-            packfileBasename="$(basename "$pointerFile")"
-            if ! [[ -e "crystal-backup-meta/cbb-index/items.packs-done/${packfileBasename%.bundle.pointer}" ]]; then
+        for pointerFile in *.bundle.pointer; do
+            if ! [[ -e "crystal-backup-meta/cbb-index/items.packs-done/${pointerFile%.bundle.pointer}" ]]; then
                 # This pack file doesn't have a .identifier file, so it needs to be extracted separately
                 packTempDir="$(tempDir)"
                 cp "$pointerFile" "$packTempDir"

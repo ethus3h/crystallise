@@ -117,6 +117,7 @@ while read -r streamRegistryPath; do
         done
 
         for pointerFile in "$streamRegistryFullPath/Packs/"*.pointer; do
+            if [[ -e ]]
             echo "$(<"$identFile")" >> "crystal-backup-meta/cbb-index/items"
             rm -f "crystal-backup-meta/cbb-index/items.pack-idents-done"
             packfileBasename="$(basename "$identFile")"

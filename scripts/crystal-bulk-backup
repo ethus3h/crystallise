@@ -109,9 +109,8 @@ while read -r streamRegistryPath; do
         for identFile in "$streamRegistryFullPath/Packs/"*.identifier; do
             echo "$(<"$identFile")" >> "crystal-backup-meta/cbb-index/items"
             rm -f "crystal-backup-meta/cbb-index/items.pack-idents-done"
-            packfileBasename="$(basename "$identFile")"
-            
-            touch "${packfileBasename%.*}" >> "crystal-backup-meta/cbb-index/items.packs-done/"
+            pcak="$(basename "$identFile")"
+            touch "$(basename "$identFile")" >> "crystal-backup-meta/cbb-index/items.pack-idents-done"
             # true # (Skipping ident file since this is disabled right now to make testing faster)
             # FIXME: won't work for packs that don't have a .identifier file (older ones just have a pointer file)
         done

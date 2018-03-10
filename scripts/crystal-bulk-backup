@@ -123,6 +123,7 @@ while read -r streamRegistryPath; do
                     packTempDir="$(tempDir)"
                     cp "$pointerFile" "$packTempDir"
                 )
+            fi
         done
 
         # TODO: Not implemented

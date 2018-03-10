@@ -116,6 +116,15 @@ while read -r streamRegistryPath; do
             # true # (Skipping ident file since this is disabled right now to make testing faster)
         done
 
+        for pointerFile in "$streamRegistryFullPath/Packs/"*.pointer; do
+            echo "$(<"$identFile")" >> "crystal-backup-meta/cbb-index/items"
+            rm -f "crystal-backup-meta/cbb-index/items.pack-idents-done"
+            packfileBasename="$(basename "$identFile")"
+            mkdir -p "crystal-backup-meta/cbb-index/items.packs-done"
+            touch "crystal-backup-meta/cbb-index/items.packs-done/${packfileBasename%.*}"
+            # true # (Skipping ident file since this is disabled right now to make testing faster)
+        done
+
         # TODO: Not implemented
         # Remote pack pointers, with pointer data in the pointer [209fcfdf-d1ad-4345-8ef7-1fdc2d583d49]
         # Like the normal remote pack pointers, we need to get the identifier out of the pointer as a tar file.

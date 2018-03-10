@@ -40,6 +40,7 @@ touch "$cbbConfigDir"/crystallize/cbb/repositories
 touch "$cbbConfigDir"/crystallize/cbb/stream-registries
 
 mkdir -p 'crystal-backup-meta/cbb-index'
+mkdir -p 'crystal-backup-meta/cbb-index/items.packs-done'
 mkdir -p 'items'
 mkdir -p 'repositories'
 mkdir -p 'stream-registries'
@@ -111,8 +112,6 @@ while read -r streamRegistryPath; do
         echo "Getting identifiers for packs in $streamRegistryPath"
         for identFile in *.identifier; do
             echo "$(<"$identFile")" >> "crystal-backup-meta/cbb-index/items"
-            rm -f "crystal-backup-meta/cbb-index/items.pack-idents-done"
-            mkdir -p "crystal-backup-meta/cbb-index/items.packs-done"
             touch "crystal-backup-meta/cbb-index/items.packs-done/${identFile%.identifier}"
             # true # (Skipping ident file since this is disabled right now to make testing faster)
         done

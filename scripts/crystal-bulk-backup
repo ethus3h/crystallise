@@ -134,6 +134,7 @@ while read -r streamRegistryPath; do
                 if ! [[ -e "$localStoreCrystalName" ]]; then
                     warn "Crystal info could not be found in the pointer for $pointerFile, so giving up immediately and skipping this one (retrying probably wouldn't help this)."
                     touch "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/${pointerFile%.bundle.pointer}"
+                    spopd || die "Could not popd!"
                     continue
                 fi
                 [[ -e "$localStoreCrystalName/identifier" ]] || die "Crystal info was found, but no crystal identifier was found in the pointer for $pointerFile."

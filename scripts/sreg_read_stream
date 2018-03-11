@@ -238,7 +238,11 @@ mkdir "$streamId"
                     localstorecache_init "$crystalWorkdir/.LocalStoreCache/" "localstore"
                 fi
                 crystalFilePattern=".*.crystal-data"
+                shopt -u failglob
+                shopt -s nullglob
                 crystalFilePatternMatches=( $crystalFilePattern )
+                shopt -s failglob
+                shopt -u nullglob
                 localStoreCrystalName="${crystalFilePatternMatches[0]}"
                 if ! [[ -e "$localStoreCrystalName" ]]; then
                     error-notify "Crystal info could not be found in the pointer $hashFull, so giving up immediately (retrying probably wouldn't help this)."

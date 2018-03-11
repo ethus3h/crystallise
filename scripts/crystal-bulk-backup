@@ -131,7 +131,7 @@ while read -r streamRegistryPath; do
                 shopt -s failglob
                 shopt -u nullglob
                 localStoreCrystalName="${crystalFilePatternMatches[0]}"
-                [[ -e "$localStoreCrystalName" ]] || die "Crystal info could not be found in the pointer for $packTempDir, so giving up immediately (retrying probably wouldn't help this)."
+                [[ -e "$localStoreCrystalName" ]] || die "Crystal info could not be found in the pointer for $pointerFile, so giving up immediately (retrying probably wouldn't help this)."
                 echo "$(<"$localStoreCrystalName"/identifier)" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
                 touch "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/${pointerFile%.bundle.pointer}"
                 popd || die "Could not popd!"

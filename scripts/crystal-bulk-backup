@@ -56,8 +56,6 @@ cat "$(ember-getconf DataDir)/repositories"{,-nonpublic}.lst | while read -r "re
     echo $'\n'"${repoPattern/\@REPOSITORY\@/$repo}" >> "crystal-backup-meta/cbb-index/repositories"
 done
 
-cat "$(ember-getconf DataDir)/stream-registries.lst" >> "crystal-backup-meta/cbb-index/stream-registries"
-
 print $'\n' >> "crystal-backup-meta/cbb-index/items"
 cat "$cbbConfigDir"/crystallize/cbb/items >> "crystal-backup-meta/cbb-index/items"
 removeDuplicateLines 'crystal-backup-meta/cbb-index/items' | sponge 'crystal-backup-meta/cbb-index/items'
@@ -68,6 +66,8 @@ removeDuplicateLines 'crystal-backup-meta/cbb-index/repositories' | sponge 'crys
 
 print $'\n' >> "crystal-backup-meta/cbb-index/stream-registries"
 cat "$cbbConfigDir"/crystallize/cbb/stream-registries >> "crystal-backup-meta/cbb-index/stream-registries"
+print $'\n' >> "crystal-backup-meta/cbb-index/stream-registries"
+cat "$(ember-getconf DataDir)/stream-registries.lst" >> "crystal-backup-meta/cbb-index/stream-registries"
 removeDuplicateLines 'crystal-backup-meta/cbb-index/stream-registries' | sponge 'crystal-backup-meta/cbb-index/stream-registries'
 
 # Clone git repositories

@@ -151,11 +151,12 @@ while read -r streamRegistryPath; do
             if [[ -f "$potentialPointer" ]]; then
                 typeSignature="$(head -c 36 "$potentialPointer" | tr -d '\0')"
                 if [[ "$typeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then # Hash pointer
+                    touch "$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/${potentialPointer}"
                     true # TODO: Not implemented
                 elif [[ "$typeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then # Standard remote pointer
                     true # TODO: Not implemented
                 elif [[ "$typeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then # LocalStore pointer
-                    true # TODO: Not implemented
+                    true # These we don't mark as done, since after the next sreg_flush_localstore is run, they will need to be re-read.
                 elif [[ "$typeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]]; then # Remote pack pointer
                     true # TODO: Not implemented
                 elif [[ "$typeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]]; then # Remote pack pointer, with pointer data in the pointer

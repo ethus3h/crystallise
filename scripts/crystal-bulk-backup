@@ -154,12 +154,12 @@ while read -r streamRegistryPath; do
             if [[ -f "$potentialPointer" ]]; then
                 if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$potentialPointer" ]]; then
                     typeSignature="$(head -c 36 "$potentialPointer" | tr -d '\0')"
-                    hashFull="$(basename potentialPointer)"
-                    hashA="${hashFull:0:1}"
-                    hashB="${hashFull:1:1}"
-                    hashC="${hashFull:2:1}"
-                    hashSubpath="$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$hashA/$hashB/$hashC"
-                    [[ ! -d $hashSubpath ]] && mkdir -p "$hashSubpath"
+                    # hashFull="$(basename "$potentialPointer")"
+                    # hashA="${hashFull:0:1}"
+                    # hashB="${hashFull:1:1}"
+                    # hashC="${hashFull:2:1}"
+                    # hashSubpath="$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$hashA/$hashB/$hashC"
+                    # [[ ! -d $hashSubpath ]] && mkdir -p "$hashSubpath"
                     # touch "$hashSubpath/hashFull"
                     if [[ "$typeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then # Hash pointer
                         warn "A hash pointer, $potentialPointer, is present in the pointer database!"

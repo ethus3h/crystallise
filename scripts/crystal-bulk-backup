@@ -152,8 +152,7 @@ while read -r streamRegistryPath; do
         shopt -s globstar
         for potentialPointer in {0..9}/** {a..f}/**; do
             if [[ -f "$potentialPointer" ]]; then
-                donePointersPathRoot="$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/"
-                if ! [[ -e "$donePointersPathRoot/$potentialPointer" ]]; then
+                if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$potentialPointer" ]]; then
                     typeSignature="$(head -c 36 "$potentialPointer" | tr -d '\0')"
                     hashFull="$(basename potentialPointer)"
                     hashA="${hashFull:0:1}"

@@ -151,6 +151,10 @@ while read -r streamRegistryPath; do
             if [[ -f "$potentialPointer" ]]; then
                 typeSignature="$(head -c 36 "$potentialPointer" | tr -d '\0')"
                 hashFull="$(basename potentialPointer)"
+                hashA="${hashFull:0:1}"
+                hashB="${hashFull:1:1}"
+                hashC="${hashFull:2:1}"
+                hashSubpath="$hashA/$hashB/$hashC/$hashFull"
                 # touch "$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/${potentialPointer}" # FIXME we need the hash fragment subdirs (a/b/c/hash) to make the directory and put this in the right place
                 if [[ "$typeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then # Hash pointer
                     warn "A hash pointer, $potentialPointer, is present in the pointer database!"

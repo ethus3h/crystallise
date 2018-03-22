@@ -28,7 +28,7 @@ if [[ "$2" == "--here" ]]; then
     decrystallizeHere="--here"
 fi
 
-identifier="$(cat "$(dirname "$1")"/."$(basename "$1")"-data/identifier)"
+identifier="$(crystallize-get-identifier-from-pointer "$1")"
 
 if [[ "$useCustomPassphrase" != "true" ]]; then
     decrystallize "$lockOverride" "$identifier" "$decrystallizeHere"

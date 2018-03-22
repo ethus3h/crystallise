@@ -190,9 +190,10 @@ while read -r streamRegistryPath; do
                         shopt -u nullglob
                         localStoreCrystalName="${crystalFilePatternMatches[0]}"
                         if ! [[ -e "$localStoreCrystalName" ]]; then
-                            error-notify "Crystal info could not be found in the pointer $hashFull, so giving up immediately (retrying probably wouldn't help this)."
-                            numRetries="0"
-                            break
+                            warn "Crystal info could not be found in the pointer for $pointerFile, so giving up immediately and skipping this one (retrying probably wouldn't help this)."
+                            touch "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/${pointerFile%.bundle.pointer}"
+                            spopd || die "Could not popd!"
+                            continue
                         fi
                         echo "$(<"$localStoreCrystalName"/identifier)" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
                         spopd || die "Could not popd!"

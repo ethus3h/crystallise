@@ -194,7 +194,6 @@ while read -r streamRegistryPath; do
                     numRetries="0"
                     break
                 fi
-                localStoreCrystalIdentifier="$(<"$localStoreCrystalName"/identifier)"
                 echo "$(<"$localStoreCrystalName"/identifier)" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
                         crystallize-get-identifier-from-pointer ./*.crystal >> "$backupLocation/crystal-backup-meta/cbb-index/items"
                         spopd || die "Could not popd!"

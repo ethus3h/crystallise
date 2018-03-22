@@ -147,10 +147,6 @@ while read -r streamRegistryPath; do
 
         spopd || die "Could not popd!"
 
-        # TODO: Not implemented
-
-        # Standard remote pointers [a5e2f296-3085-49c0-8f48-24ea436b7a8b]
-        # URL pointers [45baff46-8db7-46f6-aad9-de5f713b02fe]
         shopt -s globstar
         for potentialPointer in "$streamRegistryFullPath"/**; do
             if [[ -f "$potentialPointer" ]]; then

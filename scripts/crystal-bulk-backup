@@ -164,7 +164,7 @@ while read -r streamRegistryPath; do
                     # Like the normal remote pack files, we need to get the identifier out of the pointer as a tar file.
                     true # TODO: Not implemented
                 elif [[ "$typeSignature" == "45baff46-8db7-46f6-aad9-de5f713b02fe" ]]; then # URL pointer
-                    "$(tail -c +167 "$streamId.xz")"
+                    "$(tail -c +167 "$streamId.xz" | head -n 1)"
                     true # TODO: Not implemented
                 else
                     warn "The file at $PWD/$potentialPointer has the unknown pointer type signature $typeSignature."

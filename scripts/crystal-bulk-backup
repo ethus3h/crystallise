@@ -167,9 +167,8 @@ while read -r streamRegistryPath; do
                         pointerTempDir="$(tempDir)"
                         packDir="$PWD"
                         spushd "$pointerTempDir" || die "Could not pushd to $pointerTempDir!"
-                                        tail -c +167 "$streamId.xz" | unxz --stdout - | tar -xf -
-                                        decrystallize-pointer --passphrase "$(sregi_get_passphrase "$sregDir")" "$lockOverride" ./*.crystal --here &> /dev/null
-
+                        tail -c +167 "$streamRegistryFullPath/$potentialPointer" | unxz --stdout - | tar -xf -
+                        decrystallize-pointer --passphrase "$(sregi_get_passphrase "$sregDir")" "$lockOverride" ./*.crystal --here &> /dev/null
                         spopd || die "Could not popd!"
                         rm -r "$pointerTempDir"
                     elif [[ "$typeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then # LocalStore pointer

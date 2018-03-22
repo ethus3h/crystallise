@@ -84,6 +84,7 @@ shopt -s dotglob
 
 cbbStreamRegistries="$(<crystal-backup-meta/cbb-index/stream-registries)"
 while read -r streamRegistryPath; do
+    echo "Getting identifiers for the stream registry in $streamRegistryPath..."
     if [[ -n "$streamRegistryPath" ]]; then
         streamRegistryFullPath="repositories/$streamRegistryPath"
         streamRegistryRepoName="${streamRegistryPath%%\/*}"

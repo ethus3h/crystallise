@@ -178,7 +178,13 @@ while read -r streamRegistryPath; do
                         true
                     elif [[ "$typeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]]; then # Remote pack pointer, with pointer data in the pointer
                         # Like the normal remote pack files, we need to get the identifier out of the pointer as a tar file.
-                        true # TODO: Not implemented
+                        pointerTempDir="$(tempDir)"
+                        packDir="$PWD"
+                        spushd "$pointerTempDir" || die "Could not pushd to $pointerTempDir!"
+                        tail -c +167 "$streamRegistryFullPath/$potentialPointer" | unxz --stdout - | tar -xf -
+                        crystallize-get-identifier-from-pointer ./*.crystal >> "$backupLocation/crystal-backup-meta/cbb-index/items"
+                        spopd || die "Could not popd!"
+                        rm -r "$pointerTempDir"
                     elif [[ "$typeSignature" == "45baff46-8db7-46f6-aad9-de5f713b02fe" ]]; then # URL pointer
                         iaIdentifierWithPath="$(tail -c +167 "$streamId.xz" | head -n 1)"
                         echo "${iaIdentifierWithPath%%/*}" >> "$backupLocation/crystal-backup-meta/cbb-index/items"

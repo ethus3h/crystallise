@@ -148,6 +148,7 @@ while read -r streamRegistryPath; do
 
         spopd || die "Could not popd!"
 
+        spushd "$streamRegistryFullPath" || die "Could not pushd to Packs directory!"
         shopt -s globstar
         GLOBIGNORE="./.keep:./.sreg.root:./passphrase:./LocalStore*:./Packs*"
         for potentialPointer in "$streamRegistryFullPath"/**; do

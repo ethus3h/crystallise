@@ -209,3 +209,5 @@ done <<< "$cbbCrystals"
 
 git add -A .
 git commit -m "Update" > /dev/null || true
+
+echo "Done backing up crystals!"

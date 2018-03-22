@@ -179,30 +179,32 @@ while read -r streamRegistryPath; do
                         true
                     elif [[ "$typeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]]; then # Remote pack pointer, with pointer data in the pointer
                         # Like the normal remote pack files, we need to get the identifier out of the pointer as a tar file.
-                        pointerTempDir="$(tempDir)"
-                        packDir="$PWD"
-                        spushd "$pointerTempDir" || die "Could not pushd to $pointerTempDir!"
-                        tail -c +167 "$streamRegistryFullPath/$potentialPointer" | unxz --stdout - | tar -xf -
-                        # MAINTENANCE: Code copied and tweaked from sreg_read_stream
-                        crystalFilePattern=".*.crystal-data"
-                        shopt -u failglob
-                        shopt -s nullglob
-                        crystalFilePatternMatches=( $crystalFilePattern )
-                        shopt -s failglob
-                        shopt -u nullglob
-                        localStoreCrystalName="${crystalFilePatternMatches[0]}"
-                        if ! [[ -e "$localStoreCrystalName" ]]; then
-                            warn "Crystal info could not be found in the pointer for $pointerFile, so giving up immediately and skipping this one (retrying probably wouldn't help this)."
-                            touch "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/${pointerFile%.bundle.pointer}"
-                            spopd || die "Could not popd!"
-                            continue
-                        fi
-                        echo "$(<"$localStoreCrystalName"/identifier)" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
-                        spopd || die "Could not popd!"
-                        rm -r "$pointerTempDir"
+                        true # TODO: skipped until later (test with only each kind of pointer for now, to make sure there are crystals found for each relevant type)
+                        # pointerTempDir="$(tempDir)"
+                        # packDir="$PWD"
+                        # spushd "$pointerTempDir" || die "Could not pushd to $pointerTempDir!"
+                        # tail -c +167 "$streamRegistryFullPath/$potentialPointer" | unxz --stdout - | tar -xf -
+                        # # MAINTENANCE: Code copied and tweaked from sreg_read_stream
+                        # crystalFilePattern=".*.crystal-data"
+                        # shopt -u failglob
+                        # shopt -s nullglob
+                        # crystalFilePatternMatches=( $crystalFilePattern )
+                        # shopt -s failglob
+                        # shopt -u nullglob
+                        # localStoreCrystalName="${crystalFilePatternMatches[0]}"
+                        # if ! [[ -e "$localStoreCrystalName" ]]; then
+                        #     warn "Crystal info could not be found in the pointer for $pointerFile, so giving up immediately and skipping this one (retrying probably wouldn't help this)."
+                        #     touch "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/${pointerFile%.bundle.pointer}"
+                        #     spopd || die "Could not popd!"
+                        #     continue
+                        # fi
+                        # echo "$(<"$localStoreCrystalName"/identifier)" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
+                        # spopd || die "Could not popd!"
+                        # rm -r "$pointerTempDir"
                     elif [[ "$typeSignature" == "45baff46-8db7-46f6-aad9-de5f713b02fe" ]]; then # URL pointer
-                        iaIdentifierWithPath="$(tail -c +167 "$streamId.xz" | head -n 1)"
-                        echo "${iaIdentifierWithPath%%/*}" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
+                        true # TODO: skipped until later (test with only each kind of pointer for now, to make sure there are crystals found for each relevant type)
+                        # iaIdentifierWithPath="$(tail -c +167 "$streamId.xz" | head -n 1)"
+                        # echo "${iaIdentifierWithPath%%/*}" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
                     else
                         warn "The file at $PWD/$potentialPointer has the unknown pointer type signature $typeSignature."
                     fi

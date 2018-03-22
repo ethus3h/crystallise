@@ -164,14 +164,14 @@ while read -r streamRegistryPath; do
                     if [[ "$typeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then # Hash pointer
                         warn "A hash pointer, $potentialPointer, is present in the pointer database!"
                     elif [[ "$typeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then # Standard remote pointer
-                        true # TODO: skip until later (test with only each kind of pointer for now, to make sure there are crystals found for each relevant type)
-                        pointerTempDir="$(tempDir)"
-                        packDir="$PWD"
-                        spushd "$pointerTempDir" || die "Could not pushd to $pointerTempDir!"
-                        tail -c +167 "$streamRegistryFullPath/$potentialPointer" | unxz --stdout - | tar -xf -
-                        crystallize-get-identifier-from-pointer ./*.crystal >> "$backupLocation/crystal-backup-meta/cbb-index/items"
-                        spopd || die "Could not popd!"
-                        rm -r "$pointerTempDir"
+                        true # TODO: skipped until later (test with only each kind of pointer for now, to make sure there are crystals found for each relevant type)
+                        # pointerTempDir="$(tempDir)"
+                        # packDir="$PWD"
+                        # spushd "$pointerTempDir" || die "Could not pushd to $pointerTempDir!"
+                        # tail -c +167 "$streamRegistryFullPath/$potentialPointer" | unxz --stdout - | tar -xf -
+                        # crystallize-get-identifier-from-pointer ./*.crystal >> "$backupLocation/crystal-backup-meta/cbb-index/items"
+                        # spopd || die "Could not popd!"
+                        # rm -r "$pointerTempDir"
                     elif [[ "$typeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then # LocalStore pointer
                         true # These we don't mark as done, since after the next sreg_flush_localstore is run, they will need to be re-read.
                     elif [[ "$typeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]]; then # Remote pack pointer

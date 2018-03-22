@@ -182,19 +182,19 @@ while read -r streamRegistryPath; do
                         packDir="$PWD"
                         spushd "$pointerTempDir" || die "Could not pushd to $pointerTempDir!"
                         tail -c +167 "$streamRegistryFullPath/$potentialPointer" | unxz --stdout - | tar -xf -
-                crystalFilePattern=".*.crystal-data"
-                shopt -u failglob
-                shopt -s nullglob
-                crystalFilePatternMatches=( $crystalFilePattern )
-                shopt -s failglob
-                shopt -u nullglob
-                localStoreCrystalName="${crystalFilePatternMatches[0]}"
-                if ! [[ -e "$localStoreCrystalName" ]]; then
-                    error-notify "Crystal info could not be found in the pointer $hashFull, so giving up immediately (retrying probably wouldn't help this)."
-                    numRetries="0"
-                    break
-                fi
-                echo "$(<"$localStoreCrystalName"/identifier)" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
+                        crystalFilePattern=".*.crystal-data"
+                        shopt -u failglob
+                        shopt -s nullglob
+                        crystalFilePatternMatches=( $crystalFilePattern )
+                        shopt -s failglob
+                        shopt -u nullglob
+                        localStoreCrystalName="${crystalFilePatternMatches[0]}"
+                        if ! [[ -e "$localStoreCrystalName" ]]; then
+                            error-notify "Crystal info could not be found in the pointer $hashFull, so giving up immediately (retrying probably wouldn't help this)."
+                            numRetries="0"
+                            break
+                        fi
+                        echo "$(<"$localStoreCrystalName"/identifier)" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
                         spopd || die "Could not popd!"
                         rm -r "$pointerTempDir"
                     elif [[ "$typeSignature" == "45baff46-8db7-46f6-aad9-de5f713b02fe" ]]; then # URL pointer

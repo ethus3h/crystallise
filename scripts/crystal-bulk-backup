@@ -205,7 +205,7 @@ while read -r streamRegistryPath; do
                         # rm -r "$pointerTempDir"
                     elif [[ "$typeSignature" == "45baff46-8db7-46f6-aad9-de5f713b02fe" ]]; then # URL pointer
                         true # TODO: skipped until later (test with only each kind of pointer for now, to make sure there are crystals found for each relevant type)
-                        # iaIdentifierWithPath="$(tail -c +167 "$streamId.xz" | head -n 1)"
+                        # iaIdentifierWithPath="$(tail -c +167 "$streamRegistryFullPath/$potentialPointer" | head -n 1)"
                         # echo "${iaIdentifierWithPath%%/*}" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
                     else
                         warn "The file at $PWD/$potentialPointer has the unknown pointer type signature $typeSignature."

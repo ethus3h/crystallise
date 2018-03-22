@@ -113,7 +113,6 @@ while read -r streamRegistryPath; do
         for identFile in *.identifier; do
             echo "$(<"$identFile")" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
             touch "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/${identFile%.identifier}"
-            # true # FIXME (Skipping ident file since this is disabled right now to make testing faster)
         done
 
         for pointerFile in *.bundle.pointer; do

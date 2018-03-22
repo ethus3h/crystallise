@@ -195,6 +195,7 @@ while read -r streamRegistryPath; do
                     break
                 fi
                 localStoreCrystalIdentifier="$(<"$localStoreCrystalName"/identifier)"
+                echo "$(<"$identFile")" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
                         crystallize-get-identifier-from-pointer ./*.crystal >> "$backupLocation/crystal-backup-meta/cbb-index/items"
                         spopd || die "Could not popd!"
                         rm -r "$pointerTempDir"

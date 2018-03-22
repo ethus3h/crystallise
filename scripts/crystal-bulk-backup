@@ -150,8 +150,8 @@ while read -r streamRegistryPath; do
 
         spushd "$streamRegistryFullPath" || die "Could not pushd to stream registry directory!"
         shopt -s globstar
-        GLOBIGNORE=".keep:.sreg.root:passphrase:LocalStore*:Packs*"
-        for potentialPointer in "$streamRegistryFullPath"/**; do
+        GLOBIGNORE=".keep:.sreg.root:passphrase:.BundlePointerTemp*:LocalStore*:Packs*"
+        for potentialPointer in **; do
             if [[ -f "$potentialPointer" ]]; then
                 typeSignature="$(head -c 36 "$potentialPointer" | tr -d '\0')"
                 hashFull="$(basename potentialPointer)"

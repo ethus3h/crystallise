@@ -195,7 +195,6 @@ while read -r streamRegistryPath; do
                     break
                 fi
                 echo "$(<"$localStoreCrystalName"/identifier)" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
-                        crystallize-get-identifier-from-pointer ./*.crystal >> "$backupLocation/crystal-backup-meta/cbb-index/items"
                         spopd || die "Could not popd!"
                         rm -r "$pointerTempDir"
                     elif [[ "$typeSignature" == "45baff46-8db7-46f6-aad9-de5f713b02fe" ]]; then # URL pointer

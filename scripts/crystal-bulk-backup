@@ -152,32 +152,33 @@ while read -r streamRegistryPath; do
         shopt -s globstar
         for potentialPointer in {0..9}/** {a..f}/**; do
             if [[ -f "$potentialPointer" ]]; then
-                donePointersPathRoot="$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done"
-                if ! [[ -e ]]
-                typeSignature="$(head -c 36 "$potentialPointer" | tr -d '\0')"
-                hashFull="$(basename potentialPointer)"
-                hashA="${hashFull:0:1}"
-                hashB="${hashFull:1:1}"
-                hashC="${hashFull:2:1}"
-                hashSubpath="$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$hashA/$hashB/$hashC"
-                [[ ! -d $hashSubpath ]] && mkdir -p "$hashSubpath"
-                # touch "$hashSubpath/hashFull"
-                if [[ "$typeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then # Hash pointer
-                    warn "A hash pointer, $potentialPointer, is present in the pointer database!"
-                elif [[ "$typeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then # Standard remote pointer
-                    true # TODO: Not implemented
-                elif [[ "$typeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then # LocalStore pointer
-                    true # These we don't mark as done, since after the next sreg_flush_localstore is run, they will need to be re-read.
-                elif [[ "$typeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]]; then # Remote pack pointer
-                    true # TODO: Not implemented
-                elif [[ "$typeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]]; then # Remote pack pointer, with pointer data in the pointer
-                    # Like the normal remote pack files, we need to get the identifier out of the pointer as a tar file.
-                    true # TODO: Not implemented
-                elif [[ "$typeSignature" == "45baff46-8db7-46f6-aad9-de5f713b02fe" ]]; then # URL pointer
-                    iaIdentifierWithPath="$(tail -c +167 "$streamId.xz" | head -n 1)"
-                    echo "${iaIdentifierWithPath%%/*}" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
-                else
-                    warn "The file at $PWD/$potentialPointer has the unknown pointer type signature $typeSignature."
+                donePointersPathRoot="$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/"
+                if ! [[ -e "$donePointersPathRoot/$potentialPointer" ]]; then
+                    typeSignature="$(head -c 36 "$potentialPointer" | tr -d '\0')"
+                    hashFull="$(basename potentialPointer)"
+                    hashA="${hashFull:0:1}"
+                    hashB="${hashFull:1:1}"
+                    hashC="${hashFull:2:1}"
+                    hashSubpath="$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$hashA/$hashB/$hashC"
+                    [[ ! -d $hashSubpath ]] && mkdir -p "$hashSubpath"
+                    # touch "$hashSubpath/hashFull"
+                    if [[ "$typeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then # Hash pointer
+                        warn "A hash pointer, $potentialPointer, is present in the pointer database!"
+                    elif [[ "$typeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then # Standard remote pointer
+                        true # TODO: Not implemented
+                    elif [[ "$typeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then # LocalStore pointer
+                        true # These we don't mark as done, since after the next sreg_flush_localstore is run, they will need to be re-read.
+                    elif [[ "$typeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]]; then # Remote pack pointer
+                        true # TODO: Not implemented
+                    elif [[ "$typeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]]; then # Remote pack pointer, with pointer data in the pointer
+                        # Like the normal remote pack files, we need to get the identifier out of the pointer as a tar file.
+                        true # TODO: Not implemented
+                    elif [[ "$typeSignature" == "45baff46-8db7-46f6-aad9-de5f713b02fe" ]]; then # URL pointer
+                        iaIdentifierWithPath="$(tail -c +167 "$streamId.xz" | head -n 1)"
+                        echo "${iaIdentifierWithPath%%/*}" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
+                    else
+                        warn "The file at $PWD/$potentialPointer has the unknown pointer type signature $typeSignature."
+                    fi
                 fi
             fi
         done

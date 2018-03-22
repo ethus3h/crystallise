@@ -151,6 +151,7 @@ while read -r streamRegistryPath; do
             if [[ -f "$potentialPointer" ]]; then
                 typeSignature="$(head -c 36 "$potentialPointer" | tr -d '\0')"
                 if [[ "$typeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then # Hash pointer
+                    warn "A hash pointer $potentialPointer is present in the pointer database! "
                     touch "$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/${potentialPointer}" # FIXME we need the hash fragment subdirs (a/b/c/hash) to make the directory and put this in the right place
                     true # TODO: Not implemented
                 elif [[ "$typeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then # Standard remote pointer

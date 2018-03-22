@@ -149,7 +149,7 @@ while read -r streamRegistryPath; do
         spopd || die "Could not popd!"
 
         shopt -s globstar
-        GLOBIGNORE="./passphrase:./Packs*:./.sreg.root:./LocalStore*"
+        GLOBIGNORE="./.keep:./.sreg.root:./passphrase:./LocalStore*:./Packs*"
         for potentialPointer in "$streamRegistryFullPath"/**; do
             if [[ -f "$potentialPointer" ]]; then
                 typeSignature="$(head -c 36 "$potentialPointer" | tr -d '\0')"

@@ -182,6 +182,7 @@ while read -r streamRegistryPath; do
                         packDir="$PWD"
                         spushd "$pointerTempDir" || die "Could not pushd to $pointerTempDir!"
                         tail -c +167 "$streamRegistryFullPath/$potentialPointer" | unxz --stdout - | tar -xf -
+                        # MAINTENANCE: Code copied and tweaked from sreg_read_stream
                         crystalFilePattern=".*.crystal-data"
                         shopt -u failglob
                         shopt -s nullglob

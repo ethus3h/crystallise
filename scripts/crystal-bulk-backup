@@ -169,7 +169,6 @@ while read -r streamRegistryPath; do
                         spushd "$pointerTempDir" || die "Could not pushd to $pointerTempDir!"
                         spopd || die "Could not popd!"
                         rm -r "$pointerTempDir"
-                        true # TODO: Not implemented
                     elif [[ "$typeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then # LocalStore pointer
                         true # These we don't mark as done, since after the next sreg_flush_localstore is run, they will need to be re-read.
                     elif [[ "$typeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]]; then # Remote pack pointer

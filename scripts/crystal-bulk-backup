@@ -111,8 +111,10 @@ while read -r streamRegistryPath; do
         # Normal remote pack pointers
         echo "Getting identifiers for packs in $streamRegistryPath"
         for identFile in *.identifier; do
-            echo "$(<"$identFile")" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
-            touch "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/${identFile%.identifier}"
+            if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/${identFile%.identifier}" ]]; then
+                echo "$(<"$identFile")" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
+                touch "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/${identFile%.identifier}"
+            fi
         done
 
         for pointerFile in *.bundle.pointer; do

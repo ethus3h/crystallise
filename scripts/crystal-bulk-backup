@@ -173,7 +173,7 @@ while read -r streamRegistryPath; do
                         hashC="${hashFull:2:1}"
                         hashSubpath="$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$hashA/$hashB/$hashC"
                         [[ ! -d $hashSubpath ]] && mkdir -p "$hashSubpath"
-                        touch "$hashSubpath/hashFull"
+                        touch "$hashSubpath/$hashFull"
                     elif [[ "$typeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then # LocalStore pointer
                         true # These we don't mark as done, since after the next sreg_flush_localstore is run, they will need to be re-read.
                     elif [[ "$typeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]]; then # Remote pack pointer
@@ -184,7 +184,7 @@ while read -r streamRegistryPath; do
                         hashC="${hashFull:2:1}"
                         hashSubpath="$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$hashA/$hashB/$hashC"
                         [[ ! -d $hashSubpath ]] && mkdir -p "$hashSubpath"
-                        touch "$hashSubpath/hashFull"
+                        touch "$hashSubpath/$hashFull"
                     elif [[ "$typeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]]; then # Remote pack pointer, with pointer data in the pointer
                         # Like the normal remote pack files, we need to get the identifier out of the pointer as a tar file.
                         pointerTempDir="$(tempDir)"
@@ -215,7 +215,7 @@ while read -r streamRegistryPath; do
                         hashC="${hashFull:2:1}"
                         hashSubpath="$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$hashA/$hashB/$hashC"
                         [[ ! -d $hashSubpath ]] && mkdir -p "$hashSubpath"
-                        touch "$hashSubpath/hashFull"
+                        touch "$hashSubpath/$hashFull"
                     elif [[ "$typeSignature" == "45baff46-8db7-46f6-aad9-de5f713b02fe" ]]; then # URL pointer
                         echo "URL pointer found: $potentialPointer"
                         iaIdentifierWithPath="$(tail -c +167 "$potentialPointer" | head -n 1)"
@@ -227,7 +227,7 @@ while read -r streamRegistryPath; do
                         hashC="${hashFull:2:1}"
                         hashSubpath="$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$hashA/$hashB/$hashC"
                         [[ ! -d $hashSubpath ]] && mkdir -p "$hashSubpath"
-                        touch "$hashSubpath/hashFull"
+                        touch "$hashSubpath/$hashFull"
                     else
                         warn "The file at $PWD/$potentialPointer has the unknown pointer type signature $typeSignature."
                     fi

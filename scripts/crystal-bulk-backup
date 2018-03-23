@@ -162,7 +162,7 @@ while read -r streamRegistryPath; do
                         pointerTempDir="$(tempDir)"
                         packDir="$PWD"
                         spushd "$pointerTempDir" || die "Could not pushd to $pointerTempDir!"
-                        tail -c +167 "$streamRegistryFullPath/$potentialPointer" | unxz --stdout - | tar -xf -
+                        tail -c +167 "$potentialPointer" | unxz --stdout - | tar -xf -
                         crystallize-get-identifier-from-pointer ./*.crystal >> "$backupLocation/crystal-backup-meta/cbb-index/items"
                         spopd || die "Could not popd!"
                         rm -r "$pointerTempDir"
@@ -190,7 +190,7 @@ while read -r streamRegistryPath; do
                         pointerTempDir="$(tempDir)"
                         packDir="$PWD"
                         spushd "$pointerTempDir" || die "Could not pushd to $pointerTempDir!"
-                        tail -c +167 "$streamRegistryFullPath/$potentialPointer" | unxz --stdout - | tar -xf -
+                        tail -c +167 "$potentialPointer" | unxz --stdout - | tar -xf -
                         # MAINTENANCE: Code copied and tweaked from sreg_read_stream
                         crystalFilePattern=".*.crystal-data"
                         shopt -u failglob
@@ -218,7 +218,7 @@ while read -r streamRegistryPath; do
                         touch "$hashSubpath/hashFull"
                     elif [[ "$typeSignature" == "45baff46-8db7-46f6-aad9-de5f713b02fe" ]]; then # URL pointer
                         echo "URL pointer found: $potentialPointer"
-                        iaIdentifierWithPath="$(tail -c +167 "$streamRegistryFullPath/$potentialPointer" | head -n 1)"
+                        iaIdentifierWithPath="$(tail -c +167 "$potentialPointer" | head -n 1)"
                         echo "${iaIdentifierWithPath%%/*}" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
 
                         hashFull="$(basename "$potentialPointer")"

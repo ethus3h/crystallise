@@ -84,8 +84,8 @@ shopt -s dotglob
 
 cbbStreamRegistries="$(<crystal-backup-meta/cbb-index/stream-registries)"
 while read -r streamRegistryPath; do
-    echo "Getting identifiers for the stream registry in $streamRegistryPath..."
     if [[ -n "$streamRegistryPath" ]]; then
+        echo "Getting identifiers for the stream registry in $streamRegistryPath..."
         streamRegistryFullPath="repositories/$streamRegistryPath"
         streamRegistryRepoName="${streamRegistryPath%%\/*}"
         streamRegistryPathInRepo="${streamRegistryPath#*\/}"
@@ -223,8 +223,8 @@ while read -r streamRegistryPath; do
         unset GLOBIGNORE
         shopt -u globstar
         spopd || die "Could not popd!"
+        echo "Done getting identifiers for the stream registry in $streamRegistryPath..."
     fi
-    echo "Done getting identifiers for the stream registry in $streamRegistryPath..."
 done <<< "$cbbStreamRegistries"
 pwd
 removeDuplicateLines 'crystal-backup-meta/cbb-index/items' | sponge 'crystal-backup-meta/cbb-index/items'

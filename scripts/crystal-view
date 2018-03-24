@@ -10,8 +10,7 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 
 pathPrefix="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/"$1"
 if ! [[ -e "$pathPrefix".csum ]]; then
-crystalWorkdir="$(crystallize-getconf WorkDirectory)"
-    fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.csum" > "$pathPrefix".csum
+    fcache_request "$(crystallize-getconf WorkDirectory)/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.csum" > "$pathPrefix".csum
     if [[ "$?" != "0" ]]; then
         emdate > "$pathPrefix".csum-not-found
     fi

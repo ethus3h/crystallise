@@ -13,4 +13,6 @@ pathPrefix="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/"$1"
 if [[ -e "$pathPrefix".csum ]]; then
     less "$pathPrefix".deep.idx 2>/dev/null || less "$pathPrefix".csum
 else
-    fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.csum" > 
+    fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.csum" > "$pathPrefix".csum
+    if [[ "$?" == "0" ]]; then
+fi

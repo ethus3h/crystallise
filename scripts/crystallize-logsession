@@ -350,7 +350,7 @@ script ${optb+/dev/null} ${opt+-e} ${opt+-q} ${opt+-c} crystallize-internal-ia $
 
     cp "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.passphrase"
 
-    rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.checksums" "$crystalWorkdir/$CrystalID.json.xz" "$crystalWorkdir/$CrystalID.passphrase" "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
+    rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.json.xz" "$crystalWorkdir/$CrystalID.passphrase" "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
 
     echo "rsynced..."
 

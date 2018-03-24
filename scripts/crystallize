@@ -221,7 +221,7 @@ rm -f "$crystalWorkdir/$CrystalID".json.xz
 { retryUntilSuccess 100 30 5 5 wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" > "$crystalWorkdir/$CrystalID.json"; } 2>&1
 checkedxz "$crystalWorkdir/$CrystalID".json -C sha256 -9 -e -v 2>&1
 
-rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.json.xz" "$crystalWorkdir/$CrystalID.checksums" "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
+rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.json.xz" "$crystalWorkdir/$CrystalID.checksums" "$crystalWorkdir/$CrystalID.csum" "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
 
 rm "$crystalWorkdir/$CrystalID.json.xz" "$crystalWorkdir/$CrystalID.checksums"
 

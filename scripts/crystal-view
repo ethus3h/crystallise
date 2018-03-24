@@ -12,10 +12,7 @@ CrystalID="$(iaident "$1")"
 
 pathPrefix="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/"$CrystalID"
 if ! [[ -e "$pathPrefix".csum ]]; then
-    fcache_request "$(crystallize-getconf WorkDirectory)/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.csum" > "$pathPrefix".csum
-    if [[ "$?" != "0" ]]; then
-        emdate > "$pathPrefix".csum-not-found
-    fi
+    fcache_request "$(crystallize-getconf WorkDirectory)/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.csum" > "$pathPrefix".csum || emdate > "$pathPrefix".csum-not-found
 fi
 
 if [[ -e "$pathPrefix".csum-not-found ]]; then

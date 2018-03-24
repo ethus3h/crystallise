@@ -8,7 +8,9 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 
 # TODO: Detect if output is not to a terminal and cat instead of less
 
-pathPrefix="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/"$1"
+CrystalID="$(iaident "$1")"
+
+pathPrefix="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/"$CrystalID"
 if ! [[ -e "$pathPrefix".csum ]]; then
     fcache_request "$(crystallize-getconf WorkDirectory)/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.csum" > "$pathPrefix".csum
     if [[ "$?" != "0" ]]; then

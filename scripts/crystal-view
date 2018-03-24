@@ -3,6 +3,9 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
+((EUID)) && exec sudo -- "$0" "$@"
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+
 # TODO: Detect if output is not to a terminal and cat instead of less
 # TODO: Add support for fetching index files for crystals that aren't available in the index
 

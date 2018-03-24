@@ -10,10 +10,11 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 # TODO: Add support for fetching index files for crystals that aren't available in the index
 
 pathPrefix="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/"$1"
-else
-    if [[ -e "$pathPrefix".csum ]]; then
+if ! [[ -e "$pathPrefix".csum ]]; then
     fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.csum" > "$pathPrefix".csum
-    if [[ "$?" == "0" ]]; then
+    if [[ "$?" != "0" ]]; then
+        emdate > "$pathPrefix".csum-not-found
+    fi
 fi
 
 less "$pathPrefix".deep.idx 2>/dev/null || less "$pathPrefix".csum

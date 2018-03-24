@@ -264,6 +264,8 @@ while read -r crystal; do
     fi
 done <<< "$cbbCrystals"
 
+csum "$backupLocation" > ../crystal-backup-meta/.csum
+
 git add -A .
 git commit -m "Update" > /dev/null || true
 egup-single > /dev/null || true

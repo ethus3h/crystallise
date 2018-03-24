@@ -7,7 +7,6 @@ source ember_bash_setup &> /dev/null
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
 # TODO: Detect if output is not to a terminal and cat instead of less
-# TODO: Add support for fetching index files for crystals that aren't available in the index
 
 pathPrefix="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/"$1"
 if ! [[ -e "$pathPrefix".csum ]]; then
@@ -17,4 +16,8 @@ if ! [[ -e "$pathPrefix".csum ]]; then
     fi
 fi
 
-less "$pathPrefix".deep.idx 2>/dev/null || less "$pathPrefix".csum
+if [[ -e "$pathPrefix".csum-not-found ]]; then
+    less "$pathPrefix".csum
+else
+    less "$pathPrefix".deep.idx
+fi

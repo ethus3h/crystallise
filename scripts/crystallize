@@ -15,10 +15,10 @@ fi
 source ember_bash_setup &> /dev/null
 #set -x
 
-export crystallizeVersion='3.1.2.5.14.22'
+export crystallizeVersion='3.1.2.5.14.23'
 
 # The update script shown here requires there to be only one ebuild of crystallize in the wreathe-overlay overlay.
-# ( sudo true; newVersion="3.1.2.5.14.22"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo layman -s wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
+# ( sudo true; newVersion="3.1.2.5.14.23"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo layman -s wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
 
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
@@ -221,7 +221,7 @@ rm -f "$crystalWorkdir/$CrystalID".json.xz
 { retryUntilSuccess 100 30 5 5 wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" > "$crystalWorkdir/$CrystalID.json"; } 2>&1
 checkedxz "$crystalWorkdir/$CrystalID".json -C sha256 -9 -e -v 2>&1
 
-rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.json.xz" "$crystalWorkdir/$CrystalID.checksums" "$crystalWorkdir/$CrystalID.csum" "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
+rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.json.xz" "$crystalWorkdir/$CrystalID.checksums" "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
 
 rm "$crystalWorkdir/$CrystalID.json.xz" "$crystalWorkdir/$CrystalID.checksums"
 

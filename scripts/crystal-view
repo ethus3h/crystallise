@@ -10,4 +10,7 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 # TODO: Add support for fetching index files for crystals that aren't available in the index
 
 pathPrefix="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/"$1"
-less "$pathPrefix".deep.idx 2>/dev/null || less "$pathPrefix".csum
+if [[ -e "$pathPrefix".deep.idx ]]; then
+    less "$pathPrefix".deep.idx 2>/dev/null || less "$pathPrefix".csum
+else
+    

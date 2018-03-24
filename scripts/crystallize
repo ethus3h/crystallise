@@ -15,10 +15,10 @@ fi
 source ember_bash_setup &> /dev/null
 #set -x
 
-export crystallizeVersion='3.1.2.5.14.21'
+export crystallizeVersion='3.1.2.5.14.22'
 
 # The update script shown here requires there to be only one ebuild of crystallize in the wreathe-overlay overlay.
-# ( sudo true; newVersion="3.1.2.5.14.21"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo layman -s wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
+# ( sudo true; newVersion="3.1.2.5.14.22"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo layman -s wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
 
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
@@ -117,7 +117,7 @@ echo "$0 $*" > "$crystalWorkdir/$CrystalID.cmd"
 pwd > "$crystalWorkdir/$CrystalID.cwd"
 if [[ $crystallizeLeavePointer == true ]]; then
     mkdir -p "$crystallizePointerDir"
-    rsync -a --checksum "$crystalWorkdir/$CrystalID.csum" "$crystalWorkdir/$CrystalID.cmd" "$crystalWorkdir/$CrystalID.cwd" "$crystallizePointerDir"/
+    rsync -a --checksum "$crystalWorkdir/$CrystalID.cmd" "$crystalWorkdir/$CrystalID.cwd" "$crystallizePointerDir"/
 fi
 checkedxz "$crystalWorkdir/$CrystalID" -C sha256 -v -9 -e 2>&1
 checkedxz "$crystalWorkdir/$CrystalID.time-done.warc.gz" -C sha256 -v -9 -e 2>&1

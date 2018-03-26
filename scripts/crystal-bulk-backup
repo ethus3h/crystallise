@@ -230,7 +230,7 @@ while read -r streamRegistryPath; do
                         [[ ! -d $hashSubpath ]] && mkdir -p "$hashSubpath"
                         touch "$hashSubpath/$hashFull"
                     else
-                        warn "The file at $PWD/$potentialPointer has the unknown pointer type signature $typeSignature."
+                        warn "The file at $PWD/$potentialPointer has the unknown pointer type signature $(cat -v <<< "$typeSignature")."
                     fi
                 fi
             fi

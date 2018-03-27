@@ -38,10 +38,10 @@ print $'stream-registries\n' >> .gitignore
 removeDuplicateLines '.gitignore' | sponge '.gitignore'
 
 git add .gitignore
-git commit -m "Update" > /dev/null || true
+[[ "$gitCommit" == "true" ]] && git commit -m "Update" > /dev/null || true
 git add -A .
-git commit -m "Update" > /dev/null || true
-egup-single > /dev/null || true
+[[ "$gitCommit" == "true" ]] && git commit -m "Update" > /dev/null || true
+[[ "$gitCommit" == "true" ]] && egup-single > /dev/null || true
 
 cbbConfigDir="$(crystallize-getconf ConfigDir)"
 mkdir -p "$cbbConfigDir"/crystallize/cbb
@@ -254,7 +254,7 @@ pwd
 removeDuplicateLines 'crystal-backup-meta/cbb-index/items' | sponge 'crystal-backup-meta/cbb-index/items'
 
 git add -A .
-git commit -m "Update" > /dev/null || true
+[[ "$gitCommit" == "true" ]] && git commit -m "Update" > /dev/null || true
 
 echo "Done collecting crystal identifiers, beginning fetching crystals..."
 
@@ -278,7 +278,7 @@ done <<< "$cbbCrystals"
 csum "$backupLocation" > ../crystal-backup-meta/.csum
 
 git add -A .
-git commit -m "Update" > /dev/null || true
-egup-single > /dev/null || true
+[[ "$gitCommit" == "true" ]] && git commit -m "Update" > /dev/null || true
+[[ "$gitCommit" == "true" ]] && egup-single > /dev/null || true
 
 echo "Done backing up crystals!"

@@ -253,11 +253,14 @@ echo "Done collecting crystal identifiers, beginning fetching crystals..."
 mkdir -p "items"
 cd items || die "Could not cd to newly created items directory"
 cbbCrystals="$(<../crystal-backup-meta/cbb-index/items)"
+mkdir -p "../crystal-backup-meta/completed-items"
 while read -r crystal; do
     if [[ -n "$crystal" ]]; then
         if [[ -e "$crystal" ]]; then
-            if [[ "$check" == "false" ]]; then
-                continue
+            if [[ -e "../crystal-backup-meta/completed-items/$crystal" ]]; then
+                if [[ "$check" == "false" ]]; then
+                    continue
+                fi
             fi
         fi
         crystallize-backup "$crystal"

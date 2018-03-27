@@ -97,6 +97,7 @@ if [[ -e "$CrystalID" ]]; then
             fi
         fi
     fi
+    emdate > "../crystal-backup-meta/completed-items/$CrystalID"
     echo "(Backup of $CrystalID pass""ed check.)" # extra quotation marks to prevent turning "sed" into "gsed" on Mac ;)
     exit 0
 fi

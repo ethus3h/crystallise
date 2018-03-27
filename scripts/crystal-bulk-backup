@@ -6,9 +6,12 @@ source ember_bash_setup &> /dev/null
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
-check="true"
+check="false"
 if [[ "$1" == "--no-check-existing" ]]; then
     check="false"
+    shift
+elif [[ "$1" == "--check-existing" ]]; then
+    check="true"
     shift
 fi
 

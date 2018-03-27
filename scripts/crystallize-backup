@@ -66,6 +66,8 @@ CrystalID="$CrystalAddress"
 
 echo "Backing up crystal: $CrystalID"
 
+mkdir -p "crystal-backup-meta/completed-items"
+
 cd 'items' || die "Could not cd to items directory!"
 
 if [[ -e "$CrystalID" ]]; then
@@ -108,7 +110,6 @@ ia checkeddl "$CrystalID"
 
 cd ..
 
-mkdir -p "crystal-backup-meta/completed-items"
 emdate > "crystal-backup-meta/completed-items/$CrystalID"
 
 echo "Done! The crystal has been backed up to $backupLocation/items/$CrystalID."

@@ -15,6 +15,12 @@ elif [[ "$1" == "--check-existing" ]]; then
     shift
 fi
 
+gitCommit="true"
+if [[ "$1" == "--no-commit" ]]; then
+    gitCommit="false"
+    shift
+fi
+
 backupLocation="$(crystallize-getconf BackupLocation)"
 
 mkdir -p "$backupLocation"

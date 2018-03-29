@@ -43,7 +43,7 @@ print $'repositories\n' >> .gitignore
 print $'stream-registries\n' >> .gitignore
 removeDuplicateLines '.gitignore' | sponge '.gitignore'
 
-git add .gitignore
+[[ "$gitCommit" == "true" ]] && git add .gitignore
 { [[ "$gitCommit" == "true" ]] && git commit -m "Update" > /dev/null; } || true
 [[ "$gitCommit" == "true" ]] && git add -A .
 { [[ "$gitCommit" == "true" ]] && git commit -m "Update" > /dev/null; } || true

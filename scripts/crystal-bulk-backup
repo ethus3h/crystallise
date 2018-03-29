@@ -86,15 +86,17 @@ print $'\n' >> "crystal-backup-meta/cbb-index/stream-registries"
 cat "$(ember-getconf DataDir)/stream-registries.lst" >> "crystal-backup-meta/cbb-index/stream-registries"
 removeDuplicateLines 'crystal-backup-meta/cbb-index/stream-registries' | sponge 'crystal-backup-meta/cbb-index/stream-registries'
 
-# Clone git repositories
-(
-    mkdir -p repositories
-    cd repositories
-    git-bulk-sync < "../crystal-backup-meta/cbb-index/repositories"
-    mkdir -p submodules
-    cd submodules
-    git-bulk-sync < "$(ember-getconf DataDir)/repositories-submodules.lst"
-) || die
+if [[ "$updateList" == "true" ]]; then
+    # Clone git repositories
+    (
+        mkdir -p repositories
+        cd repositories
+        git-bulk-sync < "../crystal-backup-meta/cbb-index/repositories"
+        mkdir -p submodules
+        cd submodules
+        git-bulk-sync < "$(ember-getconf DataDir)/repositories-submodules.lst"
+    ) || die
+fi
 
 shopt -s dotglob
 

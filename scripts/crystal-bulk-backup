@@ -272,7 +272,7 @@ while read -r crystal; do
             fi
         fi
         crystallize-backup "$crystal"
-        echo "Backed up of total crystals."
+        echo "Backed up (30%) of total crystals."
     fi
 done <<< "$cbbCrystals"
 

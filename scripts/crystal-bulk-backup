@@ -262,6 +262,7 @@ echo "Done collecting crystal identifiers, beginning fetching crystals..."
 mkdir -p "items"
 cd items || die "Could not cd to newly created items directory"
 cbbCrystals="$(<../crystal-backup-meta/cbb-index/items)"
+numberExpected="$(wc -l < ../crystal-backup-meta/cbb-index/items)"
 while read -r crystal; do
     if [[ -n "$crystal" ]]; then
         if [[ -e "$crystal" ]]; then
@@ -272,10 +273,9 @@ while read -r crystal; do
             fi
         fi
         crystallize-backup "$crystal"
-        numberExpected="$(<"$fsckStatusFile")"
-        numberProcessed="1"
+        numberProcessed="$(find . -maxdepth 1 -printf a | wc -c)"
         numberProcessedPercentage="$(printf "%.3f\\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
-        echo "Backed up (30%) of total crystals."
+        echo "Backed up $numberProcessed ($numberProcessedPercentage%) of $numberExpected total crystals."
     fi
 done <<< "$cbbCrystals"
 

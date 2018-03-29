@@ -289,7 +289,7 @@ while read -r crystal; do
             fi
         fi
         crystallize-backup "$crystal"
-        numberProcessed="$(find . -maxdepth 1 -printf a | wc -c | xargs)"
+        numberProcessed="$(find "../crystal-backup-meta/completed-items/" -maxdepth 1 -printf a | wc -c | xargs)"
         numberProcessedPercentage="$(printf "%.3f\\n" "$(bc -l <<< "($numberProcessed"" / $numberExpected) * 100")")" # extra quotation marks to prevent turning "sed" into "gsed" on Mac ;)
         echo "Backed up $numberProcessed"" ($numberProcessedPercentage%) of $numberExpected total crystals." # extra quotation marks to prevent turning "sed" into "gsed" on Mac ;)
     fi

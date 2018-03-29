@@ -277,7 +277,7 @@ cd items || die "Could not cd to newly created items directory"
 cbbCrystals="$(<../crystal-backup-meta/cbb-index/items)"
 numberExpected="$(wc -l < ../crystal-backup-meta/cbb-index/items)"
 numberProcessed="$(find . -maxdepth 1 -printf a | wc -c)"
-numberProcessedPercentage="$(printf "%.3f\\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
+numberProcessedPercentage="$(printf "%.3f\\n" "$(bc -l <<< "($numberProcessed"" / $numberExpected) * 100")")" # extra quotation marks to prevent turning "sed" into "gsed" on Mac ;)
 echo "Starting with $numberProcessed"" ($numberProcessedPercentage%) of $numberExpected total crystals already backed up." # extra quotation marks to prevent turning "sed" into "gsed" on Mac ;)
 while read -r crystal; do
     if [[ -n "$crystal" ]]; then
@@ -290,7 +290,7 @@ while read -r crystal; do
         fi
         crystallize-backup "$crystal"
         numberProcessed="$(find . -maxdepth 1 -printf a | wc -c)"
-        numberProcessedPercentage="$(printf "%.3f\\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
+        numberProcessedPercentage="$(printf "%.3f\\n" "$(bc -l <<< "($numberProcessed"" / $numberExpected) * 100")")" # extra quotation marks to prevent turning "sed" into "gsed" on Mac ;)
         echo "Backed up $numberProcessed"" ($numberProcessedPercentage%) of $numberExpected total crystals." # extra quotation marks to prevent turning "sed" into "gsed" on Mac ;)
     fi
 done <<< "$cbbCrystals"

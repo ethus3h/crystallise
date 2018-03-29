@@ -66,8 +66,6 @@ CrystalID="$CrystalAddress"
 
 echo "Backing up crystal: $CrystalID"
 
-mkdir -p "crystal-backup-meta/completed-items"
-
 cd 'items' || die "Could not cd to items directory!"
 
 if [[ -e "$CrystalID" ]]; then
@@ -99,7 +97,6 @@ if [[ -e "$CrystalID" ]]; then
             fi
         fi
     fi
-    emdate > "../crystal-backup-meta/completed-items/$CrystalID"
     echo "(Backup of $CrystalID pass""ed check.)" # extra quotation marks to prevent turning "sed" into "gsed" on Mac ;)
     exit 0
 fi
@@ -109,7 +106,5 @@ isEmptyDir "../items.failed-check/" && rm -r "../items.failed-check/"
 ia checkeddl "$CrystalID"
 
 cd ..
-
-emdate > "crystal-backup-meta/completed-items/$CrystalID"
 
 echo "Done! The crystal has been backed up to $backupLocation/items/$CrystalID."

@@ -15,6 +15,12 @@ elif [[ "$1" == "--check-existing" ]]; then
     shift
 fi
 
+updateList="true"
+if [[ "$1" == "--no-update-list" ]]; then
+    updateList="false"
+    shift
+fi
+
 gitCommit="true"
 if [[ "$1" == "--no-commit" ]]; then
     gitCommit="false"
@@ -92,6 +98,7 @@ removeDuplicateLines 'crystal-backup-meta/cbb-index/stream-registries' | sponge 
 
 shopt -s dotglob
 
+if [[ "$updateList" == "true" ]]; then
 cbbStreamRegistries="$(<crystal-backup-meta/cbb-index/stream-registries)"
 while read -r streamRegistryPath; do
     if [[ -n "$streamRegistryPath" ]]; then
@@ -250,7 +257,8 @@ while read -r streamRegistryPath; do
         echo "Done getting identifiers for the stream registry in $streamRegistryPath..."
     fi
 done <<< "$cbbStreamRegistries"
-pwd
+fi
+
 removeDuplicateLines 'crystal-backup-meta/cbb-index/items' | sponge 'crystal-backup-meta/cbb-index/items'
 
 git add -A .

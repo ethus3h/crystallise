@@ -31,7 +31,7 @@ backupLocation="$(crystallize-getconf BackupLocation)"
 
 mkdir -p "$backupLocation"
 
-echo 'Building backup indices'
+echo 'Preparing...'
 
 cd "$backupLocation" || die "Could not cd to newly created directory! This should never happen."
 touch ".cbb.isBackupDir"
@@ -99,6 +99,8 @@ removeDuplicateLines 'crystal-backup-meta/cbb-index/stream-registries' | sponge 
 shopt -s dotglob
 
 if [[ "$updateList" == "true" ]]; then
+echo 'Building backup indices'
+
 cbbStreamRegistries="$(<crystal-backup-meta/cbb-index/stream-registries)"
 while read -r streamRegistryPath; do
     if [[ -n "$streamRegistryPath" ]]; then

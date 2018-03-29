@@ -272,10 +272,9 @@ while read -r crystal; do
             fi
         fi
         crystallize-backup "$crystal"
-            numberExpected="$(<"$fsckStatusFile")"
+        numberExpected="$(<"$fsckStatusFile")"
         numberProcessed="1"
-    numberProcessedPercentage="$(printf "%.3f\\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
-
+        numberProcessedPercentage="$(printf "%.3f\\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
         echo "Backed up (30%) of total crystals."
     fi
 done <<< "$cbbCrystals"

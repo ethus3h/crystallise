@@ -98,13 +98,16 @@ if [[ "$updateList" == "true" ]]; then
     ) || die
 fi
 
-cd repositories || die "Could not cd to repositories directory!"
-git clone --no-checkout "$streamRegistryRepoName.git"
-cd "$streamRegistryRepoName" || die "Could not cd to repository directory $(pwd)/repositories/$streamRegistryRepoName!"
-git init
-git config core.sparseCheckout true
-echo "$streamRegistryPathInRepo*" > .git/info/sparse-checkout
-git checkout
+# Get idents from Web site
+(
+    cd repositories || die "Could not cd to repositories directory!"
+    git clone --no-checkout "$streamRegistryRepoName.git"
+    cd "$streamRegistryRepoName" || die "Could not cd to repository directory $(pwd)/repositories/$streamRegistryRepoName!"
+    git init
+    git config core.sparseCheckout true
+    echo "$streamRegistryPathInRepo*" > .git/info/sparse-checkout
+    git checkout
+)
 
 shopt -s dotglob
 

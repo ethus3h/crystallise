@@ -100,6 +100,7 @@ fi
 
 # Get idents from Web site
 (
+    if ! [[ -d "repositories/ember-web-site" ]]; then
     cd repositories || die "Could not cd to repositories directory!"
     git clone --no-checkout "ember-web-site.git"
     cd "ember-web-site" || die "Could not cd to repository directory $(pwd)/ember-web-site!"
@@ -107,6 +108,9 @@ fi
     git config core.sparseCheckout true
     echo "identifiers.lst" > .git/info/sparse-checkout
     git checkout
+                else
+                    cd "repositories/$streamRegistryRepoName" || die "Could not cd to repository directory $(pwd)/repositories/$streamRegistryRepoName!"
+                fi
     git pull origin
 )
 print $'\n' >> "crystal-backup-meta/cbb-index/items"

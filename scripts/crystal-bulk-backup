@@ -101,8 +101,8 @@ fi
 # Get idents from Web site
 (
     cd repositories || die "Could not cd to repositories directory!"
-    git clone --no-checkout "$streamRegistryRepoName.git"
-    cd "$streamRegistryRepoName" || die "Could not cd to repository directory $(pwd)/repositories/$streamRegistryRepoName!"
+    git clone --no-checkout "ember-web-site.git"
+    cd "ember-web-site" || die "Could not cd to repository directory $(pwd)/ember-web-site!"
     git init
     git config core.sparseCheckout true
     echo "people/elliot/music*" > .git/info/sparse-checkout
@@ -125,7 +125,7 @@ if [[ "$updateList" == "true" ]]; then
                 if ! [[ -d "repositories/$streamRegistryRepoName" ]]; then
                     cd repositories || die "Could not cd to repositories directory!"
                     git clone --no-checkout "$streamRegistryRepoName.git"
-                    cd "$streamRegistryRepoName" || die "Could not cd to repository directory $(pwd)/repositories/$streamRegistryRepoName!"
+                    cd "$streamRegistryRepoName" || die "Could not cd to repository directory $(pwd)/$streamRegistryRepoName!"
                     git init
                     git config core.sparseCheckout true
                     echo "$streamRegistryPathInRepo*" > .git/info/sparse-checkout

@@ -105,8 +105,9 @@ fi
     cd "$streamRegistryRepoName" || die "Could not cd to repository directory $(pwd)/repositories/$streamRegistryRepoName!"
     git init
     git config core.sparseCheckout true
-    echo "$streamRegistryPathInRepo*" > .git/info/sparse-checkout
+    echo "people/elliot/music*" > .git/info/sparse-checkout
     git checkout
+    git pull origin
 )
 
 shopt -s dotglob

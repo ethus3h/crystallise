@@ -105,13 +105,13 @@ fi
     cd "ember-web-site" || die "Could not cd to repository directory $(pwd)/ember-web-site!"
     git init
     git config core.sparseCheckout true
-    echo "identifiers" > .git/info/sparse-checkout
+    echo "identifiers.lst" > .git/info/sparse-checkout
     git checkout
     git pull origin
-    print $'\n' >> "crystal-backup-meta/cbb-index/items"
-    cat "$cbbConfigDir"/crystallize/cbb/items >> "crystal-backup-meta/cbb-index/items"
-    removeDuplicateLines 'crystal-backup-meta/cbb-index/items' | sponge 'crystal-backup-meta/cbb-index/items'
 )
+print $'\n' >> "crystal-backup-meta/cbb-index/items"
+cat "repositories/ember-web-site/identifiers.lst" >> "crystal-backup-meta/cbb-index/items"
+removeDuplicateLines 'crystal-backup-meta/cbb-index/items' | sponge 'crystal-backup-meta/cbb-index/items'
 
 shopt -s dotglob
 

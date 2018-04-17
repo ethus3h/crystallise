@@ -173,7 +173,8 @@ mkdir -p "$crystalWorkdir/.$streamId/$streamId"
         echo "$streamLength" > "$tmpFilePath.length"
         if [[ "$useLocalStore" != "true" ]]; then
             tar -c -P -S --format pax "$streamId.tmp.crystal" ".$streamId.tmp.crystal-data" > "$streamId.nonbundle.pointer.tar"
-            [[ "$(xxd "$streamId.nonbundle.pointer.tar" | head -c 12)" == "00000000: 00" ]] && { mkdir -p "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/$streamId/"; rsync -a "$streamId.LocalStore.crystal" ".$streamId.LocalStore.crystal-data" "$streamId.nonbundle.pointer.tar" "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/$streamId/"; die "Pointer pax was corrupt!"; }
+            [[ "$(xxd "$streamId.nonbundle.pointer.tar" | head -c 12)" == "00000000: 00" ]] && { mkdir -p "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/$streamId/"; rsync -a "$streamId.LocalStore.crystal" ".$streamId.LocalStore.crystal-data" "$streamId.nonbundle.pointer.tar" "$(crystallize-getconf WorkDirectory)/.CorruptSregTarFileInfo/$streamId/"; die "Pointer pax was corrupt!"; } # FIXME: Why is this mentioning LocalStore? It shouldn't have anything to do with it.
+            crystallize-backup "$(<".$streamId.tmp.crystal-data/identifier")"
             checkedxz --quiet - -k -C sha256 -T 0 -9 -e < "$streamId.nonbundle.pointer.tar" >> "$tmpFilePath"
         else
             checkedxz --quiet "$streamId.tmp" --stdout -k -C sha256 -T 0 -9 -e > "$localStoreFilePath"

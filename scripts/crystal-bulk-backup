@@ -314,7 +314,7 @@ while read -r crystal; do
     fi
 done <<< "$cbbCrystals"
 
-csum "$backupLocation" > ../crystal-backup-meta/.csum
+[[ "$gitCommit" == "true" ]] && csum "$backupLocation" > ../crystal-backup-meta/.csum
 
 [[ "$gitCommit" == "true" ]] && git add -A .
 { [[ "$gitCommit" == "true" ]] && git commit -m "Update" > /dev/null; } || true

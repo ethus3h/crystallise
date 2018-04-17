@@ -64,7 +64,7 @@ statusFile="/tmp/$streamId.sreg_flush_localstore.status"
         else
             crystallize --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.LocalStore" &> /dev/null
         fi
-        crystallize-backup "$(<".$streamId.LocalStore.crystal-data/identifier")"
+        crystallize-backup --debug "$(<".$streamId.LocalStore.crystal-data/identifier")" 1>&2
         if [[ ! -e "$streamId.LocalStore.crystal" ]] || [[ ! -e ".$streamId.LocalStore.crystal-data" ]]; then
             die "Crystal data does not seem to exist! Did crystallizing fail, and not trigger the error trap for some reason?" # I think this is the condition that causes the "Pointer pax was corrupt" problem. If that happens after adding this check, something else weird is going on.
         fi

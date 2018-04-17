@@ -8,6 +8,11 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 
 shopt -s extglob
 
+if [[ "$1" == "--debug" ]]; then
+    set -x
+    shift
+fi
+
 useCustomPassphrase="false"
 customPassphrase=""
 if [[ "$1" == "--passphrase" ]]; then

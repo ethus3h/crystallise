@@ -110,8 +110,8 @@ mkdir -p "$crystalWorkdir/.$streamId/$streamId"
         mkdir -p "$dbDir"/LocalStore
     fi
     localStoreSize="$(du -sb "$dbDir"/LocalStore | awk '{print $1;}')"
-    if [[ "$localStoreSize" -gt 100000000 ]]; then
-        if [[ "$localStoreSize" -gt 300000000 ]] && [[ -e "$dbDir"/.LocalStore.lock ]]; then
+    if [[ "$localStoreSize" -gt 200000000 ]]; then
+        if [[ "$localStoreSize" -gt 500000000 ]] && [[ -e "$dbDir"/.LocalStore.lock ]]; then
             die "LocalStore is larger than expected, and lock file is present. Has a previous invocation of sreg_flush_localstore crashed? If so, manually remove $dbDir/.LocalStore.lock and re-run sreg_flush_localstore... (It's possible that sreg_flush_localstore is still running, though.)"
         fi
         if [[ "$sregStoreStreamVerbose" != "true" ]]; then
@@ -128,7 +128,7 @@ mkdir -p "$crystalWorkdir/.$streamId/$streamId"
     dbFilePath="$hashDir/$hashFull"
     tmpFilePath="$streamId.tmp.stored"
     streamSize="$(du -sb "$streamId.tmp" | awk '{print $1;}')"
-    if [[ "$streamSize" -gt 20000000 ]]; then
+    if [[ "$streamSize" -gt 100000000 ]]; then
         useLocalStore="false"
     else
         useLocalStore="true"

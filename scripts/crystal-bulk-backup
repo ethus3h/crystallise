@@ -150,14 +150,16 @@ if [[ "$updateList" == "true" ]]; then
 
             # Normal remote pack pointers
             for identFile in *.identifier; do
-                if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/${identFile%.identifier}" ]]; then
+                if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName/${identFile%.identifier}" ]]; then
+                    mkdir -p "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName"
                     echo "$(<"$identFile")" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
-                    touch "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/${identFile%.identifier}"
+                    touch "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName/${identFile%.identifier}"
                 fi
             done
 
             for pointerFile in *.bundle.pointer; do
-                if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/${pointerFile%.bundle.pointer}" ]]; then
+                if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName/${pointerFile%.bundle.pointer}" ]]; then
+                    mkdir -p "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName"
                     # This pack doesn't have a .identifier file, so it needs to be extracted separately
                     packTempDir="$(tempDir)"
                     packDir="$PWD"
@@ -173,13 +175,13 @@ if [[ "$updateList" == "true" ]]; then
                     localStoreCrystalName="${crystalFilePatternMatches[0]}"
                     if ! [[ -e "$localStoreCrystalName" ]]; then
                         warn "Crystal info could not be found in the pointer for $pointerFile, so giving up immediately and skipping this one (retrying probably wouldn't help this)."
-                        touch "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/${pointerFile%.bundle.pointer}"
+                        touch "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName/${pointerFile%.bundle.pointer}"
                         spopd || die "Could not popd!"
                         continue
                     fi
                     [[ -e "$localStoreCrystalName/identifier" ]] || die "Crystal info was found, but no crystal identifier was found in the pointer for $pointerFile."
                     echo "$(<"$localStoreCrystalName"/identifier)" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
-                    touch "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/${pointerFile%.bundle.pointer}"
+                    touch "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName/${pointerFile%.bundle.pointer}"
                     spopd || die "Could not popd!"
                     rm -r "$packTempDir"
                 fi
@@ -193,7 +195,8 @@ if [[ "$updateList" == "true" ]]; then
             shopt -s globstar
             for potentialPointer in {0..9}/** {a..f}/**; do
                 if [[ -f "$potentialPointer" ]]; then
-                    if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$potentialPointer" ]]; then
+                    if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$streamRegistryRepoName/$potentialPointer" ]]; then
+                        mkdir -p "$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$streamRegistryRepoName"
                         typeSignature="$(head -c 36 "$potentialPointer" | tr -d '\0')"
                         if [[ "$typeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then # Hash pointer
                             warn "A hash pointer, $potentialPointer, is present in the pointer database!"
@@ -210,7 +213,7 @@ if [[ "$updateList" == "true" ]]; then
                             hashA="${hashFull:0:1}"
                             hashB="${hashFull:1:1}"
                             hashC="${hashFull:2:1}"
-                            hashSubpath="$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$hashA/$hashB/$hashC"
+                            hashSubpath="$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$streamRegistryRepoName/$hashA/$hashB/$hashC"
                             [[ ! -d $hashSubpath ]] && mkdir -p "$hashSubpath"
                             touch "$hashSubpath/$hashFull"
                         elif [[ "$typeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then # LocalStore pointer
@@ -221,7 +224,7 @@ if [[ "$updateList" == "true" ]]; then
                             hashA="${hashFull:0:1}"
                             hashB="${hashFull:1:1}"
                             hashC="${hashFull:2:1}"
-                            hashSubpath="$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$hashA/$hashB/$hashC"
+                            hashSubpath="$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$streamRegistryRepoName/$hashA/$hashB/$hashC"
                             [[ ! -d $hashSubpath ]] && mkdir -p "$hashSubpath"
                             touch "$hashSubpath/$hashFull"
                         elif [[ "$typeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]]; then # Remote pack pointer, with pointer data in the pointer
@@ -240,7 +243,7 @@ if [[ "$updateList" == "true" ]]; then
                             localStoreCrystalName="${crystalFilePatternMatches[0]}"
                             if ! [[ -e "$localStoreCrystalName" ]]; then
                                 warn "Crystal info could not be found in the pointer for $pointerFile, so giving up immediately and skipping this one (retrying probably wouldn't help this)."
-                                touch "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/${pointerFile%.bundle.pointer}"
+                                touch "$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$streamRegistryRepoName/${pointerFile%.bundle.pointer}"
                                 spopd || die "Could not popd!"
                                 continue
                             fi
@@ -252,7 +255,7 @@ if [[ "$updateList" == "true" ]]; then
                             hashA="${hashFull:0:1}"
                             hashB="${hashFull:1:1}"
                             hashC="${hashFull:2:1}"
-                            hashSubpath="$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$hashA/$hashB/$hashC"
+                            hashSubpath="$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$streamRegistryRepoName/$hashA/$hashB/$hashC"
                             [[ ! -d $hashSubpath ]] && mkdir -p "$hashSubpath"
                             touch "$hashSubpath/$hashFull"
                         elif [[ "$typeSignature" == "45baff46-8db7-46f6-aad9-de5f713b02fe" ]]; then # URL pointer
@@ -264,7 +267,7 @@ if [[ "$updateList" == "true" ]]; then
                             hashA="${hashFull:0:1}"
                             hashB="${hashFull:1:1}"
                             hashC="${hashFull:2:1}"
-                            hashSubpath="$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$hashA/$hashB/$hashC"
+                            hashSubpath="$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$streamRegistryRepoName/$hashA/$hashB/$hashC"
                             [[ ! -d $hashSubpath ]] && mkdir -p "$hashSubpath"
                             touch "$hashSubpath/$hashFull"
                         else

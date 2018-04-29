@@ -149,9 +149,11 @@ if [[ "$updateList" == "true" ]]; then
             spushd "$streamRegistryFullPath/Packs/" || die "Could not pushd to Packs directory!"
 
             # Normal remote pack pointers
+
+            mkdir -p "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName"
+
             for identFile in *.identifier; do
                 if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName/${identFile%.identifier}" ]]; then
-                    mkdir -p "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName"
                     echo "$(<"$identFile")" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
                     touch "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName/${identFile%.identifier}"
                 fi
@@ -159,7 +161,6 @@ if [[ "$updateList" == "true" ]]; then
 
             for pointerFile in *.bundle.pointer; do
                 if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName/${pointerFile%.bundle.pointer}" ]]; then
-                    mkdir -p "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName"
                     # This pack doesn't have a .identifier file, so it needs to be extracted separately
                     packTempDir="$(tempDir)"
                     packDir="$PWD"
@@ -193,10 +194,10 @@ if [[ "$updateList" == "true" ]]; then
 
             spushd "$streamRegistryFullPath" || die "Could not pushd to stream registry directory!"
             shopt -s globstar
+            mkdir -p "$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$streamRegistryRepoName"
             for potentialPointer in {0..9}/** {a..f}/**; do
                 if [[ -f "$potentialPointer" ]]; then
                     if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$streamRegistryRepoName/$potentialPointer" ]]; then
-                        mkdir -p "$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$streamRegistryRepoName"
                         typeSignature="$(head -c 36 "$potentialPointer" | tr -d '\0')"
                         if [[ "$typeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then # Hash pointer
                             warn "A hash pointer, $potentialPointer, is present in the pointer database!"

@@ -7,5 +7,12 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 
 ((EUID)) && exec sudo -- "$0" "$@"
 
-    if ! pip_loc="$(type -P "pip")" || [[ -z $pip_loc ]]; then
-        pip_needed="true"
+if ! ebs_loc="$(type -P "ember_bash_setup")" || [[ -z $ebs_loc ]]; then
+    git clone https://github.com/ethus3h/ember_bash_setup
+    pushd ember_bash_setup
+    make
+    make autodep
+    make install
+    popd
+    
+fi

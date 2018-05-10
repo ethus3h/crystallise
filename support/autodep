@@ -1,0 +1,137 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
+source ember_bash_setup &> /dev/null
+
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd)."' ERR
+#set -x
+
+((EUID)) && exec sudo -- "$0" "$@"
+
+# Install pip
+
+pip_command=""
+pip_needed="true"
+if [[ "$pip_needed" == "true" ]]; then
+    if ! pip_loc="$(type -P "pip")" || [[ -z $pip_loc ]]; then
+        pip_needed="true"
+    else
+        pip_command="pip"
+        pip_needed="false"
+    fi
+fi
+if [[ "$pip_needed" == "true" ]]; then
+    if ! pip_loc="$(type -P "pip3")" || [[ -z $pip_loc ]]; then
+        pip_needed="true"
+    else
+        pip_command="pip3"
+        pip_needed="false"
+    fi
+fi
+if [[ "$pip_needed" == "true" ]]; then
+    if ! pip_loc="$(type -P "pip2")" || [[ -z $pip_loc ]]; then
+        pip_needed="true"
+    else
+        pip_command="pip2"
+        pip_needed="false"
+    fi
+fi
+if [[ "$pip_needed" == "true" ]]; then
+    if emerge pip &> /dev/null; then
+        if ! pip_loc="$(type -P "pip3")" || [[ -z $pip_loc ]]; then
+            pip_needed="true"
+        else
+            pip_command="pip3"
+            pip_needed="false"
+        fi
+        if ! pip_loc="$(type -P "pip")" || [[ -z $pip_loc ]]; then
+            pip_needed="true"
+        else
+            pip_command="pip"
+            pip_needed="false"
+        fi
+        if ! pip_loc="$(type -P "pip2")" || [[ -z $pip_loc ]]; then
+            pip_needed="true"
+        else
+            pip_command="pip2"
+            pip_needed="false"
+        fi
+    fi
+fi
+if [[ "$pip_needed" == "true" ]]; then
+    if apt install python-pip &> /dev/null; then
+        if ! pip_loc="$(type -P "pip")" || [[ -z $pip_loc ]]; then
+            pip_needed="true"
+        else
+            pip_command="pip"
+            pip_needed="false"
+        fi
+    fi
+fi
+if [[ "$pip_needed" == "true" ]]; then
+    if apt-get install python-pip &> /dev/null; then
+        if ! pip_loc="$(type -P "pip")" || [[ -z $pip_loc ]]; then
+            pip_needed="true"
+        else
+            pip_command="pip"
+            pip_needed="false"
+        fi
+    fi
+fi
+if [[ "$pip_needed" == "true" ]]; then
+    if apt install python-pip3 &> /dev/null; then
+        if ! pip_loc="$(type -P "pip3")" || [[ -z $pip_loc ]]; then
+            pip_needed="true"
+        else
+            pip_command="pip3"
+            pip_needed="false"
+        fi
+    fi
+fi
+if [[ "$pip_needed" == "true" ]]; then
+    if apt-get install python-pip3 &> /dev/null; then
+        if ! pip_loc="$(type -P "pip3")" || [[ -z $pip_loc ]]; then
+            pip_needed="true"
+        else
+            pip_command="pip3"
+            pip_needed="false"
+        fi
+    fi
+fi
+if [[ "$pip_needed" == "true" ]]; then
+    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+    python get-pip.py
+    if ! pip_loc="$(type -P "pip")" || [[ -z $pip_loc ]]; then
+        pip_needed="true"
+    else
+        pip_command="pip"
+        pip_needed="false"
+    fi
+    if ! pip_loc="$(type -P "pip3")" || [[ -z $pip_loc ]]; then
+        pip_needed="true"
+    else
+        pip_command="pip3"
+        pip_needed="false"
+    fi
+    if ! pip_loc="$(type -P "pip2")" || [[ -z $pip_loc ]]; then
+        pip_needed="true"
+    else
+        pip_command="pip2"
+        pip_needed="false"
+    fi
+fi
+
+if [[ "$pip_needed" == "true" ]]; then
+    echo "ERROR: Could not find or install pip."
+    exit 1
+fi
+
+# Install internetarchive
+
+if ! ia_loc="$(type -P "ia")" || [[ -z $ia_loc ]]; then
+    if ! sudo "$pip_command" install internetarchive; then
+        if ! sudo -H "$pip_command" install internetarchive; then
+            echo "ERROR: Could not find or install internetarchive."
+            exit 1
+        fi
+    fi
+fi

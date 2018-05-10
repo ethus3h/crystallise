@@ -7,6 +7,12 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 
 ((EUID)) && exec sudo -- "$0" "$@"
 
+if [[ -n "$TMPDIR" ]]; then
+    cd "$TMPDIR"
+else
+    cd "/tmp"
+fi
+
 if ! ebs_loc="$(type -P "ember_bash_setup")" || [[ -z $ebs_loc ]]; then
     git clone https://github.com/ethus3h/ember_bash_setup
     pushd ember_bash_setup
@@ -14,5 +20,5 @@ if ! ebs_loc="$(type -P "ember_bash_setup")" || [[ -z $ebs_loc ]]; then
     make autodep
     make install
     popd
-    
+    rm -r ember_bash_setup
 fi

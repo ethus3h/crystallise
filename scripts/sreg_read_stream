@@ -299,7 +299,7 @@ mkdir "$streamId"
                 sreg_read_stream "${readStreamArgs[@]}" < "$dbDir/$hashA/$hashB/$hashC/$hashFull" > "$streamId.out"
             elif [[ "$pointerTypeSignature" == "45baff46-8db7-46f6-aad9-de5f713b02fe" ]]; then
                 # URL pointer
-                fcache_request "$crystalWorkdir/.CrystalCache/" "$(tail -c +167 "$streamId.xz" | head -n 1)"
+                fcache_request "$crystalWorkdir/.CrystalCache/" "$(tail -c +167 "$streamId.xz" | head -n 1)" > "$streamId.out"
             else
                 die "The provided data is not a pointer, and this was not handled when it should be. This indicates a bug in sreg_read_stream." # This should have been handled earlier
             fi

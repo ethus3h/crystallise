@@ -3,7 +3,6 @@
 source ember_bash_setup &> /dev/null
 #set -x
 
-((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
 #Need to do egup-single for futuramerlin-web-toolkit before build to ensure updates to futuramerlin-web-toolkit are committed before running it

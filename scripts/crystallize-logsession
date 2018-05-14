@@ -280,7 +280,7 @@ set -o pipefail
 
 {
     echo "Please wait, pre-testing item before upload..."
-    testDecrystDir="$(tempDir)"
+    testDecrystDir="$(bigTempDir)"
     tempTestDecrystId="$crystalWorkdir/.unpack-test-$(date-uuid)"
     trap 'rm -r "${tempTestDecrystId:?}"; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
     (

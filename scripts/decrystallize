@@ -88,7 +88,7 @@ decrystInner() (
     # Extract split forks
     forkFetchStatus=""
     forkCsumFetchStatus=""
-    tempDecrystForksDir="$(tempDir)"
+    tempDecrystForksDir="$(bigTempDir)"
     tempIdAbspath="$(readlink -f "$tempId")"
     (
         trap 'rm -r "${tempDecrystForksDir:?}"; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR

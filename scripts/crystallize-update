@@ -11,7 +11,7 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 
 sudo echo
 
-installDir="$(tempDir)"
+installDir="$(bigTempDir)"
 cd "$installDir" || die "cd failed"
 
 ember-shared-update

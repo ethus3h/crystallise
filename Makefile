@@ -12,6 +12,6 @@ noconf:
 autodep:
 	@support/autodep $(packageName) $(DESTDIR) $(prefix) $(PREFIX) $(exec_prefix) $(bindir) $(datarootdir) $(datadir) $(sysconfdir) $(sharedstatedir)
 	@echo "Done installing or updating dependencies for" $(packageName)
-test:
+check:
 	@support/test $(packageName)
 	@echo "Done running tests for" $(packageName)

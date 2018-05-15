@@ -5,4 +5,11 @@ source ember_bash_setup &> /dev/null
 
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd)."' ERR
 
+packageName="$1"
+shift
+
+#### End of test runner install script template ####
+
+# Run your tests here.
+
 # Create a local S3 host and run tests.

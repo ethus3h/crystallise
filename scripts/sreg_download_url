@@ -21,6 +21,11 @@ if [[ "$1" == "--sreg-dir" ]]; then
 fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 
+sreg_enroll_url --sreg-dir "$sregDir" "$1"
+
+tempDir="$(bigTempDir)"
+cd "$bigTempDir"
+
 url="$(iaurl "$1")"
 tempData="$(bigTempFile)"
 retryUntilSuccess 100 30 5 5 wget -t 150 -qO "$tempData" "$url"

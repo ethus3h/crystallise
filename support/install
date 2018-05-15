@@ -150,14 +150,9 @@ fi
 
 # Any extra installation logic goes here.
 
-emberEmberdir="$emberPrefix"/Ember\ Library
-
 ereplace "/usr/local/etc" "$emberSysconfdir" scripts/crystallize-logsession
 
 mkdir -p "$emberEmberdir"
-mkdir -p "$emberBindir"
-chmod +x scripts/*
-cp scripts/* "$emberBindir/"
 mkdir -p "$emberSysconfdir"
 mkdir -p "$emberSharedstatedir"
 

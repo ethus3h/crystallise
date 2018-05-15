@@ -10,6 +10,9 @@ finish() {
     if [[ -e "${tempData:?}" ]]; then
         rm -f "${tempData:?}"
     fi
+    if [[ -e "${tempDir:?}" ]]; then
+        rm -rf "${tempDir:?}"
+    fi
 }
 trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; finish; exit 1' ERR
 
@@ -30,8 +33,13 @@ fi
 url="$(iaurl "$1")"
 tempData="$(bigTempFile)"
 tempDir="$(bigTempDir)"
+destDir="$PWD"
 pushd "$(bigTempDir)" || die
 retryUntilSuccess 100 30 5 5 wget -t 150 -q "$url"
+
+rm "$tempData"
+ln ./* "$tempData"
+
 [[ "$(sha1sum "$tempData" | awk '{print $1;}')" == "$(retryUntilSuccess 100 60 5 5 iasha1 "$url")" ]] || die "Checksum of retrieved file did not match checksum reported by the Internet Archive!"
 
 hashFull="$(sha512sum < "$tempData" | awk '{print $1;}')"
@@ -54,4 +62,7 @@ dbFilePath="$sregDir/$hashSubpath"
     stat --printf='%s\n' "$tempData"
 } > "$dbFilePath"
 
+[[ "$download" == "true" ]] && srsync --sreg-dir "$sregDir" ./* "$destDir/"
+
+popd || die
 finish

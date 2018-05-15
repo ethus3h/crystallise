@@ -21,6 +21,15 @@ if [[ "$1" == "--sreg-dir" ]]; then
 fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 
+download=""
+if [[ "$1" == "--download" ]]; then
+    download="true"
+    shift
+    tempDir="$(bigTempDir)"
+    pushd "$(bigTempDir)" || die
+    retryUntilSuccess 100 30 5 5 wget -t 150 -q "$url"
+fi
+
 url="$(iaurl "$1")"
 tempData="$(bigTempFile)"
 retryUntilSuccess 100 30 5 5 wget -t 150 -qO "$tempData" "$url"

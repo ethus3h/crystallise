@@ -25,14 +25,13 @@ download=""
 if [[ "$1" == "--download" ]]; then
     download="true"
     shift
-    tempDir="$(bigTempDir)"
-    pushd "$(bigTempDir)" || die
-    retryUntilSuccess 100 30 5 5 wget -t 150 -q "$url"
 fi
 
 url="$(iaurl "$1")"
 tempData="$(bigTempFile)"
-retryUntilSuccess 100 30 5 5 wget -t 150 -qO "$tempData" "$url"
+tempDir="$(bigTempDir)"
+pushd "$(bigTempDir)" || die
+retryUntilSuccess 100 30 5 5 wget -t 150 -q "$url"
 [[ "$(sha1sum "$tempData" | awk '{print $1;}')" == "$(retryUntilSuccess 100 60 5 5 iasha1 "$url")" ]] || die "Checksum of retrieved file did not match checksum reported by the Internet Archive!"
 
 hashFull="$(sha512sum < "$tempData" | awk '{print $1;}')"

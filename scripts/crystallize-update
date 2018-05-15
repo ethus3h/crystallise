@@ -19,5 +19,7 @@ ember-shared-update
 # update crystallize
 git clone https://github.com/ethus3h/crystallize.git
 cd crystallize || die "cd failed"
+./configure
+make autodep
 make
 sudo make noconf

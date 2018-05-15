@@ -114,23 +114,23 @@ fi
 
 #### End of Makefile install script template ####
 
-crystallizeEmberdir="$crystallizePrefix"/Ember\ Library
+emberEmberdir="$emberPrefix"/Ember\ Library
 
-ereplace "/usr/local/etc" "$crystallizeSysconfdir" scripts/crystallize-logsession
+ereplace "/usr/local/etc" "$emberSysconfdir" scripts/crystallize-logsession
 
-mkdir -p "$crystallizeEmberdir"
-mkdir -p "$crystallizeBindir"
+mkdir -p "$emberEmberdir"
+mkdir -p "$emberBindir"
 chmod +x scripts/*
-cp scripts/* "$crystallizeBindir/"
-mkdir -p "$crystallizeSysconfdir"
-mkdir -p "$crystallizeSharedstatedir"
+cp scripts/* "$emberBindir/"
+mkdir -p "$emberSysconfdir"
+mkdir -p "$emberSharedstatedir"
 
-if [[ ! -h "$crystallizeSharedstatedir/crystallize" ]] && [[ -d "$crystallizeSharedstatedir/crystallize" ]]; then
-    mv "$crystallizeSharedstatedir/crystallize" "$crystallizeSharedstatedir/ember"
+if [[ ! -h "$emberSharedstatedir/crystallize" ]] && [[ -d "$emberSharedstatedir/crystallize" ]]; then
+    mv "$emberSharedstatedir/crystallize" "$emberSharedstatedir/ember"
 fi
-[[ -h "$crystallizeSharedstatedir/crystallize" ]] || ln -s "$crystallizeSharedstatedir/ember" "$crystallizeSharedstatedir/crystallize"
+[[ -h "$emberSharedstatedir/crystallize" ]] || ln -s "$emberSharedstatedir/ember" "$emberSharedstatedir/crystallize"
 
-if [[ ! -h "$crystallizeSysconfdir/crystallize.conf" ]] && [[ -f "$crystallizeSysconfdir/crystallize.conf" ]]; then
-    mv "$crystallizeSysconfdir/crystallize.conf" "$crystallizeSysconfdir/ember.conf"
+if [[ ! -h "$emberSysconfdir/crystallize.conf" ]] && [[ -f "$emberSysconfdir/crystallize.conf" ]]; then
+    mv "$emberSysconfdir/crystallize.conf" "$emberSysconfdir/ember.conf"
 fi
-[[ -h "$crystallizeSysconfdir/crystallize.conf" ]] || ln -s "$crystallizeSysconfdir/ember.conf" "$crystallizeSysconfdir/crystallize.conf"
+[[ -h "$emberSysconfdir/crystallize.conf" ]] || ln -s "$emberSysconfdir/ember.conf" "$emberSysconfdir/crystallize.conf"

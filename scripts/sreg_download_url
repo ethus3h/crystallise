@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
+source ember_bash_setup &> /dev/null
+#set -x
+
+((EUID)) && exec sudo -- "$0" "$@"
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+
+finish() {
+    if [[ -e "${tempData:?}" ]]; then
+        rm -f "${tempData:?}"
+    fi
+}
+trap 'error-notify "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."; finish; exit 1' ERR
+
+sregDir=""
+if [[ "$1" == "--sreg-dir" ]]; then
+    shift
+    sregDir="$1"
+    shift
+fi
+sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
+
+url="$(iaurl "$1")"
+tempData="$(bigTempFile)"
+retryUntilSuccess 100 30 5 5 wget -t 150 -qO "$tempData" "$url"
+[[ "$(sha1sum "$tempData" | awk '{print $1;}')" == "$(retryUntilSuccess 100 60 5 5 iasha1 "$url")" ]] || die "Checksum of retrieved file did not match checksum reported by the Internet Archive!"
+
+hashFull="$(sha512sum < "$tempData" | awk '{print $1;}')"
+
+hashA="${hashFull:0:1}"
+hashB="${hashFull:1:1}"
+hashC="${hashFull:2:1}"
+hashSubpath="$hashA/$hashB/$hashC/$hashFull"
+
+dbFilePath="$sregDir/$hashSubpath"
+
+# Output the pointer
+{
+    say '45baff46-8db7-46f6-aad9-de5f713b02fe'
+    say "$hashFull"
+    iaident "$url"
+    print "/"
+    iapath "$url"
+    print $'\n'
+    stat --printf='%s\n' "$tempData"
+} > "$dbFilePath"
+
+finish

@@ -130,7 +130,7 @@ fi
 if [[ -e scripts ]]; then
     mkdir -p "$emberBindir"
     chmod +x scripts/*
-    cp scripts/* "$emberBindir/"
+    find scripts -maxdepth 1 -type f -exec cp {} "$emberBindir/" \;
 fi
 
 if [[ -e docs ]]; then

@@ -8,7 +8,9 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 packageName="$1"
 shift
 
-fail() {
+source support/getDirs
+
+if [[ -z "$(ember-getconf emberSharedVersion)" ]]; then
     #NOTE: MAINTENANCE: Manual error printing
     if [[ -z "$(ember-getconf emberSharedVersion)" ]]; then
         printf '%b' '\033[1;31m' >&2
@@ -16,16 +18,30 @@ fail() {
         printf '%b' '\033[0m' >&2
         exit 1
     fi
-}
-
-if [[ -z "$(ember-getconf emberSharedVersion)" ]]; then
-    fail
 fi
 
 if [[ "$OSTYPE" = darwin* ]]; then
     if [[ -f "support/prepareForMac" ]]; then
         support/prepareForMac "$packageName"
     fi
+fi
+
+substitutePath() {
+    defaultPath="${1//\//\\\/}"
+    newPathVarName="$2"
+    export "$newPathVarName"
+    local pathEsc
+    pathEsc="$(perl -0777 -e 'print(quotemeta($ENV{'"$newPathVarName"'}))')"
+    echo "pathEsc for $newPathVarName: $pathEsc"
+    find scripts -maxdepth 1 -type f -exec perl -0777 -p -i -e "s/$defaultPath/$pathEsc/g" {} \;
+}
+
+if [[ -e scripts ]]; then
+    substitutePath "/usr/local/bin" "emberBindir"
+
+    substitutePath "/usr/local/etc" "emberSysconfdir"
+
+    substitutePath "/usr/local/share" "emberDatadir"
 fi
 
 #### End of preparation install script template ####

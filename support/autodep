@@ -10,6 +10,8 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 packageName="$1"
 shift
 
+source support/getDirs
+
 failinstall() {
     die "ERROR: Could not find or install $1."
 }

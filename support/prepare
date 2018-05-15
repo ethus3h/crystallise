@@ -8,6 +8,9 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 packageName="$1"
 shift
 
+# Note: Only provide this file if the package should run on macOS. Your code may require some
+# changes to be correctly transformed by this script.
+
 fail() {
     #NOTE: MAINTENANCE: Manual error printing
     if [[ -z "$(ember-getconf emberSharedVersion)" ]]; then

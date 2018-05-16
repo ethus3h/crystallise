@@ -16,7 +16,7 @@ if ! [[ -e "$pathPrefix".csum ]]; then
 fi
 
 if [[ -e "$pathPrefix".csum-not-found ]]; then
-    less "$pathPrefix".csum
-else
     less "$pathPrefix".deep.idx
+else
+    less "$pathPrefix".csum
 fi

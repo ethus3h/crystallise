@@ -18,12 +18,12 @@ if [[ "$1" == "--override-data-dir="* ]] && [[ -n "$overrideInstalledAppDataDirA
 fi
 shift
 
-emberPrefix="$(<support/.prefix)" || true
-emberMandir="$(<support/.mandir)" || true
-emberInfodir="$(<support/.infodir)" || true
-emberDatadir="$(<support/.datadir)" || true
-emberSysconfdir="$(<support/.sysconfdir)" || true
-emberLocalstatedir="$(<support/.localstatedir)" || true
+{ emberPrefix="$(<support/.prefix)" || true; } 2> /dev/null
+{ emberMandir="$(<support/.mandir)" || true; } 2> /dev/null
+{ emberInfodir="$(<support/.infodir)" || true; } 2> /dev/null
+{ emberDatadir="$(<support/.datadir)" || true; } 2> /dev/null
+{ emberSysconfdir="$(<support/.sysconfdir)" || true; } 2> /dev/null
+{ emberLocalstatedir="$(<support/.localstatedir)" || true; } 2> /dev/null
 
 #echo 1 "$1" 2 "$2" 3 "$3" 4 "$4" 5 "$5" 6 "$6" 7 "$7" 8 "$8" 9 "$9"
 if [[ -z "$emberDestdir" ]] && [[ -n "$1" ]]; then

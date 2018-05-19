@@ -21,7 +21,7 @@ EmberLibrary="$(crystallize-getconf EmberLibrary)"
         elex
     )
     findemberlibraryfolders() {
-        find . -maxdepth 1 -not -name '\.*' -name "ember-library-[0-9]" -type d -print0 | xargs -i{} -0 -P 3 bash -c "source ember_bash_s,etup &> /dev/null; elen "$(basename "$1")"; $egupCmd"'-single; elex' -- '{}' \;
+        find . -maxdepth 1 -not -name '\.*' -name "ember-library-[0-9]" -type d -print0 | xargs -i{} -0 -P 3 bash -c "source ember_bash_setup &> /dev/null; elen "$(basename "$1")"; $egupCmd"'-single; elex' -- '{}' \;
     }
     findemberfolders() {
         find . -maxdepth 1 -not -name '\.*' -type d -print0 | xargs -i{} -0 -P 5 bash -c "$egupCmd"'-single "$1"' -- '{}' \;

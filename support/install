@@ -52,6 +52,10 @@ if [[ -e "support/$packageName.conf" ]]; then
     fi
 fi
 
+if [[ ! -e /Ember\ Library ]]; then
+	mkdir -p /Ember\ Library/Futuramerlin\ Projects/Data/Crystal\ Index/
+fi
+
 #### End of Makefile install script template ####
 
 # Any extra installation logic goes here.

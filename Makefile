@@ -1,4 +1,5 @@
-packageName = crystallize
+packageNameFile=package-name
+packageName=`cat $(packageNameFile)`
 
 all:
 	@support/prepare $(packageName) --override-data-dir=$(OVERRIDEDATADIR) $(DESTDIR) $(prefix) $(PREFIX) $(exec_prefix) $(bindir) $(datarootdir) $(datadir) $(sysconfdir) $(sharedstatedir)

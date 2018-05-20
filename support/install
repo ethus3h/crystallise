@@ -41,7 +41,6 @@ if [[ -e scripts ]]; then
 fi
 
 if [[ -e docs/futuramerlin-web-toolkit-output ]]; then
-    # NOT IMPLEMENTED ELSEWHERE
     mkdir -p "$emberDatadir/doc/$packageName"
     cp -r docs/futuramerlin-web-toolkit-output/* "$emberDatadir/doc/$packageName/"
 fi

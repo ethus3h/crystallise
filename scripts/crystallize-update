@@ -12,14 +12,17 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 sudo echo
 
 installDir="$(bigTempDir)"
-cd "$installDir" || die "cd failed"
+(
+    cd "$installDir" || die "cd failed"
 
-ember-shared-update
+    ember-shared-update
 
-# update crystallize
-git clone https://github.com/ethus3h/crystallize.git
-cd crystallize || die "cd failed"
-./configure
-make autodep
-make
-sudo make noconf
+    # update crystallize
+    git clone https://github.com/ethus3h/crystallize.git
+    cd crystallize || die "cd failed"
+    ./configure
+    make autodep
+    make
+    sudo make noconf
+)
+rm -rf "${installDir:?}"

@@ -29,7 +29,7 @@ fi
 substitutePath() {
     defaultPath="${1//\//\\\/}"
     newPathVarName="$2"
-    export "$newPathVarName"
+    export "${newPathVarName?}"
     local pathEsc
     pathEsc="$(perl -0777 -e 'print(quotemeta($ENV{'"$newPathVarName"'}))')"
     echo "pathEsc for $newPathVarName: $pathEsc"
@@ -42,6 +42,20 @@ if [[ -e scripts ]]; then
     substitutePath "/usr/local/etc" "emberSysconfdir"
 
     substitutePath "/usr/local/share" "emberDatadir"
+fi
+
+if [[ -e docs ]]; then
+    if ! [[ -d docs ]]; then
+        warn "The \"docs\" folder exists, but is not a directory. Documentation will not be installed."
+    else
+        if ! fmwtk_loc="$(type -P "futuramerlin-web-toolkit-build")" || [[ -z $fmwtk_loc ]]; then
+            warn "Not building documentation: futuramerlin-web-toolkit not found."
+        else
+            pushd "docs" || die
+            futuramerlin-web-toolkit-build
+            popd || die
+        fi
+    fi
 fi
 
 #### End of preparation install script template ####

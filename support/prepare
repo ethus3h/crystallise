@@ -5,9 +5,6 @@ source ember_bash_setup &> /dev/null || { printf '%b' '\033[1;31m' >&2; echo "A 
 
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd)."' ERR
 
-packageName="$1"
-shift
-
 source support/getDirs
 
 if [[ -z "$(ember-getconf emberSharedVersion)" ]]; then

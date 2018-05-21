@@ -7,9 +7,6 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 
 ((EUID)) && exec sudo -- "$0" "$@"
 
-packageName="$1"
-shift
-
 source support/getDirs
 
 failinstall() {

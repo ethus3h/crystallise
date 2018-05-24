@@ -3,26 +3,34 @@
 source ember_bash_setup &> /dev/null || { printf '%b' '\033[1;31m' >&2; echo "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd): The required dependency ember-shared could not be found (or ember_bash_setup could not be sourced for some other reason)." >&2; printf '%b' '\033[0m' >&2; exit 1; }
 #set -x
 
-trap - ERR
-sudo echo
-sudo chmod 777 "$(ember-getconf WorkDirectory)" &> /dev/null
-
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
-sudo echo
+if [[ -z "$1" ]]; then
+    sudo echo
+    cp "$0" "$0.tmp"
+    exec sudo "$0.tmp" --innerExec
+else
+    trap - ERR
+    sudo echo
+    sudo chmod 777 "$(ember-getconf WorkDirectory)" &> /dev/null
 
-installDir="$(bigTempDir)"
-(
-    cd "$installDir" || die "cd failed"
+    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
-    ember-shared-update
+    sudo echo
 
-    # update crystallize
-    git clone https://github.com/ethus3h/crystallize.git
-    cd crystallize || die "cd failed"
-    ./configure
-    make autodep
-    make
-    sudo make noconf
-)
-rm -rf "${installDir:?}"
+    installDir="$(tempDir)"
+    (
+        cd "$installDir" || die "cd failed"
+
+        ember-shared-update
+
+        # update crystallize
+        git clone https://github.com/ethus3h/crystallize.git
+        cd crystallize || die "cd failed"
+        ./configure
+        make autodep
+        make
+        sudo make noconf
+    )
+    rm -rf "${installDir:?}"
+fi

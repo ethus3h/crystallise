@@ -7,7 +7,7 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 
 if [[ -z "$1" ]]; then
     sudo echo
-    cp "$0" "$0.tmp"
+    sudo cp "$0" "$0.tmp"
     exec sudo "$0.tmp" --innerExec
 else
     trap - ERR

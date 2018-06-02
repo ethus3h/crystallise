@@ -123,7 +123,7 @@ destinationName="$2/${sourceNameReplaced:destinationRootLength:targetLength}"
 #echo "$destinationName"
 sourceChecksum="$(sha512sum < "$1" | awk '{print $1;}')"
 if [[ -f "$destinationName" ]]; then
-    pointerTypeSignature="$(head -c 36 "$destinationName")"
+    pointerTypeSignature="$(head -c 36 "$destinationName" | tr -d '\0')"
     destinationChecksum=""
     hasEncounteredError="0"
     if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
@@ -144,7 +144,7 @@ if [[ -f "$destinationName" ]]; then
                 fi
             fi
         else
-            destinationChecksum="$(tail -c +38 "$destinationName" | head -c 129)"
+            destinationChecksum="$(tail -c +38 "$destinationName" | head -c 129 | tr -d '\0')"
             sreg_read_stream --sreg-dir "$sregDir" < "$destinationName" > /dev/null || hasEncounteredError="1"
         fi
         if [[ "$destinationChecksum" == "$sourceChecksum" && "$hasEncounteredError" == "0" && "$assumePointerDbEntryFileExists" == "true" ]]; then

@@ -81,7 +81,7 @@ echo "0" > "$skipFile"
 
 echo "Counting items..."
 if [[ "$keepGoing" == "true" ]]; then
-    find "${pathsToCopy[@]}" -type f -printf '.' || warn "Find reported an error trying to count the files on which to operate." | wc -c > "$statusFile"
+    find "${pathsToCopy[@]}" -type f -printf '.' | wc -c > "$statusFile" || warn "Find reported an error trying to count the files on which to operate."
 else
     find "${pathsToCopy[@]}" -type f -printf '.' | wc -c > "$statusFile"
 fi

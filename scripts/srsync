@@ -14,6 +14,12 @@ if [[ "$1" == "--sreg-dir" ]]; then
 fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check "${!#}")"
 
+keepGoing=""
+if [[ "$1" == "--keep-going" ]]; then
+    keepGoing="true"
+    shift
+fi
+
 skipCount="0"
 if [[ "$1" == "--skip" ]]; then
     shift
@@ -74,7 +80,11 @@ skipFile="$failCheckFile.skip"
 echo "0" > "$skipFile"
 
 echo "Counting items..."
-find "${pathsToCopy[@]}" -type f -printf '.' | wc -c > "$statusFile"
+if [[ "$keepGoing" == "true" ]]; then
+    find "${pathsToCopy[@]}" -type f -printf '.' || warn "Find reported an error trying to count the files on which to operate." | wc -c > "$statusFile"
+else
+    find "${pathsToCopy[@]}" -type f -printf '.' | wc -c > "$statusFile"
+fi
 
 # FIXME: Why replace this in the destination parameter?! Won't this make it copy into the wrong folder?
 destinationReplaced="${destinationParameter/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"

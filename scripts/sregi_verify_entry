@@ -45,7 +45,20 @@ if [[ "$1" == "--sreg-dir" ]]; then
 fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir")"
 
+buildReport=""
+reportFile=""
+if [[ "--report-to" == "$1" ]]; then
+    buildReport="true"
+    shift
+    reportFile="$1"
+    shift
+fi
+
 fail() {
+    if [[ "$buildReport" == "true" ]]; then
+        echo "$knownHash" >> "$reportFile"
+        [[ -e "$reportFile.registry" ]] || echo "$sregDir" > "$reportFile.registry"
+    fi
     if [[ "$dropFailed" == "true" ]]; then
         dbDir="$sregDir"/Failed\ Fsck/
         mkdir -p "$dbDir"

@@ -24,6 +24,13 @@ finish() {
 trap 'removeFailCheckFile; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 trap 'removeFailCheckFile; finish' EXIT
 
+skipCount="0"
+if [[ "$1" == "--skip" ]]; then
+    shift
+    skipCount="$1"
+    shift
+fi
+
 skipCache=""
 if [[ "--skip-cache" == "$1" ]]; then
     skipCache="--skip-cache"
@@ -61,8 +68,11 @@ fsckStatusFile="/tmp/$fsckId/.sreg_fsck.status"
 dbDir="$sregDir"
 find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -printf '.' | wc -c > "$fsckStatusFile"
 rm -f "$fsckStatusFile.failed"
-bpid="$$"
-find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" \( -exec sregi_verify_entry "$failCheckFile" --sreg-dir "$sregDir" {} "$fsckStatusFile" "$skipCache" \; -or -exec kill "-$bpid" \; \)
+
+reportFile="$(pwd)/fsck-report-$(date-uuid).lst"
+warn "If there are any failed items, a report will be generated and placed at $reportFile."
+
+find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -exec sregi_verify_entry "$failCheckFile" --sreg-dir "$sregDir" --skip "$skipCount" --report-to "$reportFile" {} "$fsckStatusFile" "$skipCache" \;
 
 if [[ -e "$failCheckFile" ]]; then
     die "An invocation of sregi_verify_entry (called from $0) failed with the message \"$(<"$failCheckFile")\"!"

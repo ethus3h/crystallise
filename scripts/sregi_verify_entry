@@ -24,6 +24,36 @@ if [[ "$1" == "--fail-check" ]]; then
     shift
 fi
 if [[ -n "$failCheckFile" ]]; then
+    skipCount="0"
+    if [[ "$1" == "--skip" ]]; then
+        shift
+        skipCount="$1"
+        shift
+    fi
+    if [[ "$skipCount" -gt "0" ]]; then
+        skipFile="$failCheckFile.skip"
+        skippedSoFar="$(<"$skipFile")"
+        skippedSoFar=$(( skippedSoFar + 1 ))
+        if [[ "$skippedSoFar" -le "$skipCount" ]]; then
+            if [[ "$skippedSoFar" -eq "$skipCount" ]]; then
+                # Mirror the argument parsing code here so we can find the fsckStatusFile
+                if [[ "$1" == "--sreg-dir" ]]; then
+                    shift
+                    shift
+                fi
+                if [[ "$1" == "--report-to" ]]; then
+                    shift
+                    shift
+                fi
+                fsckStatusFile="$2"
+                numberProcessedFile="$fsckStatusFile.done"
+                echo "$skipCount" > "$numberProcessedFile"
+            fi
+            echo "$skippedSoFar" > "$skipFile"
+            echo "(skipped $skippedSoFar out of $skipCount...)"
+            exit 0
+        fi
+    fi
     if [[ -e "$failCheckFile" ]]; then
         warn "A previous invocation of $0 failed with the message \"$(<"$failCheckFile")\"!"
     else
@@ -34,6 +64,10 @@ if [[ -n "$failCheckFile" ]]; then
             fi
             exit 0
         }
+    fi
+else
+    if [[ "$1" == "--skip" ]] && [[ "$2" != "0" ]]; then
+        die "Non-zero skip counts require a --fail-check path to be given."
     fi
 fi
 

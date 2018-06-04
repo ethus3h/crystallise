@@ -72,7 +72,7 @@ rm -f "$fsckStatusFile.failed"
 reportFile="$(pwd)/fsck-report-$(date-uuid).lst"
 warn "If there are any failed items, a report will be generated and placed at $reportFile."
 
-find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -exec sregi_verify_entry "$failCheckFile" --sreg-dir "$sregDir" --skip "$skipCount" --report-to "$reportFile" {} "$fsckStatusFile" "$skipCache" \;
+find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -exec sregi_verify_entry --fail-check "$failCheckFile" --sreg-dir "$sregDir" --skip "$skipCount" --report-to "$reportFile" {} "$fsckStatusFile" "$skipCache" \;
 
 if [[ -e "$failCheckFile" ]]; then
     die "An invocation of sregi_verify_entry (called from $0) failed with the message \"$(<"$failCheckFile")\"!"

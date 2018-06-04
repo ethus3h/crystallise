@@ -58,6 +58,9 @@ if [[ "$skipCache" == "--skip-cache" || "$skipCache" == "--skip-drop-failed" ]];
     skipCache=""
 fi
 
+reportFile="$(pwd)/fsck-report-$(date-uuid).lst"
+warn "If there are any failed items, a report will be generated and placed at $reportFile."
+
 echo "Counting items..."
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 fsckId=".sreg_fsck-$(date-uuid)"
@@ -68,9 +71,6 @@ fsckStatusFile="/tmp/$fsckId/.sreg_fsck.status"
 dbDir="$sregDir"
 find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -printf '.' | wc -c > "$fsckStatusFile"
 rm -f "$fsckStatusFile.failed"
-
-reportFile="$(pwd)/fsck-report-$(date-uuid).lst"
-warn "If there are any failed items, a report will be generated and placed at $reportFile."
 
 find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -exec sregi_verify_entry --fail-check "$failCheckFile" --skip "$skipCount" --sreg-dir "$sregDir" --report-to "$reportFile" {} "$fsckStatusFile" "$skipCache" \;
 

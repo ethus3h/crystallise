@@ -151,10 +151,10 @@ if [[ "$exitCode" == "0" ]]; then
         numberExpected="$(<"$fsckStatusFile")"
         numberProcessedFile="$fsckStatusFile.done"
         xxd "$fsckStatusFile" >&2
-        xxd "$numberProcessedFile" >&2
         if ! [[ -f "$numberProcessedFile" ]]; then
             numberProcessed="1"
         else
+            xxd "$numberProcessedFile" >&2
             numberProcessed="$(<"$numberProcessedFile")"
             numberProcessed=$(( numberProcessed + 1 ))
         fi

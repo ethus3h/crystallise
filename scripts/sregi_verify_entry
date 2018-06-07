@@ -102,6 +102,8 @@ fail() {
     die "Error verifying stream registry database entry $knownHash!"
 }
 
+trap 'fail; warn "A failure while verifying an entry was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+
 fsckStatusFile="$2"
 
 if [[ "--quick" == "$2" ]]; then

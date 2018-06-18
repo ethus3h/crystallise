@@ -43,7 +43,9 @@ fi
 
 if [[ -e docs ]]; then
     if ! [[ -d docs ]]; then
-        warn "The \"docs\" folder exists, but is not a directory. Documentation will not be installed."
+        warn "\"docs\" exists, but is not a directory. Documentation will not be installed."
+    elif ! [[ -f 'docs/.futuramerlin-web-toolkit/.futuramerlin-web-toolkit.cfg' ]]; then
+        echo "(The package doesn't contain a docs/.futuramerlin-web-toolkit/.futuramerlin-web-toolkit.cfg file, so the documentation will be installed as normal files.)" 1>&2
     else
         if ! fmwtk_loc="$(type -P "futuramerlin-web-toolkit-build")" || [[ -z $fmwtk_loc ]]; then
             warn "Not building documentation: futuramerlin-web-toolkit not found."

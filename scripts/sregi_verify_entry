@@ -193,7 +193,7 @@ if [[ "$exitCode" == "0" ]]; then
         true
     fi
     if [[ "$useNotes" == "true" ]]; then
-        if [[ "$skipCache" != "--skip-cache" ]] || [[ "$quick" == "true" ]]; then
+        if [[ "$skipCache" == "--skip-cache" ]] && [[ "$quick" != "true" ]]; then
             touch "$entryPath.verified"
         fi
     fi
@@ -203,7 +203,7 @@ else
 fi
 
 if [[ "$useNotes" == "true" ]]; then
-    if [[ "$skipCache" != "--skip-cache" ]] || [[ "$quick" == "true" ]]; then
+    if [[ "$skipCache" == "--skip-cache" ]] && [[ "$quick" != "true" ]]; then
         touch "$entryPath.verified"
     fi
 fi

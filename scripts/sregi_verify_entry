@@ -136,10 +136,14 @@ if [[ "--drop-failed" == "$3" || "--drop-failed" == "$4" ]]; then
     dropFailed="true"
 fi
 
-if [[ "$useNotes" == "true" ]] && [[ "$skipCache" != "--skip-cache" ]]; then
-    warn "Because neither --skip-cache nor --skip-drop-failed were given, new success notes will not be written."
+if [[ "$useNotes" == "true" ]]; then
+    if [[ "$skipCache" != "--skip-cache" ]] || [[ "$quick" == "true" ]]; then
+        warn "Either --skip-cache (or --skip-drop-failed) was not given, or --quick was specified. Consequently, new success notes will not be written."
+    fi
+    if [[ -f "$entryPath.verified" ]]; then
+        quick="true"
+    fi
 fi
-if [[ "$useNotes"]]
 
 knownHash="(Failed to retrieve entry hash!)"
 knownHashTemp="$(sregi_hash_from_file "$entryPath")" || fail "$entryPath"
@@ -189,7 +193,7 @@ if [[ "$exitCode" == "0" ]]; then
         true
     fi
     if [[ "$useNotes" == "true" ]]; then
-        if [[ "$skipCache" != "--skip-cache" ]]; then
+        if [[ "$skipCache" != "--skip-cache" ]] || [[ "$quick" == "true" ]]; then
             touch "$entryPath.verified"
         fi
     fi
@@ -199,7 +203,7 @@ else
 fi
 
 if [[ "$useNotes" == "true" ]]; then
-    if [[ "$skipCache" != "--skip-cache" ]]; then
+    if [[ "$skipCache" != "--skip-cache" ]] || [[ "$quick" == "true" ]]; then
         touch "$entryPath.verified"
     fi
 fi

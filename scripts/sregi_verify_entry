@@ -71,6 +71,12 @@ else
     fi
 fi
 
+useNotes="false"
+if [[ "$1" == "--notes" ]]; then
+    shift
+    useNotes="true"
+fi
+
 sregDir=""
 if [[ "$1" == "--sreg-dir" ]]; then
     shift
@@ -96,13 +102,15 @@ fail() {
     if [[ "$dropFailed" == "true" ]]; then
         dbDir="$sregDir"/Failed\ Fsck/
         mkdir -p "$dbDir"
-        mv "$1" "$dbDir/"
+        mv "$entryPath" "$dbDir/"
         die "Error verifying stream registry database entry $knownHash! Marking entry as corrupted."
     fi
     die "Error verifying stream registry database entry $knownHash!"
 }
 
 trap 'fail; warn "A failure while verifying an entry was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+
+entryPath="$1"
 
 fsckStatusFile="$2"
 
@@ -128,8 +136,13 @@ if [[ "--drop-failed" == "$3" || "--drop-failed" == "$4" ]]; then
     dropFailed="true"
 fi
 
+if [[ "$useNotes" == "true" ]] && [[ "$skipCache" != "--skip-cache" ]]; then
+    warn "Because neither --skip-cache nor --skip-drop-failed were given, new success notes will not be written."
+fi
+if [[ "$useNotes"]]
+
 knownHash="(Failed to retrieve entry hash!)"
-knownHashTemp="$(sregi_hash_from_file "$1")" || fail "$1"
+knownHashTemp="$(sregi_hash_from_file "$entryPath")" || fail "$entryPath"
 if [[ -n "$knownHashTemp" ]]; then
     knownHash="$knownHashTemp"
 fi
@@ -137,12 +150,12 @@ fi
 exitCode=""
 if [[ "$quick" == "true" ]]; then
     echo "Started quick-checking stream registry database entry $knownHash."
-    sregi_hashpointer_sane --sreg-dir "$sregDir" "$1"
+    sregi_hashpointer_sane --sreg-dir "$sregDir" "$entryPath"
     exitCode="$?"
 else
     # Disable SC2094 because sreg_read_stream should not write to the file specified by --entry-path.
     # shellcheck disable=SC2094
-    sreg_read_stream "$lockOverride" --sreg-dir "$sregDir" --entry-path "$1" --checksum "$knownHash" --disallow-hash-pointer "$skipCache" < "$1" > /dev/null
+    sreg_read_stream "$lockOverride" --sreg-dir "$sregDir" --entry-path "$entryPath" --checksum "$knownHash" --disallow-hash-pointer "$skipCache" < "$entryPath" > /dev/null
     exitCode="$?"
 fi
 
@@ -175,9 +188,19 @@ if [[ "$exitCode" == "0" ]]; then
     else
         true
     fi
+    if [[ "$useNotes" == "true" ]]; then
+        if [[ "$skipCache" != "--skip-cache" ]]; then
+            touch "$entryPath.verified"
+        fi
+    fi
     success
 else
-    fail "$1"
+    fail "$entryPath"
 fi
 
+if [[ "$useNotes" == "true" ]]; then
+    if [[ "$skipCache" != "--skip-cache" ]]; then
+        touch "$entryPath.verified"
+    fi
+fi
 success

@@ -49,6 +49,8 @@ fi
 
 sregDir="$(sregi_find_dir --sreg-dir "$1" --full-check)"
 
+crystalWorkdir="$(crystallize-getconf WorkDirectory)"
+
 if [[ "$skipCache" == "--skip-cache" || "$skipCache" == "--skip-drop-failed" ]]; then
     echo "Disabling caches..."
     mv "$crystalWorkdir/.StreamCache" "$crystalWorkdir/.StreamCache.disabled"
@@ -62,7 +64,6 @@ reportFile="$(pwd)/fsck-report-$(date-uuid).lst"
 warn "If there are any failed items, a report will be generated and placed at $reportFile."
 
 echo "Counting items..."
-crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 fsckId=".sreg_fsck-$(date-uuid)"
 failCheckFile="/tmp/$fsckId.srsync.running"
 mkdir -p "$crystalWorkdir/${fsckId:?}"

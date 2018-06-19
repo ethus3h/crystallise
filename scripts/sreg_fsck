@@ -72,7 +72,7 @@ dbDir="$sregDir"
 find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -printf '.' | wc -c > "$fsckStatusFile"
 rm -f "$fsckStatusFile.failed"
 
-find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/.BundlePointerTemp/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -exec sregi_verify_entry --fail-check "$failCheckFile" --skip "$skipCount" --sreg-dir "$sregDir" --report-to "$reportFile" {} "$fsckStatusFile" "$skipCache" \;
+find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/.BundlePointerTemp/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -exec sregi_verify_entry --fail-check "$failCheckFile" --skip "$skipCount" --notes --sreg-dir "$sregDir" --report-to "$reportFile" {} "$fsckStatusFile" "$skipCache" \;
 
 if [[ -e "$failCheckFile" ]]; then
     die "An invocation of sregi_verify_entry (called from $0) failed with the message \"$(<"$failCheckFile")\"!"

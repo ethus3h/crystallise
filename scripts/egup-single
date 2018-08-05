@@ -55,7 +55,7 @@ fi
 
 status=""
 while [[ "$status" != "completed" ]]; do
-    # Do this part of the process twice to make reasonably sure remote changes to branches/refs/tags are correctly reflected in the .egup.{branches/refs/tags} files
+    # Do this part of the process twice to make reasonably sure remote changes to branches/refs/tags are correctly reflected in the .egup.{branches/refs/tags/stat} files
 
     git branch --list -a -v > .egup.branches
     sed -i '/^\* master /d' .egup.branches
@@ -66,6 +66,7 @@ while [[ "$status" != "completed" ]]; do
     sed -i '/^[a-f0-9]\{40\} refs\/remotes\/origin\/HEAD$/d' .egup.refs
     sed -i '/^[a-f0-9]\{40\} refs\/remotes\/origin\/master$/d' .egup.refs
     git show-ref -d --tags > .egup.tags || echo "(Note: Repository appears to have no tags.)"
+    find . -exec stat {} \; > .egup.stat || die ".egup.stat could not be generated!"
 
     git add -A || die "Error adding tag changes."
     trap - ERR

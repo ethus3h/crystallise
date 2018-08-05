@@ -68,7 +68,7 @@ while [[ "$status" != "completed" ]]; do
     git show-ref -d --tags > .egup.tags || echo "(Note: Repository appears to have no tags.)"
 
     if [[ ! -f "./.egup.no-stat" ]]; then
-        find . -not -path '.' -not -path './.egup.stat' -not -path './.egup.tags' -not -path './.egup.branches' -not -path './.egup.refs' -not -path './.egup.remotes' -not -path '*/.git' -not -path '*/.git/*' -not \( -type d -and -exec test -e '{}/.git' \; \) -exec bash -c 'stat "$0" | sed '\''s/\\/\\\\/g'\'' | sed '\''s/$/\\\n/g'\''; printf '\''\n\n'\' {} \; > .egup.stat || die ".egup.stat could not be generated!"
+        find . -path '*/.git' -prune -o -path '*/.git/*' -prune -o -not -path '.' -not -path './.egup.stat' -not -path './.egup.tags' -not -path './.egup.branches' -not -path './.egup.refs' -not -path './.egup.remotes' -not \( -type d -and -exec test -e '{}/.git' \; \) -exec bash -c 'stat "$0" | sed '\''s/\\/\\\\/g'\'' | sed '\''s/$/\\\n/g'\''; printf '\''\n\n'\' {} \; > .egup.stat || die ".egup.stat could not be generated!"
     fi
 
     git add -A || die "Error adding tag changes."

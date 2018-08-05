@@ -66,7 +66,10 @@ while [[ "$status" != "completed" ]]; do
     sed -i '/^[a-f0-9]\{40\} refs\/remotes\/origin\/HEAD$/d' .egup.refs
     sed -i '/^[a-f0-9]\{40\} refs\/remotes\/origin\/master$/d' .egup.refs
     git show-ref -d --tags > .egup.tags || echo "(Note: Repository appears to have no tags.)"
-    #find . -not -path '.' -not -path './.egup.stat' -not -path './.egup.tags' -not -path './.egup.branches' -not -path './.egup.refs' -not -path './.egup.remotes' -not \( -type d -and -exec test -e '{}/.git' \; \) -exec bash -c 'stat "$0" | sed '\''s/\\/\\\\/g'\'' | sed '\''s/$/\\\n/g'\''; printf '\''\n\n'\' {} \; > .egup.stat || die ".egup.stat could not be generated!"
+
+    if [[ ! -f "./.egup.no-stat" ]]; then
+        find . -not -path '.' -not -path './.egup.stat' -not -path './.egup.tags' -not -path './.egup.branches' -not -path './.egup.refs' -not -path './.egup.remotes' -not \( -type d -and -exec test -e '{}/.git' \; \) -exec bash -c 'stat "$0" | sed '\''s/\\/\\\\/g'\'' | sed '\''s/$/\\\n/g'\''; printf '\''\n\n'\' {} \; > .egup.stat || die ".egup.stat could not be generated!"
+    fi
 
     git add -A || die "Error adding tag changes."
     trap - ERR
@@ -75,7 +78,7 @@ while [[ "$status" != "completed" ]]; do
 
     if [[ "$offline" != "true" ]]; then
         retryUntilSuccess 100 30 5 5 git pull --all || die "Error pulling."
-        retryUntilSuccess 100 30 5 5 git submodule update --remote || warn "Error updating submodules. Maybe a remote server is down?"
+        # FIXME UNCOMMENT retryUntilSuccess 100 30 5 5 git submodule update --remote || warn "Error updating submodules. Maybe a remote server is down?"
         if ! [[ -f .egup.nopush ]]; then
             retryUntilSuccess 100 30 5 5 git push --verbose --tags -u origin master || die "Error pushing changes."
             retryUntilSuccess 100 30 5 5 git push --verbose --all -u origin || die "Error pushing changes."

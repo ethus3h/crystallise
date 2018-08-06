@@ -71,9 +71,9 @@ while [[ "$status" != "completed" ]]; do
         rm .egup.stat
         rm .egup.stat.split*
         find . -path '*/.git' -prune -o -path '*/.git/*' -prune -o -not -path '.' -not -path './.egup.stat' -not -path './.egup.tags' -not -path './.egup.branches' -not -path './.egup.refs' -not -path './.egup.remotes' -not \( -type d -and -exec test -e '{}/.git' \; \) -exec bash -c 'stat "$0" | sed '\''s/\\/\\\\/g'\'' | sed '\''s/$/\\\n/g'\''; printf '\''\n\n'\' {} \; > .egup.stat || die ".egup.stat could not be generated!"
-    fi
 
-    find . -maxdepth 1 -type f -name '.egup.stat' -size +10M -exec split -l 50000 --numeric-suffixes .egup.stat ".egup.stat.split" \; -delete
+        find . -maxdepth 1 -type f -name '.egup.stat' -size +10M -exec split -l 50000 --numeric-suffixes .egup.stat ".egup.stat.split" \; -delete
+    fi
 
     git add -A || die "Error adding tag changes."
     trap - ERR

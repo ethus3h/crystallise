@@ -114,11 +114,11 @@ Device: 32h/50d	Inode: 117143      Links: 2\
 
 Access: (0755/drwxr-xr-x)  Uid: ( 1000/    kyan)   Gid: ( 1000/    kyan)\
 
-Access: 2018-08-07 00:45:42.700369185 -0400\
+Access: 2018-08-07 00:48:41.828179133 -0400\
 
-Modify: 2018-08-07 00:45:42.340372958 -0400\
+Modify: 2018-08-07 00:48:41.128188655 -0400\
 
-Change: 2018-08-07 00:45:42.340372958 -0400\
+Change: 2018-08-07 00:48:41.128188655 -0400\
 
  Birth: -\
 
@@ -414,17 +414,17 @@ Change: 2018-05-19 19:58:30.671325213 -0400\
 
   File: ./scripts/crystallize-bash_setup\
 
-  Size: 4355      	Blocks: 5          IO Block: 4608   regular file\
+  Size: 4966      	Blocks: 5          IO Block: 5120   regular file\
 
-Device: 32h/50d	Inode: 9961490     Links: 1\
+Device: 32h/50d	Inode: 15763419    Links: 1\
 
 Access: (0755/-rwxr-xr-x)  Uid: ( 1000/    kyan)   Gid: ( 1000/    kyan)\
 
-Access: 2018-08-06 23:40:28.483385421 -0400\
+Access: 2018-08-07 00:48:41.828179133 -0400\
 
-Modify: 2018-01-23 10:13:04.283529404 -0500\
+Modify: 2018-08-07 00:48:41.118188793 -0400\
 
-Change: 2018-05-15 01:49:39.791896408 -0400\
+Change: 2018-08-07 00:48:41.128188655 -0400\
 
  Birth: -\
 

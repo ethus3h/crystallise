@@ -73,9 +73,9 @@ while [[ "$status" != "completed" ]]; do
         rm -f .egup.stat.split*
         shopt -s failglob
 
-        find . -path '*/.git' -prune -o -path '*/.git/*' -prune -o -not -path '.' -not -path './.egup.stat' -not -path './.egup.tags' -not -path './.egup.branches' -not -path './.egup.refs' -not -path './.egup.remotes' -printf '%p\n%m\n%U\n%u\n%G\n%g\n\0\n' > .egup.stat || die ".egup.stat could not be generated!"
+        find . -path '*/.git' -prune -o -path '*/.git/*' -prune -o -not -path '.' -not -path './.egup.stat' -not -path './.egup.tags' -not -path './.egup.branches' -not -path './.egup.refs' -not -path './.egup.remotes' -printf '%p\0%l\nT:%y\nS:%s\nP:%m\nU:%U:%u\nG:%G:%g\nM:%TY.%Tm.%Td.%TH.%TM.%TS.%TZ\nC:%CY.%Cm.%Cd.%CH.%CM.%CS.%CZ\n\0\0\n' > .egup.stat || die ".egup.stat could not be generated!"
 
-        find . -maxdepth 1 -type f -name '.egup.stat' -size +10M -exec split -l 50000 --numeric-suffixes .egup.stat ".egup.stat.split" \; -delete
+        find . -maxdepth 1 -type f -name '.egup.stat' -size +1M -exec split -l 30000 --numeric-suffixes .egup.stat ".egup.stat.split" \; -delete
     fi
 
     git add -A || die "Error adding tag changes."

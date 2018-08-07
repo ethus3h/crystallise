@@ -75,7 +75,7 @@ while [[ "$status" != "completed" ]]; do
     print "$emberCrystallizeVersion" > .egup.stat
     printf '\0' >> .egup.stat
     if [[ ! -f "./.egup.no-stat" ]]; then
-        find . -path '*/.git' -prune -o -path '*/.git/*' -prune -o -not -path '.' -not -path './.egup.stat' -not -path './.egup.tags' -not -path './.egup.branches' -not -path './.egup.refs' -not -path './.egup.remotes' -printf '%p\0%l\nT:%y\nS:%s\nP:%m\nU:%U:%u\nG:%G:%g\nM:%TY.%Tm.%Td.%TH.%TM.%TS.%TZ\nC:%CY.%Cm.%Cd.%CH.%CM.%CS.%CZ\n\0\0\n' | hexdump -v -e '1/1 "%02X "' | sed 's/5C/5C 5C/g' | sed 's/0A/5C 0A/g' | sed 's/00/0A/g' | xxd -r -p >> .egup.stat || die ".egup.stat could not be generated!"
+        find . -path '*/.git' -prune -o -path '*/.git/*' -prune -o -not -path '.' -not -path './.egup.stat' -not -path './.egup.tags' -not -path './.egup.branches' -not -path './.egup.refs' -not -path './.egup.remotes' -printf '%p\0%l\nT:%y\nS:%s\nP:%m\nU:%U:%u\nG:%G:%g\nM:%TY.%Tm.%Td.%TH.%TM.%TS.%TZ\nC:%CY.%Cm.%Cd.%CH.%CM.%CS.%CZ\0\0' | hexdump -v -e '1/1 "%02X "' | sed 's/5C/5C 5C/g' | sed 's/0A/5C 0A/g' | sed 's/00/0A/g' | xxd -r -p >> .egup.stat || die ".egup.stat could not be generated!"
 
         find . -maxdepth 1 -type f -name '.egup.stat' -size +1M -exec split -l 100000 --numeric-suffixes .egup.stat ".egup.stat.split" \; -delete
     fi

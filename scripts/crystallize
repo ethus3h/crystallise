@@ -323,6 +323,7 @@ if [[ $crystallizeLeavePointer == true ]]; then
 fi
 
 chmod -R 644 "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
+chmod 755 "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
 
 if rm -v "$crystalWorkdir/$CrystalID.coal5-timestamp"; then
     #Clear the screen

@@ -76,6 +76,8 @@ while [[ "$status" != "completed" ]]; do
     if [[ ! -f "./.egup.no-stat" ]]; then
         repositoryFolderName="$(basename "$(readlink -f .)")"
         [[ "$repositoryFolderName" == "ember-web-site-snapshots" ]] && find . -name '.git' -and -not -path './.git' -exec mv {} {}.egup-single-disabled \;
+        [[ "$repositoryFolderName" == "ember-web-site-snapshots" ]] && repositoryFolderName='-false'
+        [[ "$repositoryFolderName" == "-false" ]] || repositoryFolderName='-true'
 
         statPrintFormatString='%p\0%l:\0%y:%m:%U:%u:%G:%g:%TY:%Tm:%Td:%TH:%TM:%TS:%TZ:%CY:%Cm:%Cd:%CH:%CM:%CS:%CZ\0\0'
         find . -path '*/.git' -prune -o -path '*/.git/*' -prune -o -path . -o \( -type d -and \( -exec test -e '{}/.git' \; \) -and "$repositoryFolderName" \) -prune -and -printf "$statPrintFormatString" -or -not -path './.egup.stat' -not -path './.egup.tags' -not -path './.egup.branches' -not -path './.egup.refs' -not -path './.egup.remotes' -printf "$statPrintFormatString" | hexdump -v -e '1/1 "%02X "' | tr ' ' '\12' | sed 's/5C/5C\n5C/g' | sed 's/0A/5C\n0A/g' | tr '\12' ' ' | xxd -r -p | tr '\0' '\12' >> .egup.stat || die ".egup.stat could not be generated!"

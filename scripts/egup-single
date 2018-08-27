@@ -94,13 +94,13 @@ while [[ "$status" != "completed" ]]; do
 
         find . -maxdepth 1 -type f -name '.egup.stat' -exec split -l 1 --numeric-suffixes '.egup.stat' ".egup.stat.split" \; -delete
 
-        egupStatDirDestSize=1000 # 1000 files per subdirectory
+        egupStatDirDestSize=10000 # 10000 files per subdirectory
         egupStatDirItemCount="$(find . -maxdepth 1 -type f -printf '.' | wc -c)"
         egupStatDirDestCount=$(( egupStatDirItemCount / egupStatDirDestSize + 1 ))
         egupStatDirCounter=0
         while [[ "$egupStatDirCounter" -lt "$egupStatDirDestCount" ]]; do
             mkdir -p "egup.stat.d.bin$egupStatDirCounter"
-            find . -maxdepth 1 -type f | head -n "$egupStatDirDestSize" | xargs -I'{}' -0 mv '{}' ./egup.stat.d.bin"$egupStatDirCounter"/'{}'.split
+            find . -maxdepth 1 -type f | head -n "$egupStatDirDestSize" | xargs -I'{}' mv '{}' ./egup.stat.d.bin"$egupStatDirCounter"/'{}'.split
         done
 
         popd || die "popd failed!"

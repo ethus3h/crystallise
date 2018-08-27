@@ -90,9 +90,9 @@ while [[ "$status" != "completed" ]]; do
         pushd .egup.stat.d || die "pushd failed!"
         mv ../.egup.stat ./
 
-        egupStatDirItemCount="$(wc -c < .egup.stat)"
-        egupStatDirItemCountPlusOne=$(( egupStatDirItemCount + 1 ))
-        egupStatDirItemCountWc="$(wc -c <<< "$egupStatDirItemCountPlusOne")"
+        egupStatDirItemCount="$(wc -l < .egup.stat)"
+        egupStatDirItemCountPlusTwo=$(( egupStatDirItemCount + 2 ))
+        egupStatDirItemCountWc="$(wc -c <<< "$egupStatDirItemCountPlusTwo")"
 
         find . -maxdepth 1 -type f -name '.egup.stat' -exec split -a "$egupStatDirItemCountWc" -l 1 --numeric-suffixes '.egup.stat' ".egup.stat.split" \; -delete
 

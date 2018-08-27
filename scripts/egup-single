@@ -96,12 +96,12 @@ while [[ "$status" != "completed" ]]; do
 
         find . -maxdepth 1 -type f -name '.egup.stat' -exec split -a "$egupStatDirItemCountWc" -l 1 --numeric-suffixes '.egup.stat' ".egup.stat.split" \; -delete
 
-        egupStatDirDestSize=10 # 10000 files per subdirectory
+        egupStatDirDestSize=10000 # 10000 files per subdirectory
         egupStatDirDestCount=$(( egupStatDirItemCount / egupStatDirDestSize + 1 ))
         egupStatDirCounter=0
         while [[ "$egupStatDirCounter" -lt "$egupStatDirDestCount" ]]; do
             mkdir -p "egup.stat.d.bin$egupStatDirCounter"
-            find . -maxdepth 1 -type f | head -n "$egupStatDirDestSize" | xargs -I'{}' mv '{}' ./egup.stat.d.bin"$egupStatDirCounter"/'{}'.split || test $? -eq 141 # https://stackoverflow.com/questions/22464786/ignoring-bash-pipefail-for-error-code-141
+            find . -maxdepth 1 -type f | sort | head -n "$egupStatDirDestSize" | xargs -I'{}' mv '{}' ./egup.stat.d.bin"$egupStatDirCounter"/'{}'.split || test $? -eq 141 # https://stackoverflow.com/questions/22464786/ignoring-bash-pipefail-for-error-code-141
             egupStatDirCounter=$(( egupStatDirCounter + 1))
         done
 

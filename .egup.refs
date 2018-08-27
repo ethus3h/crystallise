@@ -4,9 +4,7 @@ ccb78758bc1a32ab29a1a17afe606ea16e32fbc1 refs/heads/detached-head-2017aug28
 9bf5f115b3da560befa2db9f530f71b03c1a5af4 refs/remotes/origin/2018mar01-head-detached
 6511aecfb733e66b7379c1528b660b3e30fd7cc1 refs/remotes/origin/2018mar01n2-head-detached
 61c8739131da91d4ae810f892c4afafea7bfc71a refs/remotes/origin/61c8-2016nov06
-d0cb994deef5fc177d5f1f7411266d973b9a55df refs/remotes/origin/HEAD
 ccb78758bc1a32ab29a1a17afe606ea16e32fbc1 refs/remotes/origin/detached-head-2017aug28
-d0cb994deef5fc177d5f1f7411266d973b9a55df refs/remotes/origin/master
 913a3cce25cc255cd76fa5e4142accb774ed4d79 refs/stash
 6ca4dc5e5e9dd032fe390aacc5fa107383cc0da4 refs/tags/v2.13.5.26
 cb26ee7810da0fb3afb23c60726a9079bfbb09b4 refs/tags/v2.13.5.26^{}

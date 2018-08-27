@@ -81,7 +81,7 @@ while [[ "$status" != "completed" ]]; do
 
         [[ "$repositoryFolderName" == "ember-web-site" ]] && emberWebRepositoryFolderName='-true'
         [[ "$emberWebRepositoryFolderName" == "-true" ]] || emberWebRepositoryFolderName='-false'
-        
+
         mkdir -p './.egup.stat.d'
 
         statPrintFormatString='%p\0%l:\0%y:%m:%U:%u:%G:%g:%TY:%Tm:%Td:%TH:%TM:%TS:%TZ:%CY:%Cm:%Cd:%CH:%CM:%CS:%CZ\0\0'
@@ -91,13 +91,13 @@ while [[ "$status" != "completed" ]]; do
         mv ../.egup.stat ./
 
         egupStatDirItemCount="$(wc -c < .egup.stat)"
-        egupStatDirDestSizePlusOne=$(( egupStatDirDestSize + 1 ))
-        egupStatDirDestSizeWc="$(wc -c <<< "$egupStatDirDestSizePlusOne")"
+        egupStatDirItemCountPlusOne=$(( egupStatDirItemCount + 1 ))
+        egupStatDirItemCountWc="$(wc -c <<< "$egupStatDirItemCountPlusOne")"
 
         find . -maxdepth 1 -type f -name '.egup.stat' -exec split -a "$egupStatDirDestSizeWc" -l 1 --numeric-suffixes '.egup.stat' ".egup.stat.split" \; -delete
 
         egupStatDirDestSize=10000 # 10000 files per subdirectory
-        egupStatDirDestCount=$(( egupStatDirItemCount / egupStatDirDestSizePlusOne ))
+        egupStatDirDestCount=$(( egupStatDirItemCount / egupStatDirDestSize + 1 ))
         egupStatDirCounter=0
         while [[ "$egupStatDirCounter" -lt "$egupStatDirDestCount" ]]; do
             mkdir -p "egup.stat.d.bin$egupStatDirCounter"

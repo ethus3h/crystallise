@@ -96,7 +96,7 @@ while [[ "$status" != "completed" ]]; do
 
         find . -maxdepth 1 -type f -name '.egup.stat' -exec split -a "$egupStatDirItemCountWc" -l 1 --numeric-suffixes '.egup.stat' ".egup.stat.split" \; -delete
 
-        egupStatDirDestSize=10000 # 10000 files per subdirectory
+        egupStatDirDestSize=10 # 10000 files per subdirectory
         egupStatDirDestCount=$(( egupStatDirItemCount / egupStatDirDestSize + 1 ))
         egupStatDirCounter=0
         while [[ "$egupStatDirCounter" -lt "$egupStatDirDestCount" ]]; do

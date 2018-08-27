@@ -69,9 +69,7 @@ while [[ "$status" != "completed" ]]; do
 
     rm -f .egup.stat
     rm -rf ./.egup.stat.d
-    shopt -u failglob
-    rm -f .egup.stat.split*
-    shopt -s failglob
+    find . -maxdepth 1 -name '.egup.stat.split*' -delete
 
     print "${emberCrystallizeVersion:?}"$'\n' > .egup.stat
     if [[ ! -f "./.egup.no-stat" ]]; then

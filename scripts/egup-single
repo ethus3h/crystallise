@@ -68,7 +68,7 @@ while [[ "$status" != "completed" ]]; do
     git show-ref -d --tags > .egup.tags || echo "(Note: Repository appears to have no tags.)"
 
     rm -f .egup.stat
-    rm -r ./.egup.stat.d
+    rm -rf ./.egup.stat.d
     shopt -u failglob
     rm -f .egup.stat.split*
     shopt -s failglob

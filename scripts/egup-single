@@ -73,7 +73,7 @@ while [[ "$status" != "completed" ]]; do
     rm -f .egup.stat.split*
     shopt -s failglob
 
-    print "$emberCrystallizeVersion"$'\n' > .egup.stat
+    print "${emberCrystallizeVersion:?}"$'\n' > .egup.stat
     if [[ ! -f "./.egup.no-stat" ]]; then
         repositoryFolderName="$(basename "$(readlink -f .)")"
 
@@ -96,12 +96,12 @@ while [[ "$status" != "completed" ]]; do
 
         egupStatDirDestSize=1000 # 1000 files per subdirectory
         egupStatDirItemCount="$(find . -maxdepth 1 -type f -printf '.' | wc -c)"
-        egupStatDirDestCount=$(( $egupStatDirItemCount / $egupStatDirDestSize + 1 ))
+        egupStatDirDestCount=$(( egupStatDirItemCount / egupStatDirDestSize + 1 ))
         egupStatDirCounter=0
         while [[ "$egupStatDirCounter" -lt "$egupStatDirDestCount" ]]; do
             mkdir -p "egup.stat.d.bin$egupStatDirCounter"
-            find . -maxdepth 1 -type f 
-        find . -maxdepth 1 -type f -name '.egup.stat.split*' -print0 | xargs -I'{}' -0 mv '{}' ./'{}'.split \;
+            find . -maxdepth 1 -type f | head -n "$egupStatDirDestSize" | xargs -I'{}' -0 mv '{}' ./egup.stat.d.bin"$egupStatDirCounter"/'{}'.split \;
+        done
 
         popd || die "popd failed!"
     fi

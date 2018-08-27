@@ -91,10 +91,11 @@ while [[ "$status" != "completed" ]]; do
         mv ../.egup.stat ./
 
         egupStatDirItemCount="$(wc -l < .egup.stat)"
+        egupStatDirItemCount=$(( egupStatDirItemCount / 5 ))
         egupStatDirItemCountPlusTwo=$(( egupStatDirItemCount + 2 ))
         egupStatDirItemCountWc="$(wc -c <<< "$egupStatDirItemCountPlusTwo")"
 
-        find . -maxdepth 1 -type f -name '.egup.stat' -exec split -a "$egupStatDirItemCountWc" -l 1 --numeric-suffixes '.egup.stat' ".egup.stat.split" \; -delete
+        find . -maxdepth 1 -type f -name '.egup.stat' -exec split -a "$egupStatDirItemCountWc" -l 5 --numeric-suffixes '.egup.stat' ".egup.stat.split" \; -delete
 
         egupStatDirDestSize=10000 # 10000 files per subdirectory
         egupStatDirDestCount=$(( egupStatDirItemCount / egupStatDirDestSize + 1 ))

@@ -101,7 +101,7 @@ while [[ "$status" != "completed" ]]; do
         egupStatDirCounter=0
         while [[ "$egupStatDirCounter" -lt "$egupStatDirDestCount" ]]; do
             mkdir -p "egup.stat.d.bin$egupStatDirCounter"
-            find . -maxdepth 1 -type f | head -n "$egupStatDirDestSize" | xargs -I'{}' mv '{}' ./egup.stat.d.bin"$egupStatDirCounter"/'{}'.split
+            find . -maxdepth 1 -type f | head -n "$egupStatDirDestSize" | xargs -I'{}' mv '{}' ./egup.stat.d.bin"$egupStatDirCounter"/'{}'.split || test $? -eq 141 # https://stackoverflow.com/questions/22464786/ignoring-bash-pipefail-for-error-code-141
             egupStatDirCounter=$(( egupStatDirCounter + 1))
         done
 

@@ -95,8 +95,10 @@ while [[ "$status" != "completed" ]]; do
         find . -maxdepth 1 -type f -name '.egup.stat' -exec split -l 1 --numeric-suffixes '.egup.stat' ".egup.stat.split" \; -delete
 
         egupStatDirItemCount="$(\ls -1U | wc -l)" # \ls: backslash avoids aliases
+        egupStatDirItemCount="$(find . -maxdepth 1 -type f -printf '.' | wc -c)"
+        egupStatDirDestCount=$((/$dir_size+1))
         find . -maxdepth 1 -type f -name '.egup.stat.split*' -print0 | xargs -I'{}' -0 mv '{}' ./'{}'.split \;
-https://stackoverflow.com/questions/29116212/split-a-folder-into-multiple-subfolders-in-terminal-bash-script
+
         popd || die "popd failed!"
     fi
 

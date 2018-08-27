@@ -4,7 +4,9 @@ ccb78758bc1a32ab29a1a17afe606ea16e32fbc1 refs/heads/detached-head-2017aug28
 9bf5f115b3da560befa2db9f530f71b03c1a5af4 refs/remotes/origin/2018mar01-head-detached
 6511aecfb733e66b7379c1528b660b3e30fd7cc1 refs/remotes/origin/2018mar01n2-head-detached
 61c8739131da91d4ae810f892c4afafea7bfc71a refs/remotes/origin/61c8-2016nov06
+d0cb994deef5fc177d5f1f7411266d973b9a55df refs/remotes/origin/HEAD
 ccb78758bc1a32ab29a1a17afe606ea16e32fbc1 refs/remotes/origin/detached-head-2017aug28
+d0cb994deef5fc177d5f1f7411266d973b9a55df refs/remotes/origin/master
 913a3cce25cc255cd76fa5e4142accb774ed4d79 refs/stash
 6ca4dc5e5e9dd032fe390aacc5fa107383cc0da4 refs/tags/v2.13.5.26
 cb26ee7810da0fb3afb23c60726a9079bfbb09b4 refs/tags/v2.13.5.26^{}
@@ -1542,6 +1544,8 @@ a0820ea116256a40170c3b5a4190be94e9ca3e00 refs/tags/v3.1.2.5.14.126
 4ae5edff3fcef98f197b56662857181973e60ecb refs/tags/v3.1.2.5.14.128^{}
 423d085eb4a9247a4ae05be897cc5d68853cab89 refs/tags/v3.1.2.5.14.13
 85af7019355572b98fecd161020e906b28b35429 refs/tags/v3.1.2.5.14.13^{}
+ed1d00e4318dca749ab3c3ff8a351f1ec59dbaf4 refs/tags/v3.1.2.5.14.130
+2657629b32ea0d48d1797f802dbc36deb5ad4326 refs/tags/v3.1.2.5.14.130^{}
 a4327011f693294a5a6517bdc54037f5f9745156 refs/tags/v3.1.2.5.14.14
 88b33f5956add7130493caf5520d9e85ab4e110f refs/tags/v3.1.2.5.14.14^{}
 c8f5ade331011155f7494040e694e14e2620f5cb refs/tags/v3.1.2.5.14.15

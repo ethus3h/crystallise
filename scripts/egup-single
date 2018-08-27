@@ -92,11 +92,14 @@ while [[ "$status" != "completed" ]]; do
         pushd .egup.stat.d || die "pushd failed!"
         mv ../.egup.stat ./
 
-        find . -maxdepth 1 -type f -name '.egup.stat' -exec split -l 1 --numeric-suffixes '.egup.stat' ".egup.stat.split" \; -delete
+        egupStatDirItemCount="$(wc -c < .egup.stat)"
+        egupStatDirDestSizePlusOne=$(( egupStatDirDestSize + 1 ))
+        egupStatDirDestSizeWc="$(wc -c <<< "$egupStatDirDestSizePlusOne")"
+
+        find . -maxdepth 1 -type f -name '.egup.stat' -exec split -a "$egupStatDirDestSizeWc" -l 1 --numeric-suffixes '.egup.stat' ".egup.stat.split" \; -delete
 
         egupStatDirDestSize=10000 # 10000 files per subdirectory
-        egupStatDirItemCount="$(find . -maxdepth 1 -type f -printf '.' | wc -c)"
-        egupStatDirDestCount=$(( egupStatDirItemCount / egupStatDirDestSize + 1 ))
+        egupStatDirDestCount=$(( egupStatDirItemCount / egupStatDirDestSizePlusOne ))
         egupStatDirCounter=0
         while [[ "$egupStatDirCounter" -lt "$egupStatDirDestCount" ]]; do
             mkdir -p "egup.stat.d.bin$egupStatDirCounter"

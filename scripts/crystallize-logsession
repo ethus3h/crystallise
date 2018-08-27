@@ -23,6 +23,9 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
     date +%Y-%m-%d-%H-%M-%S-%N
     xxd -pu <<< "$(date +%z)"
 
+    date -u +%Y-%m-%d-%H-%M-%S-%N
+    xxd -pu <<< "$(date -u +%z)"
+
     crystalWorkdir="$(crystallize-getconf WorkDirectory)"
     export crystalWorkdir
 
@@ -36,6 +39,9 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
 
     date +%Y-%m-%d-%H-%M-%S-%N
     xxd -pu <<< "$(date +%z)"
+
+    date -u +%Y-%m-%d-%H-%M-%S-%N
+    xxd -pu <<< "$(date -u +%z)"
 
     echo "Working in $crystalWorkdir".
 
@@ -80,6 +86,9 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
     date +%Y-%m-%d-%H-%M-%S-%N
     xxd -pu <<< "$(date +%z)"
 
+    date -u +%Y-%m-%d-%H-%M-%S-%N
+    xxd -pu <<< "$(date -u +%z)"
+
     echo "Time (log stage 2) from http://timeapi.org/: "
 
     trap - ERR
@@ -90,6 +99,9 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
 
     date +%Y-%m-%d-%H-%M-%S-%N
     xxd -pu <<< "$(date +%z)"
+
+    date -u +%Y-%m-%d-%H-%M-%S-%N
+    xxd -pu <<< "$(date -u +%z)"
 
     echo "20170928201310973799400_2d303430300a70ed51ebe5a8492cb3f6b5e043becae2"
     cat "$(which ember_bash_setup)"
@@ -362,6 +374,9 @@ script ${optb+/dev/null} ${opt+-e} ${opt+-q} ${opt+-c} crystallize-internal-ia $
     date +%Y-%m-%d-%H-%M-%S-%N
     xxd -pu <<< "$(date +%z)"
 
+    date -u +%Y-%m-%d-%H-%M-%S-%N
+    xxd -pu <<< "$(date -u +%z)"
+
     echo "Time (log stage 3) from http://timeapi.org/: "
 
     trap - ERR
@@ -372,6 +387,9 @@ script ${optb+/dev/null} ${opt+-e} ${opt+-q} ${opt+-c} crystallize-internal-ia $
 
     date +%Y-%m-%d-%H-%M-%S-%N
     xxd -pu <<< "$(date +%z)"
+
+    date -u +%Y-%m-%d-%H-%M-%S-%N
+    xxd -pu <<< "$(date -u +%z)"
 
     #Clear the screen
     printf "\\033c"

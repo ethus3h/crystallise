@@ -71,7 +71,7 @@ while [[ "$status" != "completed" ]]; do
     rm -rf ./.egup.stat.d
     find . -maxdepth 1 -name '.egup.stat.split*' -delete
 
-    print "${emberCrystallizeVersion:?}"$'\n' > .egup.stat
+    print "${emberCrystallizeVersion:?}"$'\n' > .egup.version
     if [[ ! -f "./.egup.no-stat" ]]; then
         repositoryFolderName="$(basename "$(readlink -f .)")"
 
@@ -95,7 +95,7 @@ while [[ "$status" != "completed" ]]; do
         egupStatDirItemCountPlusTwo=$(( egupStatDirItemCount + 2 ))
         egupStatDirItemCountWc="$(wc -c <<< "$egupStatDirItemCountPlusTwo")"
 
-        find . -maxdepth 1 -type f -name '.egup.stat' -exec split -a "$egupStatDirItemCountWc" -l 5 --numeric-suffixes '.egup.stat' ".egup.stat.split" \; -delete
+        find . -maxdepth 1 -type f -name '.egup.stat' -exec split -a "$egupStatDirItemCountWc" -l 4 --numeric-suffixes '.egup.stat' ".egup.stat.split" \; -delete
 
         egupStatDirDestSize=10000 # 10000 files per subdirectory
         egupStatDirDestCount=$(( egupStatDirItemCount / egupStatDirDestSize + 1 ))

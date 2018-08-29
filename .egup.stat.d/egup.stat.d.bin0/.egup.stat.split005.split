@@ -1,5 +1,4 @@
-./scripts/crystallize-update
+./.egup.version
 :
-f:755:1000:kyan:1000:kyan:2018:06:07:00:14:37.2465042940:EDT:2018:06:07:00:14:37.2465042940:EDT
+f:644:1000:kyan:1000:kyan:2018:08:29:09:58:38.9454892840:EDT:2018:08:29:09:58:38.9454892840:EDT
 
-./scripts/sregi_get_passphrase

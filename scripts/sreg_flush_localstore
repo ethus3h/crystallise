@@ -62,7 +62,7 @@ statusFile="/tmp/$streamId.sreg_flush_localstore.status"
         if [[ "$1" == "--verbose" ]]; then
             crystallize --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.LocalStore" | cat
         else
-            crystallize --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.LocalStore" &> /dev/null
+            crystallize --passphrase "$(sregi_get_passphrase "$sregDir")" --leave-pointer "$streamId.LocalStore" > /dev/null
         fi
         # crystallize-backup --debug "$(<".$streamId.LocalStore.crystal-data/identifier")" 1>&2
         if [[ ! -e "$streamId.LocalStore.crystal" ]] || [[ ! -e ".$streamId.LocalStore.crystal-data" ]]; then

@@ -75,7 +75,7 @@ cat "$(ember-getconf DataDir)/repositories".lst | while read -r "repo"; do
     echo $'\n'"${repoPatternBegun/\@REPOSITORY\@/$repo}" >> "crystal-backup-meta/cbb-index/repositories"
 done
 
-authstring="$(ember-getconf GitAuthstring)"
+authstring="$(ember-getconf GitAuthstring)"'@'
 cat "$(ember-getconf DataDir)/repositories"-nonpublic.lst | while read -r "repo"; do
     repoPatternBegun="${repoPattern/\@AUTHSTRING\@/$authstring}"
     echo $'\n'"${repoPatternBegun/\@REPOSITORY\@/$repo}" >> "crystal-backup-meta/cbb-index/repositories"

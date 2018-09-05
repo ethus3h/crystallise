@@ -97,15 +97,26 @@ while [[ "$status" != "completed" ]]; do
 
         find . -maxdepth 1 -type f -name '.egup.stat' -exec split -a "$egupStatDirItemCountWc" -l 4 --numeric-suffixes '.egup.stat' ".egup.stat.split" \; -delete
 
+        # thanks to a kind person in #bash for this strategy!
         egupStatDirDestSize=1000 # 1000 files per subdirectory
-        egupStatDirDestCount=$(( egupStatDirItemCount / egupStatDirDestSize + 1 ))
         egupStatDirCounter=0
         egupStatItemCounter=0
-        while [[ "$egupStatDirCounter" -lt "$egupStatDirDestCount" ]]; do
-            mkdir -p "egup.stat.d.bin$egupStatDirCounter"
-            find . -maxdepth 1 -type f | sort | head -n "$egupStatDirDestSize" | xargs -I'{}' mv '{}' ./egup.stat.d.bin"$egupStatDirCounter"/'{}'.split || test $? -eq 141 # https://stackoverflow.com/questions/22464786/ignoring-bash-pipefail-for-error-code-141
-            egupStatDirCounter=$(( egupStatDirCounter + 1))
+        egupStatDirFiles=()
+
+        for egupStatDirFile in ./*; do
+            if ((!(egupStatItemCounter++ % egupStatDirDestSize) && egupStatItemCounter>1)); then
+                mkdir -p "$((++egupStatDirCounter))" || break
+                mv -- "${egupStatDirFiles[@]}" "$egupStatDirCounter"
+                egupStatDirFiles=()
+            fi
+
+            egupStatDirFiles+=("$egupStatDirFile")
         done
+
+        if ((egupStatItemCounter % egupStatDirDestSize)); then
+            mkdir -p "$((++egupStatDirCounter))" || break
+            mv -- "${egupStatDirFiles[@]}" "$egupStatDirCounter"
+        fi
 
         popd || die "popd failed!"
     fi

@@ -205,7 +205,7 @@ if [[ "$updateList" == "true" ]]; then
             shopt -s globstar
             mkdir -p "$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$streamRegistryRepoName"
             for potentialPointer in {0..9}/** {a..f}/**; do
-                if [[ -f "$potentialPointer" ]]; then
+                if [[ -f "$potentialPointer" ]] && [[ "$potentialPointer" != *.verified ]]; then
                     if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$streamRegistryRepoName/$potentialPointer" ]]; then
                         typeSignature="$(head -c 36 "$potentialPointer" | tr -d '\0')"
                         if [[ "$typeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then # Hash pointer

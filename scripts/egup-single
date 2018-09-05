@@ -97,7 +97,7 @@ while [[ "$status" != "completed" ]]; do
 
         find . -maxdepth 1 -type f -name '.egup.stat' -exec split -a "$egupStatDirItemCountWc" -l 4 --numeric-suffixes '.egup.stat' ".egup.stat.split" \; -delete
 
-        # thanks to a kind person in #bash for this strategy!
+        # thanks to a kind person in #bash for this file distribution strategy!
         egupStatDirDestSize=1000 # 1000 files per subdirectory
         egupStatDirCounter=0
         egupStatItemCounter=0

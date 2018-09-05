@@ -85,44 +85,7 @@ while [[ "$status" != "completed" ]]; do
         mkdir -p './.egup.stat.d/by-path'
 
         statPrintFormatString='%p\0%l:\0%y:%m:%U:%u:%G:%g:%TY:%Tm:%Td:%TH:%TM:%TS:%TZ:%CY:%Cm:%Cd:%CH:%CM:%CS:%CZ\0\0'
-        find . -path '*/.git' -prune -o -path '*/.git/*' -prune -o -path . -o \( \( -path './information-technology/env' -o -path './identifiers.lst' \) -and "$emberWebRepositoryFolderName" \) -prune -o \( -type d -and \( -exec test -e '{}/.git' \; \) -and "$emberWebSnapshotsRepositoryFolderName" \) -prune -and -printf "$statPrintFormatString" -or -not -path './.egup.stat' -not -path './.egup.stat.d' -not -path './.egup.stat.d/*' -not -path './.egup.version' -not -path './.egup.tags' -not -path './.egup.branches' -not -path './.egup.refs' -not -path './.egup.remotes' -printf "$statPrintFormatString" | hexdump -v -e '1/1 "%02X "' | tr ' ' '\12' | sed 's/5C/5C\n5C/g' | sed 's/0A/5C\n0A/g' | tr '\12' ' ' | xxd -r -p | tr '\0' '\12' >> ".egup.stat" || die ".egup.stat"" could not be generated!"
-
-        pushd .egup.stat.d || die "pushd failed!"
-        mv ../.egup.stat ./
-
-        egupStatDirItemCount="$(wc -l < .egup.stat)"
-        egupStatDirItemCount=$(( egupStatDirItemCount / 5 ))
-        egupStatDirItemCountPlusTwo=$(( egupStatDirItemCount + 2 ))
-        egupStatDirItemCountWc="$(wc -c <<< "$egupStatDirItemCountPlusTwo")"
-
-        find . -maxdepth 1 -type f -name '.egup.stat' -exec mkdir -p dirname cat {} | head  split -a "$egupStatDirItemCountWc" -l 4 --numeric-suffixes '.egup.stat' ".egup.stat.split" \; -delete
-
-        find . -maxdepth 1 -type f | xargs -I'{}' mv '{}' ./'{}'.split || test $? -eq 141 # https://stackoverflow.com/questions/22464786/ignoring-bash-pipefail-for-error-code-141
-
-        # thanks to a kind person in #bash for this file distribution strategy!
-        egupStatDirDestSize=1000 # 1000 files per subdirectory
-        egupStatDirCounter=0
-        egupStatItemCounter=0
-        egupStatDirFiles=()
-
-        for egupStatDirFile in ./.egup.stat.*; do
-            if ((!(egupStatItemCounter++ % egupStatDirDestSize) && egupStatItemCounter>1)); then
-                ((++egupStatDirCounter))
-                mkdir -p ./egup.stat.d.bin"$((egupStatDirCounter/1000))/$((egupStatDirCounter/100))/$((egupStatDirCounter/10))/$egupStatDirCounter" || break
-                mv -- "${egupStatDirFiles[@]}" ./egup.stat.d.bin"$((egupStatDirCounter/1000))/$((egupStatDirCounter/100))/$((egupStatDirCounter/10))/$egupStatDirCounter"
-                egupStatDirFiles=()
-            fi
-
-            egupStatDirFiles+=("$egupStatDirFile")
-        done
-
-        if ((egupStatItemCounter % egupStatDirDestSize)); then
-            ((++egupStatDirCounter))
-            mkdir -p ./egup.stat.d.bin"$((egupStatDirCounter/1000))/$((egupStatDirCounter/100))/$((egupStatDirCounter/10))/$egupStatDirCounter" || break
-            mv -- "${egupStatDirFiles[@]}" ./egup.stat.d.bin"$((egupStatDirCounter/1000))/$((egupStatDirCounter/100))/$((egupStatDirCounter/10))/$egupStatDirCounter"
-        fi
-
-        popd || die "popd failed!"
+        find . -path '*/.git' -prune -o -path '*/.git/*' -prune -o -path . -o \( \( -path './information-technology/env' -o -path './identifiers.lst' \) -and "$emberWebRepositoryFolderName" \) -prune -o \( -type d -and \( -exec test -e '{}/.git' \; \) -and "$emberWebSnapshotsRepositoryFolderName" \) -prune -and -exec bash -c 'mkdir -p "./.egup.stat.d/by-path/$(dirname "$0")"; find "$0" -maxdepth 0 -printf "$statPrintFormatString" > ./.egup.stat.d/by-path/"$0"' {} \; -or -not -path './.egup.stat' -not -path './.egup.stat.d' -not -path './.egup.stat.d/*' -not -path './.egup.version' -not -path './.egup.tags' -not -path './.egup.branches' -not -path './.egup.refs' -not -path './.egup.remotes'  -exec bash -c 'mkdir -p "./.egup.stat.d/by-path/$(dirname "$0")"; find "$0" -maxdepth 0 -printf "$statPrintFormatString" > ./.egup.stat.d/by-path/"$0"' {} \;
     fi
 
     git add -A || die "Error adding tag changes."

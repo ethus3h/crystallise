@@ -105,7 +105,7 @@ while [[ "$status" != "completed" ]]; do
         egupStatItemCounter=0
         egupStatDirFiles=()
 
-        for egupStatDirFile in ./.*; do
+        for egupStatDirFile in ./.egup.stat.*; do
             if ((!(egupStatItemCounter++ % egupStatDirDestSize) && egupStatItemCounter>1)); then
                 ((++egupStatDirCounter))
                 mkdir -p ./egup.stat.d.bin"$((egupStatDirCounter/1000))/$((egupStatDirCounter/100))/$((egupStatDirCounter/10))/$egupStatDirCounter" || break

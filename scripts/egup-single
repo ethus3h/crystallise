@@ -82,7 +82,7 @@ while [[ "$status" != "completed" ]]; do
         [[ "$repositoryFolderName" == "ember-web-site" ]] && emberWebRepositoryFolderName='-true'
         [[ "$emberWebRepositoryFolderName" == "-true" ]] || emberWebRepositoryFolderName='-false'
 
-        mkdir -p './.egup.stat.d'
+        mkdir -p './.egup.stat.d/by-path'
 
         statPrintFormatString='%p\0%l:\0%y:%m:%U:%u:%G:%g:%TY:%Tm:%Td:%TH:%TM:%TS:%TZ:%CY:%Cm:%Cd:%CH:%CM:%CS:%CZ\0\0'
         find . -path '*/.git' -prune -o -path '*/.git/*' -prune -o -path . -o \( \( -path './information-technology/env' -o -path './identifiers.lst' \) -and "$emberWebRepositoryFolderName" \) -prune -o \( -type d -and \( -exec test -e '{}/.git' \; \) -and "$emberWebSnapshotsRepositoryFolderName" \) -prune -and -printf "$statPrintFormatString" -or -not -path './.egup.stat' -not -path './.egup.stat.d' -not -path './.egup.stat.d/*' -not -path './.egup.version' -not -path './.egup.tags' -not -path './.egup.branches' -not -path './.egup.refs' -not -path './.egup.remotes' -printf "$statPrintFormatString" | hexdump -v -e '1/1 "%02X "' | tr ' ' '\12' | sed 's/5C/5C\n5C/g' | sed 's/0A/5C\n0A/g' | tr '\12' ' ' | xxd -r -p | tr '\0' '\12' >> ".egup.stat" || die ".egup.stat"" could not be generated!"
@@ -95,7 +95,7 @@ while [[ "$status" != "completed" ]]; do
         egupStatDirItemCountPlusTwo=$(( egupStatDirItemCount + 2 ))
         egupStatDirItemCountWc="$(wc -c <<< "$egupStatDirItemCountPlusTwo")"
 
-        find . -maxdepth 1 -type f -name '.egup.stat' -exec split -a "$egupStatDirItemCountWc" -l 4 --numeric-suffixes '.egup.stat' ".egup.stat.split" \; -delete
+        find . -maxdepth 1 -type f -name '.egup.stat' -exec mkdir -p dirname cat {} | head  split -a "$egupStatDirItemCountWc" -l 4 --numeric-suffixes '.egup.stat' ".egup.stat.split" \; -delete
 
         find . -maxdepth 1 -type f | xargs -I'{}' mv '{}' ./'{}'.split || test $? -eq 141 # https://stackoverflow.com/questions/22464786/ignoring-bash-pipefail-for-error-code-141
 

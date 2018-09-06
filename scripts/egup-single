@@ -83,9 +83,10 @@ while [[ "$status" != "completed" ]]; do
         [[ "$emberWebRepositoryFolderName" == "-true" ]] || emberWebRepositoryFolderName='-false'
 
         mkdir -p './.egup.stat.d/by-path'
-
+set -x
         statPrintFormatString='%p\0%l:\0%y:%m:%U:%u:%G:%g:%TY:%Tm:%Td:%TH:%TM:%TS:%TZ:%CY:%Cm:%Cd:%CH:%CM:%CS:%CZ\0\0'
-        find . -path '*/.git' -prune -o -path '*/.git/*' -prune -o -path . -o \( \( -path './information-technology/env' -o -path './identifiers.lst' \) -and "$emberWebRepositoryFolderName" \) -prune -o \( -type d -and \( -exec test -e '{}/.git' \; \) -and "$emberWebSnapshotsRepositoryFolderName" \) -prune -and -exec bash -c 'mkdir -p "./.egup.stat.d/by-path/$(dirname "$0")"; find "$0" -maxdepth 0 -fprintf "$1" ./.egup.stat.d/by-path/"$0".egup-stat' {} "$statPrintFormatString" \; -or -not -path './.egup.stat' -not -path './.egup.stat.d' -not -path './.egup.stat.d/*' -not -path './.egup.version' -not -path './.egup.tags' -not -path './.egup.branches' -not -path './.egup.refs' -not -path './.egup.remotes'  -exec bash -c 'mkdir -p "./.egup.stat.d/by-path/$(dirname "$0")"; find "$0" -maxdepth 0 -fprintf "$1" ./.egup.stat.d/by-path/"$0".egup-stat' {} "$statPrintFormatString" \;
+        find . -path '*/.git' -prune -o -path '*/.git/*' -prune -o -path . -o \( \( -path './information-technology/env' -o -path './identifiers.lst' \) -and "$emberWebRepositoryFolderName" \) -prune -o \( -type d -and \( -exec test -e '{}/.git' \; \) -and "$emberWebSnapshotsRepositoryFolderName" \) -prune -and -exec bash -c 'set -x; mkdir -p "./.egup.stat.d/by-path/$(dirname "$0")"; find "$0" -maxdepth 0 -fprintf "$1" ./.egup.stat.d/by-path/"$0".egup-stat' {} "$statPrintFormatString" \; -or -not -path './.egup.stat' -not -path './.egup.stat.d' -not -path './.egup.stat.d/*' -not -path './.egup.version' -not -path './.egup.tags' -not -path './.egup.branches' -not -path './.egup.refs' -not -path './.egup.remotes'  -exec bash -c 'set -x; mkdir -p "./.egup.stat.d/by-path/$(dirname "$0")"; find "$0" -maxdepth 0 -fprintf "$1" ./.egup.stat.d/by-path/"$0".egup-stat' {} "$statPrintFormatString" \;
+        set +x
     fi
 
     git add -A || die "Error adding tag changes."

@@ -83,7 +83,7 @@ while [[ "$status" != "completed" ]]; do
         [[ "$emberWebRepositoryFolderName" == "-true" ]] || emberWebRepositoryFolderName='-false'
 
         find . -type f -name .egup.keep.d9a21dc6-7148-451c-b2cb-282914fc6db8 -delete
-        find . -path './.egup.stat.d' -prune -o -type d -empty -fprintf d9a21dc6-7148-451c-b2cb-282914fc6db8 '%p'/.egup.keep.d9a21dc6-7148-451c-b2cb-282914fc6db8
+        find . -path './.egup.stat.d' -prune -o -type d -and -empty -exec touch {}/.egup.keep.d9a21dc6-7148-451c-b2cb-282914fc6db8 \;
 
         mkdir -p './.egup.stat.d/by-path'
 

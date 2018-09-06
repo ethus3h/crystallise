@@ -88,11 +88,11 @@ while [[ "$status" != "completed" ]]; do
         mkdir -p './.egup.stat.d/by-path'
 
         # Copy directory structure https://stackoverflow.com/questions/4073969/copy-folder-structure-sans-files-from-one-location-to-another
-        rsync -av --dry-run -f'- /.egup.stat.d/**' -f'+ */' -f'- *' -f'- /.egup.stat.d/**' . ./.egup.stat.d/by-path/
+        rsync -av -f'- /.egup.stat.d/**' -f'+ */' -f'- *' -f'- /.egup.stat.d/**' . ./.egup.stat.d/by-path/
 
         statPrintFormatString='%p\0%l:\0%y:%m:%U:%u:%G:%g:%TY:%Tm:%Td:%TH:%TM:%TS:%TZ:%CY:%Cm:%Cd:%CH:%CM:%CS:%CZ\0\0'
 
-        find . -path '*/.git' -prune -o -path './.egup.stat.d' -prune -o -path '*/.git/*' -prune -o -path . -o \( \( -path './information-technology/env' -o -path './identifiers.lst' \) -and "$emberWebRepositoryFolderName" \) -prune -o \( -type d -and \( -exec test -e '{}/.git' \; \) -and "$emberWebSnapshotsRepositoryFolderName" \) -prune -and -fprintf "$statPrintFormatString" ./.egup.stat.d/by-path/'%p'.'%i'.egup-stat -or -not -path './.egup.stat' -not -path './.egup.version' -not -path './.egup.tags' -not -path './.egup.branches' -not -path './.egup.refs' -not -path './.egup.remotes' -fprintf "$statPrintFormatString" ./.egup.stat.d/by-path/'%p'.'%i'.egup-stat
+        find . -path '*/.git' -prune -o -path './.egup.stat.d' -prune -o -path '*/.git/*' -prune -o -path . -o \( \( -path './information-technology/env' -o -path './identifiers.lst' \) -and "$emberWebRepositoryFolderName" \) -prune -o \( -type d -and \( -exec test -e '{}/.git' \; \) -and "$emberWebSnapshotsRepositoryFolderName" \) -prune -and -fprintf ./.egup.stat.d/by-path/'%p'.'%i'.egup-stat "$statPrintFormatString" -or -not -path './.egup.stat' -not -path './.egup.version' -not -path './.egup.tags' -not -path './.egup.branches' -not -path './.egup.refs' -not -path './.egup.remotes' -fprintf ./.egup.stat.d/by-path/'%p'.'%i'.egup-stat "$statPrintFormatString"
     fi
 
     git add -A || die "Error adding tag changes."

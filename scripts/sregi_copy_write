@@ -117,6 +117,8 @@ sourceNameReplaced="${1/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"
 sourceNameReplaced="${sourceNameReplaced//\/.git\//\/.git.686fc528-0e8e-4724-91bb-c103cdcdd592\/}"
 sourceNameReplaced="${sourceNameReplaced/%.gitignore/.gitignore.24355e64-bfd5-4cb7-92f9-4417fb55ccfd}"
 sourceNameReplaced="${sourceNameReplaced//\/.gitignore\//\/.gitignore.24355e64-bfd5-4cb7-92f9-4417fb55ccfd\/}"
+sourceNameReplaced="${sourceNameReplaced/%.gitmodules/.gitmodules.e17e15dc-7ed4-4b99-8acb-019f503afb9e}"
+sourceNameReplaced="${sourceNameReplaced//\/.gitmodules\//\/.gitmodules.e17e15dc-7ed4-4b99-8acb-019f503afb9e\/}"
 targetLength=${#sourceNameReplaced}
 #echo "$destinationRootLength - $targetLength"
 destinationName="$2/${sourceNameReplaced:destinationRootLength:targetLength}"

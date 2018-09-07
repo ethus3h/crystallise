@@ -71,6 +71,8 @@ destinationReplaced="${destinationParameter/%.git.686fc528-0e8e-4724-91bb-c103cd
 destinationReplaced="${destinationReplaced//\/.git.686fc528-0e8e-4724-91bb-c103cdcdd592\//\/.git\/}"
 destinationReplaced="${destinationReplaced/%.gitignore.24355e64-bfd5-4cb7-92f9-4417fb55ccfd/.gitignore}"
 destinationReplaced="${destinationReplaced//\/.gitignore.24355e64-bfd5-4cb7-92f9-4417fb55ccfd\//\/.gitignore\/}"
+destinationReplaced="${destinationReplaced/%.gitmodules.e17e15dc-7ed4-4b99-8acb-019f503afb9e/.gitmodules}"
+destinationReplaced="${destinationReplaced//\/.gitmodules.e17e15dc-7ed4-4b99-8acb-019f503afb9e\//\/.gitmodules\/}"
 
 sregDir=""
 for path in "${pathsToCopy[@]}"; do
@@ -78,8 +80,10 @@ for path in "${pathsToCopy[@]}"; do
     destinationSuffix=""
     sourceReplaced="${path/%.git.686fc528-0e8e-4724-91bb-c103cdcdd592/.git}"
     sourceReplaced="${sourceReplaced/%.git.686fc528-0e8e-4724-91bb-c103cdcdd592\//.git\/}"
-    sourceReplaced="${sourceReplaced/%.gitignore.24355e64-bfd5-4cb7-92f9-4417fb55ccfd/.git}"
-    sourceReplaced="${sourceReplaced/%.gitignore.24355e64-bfd5-4cb7-92f9-4417fb55ccfd\//.git\/}"
+    sourceReplaced="${sourceReplaced/%.gitignore.24355e64-bfd5-4cb7-92f9-4417fb55ccfd/.gitignore}"
+    sourceReplaced="${sourceReplaced/%.gitignore.24355e64-bfd5-4cb7-92f9-4417fb55ccfd\//.gitignore\/}"
+    sourceReplaced="${sourceReplaced/%.gitmodules.e17e15dc-7ed4-4b99-8acb-019f503afb9e/.gitmodules}"
+    sourceReplaced="${sourceReplaced/%.gitmodules.e17e15dc-7ed4-4b99-8acb-019f503afb9e\//.gitmodules\/}"
     if [[ -d "$path" ]]; then
         destinationSuffix="/"
     fi

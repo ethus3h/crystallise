@@ -87,10 +87,13 @@ else
 fi
 
 # FIXME: Why replace this in the destination parameter?! Won't this make it copy into the wrong folder?
+# Well, either this or sregi_copy_write does get the wrong destination length or something, apparently. (e.g. srsync /Ember\ Library/.git/modules/Ember\ satellite\ projects/modules/BeHeMMOth-related-submodules /Ember\ Library/staging/BeHeMMOth-removed-submodules/modules/ copying into /Ember\ Library/staging/BeHeMMOth-removed-submodules/modules/ules/Ember\ satellite\ projects/modules/ instead — I still need to debug that one... Well, at least it under-trims it instead of over-trimming.)
 destinationReplaced="${destinationParameter/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"
 destinationReplaced="${destinationReplaced//\/.git\//\/.git.686fc528-0e8e-4724-91bb-c103cdcdd592\/}"
 destinationReplaced="${destinationReplaced/%.gitignore/.gitignore.24355e64-bfd5-4cb7-92f9-4417fb55ccfd}"
 destinationReplaced="${destinationReplaced//\/.gitignore\//\/.gitignore.24355e64-bfd5-4cb7-92f9-4417fb55ccfd\/}"
+destinationReplaced="${destinationReplaced/%.gitmodules/.gitmodules.e17e15dc-7ed4-4b99-8acb-019f503afb9e}"
+destinationReplaced="${destinationReplaced//\/.gitmodules\//\/.gitmodules.e17e15dc-7ed4-4b99-8acb-019f503afb9e\/}"
 
 for path in "${pathsToCopy[@]}"; do
     destinationSuffix=""
@@ -98,6 +101,8 @@ for path in "${pathsToCopy[@]}"; do
     sourceReplaced="${sourceReplaced/%.git\//.git.686fc528-0e8e-4724-91bb-c103cdcdd592\/}"
     sourceReplaced="${sourceReplaced/%.gitignore/.gitignore.24355e64-bfd5-4cb7-92f9-4417fb55ccfd}"
     sourceReplaced="${sourceReplaced/%.gitignore\//.gitignore.24355e64-bfd5-4cb7-92f9-4417fb55ccfd\/}"
+    sourceReplaced="${sourceReplaced/%.gitmodules/.gitmodules.e17e15dc-7ed4-4b99-8acb-019f503afb9e}"
+    sourceReplaced="${sourceReplaced/%.gitmodules\//.gitmodules.e17e15dc-7ed4-4b99-8acb-019f503afb9e\/}"
     if [[ -d "$path" ]]; then
         destinationSuffix="/"
     fi

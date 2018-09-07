@@ -49,6 +49,12 @@ removeDuplicateLines '.gitignore' | bigSponge '.gitignore'
 { [[ "$gitCommit" == "true" ]] && git commit -m "Update" > /dev/null; } || true
 { [[ "$gitCommit" == "true" ]] && egup-single > /dev/null; } || true
 
+if [[ "$gitCommit" == "true" ]]; then
+    cp ~/.bash_history ./.personal_bash_history || warn "personal bash history copy failed"
+    cp /.bash_history.public-mirror-dir/.bash_history.public-mirror ./.root_bash_history || warn "root bash history copy failed"
+    cp /.bash_history.public-mirror-dir/.bash_history.emdate ./.root_bash_history_date || warn "root bash history date copy failed"
+fi
+
 cbbConfigDir="$(crystallize-getconf ConfigDir)"
 mkdir -p "$cbbConfigDir"/crystallize/cbb
 touch "$cbbConfigDir"/crystallize/cbb/items

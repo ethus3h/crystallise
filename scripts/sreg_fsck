@@ -57,7 +57,9 @@ fi
 
 useNotes="--notes"
 
-if [[ "--no-use-notes" == "$1" ]]; then
+if [[ "--use-notes" == "$1" ]]; then
+    shift
+elif [[ "--no-use-notes" == "$1" ]]; then
     useNotes=""
     shift
 fi
@@ -79,7 +81,13 @@ dbDir="$sregDir"
 find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -printf '.' | wc -c > "$fsckStatusFile"
 rm -f "$fsckStatusFile.failed"
 
-find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/.BundlePointerTemp/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -exec sregi_verify_entry --fail-check "$failCheckFile" --skip "$skipCount" --notes --sreg-dir "$sregDir" --report-to "$reportFile" {} "$fsckStatusFile" "$skipCache" \;
+findArgs=( "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/.BundlePointerTemp/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -exec sregi_verify_entry --fail-check "$failCheckFile" --skip "$skipCount" )
+
+[[ -n "$useNotes" ]] && findArgs+=( "$useNotes" )
+
+findArgs+=( --sreg-dir "$sregDir" --report-to "$reportFile" {} "$fsckStatusFile" "$skipCache" \; )
+
+find "${findArgs[@]}"
 
 if [[ -e "$failCheckFile" ]]; then
     die "An invocation of sregi_verify_entry (called from $0) failed with the message \"$(<"$failCheckFile")\"!"

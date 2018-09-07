@@ -31,7 +31,8 @@ if [[ "$1" == "--skip" ]]; then
     shift
 fi
 
-skipCache=""
+skipCache="--skip-cache"
+
 if [[ "--skip-cache" == "$1" ]]; then
     skipCache="--skip-cache"
     shift
@@ -40,11 +41,25 @@ if [[ "--skip-cache" == "$1" ]]; then
         shift
     fi
 else
-    warn "Using cache entries. Specify --skip-cache for more thorough checking."
     if [[ "--drop-failed" == "$1" ]]; then
-        skipCache="--drop-failed"
+        skipCache="--skip-drop-failed"
         shift
+    elif [[ "--no-skip-cache" == "$1" ]]; then
+        warn "Using cache entries. Specify --skip-cache for more thorough checking."
+        skipCache=""
+        shift
+        if [[ "--drop-failed" == "$1" ]]; then
+            skipCache="--drop-failed"
+            shift
+        fi
     fi
+fi
+
+useNotes="--notes"
+
+if [[ "--no-use-notes" == "$1" ]]; then
+    useNotes=""
+    shift
 fi
 
 sregDir="$(sregi_find_dir --sreg-dir "$1" --full-check)"

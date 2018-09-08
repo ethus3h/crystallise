@@ -110,10 +110,11 @@ retryUntilSuccess 100 30 5 5 dig +short myip.opendns.com @resolver1.opendns.com 
 
 wait
 
-crystallize-logsession "$useCustomPassphrase" "$customPassphrase" "$crystalWorkdir/$CrystalID" "$CrystalID" "$@"
-
 echo "$0 $*" > "$crystalWorkdir/$CrystalID.cmd"
 pwd > "$crystalWorkdir/$CrystalID.cwd"
+
+crystallize-logsession "$useCustomPassphrase" "$customPassphrase" "$crystalWorkdir/$CrystalID" "$CrystalID" "$@"
+
 if [[ $crystallizeLeavePointer == true ]]; then
     mkdir -p "$crystallizePointerDir"
     rsync -a --checksum "$crystalWorkdir/$CrystalID.cmd" "$crystalWorkdir/$CrystalID.cwd" "$crystallizePointerDir"/

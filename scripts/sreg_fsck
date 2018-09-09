@@ -81,7 +81,7 @@ dbDir="$sregDir"
 find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -printf '.' | wc -c > "$fsckStatusFile"
 rm -f "$fsckStatusFile.failed"
 
-findArgs=( "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/.BundlePointerTemp/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -exec sregi_verify_entry --fail-check "$failCheckFile" --skip "$skipCount" )
+findArgs=( "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/.BundlePointerTemp/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -not -name '*.verified' -exec sregi_verify_entry --fail-check "$failCheckFile" --skip "$skipCount" )
 
 [[ -n "$useNotes" ]] && findArgs+=( "$useNotes" )
 

@@ -34,7 +34,7 @@ url="$(iaurl "$1")"
 tempData="$(bigTempFile)"
 tempDir="$(bigTempDir)"
 destDir="$PWD"
-pushd "$(bigTempDir)" || die
+pushd "$tempDir" || die
 retryUntilSuccess 100 30 5 5 wget -t 150 -q "$url"
 
 rm "$tempData"

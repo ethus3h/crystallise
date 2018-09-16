@@ -98,7 +98,7 @@ bytlen=${#myvar}
 LANG=$oLang LC_ALL=$oLcAll
 printf "%s is %d char len, but %d bytes len.\n" "${myvar}" $chrlen $bytlen
 
-# https://stackoverflow.com/questions/17368067/length-of-string-in-bash
+
             if [[ ${#statPath} ]]
             printf '%s\n%s\n' "$statLink" "$statStat" > "./.egup.stat/$statPath.egup-stat" || break
         done

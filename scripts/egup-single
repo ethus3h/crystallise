@@ -91,12 +91,21 @@ while [[ "$status" != "completed" ]]; do
 
         find . -path '*/.git' -prune -o -path './.egup.stat' -prune -o -path '*/.git/*' -prune -o -path . -o \( \( -path './information-technology/env' -o -path './identifiers.lst' \) -and "$emberWebRepositoryFolderName" \) -prune -o \( -type d -and \( -exec test -e '{}/.git' \; \) -and "$emberWebSnapshotsRepositoryFolderName" \) -prune -and -printf "$statPrintFormatString" -or -not -path './.egup.version' -not -path './.egup.tags' -not -path './.egup.branches' -not -path './.egup.refs' -not -path './Futuramerlin Projects/Data/Crystal Index/*' -not -path './.egup.remotes' -printf "$statPrintFormatString" | while IFS= read -rd '' statPath; IFS= read -rd '' statLink; IFS= read -rd '' statStat; do
             # Figure out what the length in bytes of the filename is. Most filesystems do not permit more than 255 bytes, so if it is more than 255 bytes, use a hash of it instead (including the .egup.stat to hopefully prevent collisions).
+            statName="$statPath"
+            if [[ "${statPath: -1}" == "/" ]]; then
+                statName="${statPath::-1}"
+            fi
+            statName="${statName##*/}"
+            statPathDir="${statPath%/*}"
             origLang="$LANG" origLcAll="$LC_ALL"
             LANG=C LC_ALL=C
-            statPathLength=${#statPath}
+            statNameLength="${#statName}"
             LANG="$origLang" LC_ALL="$origLcAll"
-            if [[ "$statPathLength" -ge 255 ]]; then
-            printf '%s\n%s\n' "$statLink" "$statStat" > "./.egup.stat/$statPath.egup-stat" || break
+            if [[ "$statNameLength" -ge 255 ]]; then
+                statName="$(sha512sum "$statPathDir/$statName.egup-stat")"
+                printf '%s' "$statPath" > "$statPathDir/$statName.egup-sp"
+            fi
+            printf '%s\n%s\n' "$statLink" "$statStat" > "./.egup.stat/$statPathDir/$statName.egup-stat" || break
         done
     fi
 

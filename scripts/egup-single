@@ -103,7 +103,7 @@ while [[ "$status" != "completed" ]]; do
             if [[ "$statNameLength" -ge 245 ]]; then
                 statPathDir="${statPath%/*}"
                 statName="$(sha512sum <<< "$statPathDir/$statName.egup-stat" | awk '{print $1;}')"
-                printf '%s' "$statPath" > "$statPathDir/$statName.egup-sp"
+                printf '%s' "$statPath" > "./.egup.stat/$statPathDir/$statName.egup-sp"
                 printf '%s\n%s\n' "$statLink" "$statStat" > "./.egup.stat/$statPathDir/$statName.egup-stat" || break
             else
                 printf '%s\n%s\n' "$statLink" "$statStat" > "./.egup.stat/$statPath.egup-stat" || break

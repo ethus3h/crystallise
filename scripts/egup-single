@@ -67,7 +67,7 @@ while [[ "$status" != "completed" ]]; do
     sed -i '/^[a-f0-9]\{40\} refs\/remotes\/origin\/master$/d' .egup.refs
     git show-ref -d --tags > .egup.tags || echo "(Note: Repository appears to have no tags.)"
 
-    rm -f .egup.stat
+    rm -rf ./.egup.stat
     rm -rf ./.egup.stat.d
     find . -maxdepth 1 -name '.egup.stat.split*' -delete
 
@@ -82,15 +82,15 @@ while [[ "$status" != "completed" ]]; do
         [[ "$repositoryFolderName" == "ember-web-site" ]] && emberWebRepositoryFolderName='-true'
         [[ "$emberWebRepositoryFolderName" == "-true" ]] || emberWebRepositoryFolderName='-false'
 
-        mkdir -p './.egup.stat.d/by-path'
+        mkdir -p './.egup.stat'
 
         # Copy directory structure https://stackoverflow.com/questions/4073969/copy-folder-structure-sans-files-from-one-location-to-another
-        rsync -a -f'- /.egup.stat.d/**' -f'+ */' -f'- *' -f'- /.egup.stat.d/**' . ./.egup.stat.d/by-path/
+        rsync -a -f'- /.egup.stat/**' -f'+ */' -f'- *' -f'- /.egup.stat/**' . ./.egup.stat/
 
         statPrintFormatString='%p\0%l\0%y:%m:%U:%u:%G:%g:%TY:%Tm:%Td:%TH:%TM:%TS:%TZ:%CY:%Cm:%Cd:%CH:%CM:%CS:%CZ\0'
 
-        find . -path '*/.git' -prune -o -path './.egup.stat.d' -prune -o -path '*/.git/*' -prune -o -path . -o \( \( -path './information-technology/env' -o -path './identifiers.lst' \) -and "$emberWebRepositoryFolderName" \) -prune -o \( -type d -and \( -exec test -e '{}/.git' \; \) -and "$emberWebSnapshotsRepositoryFolderName" \) -prune -and -printf "$statPrintFormatString" -or -not -path './.egup.stat' -not -path './.egup.version' -not -path './.egup.tags' -not -path './.egup.branches' -not -path './.egup.refs' -not -path './Futuramerlin Projects/Data/Crystal Index/*' -not -path './.egup.remotes' -printf "$statPrintFormatString" | while IFS= read -rd '' statPath; IFS= read -rd '' statLink; IFS= read -rd '' statStat; do
-            printf '%s\n%s\n' "$statLink" "$statStat" > "./.egup.stat.d/by-path/$statPath.egup-stat" || break
+        find . -path '*/.git' -prune -o -path './.egup.stat' -prune -o -path '*/.git/*' -prune -o -path . -o \( \( -path './information-technology/env' -o -path './identifiers.lst' \) -and "$emberWebRepositoryFolderName" \) -prune -o \( -type d -and \( -exec test -e '{}/.git' \; \) -and "$emberWebSnapshotsRepositoryFolderName" \) -prune -and -printf "$statPrintFormatString" -or -not -path './.egup.version' -not -path './.egup.tags' -not -path './.egup.branches' -not -path './.egup.refs' -not -path './Futuramerlin Projects/Data/Crystal Index/*' -not -path './.egup.remotes' -printf "$statPrintFormatString" | while IFS= read -rd '' statPath; IFS= read -rd '' statLink; IFS= read -rd '' statStat; do
+            printf '%s\n%s\n' "$statLink" "$statStat" > "./.egup.stat/$statPath" || break
         done
     fi
 

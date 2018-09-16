@@ -96,16 +96,18 @@ while [[ "$status" != "completed" ]]; do
                 statName="${statPath::-1}"
             fi
             statName="${statName##*/}"
-            statPathDir="${statPath%/*}"
             origLang="$LANG" origLcAll="$LC_ALL"
             LANG=C LC_ALL=C
             statNameLength="${#statName}"
             LANG="$origLang" LC_ALL="$origLcAll"
             if [[ "$statNameLength" -ge 255 ]]; then
+                statPathDir="${statPath%/*}"
                 statName="$(sha512sum "$statPathDir/$statName.egup-stat")"
                 printf '%s' "$statPath" > "$statPathDir/$statName.egup-sp"
+                printf '%s\n%s\n' "$statLink" "$statStat" > "./.egup.stat/$statPathDir/$statName.egup-stat" || break
+            else
+                printf '%s\n%s\n' "$statLink" "$statStat" > "./.egup.stat/$statPath.egup-stat" || break
             fi
-            printf '%s\n%s\n' "$statLink" "$statStat" > "./.egup.stat/$statPathDir/$statName.egup-stat" || break
         done
     fi
 

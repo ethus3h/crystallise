@@ -90,6 +90,16 @@ while [[ "$status" != "completed" ]]; do
         statPrintFormatString='%p\0%l\0%y:%m:%U:%u:%G:%g:%TY:%Tm:%Td:%TH:%TM:%TS:%TZ:%CY:%Cm:%Cd:%CH:%CM:%CS:%CZ\0'
 
         find . -path '*/.git' -prune -o -path './.egup.stat' -prune -o -path '*/.git/*' -prune -o -path . -o \( \( -path './information-technology/env' -o -path './identifiers.lst' \) -and "$emberWebRepositoryFolderName" \) -prune -o \( -type d -and \( -exec test -e '{}/.git' \; \) -and "$emberWebSnapshotsRepositoryFolderName" \) -prune -and -printf "$statPrintFormatString" -or -not -path './.egup.version' -not -path './.egup.tags' -not -path './.egup.branches' -not -path './.egup.refs' -not -path './Futuramerlin Projects/Data/Crystal Index/*' -not -path './.egup.remotes' -printf "$statPrintFormatString" | while IFS= read -rd '' statPath; IFS= read -rd '' statLink; IFS= read -rd '' statStat; do
+        myvar='Généralités'
+chrlen=${#myvar}
+oLang=$LANG oLcAll=$LC_ALL
+LANG=C LC_ALL=C
+bytlen=${#myvar}
+LANG=$oLang LC_ALL=$oLcAll
+printf "%s is %d char len, but %d bytes len.\n" "${myvar}" $chrlen $bytlen
+
+# https://stackoverflow.com/questions/17368067/length-of-string-in-bash
+            if [[ ${#statPath} ]]
             printf '%s\n%s\n' "$statLink" "$statStat" > "./.egup.stat/$statPath.egup-stat" || break
         done
     fi

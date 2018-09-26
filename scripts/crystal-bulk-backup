@@ -37,10 +37,11 @@ cd "$backupLocation" || die "Could not cd to newly created directory! This shoul
 touch ".cbb.isBackupDir"
 
 [[ -e '.git' ]] || git init
-print $'items\n' >> .gitignore
-print $'items.failed-check\n' >> .gitignore
-print $'repositories\n' >> .gitignore
-print $'stream-registries\n' >> .gitignore
+print $'/items\n' >> .gitignore
+print $'/items.failed-check\n' >> .gitignore
+print $'/repositories\n' >> .gitignore
+print $'/stream-registries\n' >> .gitignore
+print $'/crystal-backup-meta/.csum\n' >> .gitignore
 removeDuplicateLines '.gitignore' | bigSponge '.gitignore'
 
 [[ "$gitCommit" == "true" ]] && git add .gitignore

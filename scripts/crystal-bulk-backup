@@ -123,6 +123,7 @@ fi
         git init
         git config core.sparseCheckout true
         echo "identifiers.lst" > .git/info/sparse-checkout
+        echo "identifiers-lowpriority.lst" >> .git/info/sparse-checkout
         git checkout
     else
         cd "repositories/ember-web-site" || die "Could not cd to repository directory $(pwd)/repositories/ember-web-site!"
@@ -131,6 +132,7 @@ fi
 )
 print $'\n' >> "crystal-backup-meta/cbb-index/items"
 cat "repositories/ember-web-site/identifiers.lst" >> "crystal-backup-meta/cbb-index/items"
+cat "repositories/ember-web-site/identifiers-lowpriority.lst" >> "crystal-backup-meta/cbb-index/items"
 removeDuplicateLines 'crystal-backup-meta/cbb-index/items' | bigSponge 'crystal-backup-meta/cbb-index/items'
 
 shopt -s dotglob

@@ -78,7 +78,7 @@ mkdir -p "$crystalWorkdir/${fsckId:?}"
 mkdir -p "/tmp/${fsckId:?}"
 fsckStatusFile="/tmp/$fsckId/.sreg_fsck.status"
 dbDir="$sregDir"
-find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -printf '.' | wc -c > "$fsckStatusFile"
+find "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/.BundlePointerTemp/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -not -name '*.verified' -printf '.' | wc -c > "$fsckStatusFile"
 rm -f "$fsckStatusFile.failed"
 
 findArgs=( "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/.BundlePointerTemp/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -not -name '*.verified' -exec sregi_verify_entry --fail-check "$failCheckFile" --skip "$skipCount" )

@@ -18,7 +18,7 @@ printIfMatchingHashpointer() {
     sharedChecksCounter=$(( sharedChecksCounter + 1 ))
     (( sharedChecksCounter % 50 )) || printf '\e[2K\r%s' "Checked $sharedChecksCounter files..."
 
-    [[ "$hashFromFile" == "$checksum" ]] && printf '\n%s\n' "$pointer"
+    [[ "$hashFromFile" == "$checksum" ]] && printf '\e[2K\n%s\n' "$pointer"
     return 0
 }
 
@@ -67,3 +67,4 @@ echo "List of referents (that you can read) in the current directory ($PWD):"
 find . -path './.sreg' -prune -o -path './.egup.stat' -prune -o -type f -print0 | while IFS= read -rd '' fileNameToCheck; do
     printIfMatchingHashpointer "$pointerHash" "$fileNameToCheck"
 done
+printf '\e[2K\n'

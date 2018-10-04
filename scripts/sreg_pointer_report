@@ -6,12 +6,16 @@ source ember_bash_setup &> /dev/null || { printf '%b' '\033[1;31m' >&2; echo "A 
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
-if [[ "$1" == "--print-if-matching-hashpointer" ]]; then
-    shift
+printIfMatchingHashpointer() {
     checksum="$1"
     pointer="$2"
 
     [[ "$(sregi_hash_from_file)" == "$checksum" ]] && echo "$pointer"
+}
+
+if [[ "$1" == "--print-if-matching-hashpointer" ]]; then
+    shift
+    printIfMatchingHashpointer "$@"
     exit
 fi
 

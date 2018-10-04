@@ -13,7 +13,7 @@ printIfMatchingHashpointer() {
     local pointer="$2"
 
     local hashFromFile
-    hashFromFile="$(tail -c +38 "$pointer" | head -c 129 | tr -d '\0')"
+    hashFromFile="$(tail -c +38 "$pointer" | head -c 129 | tr -d '\0')" || true
 
     sharedChecksCounter=$(( sharedChecksCounter + 1 ))
     (( sharedChecksCounter % 50 )) || printf '\e[2K\r%s' "Checked $sharedChecksCounter files..."
@@ -62,7 +62,7 @@ print "Pointer type: "
 print "Pointer reported size: "
 sregi_get_length_from_pointer --sreg-dir "$sregDir" "$pointerLocation" 2>/dev/null || echo
 
-echo "List of referents in the current directory ($PWD):"
+echo "List of referents (that you can read) in the current directory ($PWD):"
 
 find . -path './.sreg' -prune -o -path './.egup.stat' -prune -o -type f -print0 | while IFS= read -rd '' fileNameToCheck; do
     printIfMatchingHashpointer "$pointerHash" "$fileNameToCheck"

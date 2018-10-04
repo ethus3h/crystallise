@@ -12,8 +12,7 @@ printIfMatchingHashpointer() {
     local hashFromFile
     hashFromFile="$(sregi_hash_from_file "$pointer")"
 
-    [[ "$hashFromFile" == "$checksum" ]] && echo "$pointer"
-    exit
+    [[ "$hashFromFile" == "$checksum" ]] && echo "$pointer" || true
 }
 
 if [[ "$1" == "--print-if-matching-hashpointer" ]]; then

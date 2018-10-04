@@ -18,7 +18,7 @@ printIfMatchingHashpointer() {
     sharedChecksCounter=$(( sharedChecksCounter + 1 ))
     (( sharedChecksCounter % 50 )) || printf '\e[2K\r%s' "Checked $sharedChecksCounter files..."
 
-    [[ "$hashFromFile" == "$checksum" ]] && echo "$pointer"
+    [[ "$hashFromFile" == "$checksum" ]] && printf '\n%s\n' "$pointer"
     return 0
 }
 

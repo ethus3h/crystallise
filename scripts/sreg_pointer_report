@@ -16,10 +16,10 @@ printIfMatchingHashpointer() {
     hashFromFile="$(tail -c +38 "$pointer" | head -c 129 | tr -d '\0')"
 
     sharedChecksCounter=$(( sharedChecksCounter + 1 ))
-    if ! (( sharedChecksCounter % 50 )); then
-    printf '\e[2K\r%s' "Checked $sharedChecksCounter files..."
+    (( sharedChecksCounter % 50 )) || printf '\e[2K\r%s' "Checked $sharedChecksCounter files..."
 
-    [[ "$hashFromFile" == "$checksum" ]] && echo "$pointer" || true
+    [[ "$hashFromFile" == "$checksum" ]] && echo "$pointer"
+    return 0
 }
 
 if [[ "$1" == "--print-if-matching-hashpointer" ]]; then

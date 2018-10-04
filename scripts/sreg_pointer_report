@@ -10,7 +10,7 @@ printIfMatchingHashpointer() {
     local checksum="$1"
     local pointer="$2"
     local hashFromFile
-    hashFromFile="$(sregi_hash_from_file "$checksum")"
+    hashFromFile="$(sregi_hash_from_file "$pointer")"
 
     [[ "$hashFromFile" == "$checksum" ]] && echo "$pointer"
     exit

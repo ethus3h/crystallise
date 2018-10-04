@@ -6,17 +6,18 @@ source ember_bash_setup &> /dev/null || { printf '%b' '\033[1;31m' >&2; echo "A 
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
+sharedChecksCounter=0
+
 printIfMatchingHashpointer() {
     local checksum="$1"
     local pointer="$2"
 
-    local pointerTypeSignature
-    pointerTypeSignature="$(head -c 36 "$file" | tr -d '\0')"
-
-    [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]] || return 0
-
     local hashFromFile
     hashFromFile="$(tail -c +38 "$pointer" | head -c 129 | tr -d '\0')"
+
+    sharedChecksCounter=$(( sharedChecksCounter + 1 ))
+    if ! (( sharedChecksCounter % 50 )); then
+    printf '\e[2K\r%s' "Checked $sharedChecksCounter files..."
 
     [[ "$hashFromFile" == "$checksum" ]] && echo "$pointer" || true
 }

@@ -50,4 +50,4 @@ sregi_get_length_from_pointer --sreg-dir "$sregDir" "$pointerLocation"
 
 echo "List of referents in the current directory ($PWD):"
 
-find . -type f -exec 
+find . -type f -exec sreg_pointer_report --print-if-matching-hashpointer "$pointerHash" "$pointerLocation" \;

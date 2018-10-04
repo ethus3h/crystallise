@@ -9,8 +9,14 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 printIfMatchingHashpointer() {
     local checksum="$1"
     local pointer="$2"
+
+    local pointerTypeSignature
+    pointerTypeSignature="$(head -c 36 "$file" | tr -d '\0')"
+
+    [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]] || return 0
+
     local hashFromFile
-    hashFromFile="$(sregi_hash_from_file "$pointer")"
+    hashFromFile="$(tail -c +38 "$pointer" | head -c 129 | tr -d '\0')"
 
     [[ "$hashFromFile" == "$checksum" ]] && echo "$pointer" || true
 }
@@ -57,6 +63,6 @@ sregi_get_length_from_pointer --sreg-dir "$sregDir" "$pointerLocation" 2>/dev/nu
 
 echo "List of referents in the current directory ($PWD):"
 
-find . -type f -print0 | while IFS= read -rd '' fileNameToCheck; do
+find . -path './.sreg' -prune -o -path './.egup.stat' -prune -o -type f -print0 | while IFS= read -rd '' fileNameToCheck; do
     printIfMatchingHashpointer "$pointerHash" "$fileNameToCheck"
 done

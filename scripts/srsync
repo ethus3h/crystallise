@@ -81,9 +81,9 @@ echo "0" > "$skipFile"
 
 echo "Counting items..."
 if [[ "$keepGoing" == "true" ]]; then
-    find "${pathsToCopy[@]}" -type f -printf '.' | wc -c > "$statusFile" || warn "Find reported an error trying to count the files on which to operate."
+    find "${pathsToCopy[@]}" -printf '.' | wc -c > "$statusFile" || warn "Find reported an error trying to count the files on which to operate."
 else
-    find "${pathsToCopy[@]}" -type f -printf '.' | wc -c > "$statusFile"
+    find "${pathsToCopy[@]}" -printf '.' | wc -c > "$statusFile"
 fi
 
 # FIXME: Why replace this in the destination parameter?! Won't this make it copy into the wrong folder?
@@ -120,9 +120,9 @@ for path in "${pathsToCopy[@]}"; do
     fi
     # Use $path in find commands rather than sourceReplaced because sourceReplaced is used for the target computation and post-processing (post-processing with find, that is).
     if [[ "$sregNoVerify" == "true" ]]; then
-        find "$path" -type f -exec sregi_copy_write "$failCheckFile" --skip "$skipCount" --sreg-dir "$sregDir" --no-verify {} "$destinationReplaced" "$statusFile" "$destinationRootLength" \;
+        find "$path" -exec sregi_copy_write "$failCheckFile" --skip "$skipCount" --sreg-dir "$sregDir" --no-verify {} "$destinationReplaced" "$statusFile" "$destinationRootLength" \;
     else
-        find "$path" -type f -exec sregi_copy_write "$failCheckFile" --skip "$skipCount" --sreg-dir "$sregDir" {} "$destinationReplaced" "$statusFile" "$destinationRootLength" \;
+        find "$path" -exec sregi_copy_write "$failCheckFile" --skip "$skipCount" --sreg-dir "$sregDir" {} "$destinationReplaced" "$statusFile" "$destinationRootLength" \;
     fi
     # This NEEDS to skip regular files, because otherwise files that don't exist in the directory will be copied and take up space!
     # FIXME: WTF? The regular files that don't exist should already have been copied by sregi_copy_write.

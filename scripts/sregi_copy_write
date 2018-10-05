@@ -84,6 +84,7 @@ if [[ "$1" == "--no-verify" ]]; then
     shift
 fi
 #echo "$@"
+sourcePath="$1"
 fsckStatusFile="$3"
 if [[ -n "$fsckStatusFile" ]]; then
     numberExpected="$(<"$fsckStatusFile")"
@@ -100,9 +101,9 @@ if [[ -n "$fsckStatusFile" ]]; then
         numberExpected="-1"
     fi
     numberProcessedPercentage="$(printf "%.3f\\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
-    echo "Copying item $1: #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
+    echo "Copying item $sourcePath: #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
 else
-    echo "Copying item $1."
+    echo "Copying item $sourcePath."
 fi
 # FIXME: This shellcheck directive is only needed for outdated shellcheck versions. Once CodeClimate's shellcheck gets updated (which probably means when Debian stable updates shellcheck), it can be removed.
 # shellcheck disable=SC2034
@@ -120,8 +121,8 @@ targetLength=${#sourceNameReplaced}
 destinationName="$2/${sourceNameReplaced:destinationRootLength:targetLength}"
 #echo "$destinationName"
 
-if [[ -f "$1" ]]; then
-    sourceChecksum="$(sha512sum < "$1" | awk '{print $1;}')"
+if [[ -f "$sourcePath" ]]; then
+    sourceChecksum="$(sha512sum < "$sourcePath" | awk '{print $1;}')"
     if [[ -f "$destinationName" ]]; then
         pointerTypeSignature="$(head -c 36 "$destinationName" | tr -d '\0')"
         destinationChecksum=""
@@ -149,7 +150,7 @@ if [[ -f "$1" ]]; then
             fi
             if [[ "$destinationChecksum" == "$sourceChecksum" && "$hasEncounteredError" == "0" && "$assumePointerDbEntryFileExists" == "true" ]]; then
                 # The file is already present, pointerized, and readable, so exit without doing anything.
-                echo "(Nothing done for $1.)"
+                echo "(Nothing done for $sourcePath.)"
                 success
             else
                 warn "(Note: Destination pointer $destinationName did not match source checksum or could not be read (source checksum: $sourceChecksum / destinationChecksum: $destinationChecksum /  stream read status: $hasEncounteredError / quick check status: $assumePointerDbEntryFileExists / destination pointer contents: $(<"$destinationName")): the source file has probably been changed. Removing and recreating.)"
@@ -177,8 +178,8 @@ if [[ -f "$1" ]]; then
     streamId=".sreg-$(date-uuid)"
     crystalSubdir="$crystalWorkdir/$streamId"
     mkdir -p "$crystalSubdir"
-    rsync -a --checksum --no-i-r "$1" "$crystalSubdir/"
-    setVariableToCommandOutput "basename" "embasename" "$1"
+    rsync -a --checksum --no-i-r "$sourcePath" "$crystalSubdir/"
+    setVariableToCommandOutput "basename" "embasename" "$sourcePath"
     fileToStash="$crystalSubdir/${basename:?}"
     if [[ -f "$fileToStash" ]]; then
         sreg_store_stream --sreg-dir "$sregDir" --assume-checksum "$sourceChecksum" --verbose < "$fileToStash" | bigSponge "$fileToStash"
@@ -192,7 +193,7 @@ if [[ -f "$1" ]]; then
 
     # Checksum the source once again, and compare it to the stored pointer, just to make sure.
     pointerChecksum="$(tail -c +38 "$destinationName" | head -c 129)"
-    if [[ "$pointerChecksum" != "$(sha512sum < "$1" | awk '{print $1;}')" ]] || [[ "$pointerChecksum" != "$sourceChecksum" ]]; then
+    if [[ "$pointerChecksum" != "$(sha512sum < "$sourcePath" | awk '{print $1;}')" ]] || [[ "$pointerChecksum" != "$sourceChecksum" ]]; then
         die
     fi
 
@@ -201,8 +202,7 @@ if [[ -f "$1" ]]; then
         rm -r "${streamId:?}"
     fi
 else
-    error-notify "Item must be a regular file."
-    exit 1
+    rsync -a --checksum --no-i-r "$sourcePath" "$destinationName"
 fi
 
 finish

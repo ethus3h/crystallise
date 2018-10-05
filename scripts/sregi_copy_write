@@ -202,7 +202,7 @@ if [[ -f "$sourcePath" ]]; then
         rm -r "${streamId:?}"
     fi
 else
-    rsync -a --checksum --no-i-r "$sourcePath" "$destinationName"
+    rsync -a --no-r --checksum --no-i-r "$sourcePath" "$destinationName"
 fi
 
 finish

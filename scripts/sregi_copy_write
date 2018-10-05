@@ -201,6 +201,10 @@ if [[ -f "$sourcePath" ]]; then
     if [[ -e "${streamId:?}" ]]; then
         rm -r "${streamId:?}"
     fi
+elif [[ -d "$sourcePath" ]]; then
+    mkdir -p "$destinationName"
+    chmod --reference="$sourcePath" "$destinationName"
+    chmod a+rx "$destinationName"
 else
     rsync -a --no-r --checksum --no-i-r "$sourcePath" "$destinationName"
 fi

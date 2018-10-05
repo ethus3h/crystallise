@@ -84,42 +84,43 @@ if [[ "$1" == "--no-verify" ]]; then
     shift
 fi
 #echo "$@"
-if [[ -f "$1" ]]; then
-    fsckStatusFile="$3"
-    if [[ -n "$fsckStatusFile" ]]; then
-        numberExpected="$(<"$fsckStatusFile")"
-        numberProcessedFile="$fsckStatusFile.done"
-        if ! [[ -f "$numberProcessedFile" ]]; then
-            numberProcessed="1"
-        else
-            numberProcessed="$(<"$numberProcessedFile")"
-            numberProcessed=$(( numberProcessed + 1 ))
-        fi
-        echo "$numberProcessed" > "$numberProcessedFile"
-        if [[ "$numberExpected" == "0" ]]; then
-            # wtf?
-            numberExpected="-1"
-        fi
-        numberProcessedPercentage="$(printf "%.3f\\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
-        echo "Copying item $1: #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
+fsckStatusFile="$3"
+if [[ -n "$fsckStatusFile" ]]; then
+    numberExpected="$(<"$fsckStatusFile")"
+    numberProcessedFile="$fsckStatusFile.done"
+    if ! [[ -f "$numberProcessedFile" ]]; then
+        numberProcessed="1"
     else
-        echo "Copying item $1."
+        numberProcessed="$(<"$numberProcessedFile")"
+        numberProcessed=$(( numberProcessed + 1 ))
     fi
-    # FIXME: This shellcheck directive is only needed for outdated shellcheck versions. Once CodeClimate's shellcheck gets updated (which probably means when Debian stable updates shellcheck), it can be removed.
-    # shellcheck disable=SC2034
-    destinationRootLength="$4"
-    # FIXME: This shellcheck directive is only needed for outdated shellcheck versions. Once CodeClimate's shellcheck gets updated (which probably means when Debian stable updates shellcheck), it can be removed.
-    # shellcheck disable=SC2034
-    sourceNameReplaced="${1/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"
-    sourceNameReplaced="${sourceNameReplaced//\/.git\//\/.git.686fc528-0e8e-4724-91bb-c103cdcdd592\/}"
-    sourceNameReplaced="${sourceNameReplaced/%.gitignore/.gitignore.24355e64-bfd5-4cb7-92f9-4417fb55ccfd}"
-    sourceNameReplaced="${sourceNameReplaced//\/.gitignore\//\/.gitignore.24355e64-bfd5-4cb7-92f9-4417fb55ccfd\/}"
-    sourceNameReplaced="${sourceNameReplaced/%.gitmodules/.gitmodules.e17e15dc-7ed4-4b99-8acb-019f503afb9e}"
-    sourceNameReplaced="${sourceNameReplaced//\/.gitmodules\//\/.gitmodules.e17e15dc-7ed4-4b99-8acb-019f503afb9e\/}"
-    targetLength=${#sourceNameReplaced}
-    #echo "$destinationRootLength - $targetLength"
-    destinationName="$2/${sourceNameReplaced:destinationRootLength:targetLength}"
-    #echo "$destinationName"
+    echo "$numberProcessed" > "$numberProcessedFile"
+    if [[ "$numberExpected" == "0" ]]; then
+        # wtf?
+        numberExpected="-1"
+    fi
+    numberProcessedPercentage="$(printf "%.3f\\n" "$(bc -l <<< "($numberProcessed / $numberExpected) * 100")")"
+    echo "Copying item $1: #$numberProcessed of $numberExpected ($numberProcessedPercentage%)"
+else
+    echo "Copying item $1."
+fi
+# FIXME: This shellcheck directive is only needed for outdated shellcheck versions. Once CodeClimate's shellcheck gets updated (which probably means when Debian stable updates shellcheck), it can be removed.
+# shellcheck disable=SC2034
+destinationRootLength="$4"
+# FIXME: This shellcheck directive is only needed for outdated shellcheck versions. Once CodeClimate's shellcheck gets updated (which probably means when Debian stable updates shellcheck), it can be removed.
+# shellcheck disable=SC2034
+sourceNameReplaced="${1/%.git/.git.686fc528-0e8e-4724-91bb-c103cdcdd592}"
+sourceNameReplaced="${sourceNameReplaced//\/.git\//\/.git.686fc528-0e8e-4724-91bb-c103cdcdd592\/}"
+sourceNameReplaced="${sourceNameReplaced/%.gitignore/.gitignore.24355e64-bfd5-4cb7-92f9-4417fb55ccfd}"
+sourceNameReplaced="${sourceNameReplaced//\/.gitignore\//\/.gitignore.24355e64-bfd5-4cb7-92f9-4417fb55ccfd\/}"
+sourceNameReplaced="${sourceNameReplaced/%.gitmodules/.gitmodules.e17e15dc-7ed4-4b99-8acb-019f503afb9e}"
+sourceNameReplaced="${sourceNameReplaced//\/.gitmodules\//\/.gitmodules.e17e15dc-7ed4-4b99-8acb-019f503afb9e\/}"
+targetLength=${#sourceNameReplaced}
+#echo "$destinationRootLength - $targetLength"
+destinationName="$2/${sourceNameReplaced:destinationRootLength:targetLength}"
+#echo "$destinationName"
+
+if [[ -f "$1" ]]; then
     sourceChecksum="$(sha512sum < "$1" | awk '{print $1;}')"
     if [[ -f "$destinationName" ]]; then
         pointerTypeSignature="$(head -c 36 "$destinationName" | tr -d '\0')"

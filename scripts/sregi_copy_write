@@ -205,8 +205,10 @@ elif [[ -d "$sourcePath" ]]; then
     mkdir -p "$destinationName"
     chmod --reference="$sourcePath" "$destinationName"
     chmod a+rx "$destinationName"
+    echo "Copied directory $sourcePath."
 else
     rsync -a --no-r --checksum --no-i-r "$sourcePath" "$destinationName"
+    echo "Copied non-regular file $sourcePath."
 fi
 
 finish

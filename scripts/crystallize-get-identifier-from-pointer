@@ -6,4 +6,11 @@ source ember_bash_setup &> /dev/null || { printf '%b' '\033[1;31m' >&2; echo "A 
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
-cat "$(dirname "$1")"/."$(basename "$1")"-data/identifier
+potentialPointer="$1"
+
+if [[ -d "$potentialPointer" ]]; then
+    cat "$(dirname "$potentialPointer")"/."$(basename "$potentialPointer")"-data/identifier
+    exit
+else
+    die "Pointer types other than directories aren"\'"t supported currently."
+fi

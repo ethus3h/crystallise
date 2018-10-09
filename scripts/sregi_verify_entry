@@ -168,7 +168,7 @@ if [[ "$exitCode" == "0" ]]; then
     # FIXME: On macOS, this reports (standard_in) 1: parse error and displays entries like "finished # of 681638 (0.000%)". It works fine if I paste the exact same code into the shell, but doesn't work when it's in this script. I've wasted enough time trying to debug this for now, this kind of BS is why my scripts don't normally support macOS. Ugh.
     if [[ -n "$fsckStatusFile" ]]; then
         numberExpected="$(<"$fsckStatusFile")"
-        [[ -n "$skipCount" ]] && numberExpected=$(( numberProcessed - skipCount ))
+        [[ -n "$skipCount" ]] && numberExpected=$(( numberExpected - skipCount ))
         numberProcessedFile="$fsckStatusFile.done"
         if [[ "$OSTYPE" == darwin* ]]; then
             xxd "$fsckStatusFile" >&2

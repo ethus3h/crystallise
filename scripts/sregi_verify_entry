@@ -50,7 +50,7 @@ if [[ -n "$failCheckFile" ]]; then
                 echo "$skipCount" > "$numberProcessedFile"
             fi
             echo "$skippedSoFar" > "$skipFile"
-            echo "(skipped $skippedSoFar out of $skipCount...)"
+            (( skippedSoFar % 50 )) || printf '\e[2K\r%s' "(skipped $skippedSoFar out of $skipCount...)"
             exit 0
         fi
     fi

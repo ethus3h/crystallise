@@ -62,6 +62,9 @@ print "Pointer type: "
 print "Pointer reported size: "
 timeout 15 sregi_get_length_from_pointer --sreg-dir "$sregDir" "$pointerLocation" 2>/dev/null || echo
 
+print "Crystal ID for the pointer"\'"s data: "
+crystallize-get-identifier-from-pointer "$pointerLocation" "$sregDir"
+
 echo "List of referents (that you can read) in the current directory ($PWD):"
 
 find . -path './.sreg' -prune -o -path './.egup.stat' -prune -o -type f -print0 | while IFS= read -rd '' fileNameToCheck; do

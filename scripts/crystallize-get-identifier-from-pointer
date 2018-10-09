@@ -15,6 +15,10 @@ if [[ "$potentialPointer" == *.crystal ]]; then
 else
     sregDir="$(sregi_find_dir --sreg-dir "$1" --full-check)"
 
+    myTempDir="$(tempDir)"
+    potentialPointer="$(readlink -f "$potentialPointer")"
+    pushd "$myTempDir" || die "Could not pushd!"
+
     typeSignature="$(head -c 36 "$potentialPointer" | tr -d '\0')"
     hashFull="$(sregi_hash_from_file "$potentialPointer")"
     hashA="${hashFull:0:1}"
@@ -66,4 +70,6 @@ else
     else
         warn "The file at $PWD/$potentialPointer has the unknown pointer type signature $(cat -v <<< "$typeSignature")."
     fi
+    popd || die "Could not popd!"
+    rm -r "$myTempDir"
 fi

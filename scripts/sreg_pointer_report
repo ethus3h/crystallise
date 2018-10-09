@@ -60,7 +60,7 @@ print "Pointer type: "
     fi
 
 print "Pointer reported size: "
-sregi_get_length_from_pointer --sreg-dir "$sregDir" "$pointerLocation" 2>/dev/null || echo
+timeout 15 sregi_get_length_from_pointer --sreg-dir "$sregDir" "$pointerLocation" 2>/dev/null || echo
 
 echo "List of referents (that you can read) in the current directory ($PWD):"
 

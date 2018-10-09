@@ -160,6 +160,7 @@ if [[ "$quick" == "true" ]]; then
 else
     # Disable SC2094 because sreg_read_stream should not write to the file specified by --entry-path.
     # shellcheck disable=SC2094
+    echo "Started checking stream registry database entry $knownHash."
     sreg_read_stream "$lockOverride" --sreg-dir "$sregDir" --entry-path "$entryPath" --checksum "$knownHash" --disallow-hash-pointer "$skipCache" < "$entryPath" > /dev/null
     exitCode="$?"
 fi

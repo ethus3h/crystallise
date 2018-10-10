@@ -31,7 +31,7 @@ if [[ -f "$pointer" ]] && [[ ! -h "$pointer" ]]; then
         if ! [[ -e "$pointer.length" ]]; then
             crystalWorkdir="$(crystallize-getconf WorkDirectory)"
             streamId="sregi_get_length_from_pointer-$(date-uuid)"
-            trap 'rm -f ${streamId:?}; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+            trap 'rm -f ${crystalWorkdir:?}/.${streamId:?}; rm -f ${streamId:?}; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
             sreg_read_stream --sreg-dir "$sregDir" < "$pointer" > "$crystalWorkdir/.$streamId"
             retrievedSize="$(stat --printf='%s\n' "$crystalWorkdir/.$streamId")"
             echo "$crystalWorkdir/.$streamId (not hash pointer) has length $retrievedSize bytes. Pointer contents: $(xxd "$pointer")"

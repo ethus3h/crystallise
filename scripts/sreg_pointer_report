@@ -37,6 +37,11 @@ fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 
 hashFull="$1"
+if [[ "$(head -c 36 "$1" | tr -d '\0')" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
+    # Hash pointer
+    hashFull="$(sregi_hash_from_file "$1")"
+    echo "(It looks like you provided a path to a hashpointer, so investigating its associated pointer.)"
+fi
 hashA="${hashFull:0:1}"
 hashB="${hashFull:1:1}"
 hashC="${hashFull:2:1}"
@@ -50,7 +55,7 @@ echo "Pointer: $pointerHash"
 
 print "Pointer type: "
     pointerTypeSignature="$(head -c 36 "$pointerLocation" | tr -d '\0')"
-    if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then echo "Hash pointer ($pointerTypeSignature)"
+    if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then echo "Hash pointer ($pointerTypeSignature)?! Why is this in the stream database?"
     elif [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then echo "Standard remote pointer ($pointerTypeSignature)"
     elif [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then echo "LocalStore pointer ($pointerTypeSignature)"
     elif [[ "$pointerTypeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]]; then echo "Remote pack pointer ($pointerTypeSignature)"

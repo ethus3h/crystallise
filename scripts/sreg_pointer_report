@@ -54,7 +54,7 @@ pointerHash="$(sregi_hash_from_file "$pointerLocation")"
 echo "Pointer: $pointerHash"
 
 print "Pointer type: "
-    pointerTypeSignature="$(head -c 36 "$pointerLocation" | tr -d '\0')"
+    pointerTypeSignature="$(head -c 36 "$pointerLocation" | tr -d '\0')" 2>/dev/null
     if [[ "$pointerTypeSignature" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then echo "Hash pointer ($pointerTypeSignature)?! Why is this in the stream database?"
     elif [[ "$pointerTypeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then echo "Standard remote pointer ($pointerTypeSignature)"
     elif [[ "$pointerTypeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then echo "LocalStore pointer ($pointerTypeSignature)"
@@ -68,7 +68,7 @@ print "Pointer reported size: "
 timeout 15 sregi_get_length_from_pointer --sreg-dir "$sregDir" "$pointerLocation" 2>/dev/null || echo
 
 print "Crystal ID for the pointer"\'"s data: "
-crystallize-get-identifier-from-pointer "$pointerLocation" "$sregDir"
+crystallize-get-identifier-from-pointer "$pointerLocation" "$sregDir" || true
 
 echo "List of referents (that you can read) in the current directory ($PWD):"
 

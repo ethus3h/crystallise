@@ -30,9 +30,8 @@ else
         crystallize-get-identifier-from-pointer "$hashSubpath/$hashFull"
     elif [[ "$typeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then # Standard remote pointer
         pointerTempDir="$(bigTempDir)"
-        pointerDir="$PWD"
         spushd "$pointerTempDir" || die "Could not pushd to $pointerTempDir!"
-        tail -c +167 "$pointerDir/$potentialPointer" | unxz --stdout - | tar -xf -
+        tail -c +167 "$potentialPointer" | unxz --stdout - | tar -xf -
         crystallize-get-identifier-from-pointer ./*.crystal
         spopd || die "Could not popd!"
         rm -r "$pointerTempDir"
@@ -40,8 +39,13 @@ else
         warn "This is a LocalStore pointer, so it does not yet have an associated identifier."
     elif [[ "$typeSignature" == "2fae2004-94bb-4aa8-a01a-fc44298efc2c" ]]; then # Remote pack pointer
         # Pack pointer name is in the pointer, so get the pack pointer data from the Packs directory
+        pointerTempDir="$(bigTempDir)"
+        spushd "$pointerTempDir" || die "Could not pushd to $pointerTempDir!"
         packName="$(tail -c +167 "$potentialPointer")"
         unxz --stdout - < "$sregDir/Packs/$packName" | tar -xf -
+        warn "FIXME: Unimplemented"
+        spopd || die "Could not popd!"
+        rm -r "$pointerTempDir"
     elif [[ "$typeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]]; then # Remote pack pointer, with pointer data in the pointer
         # Like the normal remote pack files, we need to get the identifier out of the pointer as a tar file.
         pointerTempDir="$(bigTempDir)"

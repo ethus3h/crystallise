@@ -32,7 +32,7 @@ else
         pointerTempDir="$(bigTempDir)"
         spushd "$pointerTempDir" || die "Could not pushd to $pointerTempDir!"
         tail -c +167 "$potentialPointer" | unxz --stdout - | tar -xf -
-        crystallize-get-identifier-from-pointer ./*.crystal
+        crystallize-get-identifier-from-pointer ./*.crystal &>/dev/null
         spopd || die "Could not popd!"
         rm -r "$pointerTempDir"
     elif [[ "$typeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then # LocalStore pointer
@@ -42,7 +42,7 @@ else
         pointerTempDir="$(bigTempDir)"
         spushd "$pointerTempDir" || die "Could not pushd to $pointerTempDir!"
         packName="$(tail -c +167 "$potentialPointer")"
-        unxz --stdout - < "$sregDir/Packs/$packName" | tar -xf -
+        unxz --stdout - < "$sregDir/Packs/$packName" | tar -xf - &>/dev/null
         warn "FIXME: Unimplemented"
         spopd || die "Could not popd!"
         rm -r "$pointerTempDir"

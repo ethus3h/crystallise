@@ -37,7 +37,7 @@ fi
 sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 
 hashFull="$1"
-if [[ "$(head -c 36 "$1" | tr -d '\0')" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
+if [[ "$(head -c 36 "$1" 2>/dev/null | tr -d '\0')" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then
     # Hash pointer
     hashFull="$(sregi_hash_from_file "$1")"
     echo "(It looks like you provided a path to a hashpointer, so investigating its associated pointer.)"
@@ -48,7 +48,7 @@ hashC="${hashFull:2:1}"
 
 pointerLocation="$sregDir/$hashA/$hashB/$hashC/$hashFull"
 
-pointerHash="$(sregi_hash_from_file "$pointerLocation")" 2>/dev/null
+pointerHash="$(sregi_hash_from_file "$pointerLocation")"
 [[ "$hashFull" == "$pointerHash" ]] || die "Pointer hash ($hashFull) does not match the hash from the pointer at that location ($pointerHash)!"
 
 echo "Pointer: $pointerHash"

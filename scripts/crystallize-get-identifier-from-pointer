@@ -17,7 +17,7 @@ else
 
     myTempDir="$(tempDir)"
     potentialPointer="$(readlink -f "$potentialPointer")"
-    pushd "$myTempDir" || die "Could not pushd!"
+    spushd "$myTempDir" || die "Could not pushd!"
 
     typeSignature="$(head -c 36 "$potentialPointer" | tr -d '\0')"
     hashFull="$(sregi_hash_from_file "$potentialPointer")"
@@ -74,6 +74,6 @@ else
     else
         warn "The file at $PWD/$potentialPointer has the unknown pointer type signature $(cat -v <<< "$typeSignature")."
     fi
-    popd || die "Could not popd!"
+    spopd || die "Could not popd!"
     rm -r "$myTempDir"
 fi

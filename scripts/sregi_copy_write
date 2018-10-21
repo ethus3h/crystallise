@@ -121,6 +121,9 @@ targetLength=${#sourceNameReplaced}
 destinationName="$2/${sourceNameReplaced:destinationRootLength:targetLength}"
 #echo "$destinationName"
 
+# Copy atime and mtime already, in case it is already copied file
+touch -r "$sourcePath" "$destinationName" || true
+
 if [[ -f "$sourcePath" ]]; then
     sourceChecksum="$(sha512sum < "$sourcePath" | awk '{print $1;}')"
     if [[ -f "$destinationName" ]]; then
@@ -221,6 +224,9 @@ else
 
     echo "Copied non-regular file $sourcePath."
 fi
+
+# Copy atime and mtime one more time, just in case
+touch -r "$sourcePath" "$destinationName" || true
 
 finish
 

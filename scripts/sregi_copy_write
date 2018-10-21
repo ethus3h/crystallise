@@ -225,9 +225,6 @@ else
     echo "Copied non-regular file $sourcePath."
 fi
 
-# Copy atime and mtime one more time, just in case
-touch -r "$sourcePath" "$destinationName" || true
-
 finish
 
 success

@@ -197,6 +197,9 @@ if [[ -f "$sourcePath" ]]; then
         die
     fi
 
+    # Copy atime and mtime
+    touch -r "$sourcePath" "$destinationName"
+
     rm -r "${crystalSubdir:?}"
     if [[ -e "${streamId:?}" ]]; then
         rm -r "${streamId:?}"
@@ -205,9 +208,17 @@ elif [[ -d "$sourcePath" ]]; then
     mkdir -p "$destinationName"
     chmod --reference="$sourcePath" "$destinationName"
     chmod a+rx "$destinationName"
+
+    # Copy atime and mtime
+    touch -r "$sourcePath" "$destinationName"
+
     echo "Copied directory $sourcePath."
 else
     rsync -a --no-r --checksum --no-i-r "$sourcePath" "$destinationName"
+
+    # Copy atime and mtime (might be taken care of already by rsync, but just to be sure)
+    touch -r "$sourcePath" "$destinationName"
+
     echo "Copied non-regular file $sourcePath."
 fi
 

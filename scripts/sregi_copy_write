@@ -122,7 +122,8 @@ destinationName="$2/${sourceNameReplaced:destinationRootLength:targetLength}"
 #echo "$destinationName"
 
 # Copy atime and mtime already, in case it is already copied file
-touch -r "$sourcePath" "$destinationName" || true
+# shellcheck disable=SC2015
+[[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" || true
 
 if [[ -f "$sourcePath" ]]; then
     sourceChecksum="$(sha512sum < "$sourcePath" | awk '{print $1;}')"
@@ -201,7 +202,8 @@ if [[ -f "$sourcePath" ]]; then
     fi
 
     # Copy atime and mtime
-    touch -r "$sourcePath" "$destinationName"
+    # shellcheck disable=SC2015
+    [[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" || true
 
     rm -r "${crystalSubdir:?}"
     if [[ -e "${streamId:?}" ]]; then
@@ -213,14 +215,16 @@ elif [[ -d "$sourcePath" ]]; then
     chmod a+rx "$destinationName"
 
     # Copy atime and mtime
-    touch -r "$sourcePath" "$destinationName"
+    # shellcheck disable=SC2015
+    [[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" || true
 
     echo "Copied directory $sourcePath."
 else
     rsync -a --no-r --checksum --no-i-r "$sourcePath" "$destinationName"
 
     # Copy atime and mtime (might be taken care of already by rsync, but just to be sure)
-    touch -r "$sourcePath" "$destinationName"
+    # shellcheck disable=SC2015
+    [[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" || true
 
     echo "Copied non-regular file $sourcePath."
 fi

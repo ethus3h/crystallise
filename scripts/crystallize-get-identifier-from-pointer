@@ -31,8 +31,8 @@ else
     elif [[ "$typeSignature" == "a5e2f296-3085-49c0-8f48-24ea436b7a8b" ]]; then # Standard remote pointer
         pointerTempDir="$(bigTempDir)"
         spushd "$pointerTempDir" || die "Could not pushd to $pointerTempDir!"
-        tail -c +167 "$potentialPointer" | unxz --stdout - | tar -xf -
-        crystallize-get-identifier-from-pointer ./*.crystal &>/dev/null
+        tail -c +167 "$potentialPointer" | unxz --stdout - | tar -xf - &>/dev/null
+        crystallize-get-identifier-from-pointer ./*.crystal
         spopd || die "Could not popd!"
         rm -r "$pointerTempDir"
     elif [[ "$typeSignature" == "c39f8657-384b-438b-a5a2-eece17147589" ]]; then # LocalStore pointer
@@ -51,7 +51,7 @@ else
         pointerTempDir="$(bigTempDir)"
         pointerDir="$PWD"
         spushd "$pointerTempDir" || die "Could not pushd to $pointerTempDir!"
-        tail -c +167 "$pointerDir/$potentialPointer" | unxz --stdout - | tar -xf -
+        tail -c +167 "$pointerDir/$potentialPointer" | unxz --stdout - | tar -xf - &>/dev/null
         # MAINTENANCE: Code copied and tweaked from sreg_read_stream
         crystalFilePattern=".*.crystal-data"
         shopt -u failglob

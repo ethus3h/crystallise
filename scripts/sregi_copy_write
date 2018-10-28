@@ -222,9 +222,10 @@ elif [[ -d "$sourcePath" ]]; then
 else
     rsync -a --no-r --checksum --no-i-r "$sourcePath" "$destinationName"
 
-    # Copy atime and mtime (might be taken care of already by rsync, but just to be sure)
-    # shellcheck disable=SC2015
-    [[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" || true
+    # Copy metadata
+    [[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" && chown -r "$sourcePath" "$destinationName" && chmod -r "$sourcePath" "$destinationName" || true
+
+    chmod a+rx "$destinationName"
 
     echo "Copied non-regular file $sourcePath."
 fi

@@ -123,7 +123,7 @@ destinationName="$2/${sourceNameReplaced:destinationRootLength:targetLength}"
 
 # Copy metadata already, in case it is already copied file
 # shellcheck disable=SC2015
-[[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" && chown -r "$sourcePath" "$destinationName" && chmod -r "$sourcePath" "$destinationName" || true
+[[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" && chown --reference "$sourcePath" "$destinationName" && chmod --reference "$sourcePath" "$destinationName" || true
 # ...but make sure it's still readable
 [[ -e "$destinationName" ]] && chmod a+r "$destinationName" || true
 
@@ -203,7 +203,7 @@ if [[ -f "$sourcePath" ]]; then
 
     # Copy metadata
     # shellcheck disable=SC2015
-    [[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" && chown -r "$sourcePath" "$destinationName" && chmod -r "$sourcePath" "$destinationName" || true
+    [[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" && chown --reference "$sourcePath" "$destinationName" && chmod --reference "$sourcePath" "$destinationName" || true
     # ...but make sure it's still readable
     # a+r gives (a)ll users (r)ead permission
     chmod a+r "$destinationName"
@@ -217,7 +217,7 @@ elif [[ -d "$sourcePath" ]]; then
 
     # Copy metadata
     # shellcheck disable=SC2015
-    [[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" && chown -r "$sourcePath" "$destinationName" && chmod -r "$sourcePath" "$destinationName" || true
+    [[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" && chown --reference "$sourcePath" "$destinationName" && chmod --reference "$sourcePath" "$destinationName" || true
     # ...but make sure it's still readable
     chmod a+rx "$destinationName"
 
@@ -227,7 +227,7 @@ else
 
     # Copy metadata
     # shellcheck disable=SC2015
-    [[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" && chown -r "$sourcePath" "$destinationName" && chmod -r "$sourcePath" "$destinationName" || true
+    [[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" && chown --reference "$sourcePath" "$destinationName" && chmod --reference "$sourcePath" "$destinationName" || true
     # ...but make sure it's still readable
     chmod a+r "$destinationName"
 

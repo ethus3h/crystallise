@@ -125,7 +125,7 @@ destinationName="$2/${sourceNameReplaced:destinationRootLength:targetLength}"
 # shellcheck disable=SC2015
 [[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" && chown -r "$sourcePath" "$destinationName" && chmod -r "$sourcePath" "$destinationName" || true
 # ...but make sure it's still readable
-chmod a+r "$destinationName"
+[[ -e "$destinationName" ]] && chmod a+r "$destinationName" || true
 
 if [[ -f "$sourcePath" ]]; then
     sourceChecksum="$(sha512sum < "$sourcePath" | awk '{print $1;}')"

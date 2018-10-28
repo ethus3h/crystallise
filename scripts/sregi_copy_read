@@ -116,7 +116,7 @@ sourceChecksum="$(sregi_hash_from_file "$1")"
 # shellcheck disable=SC2015
 [[ -e "$destinationName" ]] && touch -r "$1" "$destinationName" && chown -r "$1" "$destinationName" && chmod -r "$1" "$destinationName" || true
 # ...but make sure it's still readable
-chmod a+r "$destinationName"
+[[ -e "$destinationName" ]] && chmod a+r "$destinationName" || true
 
 destinationChecksum=""
 if [[ -f "$destinationName" ]]; then

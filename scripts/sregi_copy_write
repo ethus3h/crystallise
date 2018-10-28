@@ -121,9 +121,11 @@ targetLength=${#sourceNameReplaced}
 destinationName="$2/${sourceNameReplaced:destinationRootLength:targetLength}"
 #echo "$destinationName"
 
-# Copy atime and mtime already, in case it is already copied file
+# Copy metadata already, in case it is already copied file
 # shellcheck disable=SC2015
-[[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" || true
+[[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" && chown -r "$sourcePath" "$destinationName" && chmod -r "$sourcePath" "$destinationName" || true
+# ...but make sure it's still readable
+chmod a+r "$destinationName"
 
 if [[ -f "$sourcePath" ]]; then
     sourceChecksum="$(sha512sum < "$sourcePath" | awk '{print $1;}')"
@@ -192,8 +194,6 @@ if [[ -f "$sourcePath" ]]; then
     fi
     mkdir -p "$(dirname "$destinationName")"
     rsync -a --checksum --no-i-r "$fileToStash" "$destinationName"
-    # a+r gives (a)ll users (r)ead permission
-    chmod a+r "$destinationName"
 
     # Checksum the source once again, and compare it to the stored pointer, just to make sure.
     pointerChecksum="$(tail -c +38 "$destinationName" | head -c 129)"
@@ -201,9 +201,12 @@ if [[ -f "$sourcePath" ]]; then
         die
     fi
 
-    # Copy atime and mtime
+    # Copy metadata
     # shellcheck disable=SC2015
-    [[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" || true
+    [[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" && chown -r "$sourcePath" "$destinationName" && chmod -r "$sourcePath" "$destinationName" || true
+    # ...but make sure it's still readable
+    # a+r gives (a)ll users (r)ead permission
+    chmod a+r "$destinationName"
 
     rm -r "${crystalSubdir:?}"
     if [[ -e "${streamId:?}" ]]; then
@@ -211,21 +214,22 @@ if [[ -f "$sourcePath" ]]; then
     fi
 elif [[ -d "$sourcePath" ]]; then
     mkdir -p "$destinationName"
-    chmod --reference="$sourcePath" "$destinationName"
-    chmod a+rx "$destinationName"
 
-    # Copy atime and mtime
+    # Copy metadata
     # shellcheck disable=SC2015
-    [[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" || true
+    [[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" && chown -r "$sourcePath" "$destinationName" && chmod -r "$sourcePath" "$destinationName" || true
+    # ...but make sure it's still readable
+    chmod a+rx "$destinationName"
 
     echo "Copied directory $sourcePath."
 else
     rsync -a --no-r --checksum --no-i-r "$sourcePath" "$destinationName"
 
     # Copy metadata
+    # shellcheck disable=SC2015
     [[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" && chown -r "$sourcePath" "$destinationName" && chmod -r "$sourcePath" "$destinationName" || true
-
-    chmod a+rx "$destinationName"
+    # ...but make sure it's still readable
+    chmod a+r "$destinationName"
 
     echo "Copied non-regular file $sourcePath."
 fi

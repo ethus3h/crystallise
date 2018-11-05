@@ -270,8 +270,8 @@ mv "$crystalWorkdir/$CrystalID.coal5" "$dbFilePath"
 sha512sum < "$dbFilePath" | awk '{print $1;}' > "$checksumName"
 printf "%s" "$requestUrl" > "$dbLinkPath.url"
 
-[[ -e "$dbLinkPath" ]] && [[ ! -h "$dbLinkPath" ]] && warn "Cache entry has something that's not a link at the place the link should be. Huh? Removing it."
-[[ -e "$dbLinkPath" ]] && rm "$dbLinkPath"
+[[ -e "$dbLinkPath" ]] && [[ ! -h "$dbLinkPath" ]] && warn "Cache entry has something that's not a link at the place the link should be. Huh? Removing it." && rm "$dbLinkPath"
+[[ -h "$dbLinkPath" ]] && rm "$dbLinkPath"
 ln -s "$dbFilePath" "$dbLinkPath"
 
 if [[ "$leaveLocked" != "true" ]]; then

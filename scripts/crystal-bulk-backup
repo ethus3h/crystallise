@@ -31,6 +31,8 @@ backupLocation="$(crystallize-getconf BackupLocation)"
 
 mkdir -p "$backupLocation"
 
+{
+
 echo 'Preparing...'
 
 cd "$backupLocation" || die "Could not cd to newly created directory! This should never happen."
@@ -350,3 +352,5 @@ popd
 { [[ "$gitCommit" == "true" ]] && egup-single > /dev/null; } || true
 
 echo "Done backing up crystals!"
+
+} 2>&1 | tee -a "$backupLocation/crystal-backup-meta/.cbb.log"

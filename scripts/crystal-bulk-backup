@@ -353,4 +353,4 @@ popd
 
 echo "Done backing up crystals!"
 
-} 2>&1 | tee -a "$backupLocation/crystal-backup-meta/.cbb.$(date-uuid).log"
+} 2>&1 | tee -a "$backupLocation/crystal-backup-meta/.cbb.logs/.cbb.$(date-uuid).log"

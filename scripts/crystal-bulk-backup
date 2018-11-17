@@ -29,7 +29,7 @@ fi
 
 backupLocation="$(crystallize-getconf BackupLocation)"
 
-mkdir -p "$backupLocation"
+mkdir -p "$backupLocation/crystal-backup-meta/.cbb.logs/"
 
 {
 
@@ -353,4 +353,4 @@ popd
 
 echo "Done backing up crystals!"
 
-} 2>&1 | tee -a "$backupLocation/crystal-backup-meta/.cbb.log"
+} 2>&1 | tee -a "$backupLocation/crystal-backup-meta/.cbb.$(date-uuid).log"

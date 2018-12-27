@@ -127,7 +127,7 @@ destinationName="$2/${sourceNameReplaced:destinationRootLength:targetLength}"
 # ...but make sure it's still readable
 [[ -e "$destinationName" ]] && chmod a+r "$destinationName" || true
 
-if [[ -f "$sourcePath" ]]; then
+if [[ -f "$sourcePath" ]] && [[ ! -h "$sourcePath" ]]; then
     sourceChecksum="$(sha512sum < "$sourcePath" | awk '{print $1;}')"
     if [[ -f "$destinationName" ]]; then
         pointerTypeSignature="$(head -c 36 "$destinationName" | tr -d '\0')"
@@ -190,7 +190,7 @@ if [[ -f "$sourcePath" ]]; then
     if [[ -f "$fileToStash" ]]; then
         sreg_store_stream --sreg-dir "$sregDir" --assume-checksum "$sourceChecksum" --verbose < "$fileToStash" | bigSponge "$fileToStash"
     else
-        die "Skipping item $fileToStash: not a regular file."
+        die "Was requested to stash the regular file $fileToStash, but suddenly it's not a regular file. Huh? This is probably a bug in sregi_copy_write."
     fi
     mkdir -p "$(dirname "$destinationName")"
     rsync -a --checksum --no-i-r "$fileToStash" "$destinationName"
@@ -212,7 +212,7 @@ if [[ -f "$sourcePath" ]]; then
     if [[ -e "${streamId:?}" ]]; then
         rm -r "${streamId:?}"
     fi
-elif [[ -d "$sourcePath" ]]; then
+elif [[ -d "$sourcePath" ]] && [[ ! -h "$sourcePath" ]]; then
     mkdir -p "$destinationName"
 
     # Copy metadata

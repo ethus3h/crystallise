@@ -7,6 +7,7 @@ if ! ebs_loc="$(type -P "ember_bash_setup")" || [[ -z $ebs_loc ]]; then
         cd .buildsystem-temp
         git clone --depth 1 https://github.com/ethus3h/ember-shared.git
         cd ember-shared
+        make autodep
         ./configure
         make
         make install || true

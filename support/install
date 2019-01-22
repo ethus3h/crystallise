@@ -3,7 +3,29 @@
 source ember_bash_setup &> /dev/null || { printf '%b' '\033[1;31m' >&2; echo "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd): The required dependency ember-shared could not be found (or ember_bash_setup could not be sourced for some other reason)." >&2; printf '%b' '\033[0m' >&2; exit 1; }
 #set -x
 
-#NOTE: MAINTENANCE: Manual error printing
+# NOTE: MAINTENANCE: Copied from "configure" template script
+if ! ebs_loc="$(type -P "ember_bash_setup")" || [[ -z $ebs_loc ]]; then
+    # Try automatically building an ember-shared locally to use
+    mkdir .buildsystem-temp
+    (
+        cd .buildsystem-temp
+        git clone --depth 1 https://github.com/ethus3h/ember-shared.git
+        cd ember-shared
+        ./configure
+        make
+    )
+    PATH="$PATH:.buildsystem-temp/ember-shared/scripts"
+    export PATH
+    if [[ -e ".buildsystem-temp/ember-shared" ]]; then
+        (
+            cd .buildsystem-temp/ember-shared
+            make
+            make install || true
+        )
+    fi
+fi
+
+# NOTE: MAINTENANCE: Manual error printing
 if [[ -z "$(ember-getconf emberSharedVersion)" ]]; then
     printf '%b' '\033[1;31m' >&2
     echo "ERROR: ember-shared is not properly installed! It must be installed before installing $packageName." >&2

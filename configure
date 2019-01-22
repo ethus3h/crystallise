@@ -5,6 +5,27 @@
 
 packageName="$(cat package-name)"
 
+if ! ebs_loc="$(type -P "ember_bash_setup")" || [[ -z $ebs_loc ]]; then
+    # Try automatically building an ember-shared locally to use
+    mkdir .buildsystem-temp
+    (
+        cd .buildsystem-temp
+        git clone --depth 1 https://github.com/ethus3h/ember-shared.git
+        cd ember-shared
+        ./configure
+        make
+    )
+    PATH="$PATH:.buildsystem-temp/ember-shared/scripts"
+    export PATH
+    if [[ -e ".buildsystem-temp/ember-shared" ]]; then
+        (
+            cd .buildsystem-temp/ember-shared
+            make
+            make install || true
+        )
+    fi
+fi
+
 eiteDie() {
     #NOTE: MAINTENANCE: Manual error printing
     if [[ -z "$(ember-getconf emberSharedVersion)" ]]; then

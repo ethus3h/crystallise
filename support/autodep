@@ -18,9 +18,10 @@ cd "$(getSystemTempLocation)"
 if ! ebs_loc="$(type -P "ember_bash_setup")" || [[ -z $ebs_loc ]]; then
     git clone https://github.com/ethus3h/ember_bash_setup
     pushd ember_bash_setup
+    ./configure
+    make autodep
     make
     make install
-    make autodep # Run autodep *after* installing for ember-shared, unlike other packages.
     popd
     rm -r ember_bash_setup
 fi

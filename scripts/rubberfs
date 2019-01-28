@@ -17,13 +17,17 @@ name="$2"
 lockedAction=""
 if [[ "$action" == "create" ]] || [[ "$action" == "mount" ]] || [[ "$action" == "soft-mount" ]] || [[ "$action" == "remount" ]] || [[ "$action" == "soft-remount" ]] || [[ "$action" == "rename" ]] || [[ "$action" == "unmount" ]] || [[ "$action" == "soft-unmount" ]] || [[ "$action" == "freeze" ]] || [[ "$action" == "delta" ]] || [[ "$action" == "thaw" ]] || [[ "$action" == "patch" ]] || [[ "$action" == "destroy" ]]; then
     lockedAction="true"
-    if [[ "$(whoami)" == "root" ]] && [[ "$ignoreLock" == "false" ]]; then
+    if [[ "$(whoami)" == "root" ]] && [[ "$ignoreLock" != "true" ]]; then
         [[ -e "/tmp/rubberfs.lock" ]] && die "RubberFS is already running! Only one RubberFS command can be running at a time."
     fi
 fi
 
 whoami > "/tmp/rubberfsUser"
-((EUID)) && exec sudo -- "$0" "$@"
+if [[ "$ignoreLock" == "true" ]]; then
+    ((EUID)) && exec sudo -- "$0" --ignore-lock "$@"
+else
+    ((EUID)) && exec sudo -- "$0" "$@"
+fi
 rubberfsUser="$(</tmp/rubberfsUser)"
 
 if [[ "$lockedAction" == "true" ]]; then

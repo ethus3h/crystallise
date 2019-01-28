@@ -5,13 +5,19 @@ source ember_bash_setup &> /dev/null || { printf '%b' '\033[1;31m' >&2; echo "A 
 
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
+ignoreLock="false"
+if [[ "$1" == "--ignore-lock" ]]; then
+    ignoreLock="true"
+    shift
+fi
+
 action="$1"
 name="$2"
 
 lockedAction=""
 if [[ "$action" == "create" ]] || [[ "$action" == "mount" ]] || [[ "$action" == "soft-mount" ]] || [[ "$action" == "remount" ]] || [[ "$action" == "soft-remount" ]] || [[ "$action" == "rename" ]] || [[ "$action" == "unmount" ]] || [[ "$action" == "soft-unmount" ]] || [[ "$action" == "freeze" ]] || [[ "$action" == "delta" ]] || [[ "$action" == "thaw" ]] || [[ "$action" == "patch" ]] || [[ "$action" == "destroy" ]]; then
     lockedAction="true"
-    if [[ "$(whoami)" == "root" ]]; then
+    if [[ "$(whoami)" == "root" ]] && [[ "$ignoreLock" == "false" ]]; then
         [[ -e "/tmp/rubberfs.lock" ]] && die "RubberFS is already running! Only one RubberFS command can be running at a time."
     fi
 fi
@@ -276,7 +282,7 @@ delta)
         sleep 60
         zfs list -t snapshot -o name -S creation | grep "$name"@rubberfs- | sed -n '/'"$name@$freezeId"'/,$p' | tail -n +3 | xargs -n 1 zfs destroy -vr
     fi
-    rubberfs soft-remount "$name"
+    rubberfs --ignore-lock soft-remount "$name"
     printf '\033c'
     echo "A frozen incremental snapshot $freezeCrystal of RubberFS named $name has been created, and the obsolete local snapshots removed."
     ;;

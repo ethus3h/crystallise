@@ -12,7 +12,6 @@ if ! ebs_loc="$(type -P "ember_bash_setup")" || [[ -z $ebs_loc ]]; then
         make
         make install || true
     )
-    fi
 fi
 
 # shellcheck disable=SC1091

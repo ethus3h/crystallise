@@ -229,7 +229,7 @@ else
     # shellcheck disable=SC2015
     [[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" && chown --reference "$sourcePath" "$destinationName" && chmod --reference "$sourcePath" "$destinationName" || true
     # ...but make sure it's still readable
-    chmod a+r "$destinationName"
+    chmod a+r "$destinationName" || chmod -h a+r "$destinationName"
 
     echo "Copied non-regular file $sourcePath."
 fi

@@ -27,6 +27,7 @@ fi
 
 egup-env
 
+# Get rid of gitattributes files, if there are any, since they're basically "destroy my files" files. http://web.archive.org/web/20190331062043/https://stackoverflow.com/questions/55330848/how-to-recover-corrupted-png-files-due-to-improper-gitattributes
 find . -name '.gitattributes' -exec mv {} {}.47f639ce-3b2a-4a0a-9e3e-8c83fd09e259;
 [[ -e "$GIT_DIR"/info/attributes ]] && mv "$GIT_DIR"/info/attributes ./.git_dir_info_attributes.9a0e9785-5914-4e1a-a3a9-c05f0dce6774
 [[ -e "$GIT_DIR"/info/attributes ]] && die "Tried to move git attributes file, but it's still there!"

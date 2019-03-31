@@ -27,6 +27,10 @@ fi
 
 egup-env
 
+find . -name '.gitattributes' -exec mv {} {}.47f639ce-3b2a-4a0a-9e3e-8c83fd09e259;
+[[ -e "$GIT_DIR"/info/attributes ]] && mv "$GIT_DIR"/info/attributes ./.git_dir_info_attributes.9a0e9785-5914-4e1a-a3a9-c05f0dce6774
+[[ -e "$GIT_DIR"/info/attributes ]] && die "Tried to move git attributes file, but it's still there!"
+
 if [[ -f .egup.git-native-excludes ]]; then
     echo "(Applying native Git excludes)"
     cp .egup.git-native-excludes .git/info/exclude # instead of using $GIT_DIR, because then it would get applied to the elen environment git dir too

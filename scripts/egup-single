@@ -39,7 +39,7 @@ git config --show-origin --get-all core.autocrlf > ./.egup.git-config/autocrlf-o
 git config --local --get-all core.autocrlf > ./.egup.git-config/autocrlf-local || true
 git config --show-origin --local --get core.autocrlf > ./.egup.git-config/autocrlf-origin-local-single || true
 git config --local --get core.autocrlf > ./.egup.git-config/autocrlf-local-single || true
-git config --local core.autocrlf > ./.egup.git-config/autocrlf-local-single || true
+git config --local core.autocrlf > ./.egup.git-config/autocrlf-local-single-no-get || true
 git config --local --replace-all core.autocrlf false
 [[ "false" == "$(git config --local --get core.autocrlf)" ]] || die "Tried to set core.autocrlf to false, but it's not! Continuing would risk destroying the data in your repository."
 

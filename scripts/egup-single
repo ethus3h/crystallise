@@ -30,11 +30,16 @@ egup-env
 # Get rid of gitattributes files, if there are any, since they're basically "destroy my files" files. http://web.archive.org/web/20190331062043/https://stackoverflow.com/questions/55330848/how-to-recover-corrupted-png-files-due-to-improper-gitattributes (this isn't enough to save your data; see below)
 find . -name '.gitattributes' -exec mv {} {}.47f639ce-3b2a-4a0a-9e3e-8c83fd09e259;
 mkdir -p ./.egup.git-config
-[[ -e "$GIT_DIR"/info/attributes ]] && mv "$GIT_DIR"/info/attributes ./.egup.git-config/.egup.git_dir_info_attributes.9a0e9785-5914-4e1a-a3a9-c05f0dce6774
+[[ -e "$GIT_DIR"/info/attributes ]] && mv "$GIT_DIR"/info/attributes ./.egup.git-config/git_dir_info_attributes
 [[ -e "$GIT_DIR"/info/attributes ]] && die "Tried to move git attributes file, but it's still there!"
 # Just getting rid of gitattributes isn't enough; [core] autocrlf = false must also be set.
-git config --show-origin --get-all core.autocrlf > ./.egup.git-config/autcrlf-orig
-git config core.autocrlf 
+[[ -e "$GIT_DIR"/config ]] && cp "$GIT_DIR"/config ./.egup.git-config/gitdir-config || true
+[[ -e ./.gitconfig ]] && cp ./.gitconfig ./.egup.git-config/gitconfig || true
+git config --show-origin --get-all core.autocrlf > ./.egup.git-config/autocrlf-origins || true
+git config --local --get-all core.autocrlf > ./.egup.git-config/autocrlf-origins-local || true
+git config --local --get core.autocrlf > ./.egup.git-config/autocrlf-origins-local-single || true
+git config --local core.autocrlf > ./.egup.git-config/autocrlf-origins-local-single || true
+git config --local --replace-all core.autocrlf false
 
 if [[ -f .egup.git-native-excludes ]]; then
     echo "(Applying native Git excludes)"

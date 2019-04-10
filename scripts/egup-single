@@ -111,10 +111,7 @@ while [[ "$status" != "completed" ]]; do
         mkdir -p './.egup.stat'
 
         # Copy directory structure https://stackoverflow.com/questions/4073969/copy-folder-structure-sans-files-from-one-location-to-another
-        rsync -a -f'- /.egup.stat/**' -f'+ */' -f'- *' -f'- /.egup.stat/**' . ./.egup.stat/
-
-        if [[ "$sudoGitattributes" == "true" ]]; then
-        fi
+        rsync -a --chmod=ugo=rwX -f'- /.egup.stat/**' -f'+ */' -f'- *' -f'- /.egup.stat/**' . ./.egup.stat/
 
         statPrintFormatString='%p\0%l\0%y:%m:%U:%u:%G:%g:%TY:%Tm:%Td:%TH:%TM:%TS:%TZ\0'
 

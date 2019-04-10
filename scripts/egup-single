@@ -5,6 +5,7 @@ source ember_bash_setup &> /dev/null || { printf '%b' '\033[1;31m' >&2; echo "A 
 
 # Ember Git UPdater for single repository
 
+# What's this next code for? It doesn't make non-root users root, anyway...
 userName="$(stat -c '%U' .)"
 [[ "$(whoami)" != "$userName" ]] && exec sudo -u "$userName" -- "$0" "$@"
 
@@ -13,6 +14,11 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 
 if [[ "$1" == "--offline" ]]; then
     offline="true"
+    shift
+fi
+
+if [[ "$1" == "--sudo-gitattributes" ]]; then
+    sudoGitattributes="true"
     shift
 fi
 
@@ -28,7 +34,11 @@ fi
 egup-env
 
 # Get rid of gitattributes files, if there are any, since they're basically "destroy my files" files. http://web.archive.org/web/20190331062043/https://stackoverflow.com/questions/55330848/how-to-recover-corrupted-png-files-due-to-improper-gitattributes (this isn't enough to save your data; see below)
-find . -name '.gitattributes' -exec mv {} {}.47f639ce-3b2a-4a0a-9e3e-8c83fd09e259 \;
+if [[ "$sudoGitattributes" == "true" ]]; then
+    sudo find . -name '.gitattributes' -exec mv {} {}.47f639ce-3b2a-4a0a-9e3e-8c83fd09e259 \;
+else
+    find . -name '.gitattributes' -exec mv {} {}.47f639ce-3b2a-4a0a-9e3e-8c83fd09e259 \;
+fi
 mkdir -p ./.egup.git-config
 [[ -e "$GIT_DIR"/info/attributes ]] && mv "$GIT_DIR"/info/attributes ./.egup.git-config/git_dir_info_attributes
 [[ -e "$GIT_DIR"/info/attributes ]] && die "Tried to move git attributes file, but it's still there!"

@@ -230,8 +230,17 @@ else
     [[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" && chown --reference "$sourcePath" "$destinationName" && chmod --reference "$sourcePath" "$destinationName" || true
     # ...but make sure it's still readable
     if [[ -h "$destinationName" ]]; then
-        # Only necessary for platforms (e.g. Mac OS) where symlink permissions matter; see https://unix.stackexchange.com/questions/87200/change-permissions-for-a-symbolic-link
-        chmod -h a+r "$destinationName" || true
+        chmodSupportsH=""
+        pushd "$(tempDir)"
+        touch a
+        ln -s a b
+        if [[ chmod -h a+r "b" ]]; then
+            chmodSupportsH="true"
+        fi
+        if [[ "true" == "$chmodSupportsH" ]]; then
+            # Only necessary for platforms (e.g. Mac OS) where symlink permissions matter; see https://unix.stackexchange.com/questions/87200/change-permissions-for-a-symbolic-link
+            chmod -h a+r "$destinationName" || true
+        fi
     else
         # chmod on a symlink changes the link target permissions, instead of those of the link itself.
         chmod a+r "$destinationName"

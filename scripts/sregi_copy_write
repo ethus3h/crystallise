@@ -125,7 +125,9 @@ destinationName="$2/${sourceNameReplaced:destinationRootLength:targetLength}"
 # shellcheck disable=SC2015
 [[ -e "$destinationName" ]] && touch -r "$sourcePath" "$destinationName" && chown --reference "$sourcePath" "$destinationName" && chmod --reference "$sourcePath" "$destinationName" || true
 # ...but make sure it's still readable
-[[ -e "$destinationName" ]] && chmod a+r "$destinationName" || true
+if [[ -e "$destinationName" ]]; then
+    chmod a+r "$destinationName" || true
+fi
 
 if [[ -f "$sourcePath" ]] && [[ ! -h "$sourcePath" ]]; then
     sourceChecksum="$(sha512sum < "$sourcePath" | awk '{print $1;}')"
@@ -231,12 +233,13 @@ else
     # ...but make sure it's still readable
     if [[ -h "$destinationName" ]]; then
         chmodSupportsH=""
-        pushd "$(tempDir)"
+        pushd "$(tempDir)" || die "Could not pushd"
         touch a
         ln -s a b
-        if [[ chmod -h a+r "b" ]]; then
+        if chmod -h a+r "b"; then
             chmodSupportsH="true"
         fi
+        popd || die "Could not popd"
         if [[ "true" == "$chmodSupportsH" ]]; then
             # Only necessary for platforms (e.g. Mac OS) where symlink permissions matter; see https://unix.stackexchange.com/questions/87200/change-permissions-for-a-symbolic-link
             chmod -h a+r "$destinationName" || true

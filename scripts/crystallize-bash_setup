@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 #set -x
 
-export emberCrystallizeVersion='3.1.2.5.14.247'
+export emberCrystallizeVersion='3.1.2.5.14.248'
 
 # The update script shown here requires there to be only one ebuild of crystallize in the wreathe-overlay overlay.
-# ( sudo true; newVersion="3.1.2.5.14.247"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo emerge --sync wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
+# ( sudo true; newVersion="3.1.2.5.14.248"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo emerge --sync wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
 
 rubberfs() {
     if [[ "$1" == "cd" ]]; then
@@ -40,10 +40,10 @@ iu() {
 crystallize_quick_unpack() {
     local fileToUnpack
     fileToUnpack="$1"
-    local sregDir=""
-    if [[ "$1" == "--sreg-dir" ]]; then
+    local destDir=""
+    if [[ "$2" == "--to" ]]; then
         shift
-        sregDir="$1"
+        destDir="$2"
         shift
     fi
     [[ -n "$2" ]] && { error-notify "Sorry, only one file can be unpacked at a time by crystallize_quick_unpack."; return 1; }
@@ -54,10 +54,10 @@ crystallize_quick_unpack() {
     local passphraseTempfile
     passphraseTempfile="$(tempFile)"
     printf "%s" "$crystallizePassphrase" > "$passphraseTempfile"
-    gpg --yes --batch --passphrase-file "$passphraseTempfile" - < "$fileToUnpack" > "$fileToUnpack.unpacked-$unpackDate.unpacked" || { printf "%s" "example-crystal-passphrase" > "$passphraseTempfile"; gpg --yes --batch --passphrase-file "$passphraseTempfile" - < "$fileToUnpack" > "$fileToUnpack.unpacked-$unpackDate.unpacked"; }
-    unxz --stdout - < "$fileToUnpack.unpacked-$unpackDate.unpacked" > "$fileToUnpack.unpacked-$unpackDate.unpacked.unxz" || { echo "(Unxz failed; either the file wasn't compressed or is broken.)"; rm "$fileToUnpack.unpacked-$unpackDate.unpacked.unxz"; }
-    [[ -e "$fileToUnpack.unpacked-$unpackDate.unpacked.unxz" ]] && mv "$fileToUnpack.unpacked-$unpackDate.unpacked.unxz" "$fileToUnpack.unpacked-$unpackDate.unpacked"
-    echo "Done quick unpacking; result is at $fileToUnpack.unpacked-$unpackDate.unpacked."
+    gpg --yes --batch --passphrase-file "$passphraseTempfile" - < "$fileToUnpack" > "$destDir/$fileToUnpack.unpacked-$unpackDate.unpacked" || { printf "%s" "example-crystal-passphrase" > "$passphraseTempfile"; gpg --yes --batch --passphrase-file "$passphraseTempfile" - < "$fileToUnpack" > "$destDir/$fileToUnpack.unpacked-$unpackDate.unpacked"; }
+    unxz --stdout - < "$destDir/$fileToUnpack.unpacked-$unpackDate.unpacked" > "$destDir/$fileToUnpack.unpacked-$unpackDate.unpacked.unxz" || { echo "(Unxz failed; either the file wasn't compressed or is broken.)"; rm "$destDir/$fileToUnpack.unpacked-$unpackDate.unpacked.unxz"; }
+    [[ -e "$destDir/$fileToUnpack.unpacked-$unpackDate.unpacked.unxz" ]] && mv "$destDir/$fileToUnpack.unpacked-$unpackDate.unpacked.unxz" "$destDir/$fileToUnpack.unpacked-$unpackDate.unpacked"
+    echo "Done quick unpacking; result is at $destDir/$fileToUnpack.unpacked-$unpackDate.unpacked."
 }
 
 #Function is defined with parentheses to make it run in a subshell to prevent the "die" affecting the calling script (the calling script should be responsible for trapping/handling nonzero exit codes itself)

@@ -40,6 +40,12 @@ iu() {
 crystallize_quick_unpack() {
     local fileToUnpack
     fileToUnpack="$1"
+    local sregDir=""
+    if [[ "$1" == "--sreg-dir" ]]; then
+        shift
+        sregDir="$1"
+        shift
+    fi
     [[ -n "$2" ]] && { error-notify "Sorry, only one file can be unpacked at a time by crystallize_quick_unpack."; return 1; }
     local unpackDate
     unpackDate="$(emdate)"

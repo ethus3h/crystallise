@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 #set -x
 
-export emberCrystallizeVersion='3.1.2.5.14.248'
+export emberCrystallizeVersion='3.1.2.5.14.249'
 
 # The update script shown here requires there to be only one ebuild of crystallize in the wreathe-overlay overlay.
-# ( sudo true; newVersion="3.1.2.5.14.248"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo emerge --sync wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
+# ( sudo true; newVersion="3.1.2.5.14.249"; cd "/Ember Library/Ember satellite projects/crystallize"; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember Library/Ember satellite projects/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo emerge --sync wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf )
 
 rubberfs() {
     if [[ "$1" == "cd" ]]; then
@@ -39,13 +39,13 @@ iu() {
 
 crystallize_quick_unpack() {
     local fileToUnpack
-    fileToUnpack="$1"
     local destDir=""
-    if [[ "$2" == "--to" ]]; then
+    if [[ "$1" == "--to" ]]; then
         shift
-        destDir="$2"
+        destDir="$1"
         shift
     fi
+    fileToUnpack="$1"
     [[ -n "$2" ]] && { error-notify "Sorry, only one file can be unpacked at a time by crystallize_quick_unpack."; return 1; }
     local unpackDate
     unpackDate="$(emdate)"

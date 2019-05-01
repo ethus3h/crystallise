@@ -233,13 +233,13 @@ else
     # ...but make sure it's still readable
     if [[ -h "$destinationName" ]]; then
         chmodSupportsH=""
-        pushd "$(tempDir)" || die "Could not pushd"
+        pushd "$(tempDir)" &>/dev/null || die "Could not pushd"
         touch a
         ln -s a b
         if chmod -h a+r "b" &>/dev/null; then
             chmodSupportsH="true"
         fi
-        popd || die "Could not popd"
+        popd &>/dev/null || die "Could not popd"
         if [[ "true" == "$chmodSupportsH" ]]; then
             # Only necessary for platforms (e.g. Mac OS) where symlink permissions matter; see https://unix.stackexchange.com/questions/87200/change-permissions-for-a-symbolic-link
             chmod -h a+r "$destinationName" || true

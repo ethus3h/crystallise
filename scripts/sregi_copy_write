@@ -236,7 +236,7 @@ else
         pushd "$(tempDir)" || die "Could not pushd"
         touch a
         ln -s a b
-        if chmod -h a+r "b"; then
+        if chmod -h a+r "b" &>/dev/null; then
             chmodSupportsH="true"
         fi
         popd || die "Could not popd"

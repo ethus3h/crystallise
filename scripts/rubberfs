@@ -91,7 +91,11 @@ create)
     ;;
 mount)
     #TODO: Also mount a FUSE filesystem that replaces .crystals with symlinks to a FUSE filesystem hooked up to IA's S3 API, somehow.
-    zpool import -d "/Wreathe/.Resources/RubberFS/$name/dev/" "$name"
+    if [[ -d "/Wreathe/.Resources/RubberFS/$name/dev/" ]]; then
+        zpool import -d "/Wreathe/.Resources/RubberFS/$name/dev/" "$name"
+    else
+        zpool import "$name"
+    fi
     set +e
     zpool scrub "$name"
     set -e
@@ -145,7 +149,7 @@ cd)
     ;;
 unmount)
     if [[ ! -d "/$name/.rubberfs" ]]; then
-        echo "ERROR! RubberFS named $name does not appear to be mounted." >&2
+        echo "Warning! RubberFS named $name does not appear to be mounted. Perhaps it's just a normal zpool." >&2
     else
         rubberfs save "$name"
     fi

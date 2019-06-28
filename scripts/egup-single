@@ -5,9 +5,13 @@ source ember_bash_setup &> /dev/null || { printf '%b' '\033[1;31m' >&2; echo "A 
 
 # Ember Git UPdater for single repository
 
-# What's this next code for? It doesn't make non-root users root, anyway...
-userName="$(stat -c '%U' .)"
-[[ "$(whoami)" != "$userName" ]] && exec sudo -u "$userName" -- "$0" "$@"
+# Exit sudo environments unless there's an .egup.allowRootEgup file
+if [[ -f ./.egup.allowRootEgup ]]; then
+    [[ "$(whoami)" == "root" ]] && warn "Allowing sudo-root egup."
+else
+    userName="$(stat -c '%U' .)"
+    [[ "$(whoami)" != "$userName" ]] && exec sudo -u "$userName" -- "$0" "$@"
+fi
 
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd)."' ERR
 # set -x

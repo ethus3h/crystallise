@@ -15,7 +15,7 @@ action="$1"
 name="$2"
 
 lockedAction=""
-if [[ "$action" == "create" ]] || [[ "$action" == "mount" ]] || [[ "$action" == "soft-mount" ]] || [[ "$action" == "remount" ]] || [[ "$action" == "soft-remount" ]] || [[ "$action" == "rename" ]] || [[ "$action" == "unmount" ]] || [[ "$action" == "soft-unmount" ]] || [[ "$action" == "freeze" ]] || [[ "$action" == "delta" ]] || [[ "$action" == "thaw" ]] || [[ "$action" == "patch" ]] || [[ "$action" == "destroy" ]]; then
+if [[ "$action" == "create" ]] || [[ "$action" == "mount" ]] || [[ "$action" == "scrub" ]] || [[ "$action" == "soft-mount" ]] || [[ "$action" == "remount" ]] || [[ "$action" == "soft-remount" ]] || [[ "$action" == "rename" ]] || [[ "$action" == "unmount" ]] || [[ "$action" == "soft-unmount" ]] || [[ "$action" == "freeze" ]] || [[ "$action" == "delta" ]] || [[ "$action" == "thaw" ]] || [[ "$action" == "patch" ]] || [[ "$action" == "destroy" ]]; then
     lockedAction="true"
     if [[ "$(whoami)" == "root" ]] && [[ "$ignoreLock" != "true" ]]; then
         [[ -e "/tmp/rubberfs.lock" ]] && die "RubberFS is already running! Only one RubberFS command can be running at a time."
@@ -97,7 +97,7 @@ mount)
         zpool import "$name"
     fi
     set +e
-    zpool scrub "$name"
+    #zpool scrub "$name"
     set -e
     ln -s -T -f "/$name" "/Wreathe/.Resources/RubberFS/$name/mount"
     #rubberfs cd "$name"
@@ -108,12 +108,15 @@ mount)
     printf '\033c'
     echo "RubberFS named $name has been mounted."
     ;;
+scrub)
+    rubberfs check "$name"
+    ;;
 soft-mount)
     #TODO: Also mount a FUSE filesystem that replaces .crystals with symlinks to a FUSE filesystem hooked up to IA's S3 API, somehow.
     set +e
     zpool import -d "/Wreathe/.Resources/RubberFS/$name/dev/" "$name"
     set -e
-    zpool scrub "$name"
+    #zpool scrub "$name"
     ln -s -T -f "/$name" "/Wreathe/.Resources/RubberFS/$name/mount"
     #rubberfs cd "$name"
     printf '\033c'
@@ -177,7 +180,9 @@ attach)
     sshfs -o allow_other,defer_permissions "$username@$server:/Wreathe/.Resources/RubberFS/$prefix/mount/" "$mountpoint"
     ;;
 check)
+    set +e
     zpool scrub "$name"
+    set -e
     printf '\033c'
     echo "A check for RubberFS named $name has been begun; use rubberfs status $name to see its progress."
     ;;

@@ -39,6 +39,8 @@ cd "$backupLocation" || die "Could not cd to newly created directory! This shoul
 touch ".cbb.isBackupDir"
 
 [[ -e '.git' ]] || git init
+find .git -type d -exec chmod +rwx {} \;
+find .git -type f -exec chmod +rw {} \;
 print $'/items\n' >> .gitignore
 print $'/items.failed-check\n' >> .gitignore
 print $'/repositories\n' >> .gitignore

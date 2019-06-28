@@ -38,9 +38,7 @@ echo 'Preparing...'
 cd "$backupLocation" || die "Could not cd to newly created directory! This should never happen."
 touch ".cbb.isBackupDir"
 
-[[ -e '.git' ]] || git init
-find .git -type d -exec chmod a+rwX {} \;
-find .git -type f -exec chmod a+rws {} \;
+[[ -e '.git' ]] || sudo -u "$SUDO_USER" git init
 print $'/items\n' >> .gitignore
 print $'/items.failed-check\n' >> .gitignore
 print $'/repositories\n' >> .gitignore

@@ -40,7 +40,7 @@ cd "$backupLocation" || die "Could not cd to newly created directory! This shoul
 touch ".cbb.isBackupDir"
 
 rsync -av --checksum "$backupLocation/crystal-backup-meta/.cbb.logs.open/" "$backupLocation/crystal-backup-meta/.cbb.logs"
-find "$backupLocation/crystal-backup-meta/.cbb.logs" -name '.cbb.*.log' -exec split -l 100000 -C 5M --additional-suffix=.cbbLogSplit {} {}. \;
+find "$backupLocation/crystal-backup-meta/.cbb.logs" -name '.cbb.*.log' -exec split -l 100000 --additional-suffix=.cbbLogSplit {} {}. \;
 find "$backupLocation/crystal-backup-meta/.cbb.logs" -name '.cbb.*.log' -delete
 
 [[ -e '.git' ]] || git init

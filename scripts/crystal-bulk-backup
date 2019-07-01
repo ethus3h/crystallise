@@ -73,6 +73,7 @@ touch "$cbbConfigDir"/crystallize/cbb/stream-registries
 
 mkdir -p 'crystal-backup-meta/cbb-index'
 mkdir -p 'crystal-backup-meta/cbb-index/items.packs-done'
+mkdir -p 'crystal-backup-meta/completed-items'
 mkdir -p 'items'
 mkdir -p 'repositories'
 mkdir -p 'stream-registries'

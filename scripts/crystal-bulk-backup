@@ -332,9 +332,6 @@ numberProcessedPercentage="$(printf "%.3f\\n" "$(bc -l <<< "($numberProcessed"" 
 echo "Starting with $numberProcessed"" ($numberProcessedPercentage%) of $numberExpected total crystals already backed up." # extra quotation marks to prevent turning "sed" into "gsed" on Mac ;)
 set -x
 while read -r crystal; do
-    echo "$crystal"
-done <<< "$cbbCrystals"
-while read -r crystal; do
     if [[ -n "$crystal" ]]; then
         if [[ -e "$crystal" ]]; then
             if [[ -e "../crystal-backup-meta/completed-items/$crystal" ]]; then

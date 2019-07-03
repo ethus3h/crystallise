@@ -335,7 +335,7 @@ while read -r crystal; do
     if [[ -n "$crystal" ]]; then
         if [[ -e "$crystal" ]]; then
             if [[ -e "../crystal-backup-meta/completed-items/$crystal" ]]; then
-                if [[ "$check" == "false" ]]; then
+                if [[ "$check" != "true" ]]; then
                     continue
                 fi
             fi

@@ -352,7 +352,7 @@ set +x
 pushd ../crystal-backup-meta/ || die "Could not pushd"
 if [[ -f "./.csum" ]]; then
     find . -maxdepth 1 -type f -name '.csum.split*' -delete;
-    split -l 100000 --numeric-suffixes .csum ".csum.split"
+    split -l 10000 --numeric-suffixes .csum ".csum.split"
     find . -maxdepth 1 -type f -name '.csum.split*' -exec mv {} {}.split \;
 fi
 popd

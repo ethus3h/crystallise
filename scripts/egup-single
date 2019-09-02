@@ -63,7 +63,7 @@ if [[ -f .egup.git-native-excludes ]]; then
 fi
 
 # Back up the .gitignore in preparation for the next step
-git add .gitignore || true # It's ok if this fails — it probably means there is no .gitignore
+git add .gitignore &>/dev/null || true # It's ok if this fails — it probably means there is no .gitignore
 git commit -m "[egup] Update .gitignore$commitMessageAppendable" -- .gitignore || true #It's ok if this fails — it probably means there is nothing to commit
 
 if [[ -f .egup.git-native-excludes ]] && [[ "$(readlink -f .git/info/exclude)" == "$(readlink -f "$GIT_DIR"/info/exclude)" ]]; then

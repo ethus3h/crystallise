@@ -31,10 +31,11 @@ fi
 sregDir=""
 if [[ "$1" == "--sreg-dir" ]]; then
     shift
-    sregDir="$1"
+    sregDir="$(sregi_find_dir --sreg-dir "$1" --full-check)"
     shift
+else
+    sregDir="$(sregi_find_dir "$1" --full-check)"
 fi
-sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
 echo "SREGDIR:$sregDir:ABBABA"
 hashFull="$1"
 if [[ "$(head -c 36 "$1" 2>/dev/null | tr -d '\0')" == "760fa662-89cf-4ebd-9664-150b7637ddd4" ]]; then

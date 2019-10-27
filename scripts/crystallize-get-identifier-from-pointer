@@ -44,7 +44,8 @@ else
         packName="$(tail -c +167 "$potentialPointer")"
         unxz --stdout - < "$sregDir/Packs/$packName" | tar -xf - &>/dev/null
         warn "FIXME: Unimplemented"
-        echo "$(pwd)"
+        pwd
+        sleep 100000000
         spopd || die "Could not popd!"
         rm -r "$pointerTempDir"
     elif [[ "$typeSignature" == "209fcfdf-d1ad-4345-8ef7-1fdc2d583d49" ]]; then # Remote pack pointer, with pointer data in the pointer

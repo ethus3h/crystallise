@@ -9,11 +9,11 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 potentialPointer="$1"
 shift
 
-if [[ "$potentialPointer" == *.crystal ]]; then
+if [[ "$potentialPointer" == *.crystal ]] && [[ -f "$(dirname "$potentialPointer")"/."$(basename "$potentialPointer")"-data/identifier ]]; then
     cat "$(dirname "$potentialPointer")"/."$(basename "$potentialPointer")"-data/identifier
     exit
 else
-    sregDir="$(sregi_find_dir --sreg-dir "$1" --full-check)"
+    sregDir="$(sregi_find_dir "$1" --full-check)"
 
     myTempDir="$(tempDir)"
     potentialPointer="$(readlink -f "$potentialPointer")"

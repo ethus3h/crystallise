@@ -9,8 +9,9 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 potentialPointer="$1"
 shift
 
+showName="false"
 if [[ "--name" == "$1" ]]; then
-    echo ""
+    showName="true"
 fi
 
 if [[ "$potentialPointer" == *.crystal ]] && [[ -f "$(dirname "$potentialPointer")"/."$(basename "$potentialPointer")"-data/identifier ]]; then
@@ -85,4 +86,7 @@ else
     fi
     spopd || die "Could not popd!"
     rm -r "$myTempDir"
+fi
+if [[ "true" == "$showName" ]]; then
+    print "   '--> is required by $potentialPointer"
 fi

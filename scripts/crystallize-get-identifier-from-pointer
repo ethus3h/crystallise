@@ -8,7 +8,7 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 
 potentialPointer="$1"
 shift
-
+set -x
 showName="false"
 if [[ "--verbose" == "$1" ]]; then
     showName="true"

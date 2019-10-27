@@ -12,6 +12,7 @@ shift
 showName="false"
 if [[ "--verbose" == "$1" ]]; then
     showName="true"
+    shift
 fi
 
 if [[ "$potentialPointer" == *.crystal ]] && [[ -f "$(dirname "$potentialPointer")"/."$(basename "$potentialPointer")"-data/identifier ]]; then

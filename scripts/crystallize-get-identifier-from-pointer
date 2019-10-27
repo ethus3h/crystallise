@@ -10,7 +10,7 @@ potentialPointer="$1"
 shift
 
 showName="false"
-if [[ "--name" == "$1" ]]; then
+if [[ "--verbose" == "$1" ]]; then
     showName="true"
 fi
 

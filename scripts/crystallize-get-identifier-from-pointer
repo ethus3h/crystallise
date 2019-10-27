@@ -13,8 +13,12 @@ if [[ "$potentialPointer" == *.crystal ]] && [[ -f "$(dirname "$potentialPointer
     cat "$(dirname "$potentialPointer")"/."$(basename "$potentialPointer")"-data/identifier
     exit
 else
-    sregDir="$(sregi_find_dir "$1" --full-check)"
-echo "SREGDIR:$sregDir:ABBABA"
+    sregDir=""
+    if [[ -n "$1" ]]; then
+        sregDir="$(sregi_find_dir --sreg-dir "$1" --full-check)"
+    else
+        sregDir="$(sregi_find_dir "$potentialPointer" --full-check)"
+    fi
 
     myTempDir="$(tempDir)"
     potentialPointer="$(readlink -f "$potentialPointer")"

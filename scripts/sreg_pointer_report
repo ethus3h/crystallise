@@ -65,11 +65,11 @@ print "Pointer type: "
     else echo "Normal file (?!)"
     fi
 
-print "Pointer reported size: "
-timeout 15 sregi_get_length_from_pointer --sreg-dir "$sregDir" "$pointerLocation" 2>/dev/null || echo
-
 print "Crystal ID for the pointer"\'"s data: "
 crystallize-get-identifier-from-pointer "$pointerLocation" "$sregDir" || true
+
+print "Pointer reported size: "
+timeout 15 sregi_get_length_from_pointer --sreg-dir "$sregDir" "$pointerLocation" 2>/dev/null || echo
 
 echo "List of referents (that you can read) in the current directory ($PWD):"
 

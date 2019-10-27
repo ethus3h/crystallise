@@ -311,11 +311,10 @@ if [[ "$updateList" == "true" ]]; then
             echo "Done getting identifiers for the stream registry in $streamRegistryPath..."
         fi
     done <<< "$cbbStreamRegistries"
+    removeDuplicateLines 'crystal-backup-meta/cbb-index/items' | bigSponge 'crystal-backup-meta/cbb-index/items'
 else
     echo "(Not building backup index because --no-update-list was specified.)"
 fi
-
-removeDuplicateLines 'crystal-backup-meta/cbb-index/items' | bigSponge 'crystal-backup-meta/cbb-index/items'
 
 [[ "$gitCommit" == "true" ]] && git add -A .
 { [[ "$gitCommit" == "true" ]] && git commit -m "Update" > /dev/null; } || true

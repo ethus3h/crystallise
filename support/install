@@ -100,4 +100,4 @@ fi
 if [[ ! -h "$emberSysconfdir/crystallize.conf" ]] && [[ -f "$emberSysconfdir/crystallize.conf" ]]; then
     mv "$emberSysconfdir/crystallize.conf" "$emberSysconfdir/ember.conf"
 fi
-[[ -h "$emberSysconfdir/crystallize.conf" ]] || ln -s "$emberSysconfdir/crystallize.conf" "$emberSysconfdir/ember.conf"
+[[ -h "$emberSysconfdir/crystallize.conf" ]] || ln -s "$emberSysconfdir/ember.conf" "$emberSysconfdir/crystallize.conf"

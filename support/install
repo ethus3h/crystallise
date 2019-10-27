@@ -72,7 +72,7 @@ if ! [[ -e "support/.no-build-docs" ]]; then
 fi
 
 if [[ -e "support/$packageName.conf" ]]; then
-    if [[ "$skipConfigFile" == "false" ]]; then
+    if [[ "$skipConfigFile" == "false" ]] && [[ ! -f "$emberSysconfdir/$packageName.conf" ]]; then
         mkdir -p "$emberSysconfdir"
         cp -v "support/$packageName.conf" "$emberSysconfdir/"
     fi

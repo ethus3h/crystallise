@@ -9,6 +9,10 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 potentialPointer="$1"
 shift
 
+if [[ "--name" == "$1" ]]; then
+    echo ""
+fi
+
 if [[ "$potentialPointer" == *.crystal ]] && [[ -f "$(dirname "$potentialPointer")"/."$(basename "$potentialPointer")"-data/identifier ]]; then
     cat "$(dirname "$potentialPointer")"/."$(basename "$potentialPointer")"-data/identifier
     exit

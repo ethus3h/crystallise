@@ -135,7 +135,7 @@ decrystInner() (
     rm -r "$tempDecrystForksDir"
 
     if ! version_gt "$knownCrystalCrystallizeVersion" "3.1.2.5.11"; then
-        warn "(Probably can not use checksum verification for this crystal as the version of crystallize it was created using is too old. It may be slow trying to. FIXME?)"
+        warn "(Probably can not use checksum verification for this crystal as the version of crystallize it was created using is too old. It may be slow trying to. FIXME?)" # FIXME?
     fi
 
     #if version_gt "$knownCrystalCrystallizeVersion" "3.1.2.5.11"; then

@@ -89,5 +89,5 @@ else
     rm -r "$myTempDir"
 fi
 if [[ "true" == "$showName" ]]; then
-    print "   '--> is required by $potentialPointer"
+    echo "   '--> is required by $potentialPointer"
 fi

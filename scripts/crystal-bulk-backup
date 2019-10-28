@@ -59,6 +59,8 @@ CBBMetaGitRepoQuickUpdate() (
     eogup-single
 )
 
+CBBMetaGitRepoQuickUpdate
+
 [[ -e '.git' ]] || git init
 touch ./.egup.allowRootEgup
 print $'/items\n' >> .gitignore
@@ -372,6 +374,8 @@ if [[ -f "./.csum" ]]; then
     find . -maxdepth 1 -type f -name '.csum.split*' -exec mv {} {}.split \;
 fi
 popd
+
+CBBMetaGitRepoQuickUpdate
 
 [[ "$gitCommit" == "true" ]] && git add -A .
 { [[ "$gitCommit" == "true" ]] && git commit -m "Update" > /dev/null; } || true

@@ -144,7 +144,7 @@ decrystInner() (
         } 2>/dev/null
         trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
     else
-        warn "(Couldn't retrieve checksum because the crystal version it was created with is toold.)"
+        warn "(Couldn't retrieve checksum as the version of crystallize it was created using is too old.)"
     fi
 
     if [[ "$exitStatus" == "0" ]]; then

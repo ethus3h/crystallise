@@ -141,7 +141,7 @@ decrystInner() (
         {
             fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-csum" | pv -tparbIfei 0.1 | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - > "$tempId.csum"
             exitStatus="$?"
-        } 2>/dev/null
+        } # 2>/dev/null
         trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
     else
         warn "(Couldn't use checksum verification for this crystal as the version of crystallize it was created using is too old.)"

@@ -136,13 +136,16 @@ decrystInner() (
 
     if version_gt "$knownCrystalCrystallizeVersion" "3.1.2.5.11"; then
         # This crystal was made by a version that supports csum verification
-    trap - ERR
-    exitStatus=""
-    {
-        fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-csum" | pv -tparbIfei 0.1 | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - > "$tempId.csum"
-        exitStatus="$?"
-    } 2>/dev/null
-    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+        trap - ERR
+        exitStatus=""
+        {
+            fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-csum" | pv -tparbIfei 0.1 | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - > "$tempId.csum"
+            exitStatus="$?"
+        } 2>/dev/null
+        trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+    else
+        warn "(Couldn't retrieve checksum because the crystal version it was created with is toold.)"
+    fi
 
     if [[ "$exitStatus" == "0" ]]; then
         mkdir "$tempId.tempDir"

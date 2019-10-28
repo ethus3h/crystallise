@@ -54,7 +54,7 @@ find "$backupLocation/crystal-backup-meta/.cbb.logs" -name '.cbb.*.log' -delete
         rm .gitignore
     fi
     eogup-single
-    find .. -path ./.git -prune -or -path ./.egup.stat -prune -or -path './items*' -prune -or -path ./repositories -prune -or -path ./stream-registries -prune -or -path './crystal-backup-meta/.cbb.*' -prune -or -path './crystal-backup-meta/cbb-index/items.*' -prune -or -type f -exec rsync -av --checksum {} ./synced/ \;
+    find .. -path ../.git -prune -or -path ../.egup.stat -prune -or -path '../items*' -prune -or -path ../repositories -prune -or -path ../stream-registries -prune -or -path '../crystal-backup-meta/.cbb.*' -prune -or -path '../crystal-backup-meta/cbb-index/items.*' -prune -or -type f -exec rsync -av --checksum {} ./synced/ \;
     eogup-single
 )
 

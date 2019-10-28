@@ -48,7 +48,7 @@ find "$backupLocation/crystal-backup-meta/.cbb.logs" -name '.cbb.*.log' -delete
     mkdir -p "./crystal-backup-meta-quick/"
     cd "./crystal-backup-meta-quick/"
     [[ -e '.git' ]] || git init
-    find .. -name .egup.stat -prune -or -name items* -or -name repositories -or -name rsync -av --checksum ../
+    find .. -path ./.git -prune -or -path ./.egup.stat -prune -or -path './items*' -prune -or -path ./repositories -prune -or -path ./stream-registries -prune -or -path './crystal-backup-meta/.cbb.*' -prune -or -path './crystal-backup-meta/cbb-index/items.*' -prune -or -exec rsync -av --checksum {} ./synced/ \;
 )
 
 [[ -e '.git' ]] || git init

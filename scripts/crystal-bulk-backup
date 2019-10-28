@@ -43,6 +43,14 @@ rsync -av --checksum "$backupLocation/crystal-backup-meta/.cbb.logs.open/" "$bac
 find "$backupLocation/crystal-backup-meta/.cbb.logs" -name '.cbb.*.log' -exec split -l 100000 --additional-suffix=.cbbLogSplit {} {}. \;
 find "$backupLocation/crystal-backup-meta/.cbb.logs" -name '.cbb.*.log' -delete
 
+(
+    cd "$backupLocation"
+    mkdir -p "./crystal-backup-meta-quick/"
+    cd "./crystal-backup-meta-quick/"
+    [[ -e '.git' ]] || git init
+    find .. -name .egup.stat -prune -or -name items* -or -name repositories -or -name rsync -av --checksum ../
+)
+
 [[ -e '.git' ]] || git init
 touch ./.egup.allowRootEgup
 print $'/items\n' >> .gitignore

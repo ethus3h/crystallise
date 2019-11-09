@@ -26,14 +26,14 @@ if ! [[ -e "$pathPrefix".csum-not-found ]]; then
         fcache_request "$(crystallize-getconf WorkDirectory)/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-csum" > "$pathPrefix".coal5-csum || emdate > "$pathPrefix".csum-not-found
     fi
 
+fi
+
+if [[ -e "$pathPrefix".csum-not-found ]]; then
+    less "$pathPrefix".deep.idx
+else
     if [[ "$(wc -c "$pathPrefix".coal5-csum)" == "0" ]]; then
         dest="$pathPrefix".coal5-csum.moved-because-empty-"$(emdate)"
         mv "$pathPrefix".coal5-csum "$dest"
         die "coal5-csum file $pathPrefix.coal5-csum was empty. It has been moved to $dest."
     fi
     less "$pathPrefix".coal5-csum
-fi
-
-if [[ -e "$pathPrefix".csum-not-found ]]; then
-    less "$pathPrefix".deep.idx
-fi

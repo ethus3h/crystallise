@@ -37,6 +37,6 @@ else
         mv "$pathPrefix".coal5-csum "$dest"
         die "coal5-csum file $pathPrefix.coal5-csum was empty. It has been moved to $dest."
     fi
-    die "Decrypting coal5-"
+    die "Unpacking coal5-csum is not implemented yet."
     less "$pathPrefix".coal5-csum
 fi

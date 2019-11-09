@@ -89,8 +89,9 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvai
     else
         if [[ "$iaPath" == "$iaIdentifier/$iaIdentifier""_files.xml" ]]; then
             ia filesXMLStored "$iaIdentifier" > "$dbFilePath"
-        fi
+        else
         retryUntilSuccess 100 30 5 5 wget -t 150 -qO "$dbFilePath" "$requestUrl"
+        fi
     fi
     sha512sum < "$dbFilePath" | awk '{print $1;}' > "$checksumName"
     printf "%s" "$requestUrl" > "$dbLinkPath.url"

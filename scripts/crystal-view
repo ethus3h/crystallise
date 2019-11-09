@@ -13,8 +13,6 @@ CrystalID="$(iaident "$1")"
 pathPrefix="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/"$CrystalID"
 
 if [[ -e "$pathPrefix".csum-not-found ]]; then
-    less "$pathPrefix".deep.idx
-else
     if [[ -e "$pathPrefix".csum ]]; then
         if [[ "$(wc -c "$pathPrefix".csum)" == "0" ]]; then
             dest="$pathPrefix".csum.moved-because-empty-"$(emdate)"
@@ -33,4 +31,7 @@ else
         die "coal5-csum file $pathPrefix.coal5-csum was empty. It has been moved to $dest."
     fi
     less "$pathPrefix".coal5-csum
+fi
+if [[ -e "$pathPrefix".csum-not-found ]]; then
+    less "$pathPrefix".deep.idx
 fi

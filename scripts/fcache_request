@@ -88,7 +88,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvai
         [[ "$(sha1sum "$dbFilePath" | awk '{print $1;}')" == "$(retryUntilSuccess 10 30 5 5 iasha1 "$iaIdentifier/$iaPath")" ]] || die "Checksum known by Internet Archive did not match the retrieved file! Was it corrupted in transit?"
     else
         if [[ "$iaPath" == "$iaIdentifier/$iaIdentifier""_files.xml" ]]; then
-            ia filesXMLStored "$iaIdentifier"
+            ia filesXMLStored "$iaIdentifier" > "$dbFilePath"
         fi
         retryUntilSuccess 100 30 5 5 wget -t 150 -qO "$dbFilePath" "$requestUrl"
     fi

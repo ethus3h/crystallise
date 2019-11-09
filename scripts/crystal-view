@@ -19,7 +19,9 @@ if [[ -e "$pathPrefix".csum-not-found ]]; then
     less "$pathPrefix".deep.idx
 else
     if [[ "$(wc -c "$pathPrefix".coal5-csum)" == "0" ]]; then
-    mv "$pathPrefix".coal5-csum "$pathPrefix".coal5-csum.moved-because-empty-"$(emdate)"
-    die "csum file $pathPrefix.coal5-csum was empty. It has been moved to "
+        dest="$pathPrefix".coal5-csum.moved-because-empty-"$(emdate)"
+        mv "$pathPrefix".coal5-csum "$dest"
+        die "csum file $pathPrefix.coal5-csum was empty. It has been moved to $dest."
+    fi
     less "$pathPrefix".coal5-csum
 fi

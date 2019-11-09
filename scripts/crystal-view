@@ -20,6 +20,7 @@ if ! [[ -e "$pathPrefix".csum-not-found ]]; then
             die "csum file $pathPrefix.csum was empty. It has been moved to $dest."
         fi
         less "$pathPrefix".csum
+        exit 0
     fi
 
     if ! [[ -e "$pathPrefix".coal5-csum ]]; then

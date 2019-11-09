@@ -15,6 +15,7 @@ pathPrefix="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/"$Crys
 if [[ -e "$pathPrefix".csum-not-found ]]; then
     less "$pathPrefix".deep.idx
 else
+    if [[ -e "$pathPrefix".csum ]]; then
     if ! [[ -e "$pathPrefix".coal5-csum ]]; then
         fcache_request "$(crystallize-getconf WorkDirectory)/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-csum" > "$pathPrefix".coal5-csum || emdate > "$pathPrefix".csum-not-found
     fi

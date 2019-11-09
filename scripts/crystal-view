@@ -37,3 +37,4 @@ else
         die "coal5-csum file $pathPrefix.coal5-csum was empty. It has been moved to $dest."
     fi
     less "$pathPrefix".coal5-csum
+fi

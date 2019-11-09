@@ -18,5 +18,6 @@ fi
 if [[ -e "$pathPrefix".csum-not-found ]]; then
     less "$pathPrefix".deep.idx
 else
+    if [[ "$(wc -c "$pathPrefix".coal5-csum)" == "0" ]]; then
     less "$pathPrefix".coal5-csum
 fi

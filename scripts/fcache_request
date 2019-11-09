@@ -83,7 +83,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -s "$tempResolvedFileName" ]] || [[ "$csAvai
     iaIdentifier="$(iaident "$requestUrl")"
     iaPath="$(iapath "$requestUrl")"
     if isIaName "$requestUrl" && [[ "$iaPath" != "$iaIdentifier/$iaIdentifier""_files.xml" ]]; then
-        iacontains "$iaIdentifier" "$iaPath" || die "The Internet Archive item $iaIdentifier does not contain the requseted"
+        iacontains "$iaIdentifier" "$iaPath" || die "The Internet Archive item $iaIdentifier does not seem to contain the requested path $iaPath."
         ia downloadAsStream "$requestUrl" > "$dbFilePath"
         retryUntilSuccess 10 30 5 5 iasha1 "$iaIdentifier/$iaPath" > /dev/null || die "Number of allowed retries exceeded without success."
         [[ "$(sha1sum "$dbFilePath" | awk '{print $1;}')" == "$(retryUntilSuccess 10 30 5 5 iasha1 "$iaIdentifier/$iaPath")" ]] || die "Checksum known by Internet Archive did not match the retrieved file! Was it corrupted in transit?"

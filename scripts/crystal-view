@@ -14,7 +14,7 @@ pathPrefix="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/"$Crys
 
 if ! [[ -e "$pathPrefix".csum-not-found ]]; then
     if [[ -e "$pathPrefix".csum ]]; then
-        if [[ "$(wc -c "$pathPrefix".csum)" == "0" ]]; then
+        if [[ "$(wc -c < "$pathPrefix".csum)" == "0" ]]; then
             dest="$pathPrefix".csum.moved-because-empty-"$(emdate)"
             mv "$pathPrefix".csum "$dest"
             die "csum file $pathPrefix.csum was empty. It has been moved to $dest."
@@ -32,7 +32,7 @@ fi
 if [[ -e "$pathPrefix".csum-not-found ]]; then
     less "$pathPrefix".deep.idx
 else
-    if [[ "$(wc -c "$pathPrefix".coal5-csum)" == "0" ]]; then
+    if [[ "$(wc -c < "$pathPrefix".coal5-csum)" == "0" ]]; then
         dest="$pathPrefix".coal5-csum.moved-because-empty-"$(emdate)"
         mv "$pathPrefix".coal5-csum "$dest"
         die "coal5-csum file $pathPrefix.coal5-csum was empty. It has been moved to $dest."

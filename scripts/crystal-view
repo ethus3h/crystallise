@@ -11,12 +11,12 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 CrystalID="$(iaident "$1")"
 
 pathPrefix="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/"$CrystalID"
-if ! [[ -e "$pathPrefix".csum ]]; then
-    fcache_request "$(crystallize-getconf WorkDirectory)/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.csum" > "$pathPrefix".csum || emdate > "$pathPrefix".csum-not-found
+if ! [[ -e "$pathPrefix".coal5-csum ]]; then
+    fcache_request "$(crystallize-getconf WorkDirectory)/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-csum" > "$pathPrefix".coal5-csum || emdate > "$pathPrefix".csum-not-found
 fi
 
 if [[ -e "$pathPrefix".csum-not-found ]]; then
     less "$pathPrefix".deep.idx
 else
-    less "$pathPrefix".csum
+    less "$pathPrefix".coal5-csum
 fi

@@ -30,6 +30,7 @@ if ! [[ -e "$pathPrefix".csum-not-found ]]; then
 fi
 
 if [[ -e "$pathPrefix".csum-not-found ]]; then
+    warn "No csum was found, so using .deep.idx instead."
     less "$pathPrefix".deep.idx
 else
     if [[ "$(wc -c < "$pathPrefix".coal5-csum)" == "0" ]]; then

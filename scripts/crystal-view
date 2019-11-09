@@ -23,7 +23,7 @@ if ! [[ -e "$pathPrefix".csum-not-found ]]; then
         exit 0
     fi
 
-    if ! [[ -e "$pathPrefix".coal5-csum ]] && ! [[ -e "$pathPrefix".deep.idx ]]; then
+    if ! [[ -e "$pathPrefix".coal5-csum ]]; then
         fcache_request "$(crystallize-getconf WorkDirectory)/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5-csum" > "$pathPrefix".coal5-csum || emdate > "$pathPrefix".csum-not-found
     fi
 fi

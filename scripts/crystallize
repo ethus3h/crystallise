@@ -170,7 +170,7 @@ postUploadCheckFailHandler() {
 getChecksumRetries=0
 retryDelayTime=5
 until [[ "$getChecksumRetries" -ge 1000 ]]; do
-    if ia downloadAsStream https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F "<file name=\"$CrystalID.coal5\" source=\"original\">" > /dev/null; then
+    if ia downloadAsStream --no-cache-metadata https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F "<file name=\"$CrystalID.coal5\" source=\"original\">" > /dev/null; then
         postUploadCheckFailHandler
         break
     fi
@@ -200,7 +200,7 @@ fi
 getChecksumRetries=0
 retryDelayTime=5
 until [[ $getChecksumRetries -ge 1000 ]]; do
-    if ia downloadAsStream https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F "<file name=\"$CrystalID.coal5-timestamp\" source=\"original\">" > /dev/null; then
+    if ia downloadAsStream --no-cache-metadata https://archive.org/download/"$CrystalID/$CrystalID"_files.xml | grep -F "<file name=\"$CrystalID.coal5-timestamp\" source=\"original\">" > /dev/null; then
         postUploadCheckFailHandler
         break
     fi

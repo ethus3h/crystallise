@@ -1,0 +1,120 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
+source ember_bash_setup &> /dev/null || { printf '%b' '\033[1;31m' >&2; echo "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd): The required dependency ember-shared could not be found (or ember_bash_setup could not be sourced for some other reason)." >&2; printf '%b' '\033[0m' >&2; exit 1; }
+set -x
+
+((EUID)) && exec sudo -- "$0" "$@"
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+
+shopt -s extglob
+
+if [[ "$1" == "--debug" ]]; then
+    set -x
+    shift
+fi
+
+useCustomPassphrase="false"
+customPassphrase=""
+if [[ "$1" == "--passphrase" ]]; then
+    useCustomPassphrase="true"
+    shift
+    customPassphrase="$1"
+    shift
+fi
+
+check="true"
+if [[ "$1" == "--no-check-existing" ]]; then
+    check="false"
+    shift
+fi
+
+here="false"
+if [[ "$1" == "--here" ]]; then
+    here="true"
+    shift
+fi
+
+recurse="true"
+if [[ "$1" == "--no-recurse" ]]; then
+    recurse="false"
+    shift
+fi
+
+if [[ "$here" != "true" ]]; then
+    backupLocation="$(crystallize-getconf BackupLocation)"
+
+    mkdir -p "$backupLocation/items"
+
+    cd "$backupLocation" || die "Could not cd to newly created directory! This should never happen."
+
+    mkdir -p "crystal-backup-meta/.cbk"
+fi
+
+if [[ "$useCustomPassphrase" != "true" ]]; then
+    customPassphrase="$(crystallize-getconf Passphrase)"
+fi
+mkdir -p "crystal-backup-meta/.cbk/.cbk.passphrases"
+print "$customPassphrase" > "crystal-backup-meta/.cbk/.cbk.passphrases/$(print "$customPassphrase" | sha512sum | awk '{print $1;}')"
+
+#Remove URL
+CrystalAddress="${1#https://archive.org/@(details|download)/}"
+#Remove trailing path(s) from identifier
+CrystalAddress="${CrystalAddress%%/*}"
+CrystalAddress="${CrystalAddress%\.coal5*}"
+
+if [[ "$CrystalAddress" == "" ]]; then
+    echo "Please specify a crystal address to back up."
+    exit 1
+fi
+
+CrystalID="$CrystalAddress"
+
+echo "Backing up crystal: $CrystalID"
+
+mkdir -p "crystal-backup-meta/completed-items"
+
+cd 'items' || die "Could not cd to items directory!"
+
+if [[ -e "$CrystalID" ]]; then
+    if [[ "$check" == "true" ]]; then
+        succeeded=""
+        ident="$CrystalID"
+        shopt -s dotglob
+        shopt -s globstar
+        # NOTE: MAINTENANCE: Copy of code from "ia checkeddl" in ember_bash_setup.
+        # FIXME: Does this code really need to be duplicated?
+        while read -r fileNameToCheck; do
+            file="$ident/$fileNameToCheck"
+            if [[ -f "$file" ]] && [[ "$(sha1sum "$file" | awk '{print $1;}')" == "$(iasha1 "$file")" ]] && ( [[ "$succeeded" == "true" ]] || [[ -z "$succeeded" ]] ); then
+                    succeeded="true"
+            else
+                succeeded="false"
+                continue
+            fi
+        done < <(ia list "$ident")
+        if [[ "$succeeded" != "true" ]]; then
+            mkdir -p "../items.failed-check/"
+            [[ -e "../items.failed-check/$CrystalID" ]]  && die "Item $CrystalID failed integrity check, and there is already a failed copy!"
+            mv "$CrystalID" "../items.failed-check/"
+            if [[ "$recurse" == "false" ]]; then
+                die "Item $CrystalID failed integrity check!"
+            else
+                warn "Item $CrystalID failed integrity check!"
+                crystallize-backup --no-recurse "$@" || die "Retried backing up and failed twice."
+            fi
+        fi
+    fi
+    emdate > "../crystal-backup-meta/completed-items/$CrystalID"
+    echo "(Backup of $CrystalID pass""ed check.)" # extra quotation marks to prevent turning "sed" into "gsed" on Mac ;)
+    exit 0
+fi
+
+isEmptyDir "../items.failed-check/" && rm -r "../items.failed-check/"
+
+ia checkeddl "$CrystalID"
+
+cd ..
+
+emdate > "crystal-backup-meta/completed-items/$CrystalID"
+
+echo "Done! The crystal has been backed up to $backupLocation/items/$CrystalID."

@@ -16,18 +16,21 @@ fi
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd)."' ERR
 # set -x
 
+offline="false"
 if [[ "$1" == "--offline" ]]; then
     offline="true"
     shift
 fi
 
+sudoGitattributes="false"
 if [[ "$1" == "--sudo-gitattributes" ]]; then
     sudoGitattributes="true"
     shift
 fi
 
+noHooks="false"
 if [[ "$1" == "--sudo-gitattributes" ]]; then
-    sudoGitattributes="true"
+    noHooks="true"
     shift
 fi
 

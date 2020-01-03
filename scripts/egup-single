@@ -29,7 +29,7 @@ if [[ "$1" == "--sudo-gitattributes" ]]; then
 fi
 
 noHooks="false"
-if [[ "$1" == "--sudo-gitattributes" ]]; then
+if [[ "$1" == "--no-hooks" ]]; then
     noHooks="true"
     shift
 fi

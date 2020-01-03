@@ -26,6 +26,11 @@ if [[ "$1" == "--sudo-gitattributes" ]]; then
     shift
 fi
 
+if [[ "$1" == "--sudo-gitattributes" ]]; then
+    sudoGitattributes="true"
+    shift
+fi
+
 cd "$1" || exit 1
 
 commitMessage="Update Git repository using egup-single"

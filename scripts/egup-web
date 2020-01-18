@@ -8,9 +8,9 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 #Need to do egup-single for futuramerlin-web-toolkit before build to ensure updates to futuramerlin-web-toolkit are committed before running it
 (
     EmberLibrary="$(crystallize-getconf EmberLibrary)"
-    cd "$EmberLibrary"/Ember\ satellite\ projects/futuramerlin-web-toolkit || exit 1
+    cd "$EmberLibrary"/futuramerlin-web-toolkit || exit 1
     egup-single .
-    cd "$EmberLibrary"/Ember/ember-web-site || exit 1
+    cd "$EmberLibrary"/ember-web-site || exit 1
     eogup-single .
     futuramerlin-web-toolkit-build
     egup-single .

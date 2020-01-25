@@ -48,6 +48,7 @@ CBBMetaGitRepoQuickUpdate() (
     cd "$backupLocation"
     mkdir -p "./crystal-backup-meta-quick/"
     cd "./crystal-backup-meta-quick/"
+    sudo chmod -R a+rw ./synced
     if [[ ! -e '.git' ]]; then
         git init
         touch .gitignore

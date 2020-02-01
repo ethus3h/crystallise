@@ -159,17 +159,23 @@ if [[ "true" == "$completeOnly" ]]; then
     if [[ ! -d "$crystalWorkdir/NonfinalizedCrystals/$CrystalID" ]]; then
         die "Please put the crystal to complete at $crystalWorkdir/NonfinalizedCrystals/$CrystalID/."
     fi
+
+        crystallize-logsession "$useCustomPassphrase" "$customPassphrase" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID" "$CrystalID" "$@"
+
     echo "$0 $*" > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cmd-completion"
     pwd > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cwd-completion"
     crystallize-getconf crystallizeVersion > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-ver-completion"
 fi
 
+if [[ "true" == "$offline" ]]; then
+    crystallize-logsession "$useCustomPassphrase" "$customPassphrase" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID" "$CrystalID" "$@"
+
+
+
 if [[ "false" == "$completeOnly" ]]; then
     echo "$0 $*" > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cmd"
     pwd > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cwd"
     crystallize-getconf crystallizeVersion > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-ver"
-
-    crystallize-logsession "$useCustomPassphrase" "$customPassphrase" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID" "$CrystalID" "$@"
 
     if [[ $crystallizeLeavePointer == true ]]; then
         mkdir -p "$crystallizePointerDir"

@@ -224,7 +224,7 @@ if [[ "false" == "$offline" ]]; then
     ia upload "$CrystalID" --retries=100 --verify "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-timestamp" 2>&1
 
     if [[ "true" == "$completeOnly" ]]; then
-        ia upload "$CrystalID" --retries=100 --verify --delete "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cmd-completion" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cwd-completion" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-ver-completion" 2>&1
+        ia upload "$CrystalID" --retries=100 --verify --delete "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cmd-completion" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cwd-completion" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-ver-completion" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-ver-completion" 2>&1
     fi
 
     echo "Please wait..."

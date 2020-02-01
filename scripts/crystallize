@@ -330,6 +330,7 @@ testDecrystDir="$(bigTempDir)"
 rm -r "${testDecrystDir:?}"
 
 if [[ "true" == "$backup" ]]; then
+    echo "$CrystalID" >> "${EmberLibrary:?}"/ember-web-site/
     crystal-backup "$CrystalID" || die "Failed while trying to back up crystal!"
 fi
 

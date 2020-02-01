@@ -14,6 +14,18 @@ if [[ "--offline" == "$1" ]]; then
     export EMBER_IA_OFFLINE
     shift
 fi
+completeOnly="false"
+if [[ "--complete" == "$1"  ]]; then
+    # Upload a crystal that's already been packaged. Provide the CrystalID as the next parameter.
+    if [[ "true" == "$offline" ]]; then
+        die "--complete can not be used with --offline."
+    fi
+    completeOnly="true"
+    shift
+    CrystalID="$1"
+    echo "Completing crystal with the ID: $1"
+    shift
+fi
 
 useCustomPassphrase="$1"
 shift

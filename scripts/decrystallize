@@ -65,10 +65,11 @@ mkdir "$tempId"
 crystalXzFileSize=1
 if [[ -t 1 ]]; then
     # used for pv progress indicator.
-if [[ "true" == "$offline" ]]; then
-else
-    crystalXzFileSize="$(retryUntilSuccess 100 30 5 5 curl -sIL "https://archive.org/download/$CrystalID/$CrystalID.coal5" | grep Content-Length | awk '{print $2}')" || warn "Couldn't get compressed file size"
-    crystalXzFileSize="${crystalXzFileSize::-1}"
+    if [[ "true" == "$offline" ]]; then
+    else
+        crystalXzFileSize="$(retryUntilSuccess 100 30 5 5 curl -sIL "https://archive.org/download/$CrystalID/$CrystalID.coal5" | grep Content-Length | awk '{print $2}')" || warn "Couldn't get compressed file size"
+        crystalXzFileSize="${crystalXzFileSize::-1}"
+    fi
 fi
 
 if [[ "$useCustomPassphrase" != "true" ]]; then

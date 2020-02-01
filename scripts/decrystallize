@@ -69,6 +69,7 @@ tempId="decrystallize-$(date-uuid)"
 mkdir "$tempId"
 
 if [[ "true" == "$offline" ]]; then
+    # Override fcache_request to get from the local folder
 fi
 
 crystalXzFileSize=1

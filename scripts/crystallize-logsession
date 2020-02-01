@@ -361,8 +361,8 @@ echo "rsynced..."
 fi
 
 if [[ "false" == "$offline" ]]; then
-unset opt
-unset optb
+    unset opt
+    unset optb
 
     trap - ERR
     #If GNU/Linux, set opt to 1 and unset optb; otherwise opposite

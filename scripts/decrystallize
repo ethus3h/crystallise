@@ -74,6 +74,7 @@ if [[ "true" == "$offline" ]]; then
         if [[ -z "$requestUrl" ]] || [[ "--lock-override" == "$requestUrl" ]]; then
             requestUrl="$1"
         fi
+        cat "$offlineLocation/$(iapath "$requestUrl")"
     }
 fi
 

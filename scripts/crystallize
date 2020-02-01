@@ -191,7 +191,7 @@ if [[ "$checksumLine" != "$knownChecksum" ]]; then
     die "ERROR! Checksum known by Internet Archive $checksumLine does not match saved checksum known locally $knownChecksum."
 fi
 
-# Now, check the local file's checksum again in case it's gotten screwed up in the mean time somehow
+# Now, check the local file's checksum again in case it's gotten damaged in the mean time somehow
 knownChecksum="$(hashdeep -c sha1 -j0 -o fbcpsde < "$crystalWorkdir/Crystals/$CrystalID.coal5" | grep ",stdin" | awk -F',' '{print $2}')"
 if [[ "$checksumLine" != "$knownChecksum" ]]; then
     die "ERROR! Checksum known by Internet Archive $checksumLine does not match new checksum known locally $knownChecksum."

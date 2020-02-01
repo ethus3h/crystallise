@@ -73,15 +73,6 @@ if [[ "true" == "$offline" ]]; then
         requestUrl="$2"
         if [[ -z "$requestUrl" ]] || [[ "--lock-override" == "$requestUrl" ]]; then
             requestUrl="$1"
-            shift
-            dbDir="$(crystallize-getconf WorkDirectory)/.CrystalCache"
-        fi
-            shift
-            shift
-        fi
-        lockOverride="false"
-        if [[ "$1" == "--lock-override" ]]; then
-            lockOverride="true"
         fi
 else
     shift

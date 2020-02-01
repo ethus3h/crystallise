@@ -29,6 +29,9 @@ crystallizePassphrase="$1" # Custom passphrase only. Empty at this point if usin
 shift
 logfile="$1"
 shift
+CrystalID="$1"
+export CrystalID
+shift
 
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"
 export crystalWorkdir
@@ -40,9 +43,6 @@ crystalCollection="$(crystallize-getconf Collection)"
 export crystalCollection
 [[ "$useCustomPassphrase" != "true" ]] && crystallizePassphrase="$(crystallize-getconf Passphrase)"
 export crystallizePassphrase
-
-export CrystalID="$1"
-shift
 
 if [[ "false" == "$completeOnly" ]]; then
     crystallize --version 2>&1 | tee -a "$logfile"

@@ -23,9 +23,9 @@ export crystallizeVersion="$emberCrystallizeVersion"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
 finishclean() {
-if [[ "false" == "$offline" ]]; then
-    if [[ "false" == "$completeOnly" ]]
+    if [[ "false" == "$offline" ]] && [[ "false" == "$completeOnly" ]]; then
     rm -f "${crystalWorkdir:?}/${CrystalID:?}.coal5"
+    fi
 }
 trap 'if [[ -e "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID" ]]; then cat "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID" || true; fi; finishclean; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 

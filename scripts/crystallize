@@ -45,6 +45,14 @@ if [[ "$1" == "--offline" ]]; then
     shift
 fi
 
+offline=""
+if [[ "$1" == "--offline" ]]; then
+    offline="true"
+    EMBER_IA_OFFLINE="true"
+    export EMBER_IA_OFFLINE
+    shift
+fi
+
 leaveLocked=""
 if [[ "$1" == "--leave-locked" ]]; then
     leaveLocked="true"

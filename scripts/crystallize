@@ -165,6 +165,7 @@ mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.forks-csum.xz.gpg" "$crystal
 
 if [[ "false" == "$offline" ]]; then
     if [[ "false" == "$completeOnly" ]]; then
+        # Remove .coal5 if the upload fails, but only if uploading immediately.
         trap 'cat "$crystalWorkdir/NonfinalizedCrystals/$CrystalID" || true; finishclean; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
     fi
 

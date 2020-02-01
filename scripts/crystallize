@@ -61,7 +61,7 @@ if [[ "$1" == "--complete" ]]; then
     completeOnly="true"
     shift
     CrystalID="$1"
-    echo "Completing crystal with the ID: $1"
+    echo "Publishing crystal with the ID: $1"
     shift
 fi
 

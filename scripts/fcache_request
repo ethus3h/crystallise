@@ -10,6 +10,7 @@ dbDir="$1"
 requestUrl="$2"
 if [[ -z "$requestUrl" ]]; then
     requestUrl="$dbDir"
+    shift
     dbDir="$(crystallize-getconf WorkDirectory)/.CrystalCache"
 fi
 if ! hasWebProtocol "$requestUrl"; then

@@ -363,5 +363,5 @@ if [[ "false" == "$offline" ]]; then
         exit 1
     fi
 else
-    echo
+    echo "The offline crystal is now available in "
 fi

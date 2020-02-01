@@ -339,6 +339,7 @@ if [[ "false" == "$completeOnly" ]]; then
             find . -name "$CrystalID"'*' -not -name "$CrystalID.ostype" -not -name "$CrystalID.forks" -not -name "$CrystalID.forks-csum" -not \( -name "$CrystalID" -and -type d \) -print -delete || die
             csum --check ./* "$tempTestDecrystId.csum" || die
         ) || die
+        trap 'rm -r "${tempTestDecrystId:?}"; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
         if [[ -d "${tempTestDecrystId:?}" ]]; then
             # Just in case; it should have been removed by the EXIT trap for the above subshell
             rm -r "${tempTestDecrystId:?}"

@@ -203,6 +203,7 @@ if [[ "false" == "$offline" ]]; then
     ia upload "$CrystalID" --retries=100 --verify "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-timestamp" 2>&1
 
     if [[ "true" == "$complete" ]]; then
+        ia upload "$CrystalID" --retries=100 --verify --delete $crystalWorkdir/NonfinalizedCrystals/$CrystalID.cmd-completion
     fi
 
     echo "Please wait..."

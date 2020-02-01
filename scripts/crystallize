@@ -346,7 +346,10 @@ echo "Please wait, testing finished item..."
 testDecrystDir="$(bigTempDir)"
 (
     cd "$testDecrystDir" || die "cd failed"
+    if [[ "true" == "$offline" ]]; then
+    else
     decrystallize --passphrase "$(<"$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID".tmp)" --lock-override "$CrystalID" 2>&1 || die "Could not decrystallize the finished crystal!"
+    fi
     rm "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.tmp"
 )
 rm -r "${testDecrystDir:?}"

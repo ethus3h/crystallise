@@ -392,8 +392,6 @@ if [[ "false" == "$offline" ]]; then
 
         echo "Done! The new crystal's address is:"
         echo "$CrystalID"
-        if [[ "true" == "$complete" ]]; then
-            echo "Remember to "
     else
         #Clear the screen
         printf "\\033c"

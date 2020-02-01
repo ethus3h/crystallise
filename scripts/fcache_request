@@ -32,7 +32,7 @@ finish() {
 }
 trap finish EXIT
 
-if [[ "$3" != "--lock-override" ]]; then
+if [[ "$1" != "--lock-override" ]]; then
     if [[ -e "$dbLinkPath.locked" ]]; then
         warn "This URL cache entry is already in use. If the process using it ($(<"$dbLinkPath.locked")) has crashed, remove $dbLinkPath.locked manually."
         warn "Waiting 30 minutes for process using it ($(<"$dbLinkPath.locked")) to finish..."

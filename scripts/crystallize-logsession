@@ -35,6 +35,8 @@ shift
 
 crystalWorkdir="$(crystallize-getconf WorkDirectory)/NonfinalizedCrystals/$CrystalID/"
 export crystalWorkdir
+CrystalTmpUploadFile="$crystalWorkdir/$CrystalID.coal5"
+export CrystalTmpUploadFile
 
 crystalTitle="$(crystallize-getconf InstallationIdentifier)"
 assert true [[ -n "$crystalTitle" ]]
@@ -262,8 +264,6 @@ if [[ "false" == "$completeOnly" ]]; then
     # pack files into stream | measure rate of stream's flow | compress the stream | encrypt the stream | send the input to a checksummer and to the output | send the stream to ia
     # For debugging the curl command, can add tee >(cat > "$crystalWorkdir/$CrystalID.local-coal5") to the pipeline to get a local copy of the coal5
     # For the streaming upload (broken atm), (also remove the TmpUploadFile and pipe directly) do: s3-streaming-upload s3.us.archive.org "$crystalCollection" "$CrystalID" "$CrystalID.coal5" "$crystalFilesSize" "$crystalTitle" "Crystal $CrystalID" "Uploaded using Crystallize $crystallizeVersion; 1EA21BD8-DB7E-11E5-9733-728C37852114; $crystalTitle; $CrystalID"
-    CrystalTmpUploadFile="$crystalWorkdir/$CrystalID.coal5"
-    export CrystalTmpUploadFile
 
     # macOS tar doesn't want backslashes to be escaped in file names
     if [[ "$OSTYPE" == darwin* ]]; then

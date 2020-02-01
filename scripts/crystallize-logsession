@@ -353,11 +353,11 @@ if [[ "false" == "$completeOnly" ]]; then
         rm "${tempTestDecrystId:?}.csum"
         rm "${tempTestDecrystId:?}.forks-csum"
         echo "Please wait..."
-    } 2>&1 | tee -a "$logfile"
 
     rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.csum" "$crystalWorkdir/$CrystalID.json.xz" "$crystalWorkdir/$CrystalID.passphrase" "${EmberLibrary:?}"/CrystalIndex/
 
     echo "rsynced..."
+    } 2>&1 | tee -a "$logfile"
 fi
 
 if [[ "false" == "$offline" ]]; then

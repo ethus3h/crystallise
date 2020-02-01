@@ -32,6 +32,11 @@ if [[ ! -e "${EmberLibrary:?}"/CrystalIndex/ ]]; then
     exit 1
 fi
 
+if [[ ! -e "${EmberLibrary:?}"/CrystalIndex/ ]]; then
+    echo "ERROR: Could not find a usable Ember Library directory tree. Nothing done."
+    exit 1
+fi
+
 if ! [[ -d . ]]; then
     echo "Please run crystallize from a directory that exists."
     exit 1

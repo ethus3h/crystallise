@@ -111,7 +111,7 @@ export crystalWorkdir
 mkdir -p "$crystalWorkdir"
 
 #Check for and handle option to leave behind a pointer
-if [[ "$1" == "--leave-pointer" == "$1" ]]; then
+if [[ "--leave-pointer" == "$1" ]]; then
     echo "Pointer is enabled."
     crystallizeLeavePointer=true
     shift

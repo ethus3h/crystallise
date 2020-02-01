@@ -336,6 +336,7 @@ if [[ "false" == "$completeOnly" ]]; then
 
             cp "$crystalWorkdir/$CrystalID.csum" "$tempTestDecrystId.csum"
             cd "$tempTestDecrystId" || die "cd failed"
+            ls -lsa
             find . -name "$CrystalID"'*' -not -name "$CrystalID.ostype" -not -name "$CrystalID.forks" -not -name "$CrystalID.forks-csum" -delete || die
             csum --check ./* "$tempTestDecrystId.csum" || die
         ) || die

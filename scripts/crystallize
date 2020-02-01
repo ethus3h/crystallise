@@ -57,6 +57,9 @@ fi
 backup="false"
 if [[ "$1" == "--backup" ]]; then
     # Back up the crystal locally after publishing.
+    if [[ "true" == "--offline" ]]; then
+        die "--backup can not be used with --offline."
+    fi
     backup="true"
     shift
 fi

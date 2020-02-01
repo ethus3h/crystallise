@@ -38,16 +38,16 @@ if [[ "false" == "$completeOnly" ]]; then
     crystalWorkdir="$(crystallize-getconf WorkDirectory)"
     export crystalWorkdir
 
-        crystalTitle="$(crystallize-getconf InstallationIdentifier)"
-        assert true [[ -n "$crystalTitle" ]]
-        export crystalTitle
-        crystalCollection="$(crystallize-getconf Collection)"
-        export crystalCollection
-        [[ "$useCustomPassphrase" != "true" ]] && crystallizePassphrase="$(crystallize-getconf Passphrase)"
-        export crystallizePassphrase
+    crystalTitle="$(crystallize-getconf InstallationIdentifier)"
+    assert true [[ -n "$crystalTitle" ]]
+    export crystalTitle
+    crystalCollection="$(crystallize-getconf Collection)"
+    export crystalCollection
+    [[ "$useCustomPassphrase" != "true" ]] && crystallizePassphrase="$(crystallize-getconf Passphrase)"
+    export crystallizePassphrase
 
-        export CrystalID="$1"
-        shift
+    export CrystalID="$1"
+    shift
 
     {
         echo "Time (log stage 1) locally:"

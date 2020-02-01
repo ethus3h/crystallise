@@ -30,21 +30,21 @@ shift
 logfile="$1"
 shift
 
-    crystalWorkdir="$(crystallize-getconf WorkDirectory)"
-    export crystalWorkdir
+crystalWorkdir="$(crystallize-getconf WorkDirectory)"
+export crystalWorkdir
 
-    crystalTitle="$(crystallize-getconf InstallationIdentifier)"
-    assert true [[ -n "$crystalTitle" ]]
-    export crystalTitle
-    crystalCollection="$(crystallize-getconf Collection)"
-    export crystalCollection
-    [[ "$useCustomPassphrase" != "true" ]] && crystallizePassphrase="$(crystallize-getconf Passphrase)"
-    export crystallizePassphrase
+crystalTitle="$(crystallize-getconf InstallationIdentifier)"
+assert true [[ -n "$crystalTitle" ]]
+export crystalTitle
+crystalCollection="$(crystallize-getconf Collection)"
+export crystalCollection
+[[ "$useCustomPassphrase" != "true" ]] && crystallizePassphrase="$(crystallize-getconf Passphrase)"
+export crystallizePassphrase
 
-    export CrystalID="$1"
-    shift
+export CrystalID="$1"
+shift
 
-    if [[ "false" == "$completeOnly" ]]; then
+if [[ "false" == "$completeOnly" ]]; then
     crystallize --version 2>&1 | tee -a "$logfile"
 
     echo "The crystal will have the following address when it is ready: $CrystalID" >> "$logfile" # not using tee because it's already been printed to the user by the crystallize script

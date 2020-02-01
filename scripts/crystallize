@@ -171,7 +171,9 @@ if [[ "true" == "$offline" ]]; then
     crystallize-logsession --offline "$useCustomPassphrase" "$customPassphrase" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID" "$CrystalID" "$@"
 fi
 
-
+if [[ "true" == "$offline" ]]; then
+    crystallize-logsession --offline "$useCustomPassphrase" "$customPassphrase" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID" "$CrystalID" "$@"
+fi
 
 if [[ "false" == "$completeOnly" ]]; then
     echo "$0 $*" > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cmd"

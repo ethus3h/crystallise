@@ -362,4 +362,6 @@ if [[ "false" == "$offline" ]]; then
         echo "Crystallisation failed! This is bad!"
         exit 1
     fi
+else
+    echo
 fi

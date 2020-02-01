@@ -67,6 +67,7 @@ if [[ "true" == "$offline" ]]; then
         die "Could not find directory with offline location: $offlineLocation"
     fi
     echo "Using offline location: $offlineLocation"
+    if [[ ! -f "" ]]
 
     # Override fcache_request to get from the local folder
 fi

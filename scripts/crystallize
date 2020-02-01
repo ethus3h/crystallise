@@ -49,6 +49,7 @@ fi
 
 completeOnly="false"
 if [[ "$1" == "--complete" ]]; then
+    # Upload a crystal that's already been packaged.
     completeOnly="true"
     shift
 fi

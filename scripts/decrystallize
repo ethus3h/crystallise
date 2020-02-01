@@ -18,10 +18,6 @@ if [[ "$1" == "--offline" ]]; then
     export EMBER_IA_OFFLINE
     shift
     offlineLocation="$1"
-    if [[ ! -d "$offlineLocation" ]]; then
-        die "Could not find directory with offline location: $offlineLocation"
-    fi
-    echo "Using offline location: $offlineLocation"
     shift
 fi
 

@@ -72,8 +72,8 @@ if [[ "true" == "$offline" ]]; then
     fcache_request() {
         dbDir="$1"
         requestUrl="$2"
-if [[ -z "$requestUrl" ]]; then
-    requestUrl="$dbDir"
+        if [[ -z "$requestUrl" ]]; then
+            requestUrl="$dbDir"
     shift
     dbDir="$(crystallize-getconf WorkDirectory)/.CrystalCache"
 else

@@ -37,9 +37,9 @@ if ! [[ -d . ]]; then
     exit 1
 fi
 
-leaveLocked=""
-if [[ "$1" == "--leave-locked" ]]; then
-    leaveLocked="true"
+offline=""
+if [[ "$1" == "--offline" ]]; then
+    offline="true"
     shift
 fi
 

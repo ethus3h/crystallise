@@ -162,7 +162,7 @@ fi
 if [[ "false" == "$complete" ]]; then
     echo "$0 $*" > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cmd"
     pwd > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cwd"
-    crystallize-getconf crystallizeVersion > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-ver-completion"
+    crystallize-getconf crystallizeVersion > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-ver"
 
     crystallize-logsession "$useCustomPassphrase" "$customPassphrase" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID" "$CrystalID" "$@"
 

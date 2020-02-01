@@ -151,7 +151,7 @@ retryUntilSuccess 100 30 5 5 dig +short myip.opendns.com @resolver1.opendns.com 
 
 wait
 
-if [[ "true" == "$complete" ]]; then
+if [[ "true" == "$completeOnly" ]]; then
     if [[ ! -d "$crystalWorkdir/NonfinalizedCrystals/$CrystalID" ]]; then
         die "Please put the crystal to complete at $crystalWorkdir/NonfinalizedCrystals/$CrystalID/."
     fi
@@ -160,7 +160,7 @@ if [[ "true" == "$complete" ]]; then
     crystallize-getconf crystallizeVersion > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-ver-completion"
 fi
 
-if [[ "false" == "$complete" ]]; then
+if [[ "false" == "$completeOnly" ]]; then
     echo "$0 $*" > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cmd"
     pwd > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cwd"
     crystallize-getconf crystallizeVersion > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-ver"

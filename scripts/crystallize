@@ -50,6 +50,8 @@ completeOnly=""
 if [[ "$1" == "--complete" ]]; then
     completeOnly="true"
     shift
+else
+    completeOnly="false"
 fi
 
 leaveLocked=""

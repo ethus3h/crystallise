@@ -82,6 +82,7 @@ if [[ "false" == "$completeOnly" ]]; then
         export crystallizePassphrase
 
         export CrystalID="$1"
+        shift
 
         echo "Environment: "
 
@@ -132,9 +133,6 @@ if [[ "false" == "$completeOnly" ]]; then
         echo "20170928201310973799400_2d303430300a70ed51ebe5a8492cb3f6b5e043becae2"
 
         printf "%s" "$crystallizePassphrase" > "$crystalWorkdir/$CrystalID".tmp
-
-        CrystallizeFirstArg="$1"
-        shift
 
         # Resolve relative paths in the arguments, since GNU tar's -P doesn't
         CrystallizePaths=( "$@" )

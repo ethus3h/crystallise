@@ -155,6 +155,10 @@ wait
 
 mkdir -p "$crystalWorkdir/NonfinalizedCrystals/$CrystalID"
 
+if [[ "true" == "$offline" ]]; then
+    crystallize-logsession --offline "$useCustomPassphrase" "$customPassphrase" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID" "$CrystalID" "$@"
+fi
+
 if [[ "true" == "$completeOnly" ]]; then
     if [[ ! -d "$crystalWorkdir/NonfinalizedCrystals/$CrystalID" ]]; then
         die "Please put the crystal to complete at $crystalWorkdir/NonfinalizedCrystals/$CrystalID/."
@@ -165,10 +169,6 @@ if [[ "true" == "$completeOnly" ]]; then
     echo "$0 $*" > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cmd-completion"
     pwd > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cwd-completion"
     crystallize-getconf crystallizeVersion > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-ver-completion"
-fi
-
-if [[ "true" == "$offline" ]]; then
-    crystallize-logsession --offline "$useCustomPassphrase" "$customPassphrase" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID" "$CrystalID" "$@"
 fi
 
 if [[ "false" == "$offline" ]] && [[ "false" == "$completeOnly" ]]; then

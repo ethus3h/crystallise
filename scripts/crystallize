@@ -432,5 +432,5 @@ if [[ "false" == "$offline" ]]; then
         exit 1
     fi
 else
-    echo "The LOCAL ONLY crystal is now available at $crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID."
+    echo "The LOCAL ONLY crystal is now available at $crystalWorkdir/NonfinalizedCrystals/$CrystalID/."
 fi

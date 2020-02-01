@@ -10,6 +10,16 @@ shopt -s extglob
 
 # TODO (maybe): Automatically add crystal metadata to the local Crystal Index folder when decrystallizing if it's missing
 
+offline="false"
+if [[ "$1" == "--offline" ]]; then
+    # Just package the crystal locally; don't publish.
+    # Will still use network to get timestamps. I think that's OK.
+    offline="true"
+    EMBER_IA_OFFLINE="true"
+    export EMBER_IA_OFFLINE
+    shift
+fi
+
 useCustomPassphrase="false"
 crystallizePassphrase=""
 if [[ "$1" == "--passphrase" ]]; then

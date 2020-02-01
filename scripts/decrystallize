@@ -70,20 +70,20 @@ if [[ "true" == "$offline" ]]; then
 
     # Override fcache_request to get from the local folder
     fcache_request() {
-dbDir="$1"
-requestUrl="$2"
-if [[ -z "$requestUrl" ]] || [[ "--lock-override" == "$requestUrl" ]]; then
-    requestUrl="$1"
-    shift
-    dbDir="$(crystallize-getconf WorkDirectory)/.CrystalCache"
-else
-    shift
-    shift
-fi
-lockOverride="false"
-if [[ "$1" == "--lock-override" ]]; then
-    lockOverride="true"
-fi
+        dbDir="$1"
+        requestUrl="$2"
+        if [[ -z "$requestUrl" ]] || [[ "--lock-override" == "$requestUrl" ]]; then
+            requestUrl="$1"
+            shift
+            dbDir="$(crystallize-getconf WorkDirectory)/.CrystalCache"
+        else
+            shift
+            shift
+        fi
+        lockOverride="false"
+        if [[ "$1" == "--lock-override" ]]; then
+            lockOverride="true"
+        fi
 else
     shift
 fi

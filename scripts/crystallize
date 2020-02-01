@@ -325,7 +325,7 @@ testDecrystDir="$(bigTempDir)"
 rm -r "${testDecrystDir:?}"
 
 if [[ "true" == "$backup" ]]; then
-    crystal-backup "$CrystalID"
+    crystal-backup "$CrystalID" || die "Failed while trying to back up crystal!"
 fi
 
 #Build this again for the rm command

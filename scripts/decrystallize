@@ -18,6 +18,7 @@ if [[ "$1" == "--offline" ]]; then
     export EMBER_IA_OFFLINE
     shift
     offlineLocation="$1"
+    echo "Using offline location: $offlineLocation"
     shift
 fi
 

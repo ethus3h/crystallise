@@ -6,6 +6,29 @@ source ember_bash_setup &> /dev/null || { printf '%b' '\033[1;31m' >&2; echo "A 
 ((EUID)) && exec sudo -- "$0" "$@"
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
+offline="false"
+if [[ "--offline" == "$1" ]]; then
+    # Just package the crystal locally; don't publish.
+    # Will still use network to get timestamps. I think that's OK.
+    offline="true"
+    EMBER_IA_OFFLINE="true"
+    export EMBER_IA_OFFLINE
+    shift
+fi
+
+completeOnly="false"
+if [[ "--complete" == "$1"  ]]; then
+    # Upload a crystal that's already been packaged. Provide the CrystalID as the next parameter.
+    if [[ "true" == "$offline" ]]; then
+        die "--complete can not be used with --offline."
+    fi
+    completeOnly="true"
+    shift
+    CrystalID="$1"
+    echo "Completing crystal with the ID: $1"
+    shift
+fi
+
 useCustomPassphrase="$1"
 shift
 crystallizePassphrase="$1" # Custom passphrase only. Empty at this point if using configured passphrase

@@ -12,7 +12,7 @@ shopt -s extglob
 
 offline="false"
 if [[ "$1" == "--offline" ]]; then
-    # Use an offline copy of the crystal.
+    # Use an offline copy of the crystal. Provide the path to the local crystal directory as the second argument.
     offline="true"
     EMBER_IA_OFFLINE="true"
     export EMBER_IA_OFFLINE

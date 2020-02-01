@@ -32,7 +32,7 @@ echo "The crystal will have the following address when it is ready: $CrystalID" 
     echo "Time (log stage 1) from http://timeapi.org/: "
 
     trap - ERR
-    wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-start" -e robots=off "http://www.timeapi.org/utc/now?\\Y-\\m-\\d-\\H-\\M-\\S-\\6N-\\z"
+    command wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-start" -e robots=off "http://www.timeapi.org/utc/now?\\Y-\\m-\\d-\\H-\\M-\\S-\\6N-\\z"
     trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
     echo "Time (log stage 1b) locally:"

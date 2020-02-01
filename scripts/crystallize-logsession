@@ -339,8 +339,8 @@ if [[ "false" == "$completeOnly" ]]; then
             find . -name "$CrystalID"'*' -not -name "$CrystalID.ostype" -not -name "$CrystalID.forks" -not -name "$CrystalID.forks-csum" -delete || die
             csum --check ./* "$tempTestDecrystId.csum" || die
         ) || die
-        rm -rf "${tempTestDecrystId:?}"
-        rm -rf "${tempTestDecrystId:?}.forks"
+        rm -r "${tempTestDecrystId:?}"
+        rm -r "${tempTestDecrystId:?}.forks"
         rm "${tempTestDecrystId:?}.csum"
         rm "${tempTestDecrystId:?}.forks-csum"
         echo "Please wait..."

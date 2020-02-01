@@ -45,9 +45,9 @@ if [[ "$1" == "--offline" ]]; then
     shift
 fi
 
-offline=""
-if [[ "$1" == "--offline" ]]; then
-    offline="true"
+completeOnly=""
+if [[ "$1" == "--complete" ]]; then
+    completeOnly="true"
     EMBER_IA_OFFLINE="true"
     export EMBER_IA_OFFLINE
     shift

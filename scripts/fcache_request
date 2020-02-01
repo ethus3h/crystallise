@@ -15,6 +15,7 @@ if [[ -z "$requestUrl" ]] || [[ "--lock-override" == "$requestUrl" ]]; then
 else
     shift
 fi
+if [[ ""]]
 if ! hasWebProtocol "$requestUrl"; then
     requestUrl="$(iaurl "$requestUrl")"
 fi

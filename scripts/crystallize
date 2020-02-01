@@ -50,6 +50,9 @@ fi
 completeOnly="false"
 if [[ "$1" == "--complete" ]]; then
     # Upload a crystal that's already been packaged.
+    if [[ "true" == "--offline" ]]; then
+        die "--backup can not be used with --offline."
+    fi
     completeOnly="true"
     shift
 fi

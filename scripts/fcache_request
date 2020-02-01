@@ -9,7 +9,7 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 dbDir="$1"
 requestUrl="$2"
 if [[ -z "$requestUrl" ]] || [[ "--lock-override" == "$requestUrl" ]]; then
-    requestUrl="$dbDir"
+    requestUrl="$1"
     shift
     dbDir="$(crystallize-getconf WorkDirectory)/.CrystalCache"
 else

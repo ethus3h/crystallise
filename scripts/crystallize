@@ -226,7 +226,7 @@ if [[ "false" == "$offline" ]]; then
 
     if [[ "true" == "$completeOnly" ]]; then
         mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-time-done-completion.warc.gz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-time-done-completion"
-        itemsToUpload+=( "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cmd-completion" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cwd-completion" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-ver-completion" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-time-done-completion" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-log-completion" ) 2>&1
+        itemsToUpload+=( "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cmd-completion" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cwd-completion" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-ver-completion" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-time-done-completion" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-log-completion" )
     fi
 
     keepFilesParameter=""

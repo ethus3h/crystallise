@@ -70,7 +70,8 @@ if [[ "true" == "$offline" ]]; then
 
     # Override fcache_request to get from the local folder
     fcache_request() {
-        cacheDir="$1"
+        dbDir="$1"
+        requestUrl="$2"
 
     }
 fi

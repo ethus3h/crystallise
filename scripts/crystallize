@@ -133,7 +133,10 @@ if [[ "$1" == "--leave-pointer" ]]; then
     echo "Pointer name: $crystallizePointerName"
 fi
 
-CrystalID="C3-$(date-uuid)"
+if [[ "false" == "$complete" ]]; then
+    CrystalID="C3-$(date-uuid)"
+fi
+
 export CrystalID
 
 echo "The crystal will have the following address when it is ready: $CrystalID"$'\n'

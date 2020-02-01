@@ -56,7 +56,7 @@ fi
 
 backup="false"
 if [[ "$1" == "--backup" ]]; then
-    # Back up the crystal locally after uploading.
+    # Back up the crystal locally after publishing.
     backup="true"
     shift
 fi

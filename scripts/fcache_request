@@ -16,6 +16,7 @@ else
     shift
     shift
 fi
+lockOverride="false"
 if [[ "$1" == "--lock-override" ]]; then
     lockOverride="true"
 fi

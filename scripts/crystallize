@@ -164,7 +164,7 @@ if [[ "true" == "$completeOnly" ]]; then
         die "Please put the crystal to complete at $crystalWorkdir/NonfinalizedCrystals/$CrystalID/."
     fi
 
-    crystallize-logsession --complete "$useCustomPassphrase" "$customPassphrase" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-completion-log" "$CrystalID" "$@"
+    crystallize-logsession --complete "$useCustomPassphrase" "$customPassphrase" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-log-completion" "$CrystalID" "$@"
 
     echo "$0 $*" > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cmd-completion"
     pwd > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cwd-completion"

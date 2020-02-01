@@ -24,6 +24,16 @@ finish() {
 trap 'removeFailCheckFile; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 trap 'removeFailCheckFile; finish' EXIT
 
+offline="false"
+if [[ "--offline" == "$1" ]]; then
+    # Just package the crystal locally; don't publish.
+    # Will still use network to get timestamps. I think that's OK.
+    offline="true"
+    EMBER_IA_OFFLINE="true"
+    export EMBER_IA_OFFLINE
+    shift
+fi
+
 skipCount="0"
 if [[ "$1" == "--skip" ]]; then
     shift

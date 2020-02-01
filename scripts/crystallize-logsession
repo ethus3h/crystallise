@@ -438,7 +438,8 @@ if [[ "true" == "$offline" ]]; then
         echo "Time (log stage 3, offline) from http://timeapi.org/: "
 
         trap - ERR
-        wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-done" -e robots=off "http://www.timeapi.org/utc/now?\\Y-\\m-\\d-\\H-\\M-\\S-\\6N-\\z"
+        # allow when otherwise running offline
+        command wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-done" -e robots=off "http://www.timeapi.org/utc/now?\\Y-\\m-\\d-\\H-\\M-\\S-\\6N-\\z"
         trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
     } 2>&1 | tee -a "$logfile"
 fi

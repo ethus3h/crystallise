@@ -164,8 +164,9 @@ mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.forks.xz.gpg" "$crystalWorkd
 mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.forks-csum.xz.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-forks-csum"
 
 if [[ "false" == "$offline" ]]; then
-    if [[ "false" == "$completeOnly" ]]
-trap 'cat "$crystalWorkdir/NonfinalizedCrystals/$CrystalID" || true; finishclean; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+    if [[ "false" == "$completeOnly" ]]; then
+        trap 'cat "$crystalWorkdir/NonfinalizedCrystals/$CrystalID" || true; finishclean; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+    fi
 ia upload "$CrystalID" --retries=100 --verify --delete "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-log" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-idx-l" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-idx-d" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-csum" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-cmd" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-cwd" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-ostype" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-forks" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-forks-csum" 2>&1
 ia upload "$CrystalID" --retries=100 --verify "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-timestamp" 2>&1
 

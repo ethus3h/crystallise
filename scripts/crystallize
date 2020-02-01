@@ -60,6 +60,8 @@ if [[ "$1" == "--complete" ]]; then
     fi
     completeOnly="true"
     shift
+    CrystalID="$1"
+    shift
 fi
 
 backup="false"

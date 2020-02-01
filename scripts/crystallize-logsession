@@ -425,4 +425,4 @@ if [[ "false" == "$offline" ]]; then
     } &>> "$logfile"
 fi
 
-if [[ "false" == "$completeOnly" ]]; then
+if [[ "true" == "offline" ]]; then

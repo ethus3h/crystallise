@@ -189,6 +189,7 @@ mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.cwd.gpg" "$crystalWorkdir/No
 mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.ostype.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-ostype"
 mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.forks.xz.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-forks"
 mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.forks-csum.xz.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-forks-csum"
+fi
 
 if [[ "false" == "$offline" ]]; then
     if [[ "false" == "$completeOnly" ]]; then

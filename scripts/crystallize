@@ -325,7 +325,8 @@ testDecrystDir="$(bigTempDir)"
 rm -r "${testDecrystDir:?}"
 
 if [[ "true" == "$backup" ]]; then
-
+    crystal-backup "$CrystalID"
+fi
 
 #Build this again for the rm command
 CrystallizePaths=( "$@" )

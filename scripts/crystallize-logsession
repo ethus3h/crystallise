@@ -194,7 +194,7 @@ if [[ "false" == "$completeOnly" ]]; then
 
         echo "Counting size..."
 
-        crystalFilesSize="$(disk-size-in-bytes "$crystalWorkdir/$CrystalID/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID/$CrystalID")"
+        crystalFilesSize="$(disk-size-in-bytes "$crystalWorkdir/$CrystalID/$CrystalID" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID/$CrystalID")"
     } &>> "$logfile"
 
     #get available memory

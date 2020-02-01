@@ -234,7 +234,7 @@ if [[ "false" == "$offline" ]]; then
         keepFilesParameter="true"
     fi
 
-    ia upload "$CrystalID" --retries=100 --verify ${keepFilesParameter:+--delete}  2>&1
+    ia upload "$CrystalID" --retries=100 --verify ${keepFilesParameter:+--delete} "${findArgs[@]}" 2>&1
     ia upload "$CrystalID" --retries=100 --verify "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-timestamp" 2>&1
 
     echo "Please wait..."

@@ -346,7 +346,6 @@ if [[ "false" == "$completeOnly" ]]; then
         rm -r "${tempTestDecrystId:?}.forks"
         rm "${tempTestDecrystId:?}.csum"
         rm "${tempTestDecrystId:?}.forks-csum"
-        echo "Please wait..."
 
         echo "Copying indices..."
 
@@ -355,6 +354,8 @@ if [[ "false" == "$completeOnly" ]]; then
         rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.csum" "$crystalWorkdir/$CrystalID.json.xz" "$crystalWorkdir/$CrystalID.passphrase" "${EmberLibrary:?}"/CrystalIndex/
 
         echo "rsynced..."
+
+        echo "Please wait..."
     } 2>&1 | tee -a "$logfile"
 fi
 

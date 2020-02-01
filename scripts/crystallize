@@ -39,6 +39,7 @@ fi
 
 offline="false"
 if [[ "$1" == "--offline" ]]; then
+    # Just prepare the crystal locally.
     # Will still use network to get timestamps. I think that's OK.
     offline="true"
     EMBER_IA_OFFLINE="true"

@@ -154,9 +154,9 @@ if [[ "true" == "$complete" ]]; then
     if [[ ! -d "$crystalWorkdir/NonfinalizedCrystals/$CrystalID" ]]; then
         die "Please put the crystal to complete at $crystalWorkdir/NonfinalizedCrystals/$CrystalID/."
     fi
-    echo "$0 $*" > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cmd-completion"
-    pwd > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cwd-completion"
-    crystallize-getconf crystallizeVersion > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.ver-completion"
+    echo "$0 $*" > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cmd-completion"
+    pwd > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cwd-completion"
+    crystallize-getconf crystallizeVersion > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-ver-completion"
 fi
 
 if [[ "false" == "$complete" ]]; then

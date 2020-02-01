@@ -146,7 +146,7 @@ retryUntilSuccess 100 30 5 5 dig +short myip.opendns.com @resolver1.opendns.com 
 wait
 
 if [[ "true" == "$complete" ]]; then
-
+    if [[ -d  ]]
 if [[ "false" == "$complete" ]]; then
 echo "$0 $*" > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.cmd"
 pwd > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.cwd"

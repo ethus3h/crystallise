@@ -21,9 +21,6 @@ if [[ "--complete" == "$1"  ]]; then
     fi
     completeOnly="true"
     shift
-    CrystalID="$1"
-    echo "Completing crystal with the ID: $1"
-    shift
 fi
 
 useCustomPassphrase="$1"

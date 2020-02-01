@@ -35,6 +35,9 @@ if [[ "false" == "$completeOnly" ]]; then
 
     echo "The crystal will have the following address when it is ready: $CrystalID" >> "$logfile" # not using tee because it's already been printed to the user by the crystallize script
 
+    crystalWorkdir="$(crystallize-getconf WorkDirectory)"
+    export crystalWorkdir
+
     {
         echo "Time (log stage 1) locally:"
 
@@ -43,9 +46,6 @@ if [[ "false" == "$completeOnly" ]]; then
 
         date -u +%Y-%m-%d-%H-%M-%S-%N
         xxd -pu <<< "$(date -u +%z)"
-
-        crystalWorkdir="$(crystallize-getconf WorkDirectory)"
-        export crystalWorkdir
 
         echo "Time (log stage 1) from http://timeapi.org/: "
 

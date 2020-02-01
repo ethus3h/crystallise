@@ -351,7 +351,7 @@ if [[ "false" == "$completeOnly" ]]; then
 
         cp "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.passphrase"
 
-        rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.csum" "$crystalWorkdir/$CrystalID.json.xz" "$crystalWorkdir/$CrystalID.passphrase" "${EmberLibrary:?}"/CrystalIndex/
+        rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.csum" "$crystalWorkdir/$CrystalID.passphrase" "${EmberLibrary:?}"/CrystalIndex/
 
         echo "rsynced..."
 
@@ -388,7 +388,7 @@ if [[ "false" == "$offline" ]]; then
         #opt is for GNU/Linux; optb is for others
         script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-xz-b ${opt+/dev/null}
 
-        rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.csum" "$crystalWorkdir/$CrystalID.json.xz" "$crystalWorkdir/$CrystalID.passphrase" "${EmberLibrary:?}"/CrystalIndex/
+        rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.json.xz" "${EmberLibrary:?}"/CrystalIndex/
 
         #Clear the screen
         printf "\\033c"

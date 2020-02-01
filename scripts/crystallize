@@ -52,9 +52,9 @@ if [[ "$1" == "--complete" ]]; then
     shift
 fi
 
-completeOnly="false"
+backup="true"
 if [[ "$1" == "--complete" ]]; then
-    completeOnly="true"
+    backup="true"
     shift
 fi
 

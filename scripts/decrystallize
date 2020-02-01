@@ -48,9 +48,7 @@ if [[ "$2" == "--here" ]]; then
 fi
 
 # Remove URL
-CrystalAddress="${1#https://archive.org/@(details|download)/}"
-# Remove trailing path(s) from identifier
-CrystalAddress="${CrystalAddress%%/*}"
+CrystalAddress="$(iaident "$1")"
 CrystalAddress="${CrystalAddress%\.coal5*}"
 
 if [[ "$CrystalAddress" == "" ]]; then

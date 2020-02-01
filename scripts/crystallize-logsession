@@ -33,6 +33,8 @@ shift
 logfile="$1"
 shift
 
+if [[ "false" == "$complete" ]]; then
+
 crystallize --version 2>&1 | tee -a "$logfile"
 
 echo "The crystal will have the following address when it is ready: $CrystalID" >> "$logfile" # not using tee because it's already been printed to the user by the crystallize script

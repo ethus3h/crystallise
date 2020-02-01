@@ -40,6 +40,7 @@ fi
 offline=""
 if [[ "$1" == "--offline" ]]; then
     offline="true"
+    # Will still use network to get timestamps.
     EMBER_IA_OFFLINE="true"
     export EMBER_IA_OFFLINE
     shift

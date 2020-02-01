@@ -347,7 +347,7 @@ testDecrystDir="$(bigTempDir)"
 (
     cd "$testDecrystDir" || die "cd failed"
     if [[ "true" == "$offline" ]]; then
-        decrystallize --offline "" --passphrase "$(<"$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID".tmp)" --lock-override "$CrystalID" 2>&1 || die "Could not decrystallize the finished crystal (working offline)!"
+        decrystallize --offline "$crystalWorkdir/NonfinalizedCrystals/$CrystalID" --passphrase "$(<"$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID".tmp)" --lock-override "$CrystalID" 2>&1 || die "Could not decrystallize the finished crystal (working offline)!"
     else
         decrystallize --passphrase "$(<"$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID".tmp)" --lock-override "$CrystalID" 2>&1 || die "Could not decrystallize the finished crystal!"
     fi

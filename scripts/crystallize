@@ -149,8 +149,8 @@ if [[ "true" == "$complete" ]]; then
     if [[ ! -d "$crystalWorkdir/NonfinalizedCrystals/$CrystalID" ]]; then
         die "Please put the crystal to complete at $crystalWorkdir/NonfinalizedCrystals/$CrystalID."
     fi
-    echo "$0 $*" > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.cmd-completion"
 fi
+
 if [[ "false" == "$complete" ]]; then
     echo "$0 $*" > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.cmd"
     pwd > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.cwd"

@@ -82,14 +82,14 @@ if [[ "--leave-locked" == "$1" ]]; then
 fi
 
 keepFiles="false"
-if [[ "$1" == "--keep" == "$1" ]]; then
+if [[ "--keep" == "$1" ]]; then
     keepFiles="true"
     shift
 fi
 
 useCustomPassphrase="false"
 customPassphrase=""
-if [[ "$1" == "--passphrase" == "$1" ]]; then
+if [[ "--passphrase" == "$1" ]]; then
     useCustomPassphrase="true"
     shift
     customPassphrase="$1"
@@ -97,7 +97,7 @@ if [[ "$1" == "--passphrase" == "$1" ]]; then
 fi
 
 #Remove first argument if it's the end-of-options delimiter
-if [[ "$1" == "--" ]]; then
+if [[ "--" == "$1" ]]; then
     shift
 fi
 

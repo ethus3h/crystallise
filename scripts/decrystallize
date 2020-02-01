@@ -63,6 +63,11 @@ tempId="decrystallize-$(date-uuid)"
 mkdir "$tempId"
 
 if [[ "true" == "$offline" ]]; then
+    if [[ ! -d "$offlineLocation" ]]; then
+        die "Could not find directory with offline location: $offlineLocation"
+    fi
+    echo "Using offline location: $offlineLocation"
+
     # Override fcache_request to get from the local folder
 fi
 

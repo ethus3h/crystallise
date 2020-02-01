@@ -315,8 +315,8 @@ if [[ "false" == "$completeOnly" ]]; then
         #trap 'rm -r "${tempTestDecrystId:?}"; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
         (
             mkdir "$tempTestDecrystId"
-            trap 'rm -r "${tempTestDecrystId:?}"; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
-            trap 'rm -r "${tempTestDecrystId:?}"' EXIT
+            #trap 'rm -r "${tempTestDecrystId:?}"; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+            #trap 'rm -r "${tempTestDecrystId:?}"' EXIT
             crystalXzFileSize="$(disk-size-in-bytes "$CrystalTmpUploadFile")"
             pv -tparbIfei 0.1 -s "$crystalXzFileSize" < "$CrystalTmpUploadFile" | gpg --yes --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - | unxz --stdout - | tar -xvf - -C "$tempTestDecrystId/" || die "Could not extract the local packed crystal!"
 

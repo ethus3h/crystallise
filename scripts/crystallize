@@ -52,8 +52,8 @@ if [[ "$1" == "--complete" ]]; then
     shift
 fi
 
-backup="true"
-if [[ "$1" == "--complete" ]]; then
+backup="false"
+if [[ "$1" == "--backup" ]]; then
     backup="true"
     shift
 fi

@@ -43,6 +43,12 @@ if [[ "$1" == "--leave-locked" ]]; then
     shift
 fi
 
+leaveLocked=""
+if [[ "$1" == "--leave-locked" ]]; then
+    leaveLocked="true"
+    shift
+fi
+
 keepFiles="false"
 if [[ "$1" == "--keep" ]]; then
     keepFiles="true"

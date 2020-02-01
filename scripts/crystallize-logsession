@@ -424,3 +424,5 @@ if [[ "false" == "$offline" ]]; then
         echo "Please wait..."
     } &>> "$logfile"
 fi
+
+if [[ "false" == "$completeOnly" ]]; then

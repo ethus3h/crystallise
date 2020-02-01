@@ -355,15 +355,15 @@ set -o pipefail
     echo "Please wait..."
 } 2>&1 | tee -a "$logfile"
 
-unset opt
-unset optb
-
 rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.csum" "$crystalWorkdir/$CrystalID.json.xz" "$crystalWorkdir/$CrystalID.passphrase" "${EmberLibrary:?}"/CrystalIndex/
 
 echo "rsynced..."
 fi
 
 if [[ "false" == "$offline" ]]; then
+unset opt
+unset optb
+
     trap - ERR
     #If GNU/Linux, set opt to 1 and unset optb; otherwise opposite
     [[ "$OSTYPE" = *inux* ]] && (( opt++ ))

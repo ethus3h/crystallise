@@ -43,7 +43,7 @@ if ! [[ -d . ]]; then
 fi
 
 offline="false"
-if [[ "$1" == "--offline" ]]; then
+if [[ "--offline" == "$1" ]]; then
     # Just package the crystal locally; don't publish.
     # Will still use network to get timestamps. I think that's OK.
     offline="true"
@@ -53,7 +53,7 @@ if [[ "$1" == "--offline" ]]; then
 fi
 
 completeOnly="false"
-if [[ "$1" == "--complete" ]]; then
+if [[ "--complete" == "$1"  ]]; then
     # Upload a crystal that's already been packaged. Provide the CrystalID as the next parameter.
     if [[ "true" == "--offline" ]]; then
         die "--complete can not be used with --offline."

@@ -83,15 +83,16 @@ decrystInner() (
     getCrystalVersion() {
         if [[ "true" == "$offline" ]]; then
             knownCrystalCrystallizeVersion="$(crystallize-getconf crystallizeVersion)"
+        else
+            metadata="$(fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID"_meta.xml)"
+            regex='<subject>Uploaded using Crystallize ([0-9\.]+)<\/subject>'
+            [[ -n "$metadata" ]] || die "Could not get metadata for this crystal."
+            knownCrystalCrystallizeVersion=""
+            if [[ "$metadata" =~ $regex ]]; then
+                knownCrystalCrystallizeVersion="${BASH_REMATCH[1]}"
+            fi
+            [[ -n "$knownCrystalCrystallizeVersion" ]] || warn "Could not get version of Crystallize used for this crystal."
         fi
-        metadata="$(fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID"_meta.xml)"
-        regex='<subject>Uploaded using Crystallize ([0-9\.]+)<\/subject>'
-        [[ -n "$metadata" ]] || die "Could not get metadata for this crystal."
-        knownCrystalCrystallizeVersion=""
-        if [[ "$metadata" =~ $regex ]]; then
-            knownCrystalCrystallizeVersion="${BASH_REMATCH[1]}"
-        fi
-        [[ -n "$knownCrystalCrystallizeVersion" ]] || warn "Could not get version of Crystallize used for this crystal."
     }
 
     decrystallizeNoDieOnMac() {

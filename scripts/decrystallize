@@ -47,6 +47,9 @@ CrystalAddress="${1#https://archive.org/@(details|download)/}"
 CrystalAddress="${CrystalAddress%%/*}"
 CrystalAddress="${CrystalAddress%\.coal5*}"
 
+if [[ "true" == "$offline" ]]; then
+
+
 if [[ "$CrystalAddress" == "" ]]; then
     echo "Please specify a crystal address to unpack."
     exit 1

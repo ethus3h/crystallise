@@ -103,9 +103,11 @@ if [[ "--" == "$1" ]]; then
     shift
 fi
 
-if [[ "" == "$1" ]] || [[ "." == "$1" ]] || [[ ".." == "$1" ]] || [[ "./" == "$1" ]] || [[ "$1" =~ ^../ ]]; then
-    echo "Please specify file(s) within the current directory to crystallize when using relative path names."
-    exit 1
+if [[ "false" == "$completeOnly" ]]; then
+    if [[ "" == "$1" ]] || [[ "." == "$1" ]] || [[ ".." == "$1" ]] || [[ "./" == "$1" ]] || [[ "$1" =~ ^../ ]]; then
+        echo "Please specify file(s) within the current directory to crystallize when using relative path names."
+        exit 1
+    fi
 fi
 
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"

@@ -156,6 +156,7 @@ if [[ "true" == "$complete" ]]; then
     fi
     echo "$0 $*" > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cmd-completion"
     pwd > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cwd-completion"
+
 fi
 
 if [[ "false" == "$complete" ]]; then

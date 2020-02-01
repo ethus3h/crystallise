@@ -63,7 +63,7 @@ tempId="decrystallize-$(date-uuid)"
 mkdir "$tempId"
 
 if [[ "true" == "$offline" ]]; then
-    if [[ ! -d "$offlineLocation" ]]; then
+    if [[ ! -f "$offlineLocation/$CrystalAddress.coal5" ]]; then
         die "Could not find directory with offline location: $offlineLocation"
     fi
     echo "Using offline location: $offlineLocation"

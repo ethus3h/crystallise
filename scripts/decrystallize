@@ -17,6 +17,8 @@ if [[ "$1" == "--offline" ]]; then
     EMBER_IA_OFFLINE="true"
     export EMBER_IA_OFFLINE
     shift
+    offlineLocation="$1"
+    shift
 fi
 
 useCustomPassphrase="false"

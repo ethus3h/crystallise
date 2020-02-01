@@ -312,8 +312,8 @@ if [[ "false" == "$completeOnly" ]]; then
     {
         echo "Please wait, pre-testing item before upload..."
         testDecrystDir="$(bigTempDir)"
-        tempTestDecrystId="$crystalWorkdir/.unpack-test-$(date-uuid)"
-        #   trap 'rm -r "${tempTestDecrystId:?}"; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+        tempTestDecrystId="$(crystallize-getconf WorkDirectory)/.unpack-test-$(date-uuid)"
+        #trap 'rm -r "${tempTestDecrystId:?}"; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
         (
             cd "$testDecrystDir" || die "cd failed"
 

@@ -311,12 +311,9 @@ if [[ "false" == "$completeOnly" ]]; then
 
     {
         echo "Please wait, pre-testing item before upload..."
-        testDecrystDir="$(bigTempDir)"
         tempTestDecrystId="$(crystallize-getconf WorkDirectory)/.unpack-test-$(date-uuid)"
         #trap 'rm -r "${tempTestDecrystId:?}"; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
         (
-            cd "$testDecrystDir" || die "cd failed"
-
             mkdir "$tempTestDecrystId"
             trap 'rm -r "${tempTestDecrystId:?}"; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
             trap 'rm -r "${tempTestDecrystId:?}"' EXIT
@@ -342,7 +339,6 @@ if [[ "false" == "$completeOnly" ]]; then
             find . -name "$CrystalID"'*' -not -name "$CrystalID.ostype" -not -name "$CrystalID.forks" -not -name "$CrystalID.forks-csum" -delete || die
             csum --check ./* "$tempTestDecrystId.csum" || die
         ) || die
-        rm -r "${testDecrystDir:?}"
         rm -rf "${tempTestDecrystId:?}"
         rm -rf "${tempTestDecrystId:?}.forks"
         rm "${tempTestDecrystId:?}.csum"

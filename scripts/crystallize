@@ -354,7 +354,7 @@ rm -r "${testDecrystDir:?}"
 if [[ "true" == "$backup" ]]; then
     echo "$CrystalID" >> "${EmberLibrary:?}"/ember-web-site/identifiers-auto-backed-up.lst
     (
-        cd "${EmberLibrary:?}"/ember-web-site
+        cd "${EmberLibrary:?}"/ember-web-site || die "Could not cd to ember-web-site"
         eogup-single
     )
     crystal-backup "$CrystalID" || die "Failed while trying to back up crystal!"

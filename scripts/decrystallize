@@ -75,11 +75,6 @@ if [[ "true" == "$offline" ]]; then
             requestUrl="$1"
         fi
     }
-else
-    shift
-fi
-
-    }
 fi
 
 crystalXzFileSize=1

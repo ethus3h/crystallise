@@ -181,12 +181,12 @@ if [[ "false" == "$completeOnly" ]]; then
 
     echo "Building local index..." | tee -a "$logfile"
 
-    hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -e -o fbsd "$crystalWorkdir/$CrystalID/$CrystalID" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID/$CrystalID" | tee "$crystalWorkdir/$CrystalID/$CrystalID.local.idx" 2>&1 | tee -a "$logfile" &
+    hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -e -o fbsd "$crystalWorkdir/$CrystalID" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.local.idx" 2>&1 | tee -a "$logfile" &
     localIndexPid="$!"
 
     echo "Building deep index..." | tee -a "$logfile"
 
-    hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -e -o fbsd -r "$crystalWorkdir/$CrystalID/$CrystalID" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID/$CrystalID" | tee "$crystalWorkdir/$CrystalID/$CrystalID.deep.idx" 2>&1 | tee -a "$logfile"
+    hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -e -o fbsd -r "$crystalWorkdir/$CrystalID" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.deep.idx" 2>&1 | tee -a "$logfile"
 
     {
         echo "Waiting for local index..."
@@ -194,7 +194,7 @@ if [[ "false" == "$completeOnly" ]]; then
 
         echo "Counting size..."
 
-        crystalFilesSize="$(disk-size-in-bytes "$crystalWorkdir/$CrystalID/$CrystalID" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID/$CrystalID")"
+        crystalFilesSize="$(disk-size-in-bytes "$crystalWorkdir/$CrystalID" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID")"
     } &>> "$logfile"
 
     #get available memory

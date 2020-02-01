@@ -433,7 +433,7 @@ if [[ "false" == "$offline" ]]; then
     } &>> "$logfile"
 fi
 
-if [[ "true" == "offline" ]]; then
+if [[ "true" == "$offline" ]]; then
     {
         echo "Time (log stage 3, offline) from http://timeapi.org/: "
 

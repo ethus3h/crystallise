@@ -164,14 +164,14 @@ if [[ "false" == "$completeOnly" ]]; then
 
     {
         echo "Creating checksum file for split resource forks, if any..."
-        csum "$splitForksTarLocation" - > "$crystalWorkdir/$CrystalID/$CrystalID.forks-csum"
+        csum "$splitForksTarLocation" - > "$crystalWorkdir/$CrystalID.forks-csum"
 
         echo "Packing split resource forks, if any..."
-        tar -cv -P -S --format pax "$splitForksTarLocation" > "$crystalWorkdir/$CrystalID/$CrystalID.forks"
+        tar -cv -P -S --format pax "$splitForksTarLocation" > "$crystalWorkdir/$CrystalID.forks"
         rm -r "${splitForksTarLocation:?}"
 
         echo "Creating checksum file..."
-        csum "${CrystallizePaths[@]}" - > "$crystalWorkdir/$CrystalID/$CrystalID.csum"
+        csum "${CrystallizePaths[@]}" - > "$crystalWorkdir/$CrystalID.csum"
     } 2>&1 | tee -a "$logfile"
 
     # TODO: Check right before deleting that no changes have been made to the files being crystallized, to avoid losing those changes.

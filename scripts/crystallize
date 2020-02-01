@@ -52,6 +52,12 @@ if [[ "$1" == "--complete" ]]; then
     shift
 fi
 
+completeOnly="false"
+if [[ "$1" == "--complete" ]]; then
+    completeOnly="true"
+    shift
+fi
+
 leaveLocked=""
 if [[ "$1" == "--leave-locked" ]]; then
     leaveLocked="true"

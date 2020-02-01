@@ -226,7 +226,9 @@ if [[ "false" == "$offline" ]]; then
     if [[ "true" == "$keepFiles" ]] && [[ "true" == "$completeOnly" ]]; then
         keepFilesParameter="true"
     fi
+
     itemsToUpload=( "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-log" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-idx-l" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-idx-d" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-csum" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cmd" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cwd" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-ver" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-ostype" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-forks" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-forks-csum" )
+
     if [[ "true" == "$completeOnly" ]]; then
         mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-time-done-completion.warc.gz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-time-done-completion"
         ia upload "$CrystalID" --retries=100 --verify ${keepFilesParameter:+--delete} "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cmd-completion" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cwd-completion" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-ver-completion" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-time-done-completion" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-log-completion" 2>&1

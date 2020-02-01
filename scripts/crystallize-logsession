@@ -8,7 +8,6 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 
 offline="false"
 if [[ "--offline" == "$1" ]]; then
-    # Just package the crystal locally; don't publish.
     # Will still use network to get timestamps. I think that's OK.
     offline="true"
     EMBER_IA_OFFLINE="true"

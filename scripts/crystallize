@@ -151,6 +151,8 @@ retryUntilSuccess 100 30 5 5 dig +short myip.opendns.com @resolver1.opendns.com 
 
 wait
 
+mkdir -p "$crystalWorkdir/NonfinalizedCrystals/$CrystalID"
+
 if [[ "true" == "$completeOnly" ]]; then
     if [[ ! -d "$crystalWorkdir/NonfinalizedCrystals/$CrystalID" ]]; then
         die "Please put the crystal to complete at $crystalWorkdir/NonfinalizedCrystals/$CrystalID/."

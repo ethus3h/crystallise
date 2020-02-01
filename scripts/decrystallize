@@ -99,7 +99,7 @@ decrystInner() (
     getCrystalVersion() {
         if [[ "true" == "$offline" ]]; then
             if [[ ! -f "$offlineLocation/$CrystalAddress.coal5-ver" ]]; then
-                die ""
+                die "The crystal requested for unpacking is too old to be unpacked locally."
             knownCrystalCrystallizeVersion="$(<"$offlineLocation/$CrystalAddress.coal5-ver")"
         else
             metadata="$(fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID"_meta.xml)"

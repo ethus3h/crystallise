@@ -68,6 +68,9 @@ tempId="decrystallize-$(date-uuid)"
 
 mkdir "$tempId"
 
+if [[ "true" == "$offline" ]]; then
+fi
+
 crystalXzFileSize=1
 if [[ -t 1 ]]; then
     # used for pv progress indicator.

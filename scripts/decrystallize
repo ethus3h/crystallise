@@ -76,7 +76,7 @@ if [[ "true" == "$offline" ]]; then
             requestUrl="$1"
             shift
             dbDir="$(crystallize-getconf WorkDirectory)/.CrystalCache"
-        else
+        fi
             shift
             shift
         fi

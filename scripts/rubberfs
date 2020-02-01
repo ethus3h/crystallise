@@ -63,7 +63,7 @@ create)
         exit 1
     fi
     mkdir -p "/Wreathe/.Resources/RubberFS/$name/dev/"
-    #4T doesn't work: "truncate: failed to truncate '/Wreathe/.Resources/RubberFS/library/dev/StorageBlockDevice1' at 4398046511104 bytes: File too large" — wtf?! I don't have 3tb available either.
+    #4T doesn't work: "truncate: failed to truncate '/Wreathe/.Resources/RubberFS/library/dev/StorageBlockDevice1' at 4398046511104 bytes: File too large" — huh? I don't have 3tb available either.
     truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice1"
     truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice2"
     truncate -s 3T "/Wreathe/.Resources/RubberFS/$name/dev/StorageBlockDevice3"
@@ -486,7 +486,7 @@ historypull)
     ;;
 stub)
     if [[ ! -e "${EmberLibrary:?}" ]]; then
-        mkdir -p "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
+        mkdir -p "${EmberLibrary:?}"/CrystalIndex/
     else
         die "There appears to already be an Ember Library instance available; no action taken."
     fi

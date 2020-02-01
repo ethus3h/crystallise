@@ -25,7 +25,7 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 finishclean() {
     rm -f "${crystalWorkdir:?}/${CrystalID:?}.coal5"
 }
-trap 'if [[ -e "$crystalWorkdir/NonfinalizedCrystals/$CrystalID" ]]; then cat "$crystalWorkdir/NonfinalizedCrystals/$CrystalID" || true; fi; finishclean; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+trap 'if [[ -e "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID" ]]; then cat "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID" || true; fi; finishclean; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
 if [[ ! -d "${EmberLibrary:?}"/CrystalIndex/ ]]; then
     echo "ERROR: Could not find a usable Ember Library directory tree. Nothing done."
@@ -146,64 +146,64 @@ retryUntilSuccess 100 30 5 5 dig +short myip.opendns.com @resolver1.opendns.com 
 wait
 
 if [[ "true" == "$complete" ]]; then
-    if [[ ! -d "$crystalWorkdir/NonfinalizedCrystals/$CrystalID" ]]; then
-        die "Please put the crystal to complete at $crystalWorkdir/NonfinalizedCrystals/$CrystalID."
+    if [[ ! -d "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID" ]]; then
+        die "Please put the crystal to complete at $crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID."
     fi
-    echo "$0 $*" > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.cmd-completion"
-    pwd > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.cwd-completion"
+    echo "$0 $*" > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cmd-completion"
+    pwd > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cwd-completion"
 fi
 
 if [[ "false" == "$complete" ]]; then
-    echo "$0 $*" > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.cmd"
-    pwd > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.cwd"
+    echo "$0 $*" > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cmd"
+    pwd > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cwd"
 
-    crystallize-logsession "$useCustomPassphrase" "$customPassphrase" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID" "$CrystalID" "$@"
+    crystallize-logsession "$useCustomPassphrase" "$customPassphrase" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID" "$CrystalID" "$@"
 
     if [[ $crystallizeLeavePointer == true ]]; then
         mkdir -p "$crystallizePointerDir"
-        rsync -a --checksum "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.cmd" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.cwd" "$crystallizePointerDir"/
+        rsync -a --checksum "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cmd" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cwd" "$crystallizePointerDir"/
     fi
-    checkedxz "$crystalWorkdir/NonfinalizedCrystals/$CrystalID" -C sha256 -v -9 -e 2>&1
-    checkedxz "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.time-done.warc.gz" -C sha256 -v -9 -e 2>&1
-    checkedxz "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.local.idx" -C sha256 -v -9 -e 2>&1
-    checkedxz "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.deep.idx" -C sha256 -v -9 -e 2>&1
-    checkedxz "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.csum" -C sha256 -v -9 -e 2>&1
-    checkedxz "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.forks" -C sha256 -v -9 -e 2>&1
-    checkedxz "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.forks-csum" -C sha256 -v -9 -e 2>&1
-    gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.xz"
-    gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.time-done.warc.gz.xz"
-    gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.local.idx.xz"
-    gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.deep.idx.xz"
-    gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.csum.xz"
-    gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.forks.xz"
-    gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.forks-csum.xz"
-    gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.cmd"
-    gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.cwd"
-    gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.ostype"
-    rm "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.csum.xz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.local.idx.xz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.deep.idx.xz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.cmd" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.cwd" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.time-done.warc.gz.xz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.time-env.warc.gz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.time-start.warc.gz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.xz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.ip.warc.gz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.passphrase" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.ostype" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.forks.xz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.forks-csum.xz"
-    mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.xz.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-log"
-    mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.time-done.warc.gz.xz.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-timestamp"
-    mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.csum.xz.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-csum"
-    mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.local.idx.xz.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-idx-l"
-    mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.deep.idx.xz.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-idx-d"
-    mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.cmd.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-cmd"
-    mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.cwd.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-cwd"
-    mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.ostype.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-ostype"
-    mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.forks.xz.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-forks"
-    mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.forks-csum.xz.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-forks-csum"
+    checkedxz "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID" -C sha256 -v -9 -e 2>&1
+    checkedxz "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.time-done.warc.gz" -C sha256 -v -9 -e 2>&1
+    checkedxz "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.local.idx" -C sha256 -v -9 -e 2>&1
+    checkedxz "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.deep.idx" -C sha256 -v -9 -e 2>&1
+    checkedxz "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.csum" -C sha256 -v -9 -e 2>&1
+    checkedxz "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.forks" -C sha256 -v -9 -e 2>&1
+    checkedxz "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.forks-csum" -C sha256 -v -9 -e 2>&1
+    gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.xz"
+    gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.time-done.warc.gz.xz"
+    gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.local.idx.xz"
+    gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.deep.idx.xz"
+    gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.csum.xz"
+    gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.forks.xz"
+    gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.forks-csum.xz"
+    gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cmd"
+    gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cwd"
+    gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.ostype"
+    rm "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.csum.xz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.local.idx.xz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.deep.idx.xz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cmd" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cwd" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.time-done.warc.gz.xz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.time-env.warc.gz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.time-start.warc.gz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.xz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.ip.warc.gz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.passphrase" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.ostype" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.forks.xz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.forks-csum.xz"
+    mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.xz.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-log"
+    mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.time-done.warc.gz.xz.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-timestamp"
+    mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.csum.xz.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-csum"
+    mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.local.idx.xz.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-idx-l"
+    mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.deep.idx.xz.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-idx-d"
+    mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cmd.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cmd"
+    mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cwd.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cwd"
+    mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.ostype.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-ostype"
+    mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.forks.xz.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-forks"
+    mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.forks-csum.xz.gpg" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-forks-csum"
 fi
 
 if [[ "false" == "$offline" ]]; then
     if [[ "false" == "$completeOnly" ]]; then
         # Remove .coal5 if the upload fails, but only if uploading immediately.
-        trap 'cat "$crystalWorkdir/NonfinalizedCrystals/$CrystalID" || true; finishclean; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+        trap 'cat "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID" || true; finishclean; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
     fi
 
-    ia upload "$CrystalID" --retries=100 --verify --delete "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-log" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-idx-l" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-idx-d" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-csum" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-cmd" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-cwd" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-ostype" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-forks" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-forks-csum" 2>&1
-    ia upload "$CrystalID" --retries=100 --verify "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-timestamp" 2>&1
+    ia upload "$CrystalID" --retries=100 --verify --delete "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-log" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-idx-l" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-idx-d" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-csum" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cmd" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-cwd" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-ostype" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-forks" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-forks-csum" 2>&1
+    ia upload "$CrystalID" --retries=100 --verify "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-timestamp" 2>&1
 
     if [[ "true" == "$complete" ]]; then
-        ia upload "$CrystalID" --retries=100 --verify --delete "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.cmd-completion" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.cwd-completion" 2>&1
+        ia upload "$CrystalID" --retries=100 --verify --delete "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cmd-completion" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cwd-completion" 2>&1
     fi
 
     echo "Please wait..."
@@ -235,7 +235,7 @@ if [[ "false" == "$offline" ]]; then
         fi
     done
 
-    knownChecksum="$(grep ",stdin" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.checksums" | awk -F',' '{print $3}')"
+    knownChecksum="$(grep ",stdin" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.checksums" | awk -F',' '{print $3}')"
 
     retryUntilSuccess 1000 60 5 5 iasha1 "$CrystalID/$CrystalID.coal5" > /dev/null || die "Number of allowed retries exceeded without success."
     checksumLine="$(retryUntilSuccess 1000 60 5 5 iasha1 "$CrystalID/$CrystalID.coal5")" || die "Number of allowed retries exceeded without success."
@@ -246,7 +246,7 @@ if [[ "false" == "$offline" ]]; then
     fi
 
     # Now, check the local file's checksum again in case it's gotten damaged in the mean time somehow
-    knownChecksum="$(hashdeep -c sha1 -j0 -o fbcpsde < "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5" | grep ",stdin" | awk -F',' '{print $2}')"
+    knownChecksum="$(hashdeep -c sha1 -j0 -o fbcpsde < "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5" | grep ",stdin" | awk -F',' '{print $2}')"
     if [[ "$checksumLine" != "$knownChecksum" ]]; then
         die "ERROR! Checksum known by Internet Archive $checksumLine does not match new checksum known locally $knownChecksum."
     fi
@@ -271,13 +271,13 @@ if [[ "false" == "$offline" ]]; then
 
     echo "Retrieving remote index..."
 
-    rm -f "$crystalWorkdir/NonfinalizedCrystals/$CrystalID".json.xz
-    { retryUntilSuccess 100 30 5 5 wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.json"; } 2>&1
-    checkedxz "$crystalWorkdir/NonfinalizedCrystals/$CrystalID".json -C sha256 -9 -e -v 2>&1
+    rm -f "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID".json.xz
+    { retryUntilSuccess 100 30 5 5 wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" > "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.json"; } 2>&1
+    checkedxz "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID".json -C sha256 -9 -e -v 2>&1
 
-    rsync -av --progress --checksum "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.json.xz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.checksums" "${EmberLibrary:?}"/CrystalIndex/
+    rsync -av --progress --checksum "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.json.xz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.checksums" "${EmberLibrary:?}"/CrystalIndex/
 
-    rm "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.json.xz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.checksums"
+    rm "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.json.xz" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.checksums"
 
     # Next section registers the newly created crystal in the CrystalCache so an immediate decrystallize doesn't need to re-download it.
 
@@ -304,7 +304,7 @@ if [[ "false" == "$offline" ]]; then
     }
     trap finish EXIT
     # Don't remove .coal5 file if it fails after this point
-    trap 'cat "$crystalWorkdir/NonfinalizedCrystals/$CrystalID" || true; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+    trap 'cat "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID" || true; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
     [[ -e "$dbLinkPath.locked" ]] && die "This URL cache entry (for a supposedly new crystal) is already in use. This should never happen, and indicates a bug in crystallize."
 
@@ -320,7 +320,7 @@ if [[ "false" == "$offline" ]]; then
     dbFileDir="$dbDir/ByCount/${requestCount:?}/$hashSubdir"
     dbFilePath="$dbFileDir/$hashFull"
     mkdir -p "$dbFileDir"
-    mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5" "$dbFilePath"
+    mv "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5" "$dbFilePath"
     sha512sum < "$dbFilePath" | awk '{print $1;}' > "$checksumName"
     printf "%s" "$requestUrl" > "$dbLinkPath.url"
 
@@ -338,8 +338,8 @@ echo "Please wait, testing finished item..."
 testDecrystDir="$(bigTempDir)"
 (
     cd "$testDecrystDir" || die "cd failed"
-    decrystallize --passphrase "$(<"$crystalWorkdir/NonfinalizedCrystals/$CrystalID".tmp)" --lock-override "$CrystalID" 2>&1 || die "Could not decrystallize the finished crystal!"
-    rm "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.tmp"
+    decrystallize --passphrase "$(<"$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID".tmp)" --lock-override "$CrystalID" 2>&1 || die "Could not decrystallize the finished crystal!"
+    rm "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.tmp"
 )
 rm -r "${testDecrystDir:?}"
 
@@ -368,7 +368,7 @@ trap - ERR
 if [[ "false" == "$keepFiles" ]]; then
     rm -rf "${CrystallizePaths[@]}"
 fi
-trap 'cat "$crystalWorkdir/NonfinalizedCrystals/$CrystalID" || true; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+trap 'cat "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID" || true; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 set -o pipefail
 echo "Done cleaning up..."
 
@@ -392,7 +392,7 @@ chmod -R 644 "${EmberLibrary:?}"/CrystalIndex/
 chmod 755 "${EmberLibrary:?}"/CrystalIndex/
 
 if [[ "false" == "$offline" ]]; then
-    if rm -v "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-timestamp"; then
+    if rm -v "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-timestamp"; then
         #Clear the screen
         printf "\\033c"
 
@@ -406,5 +406,5 @@ if [[ "false" == "$offline" ]]; then
         exit 1
     fi
 else
-    echo "The LOCAL ONLY crystal is now available at $crystalWorkdir/NonfinalizedCrystals/$CrystalID."
+    echo "The LOCAL ONLY crystal is now available at $crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID."
 fi

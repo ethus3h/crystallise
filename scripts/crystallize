@@ -134,7 +134,7 @@ if [[ "--leave-pointer" == "$1" ]]; then
     echo "Pointer name: $crystallizePointerName"
 fi
 
-if [[ "false" == "$complete" ]]; then
+if [[ "false" == "$completeOnly" ]]; then
     CrystalID="C3-$(date-uuid)"
 fi
 

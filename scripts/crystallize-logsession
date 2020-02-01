@@ -33,7 +33,7 @@ CrystalID="$1"
 export CrystalID
 shift
 
-crystalWorkdir="$(crystallize-getconf WorkDirectory)"
+crystalWorkdir="$(crystallize-getconf WorkDirectory)/NonfinalizedCrystals/$CrystalID"
 export crystalWorkdir
 
 crystalTitle="$(crystallize-getconf InstallationIdentifier)"

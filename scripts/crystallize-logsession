@@ -361,6 +361,8 @@ rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.csum" "$crystalWorkd
 
 echo "rsynced..."
 
+if [[ "false" == "$offline" ]]; then
+
 trap - ERR
 #If GNU/Linux, set opt to 1 and unset optb; otherwise opposite
 [[ "$OSTYPE" = *inux* ]] && (( opt++ ))

@@ -27,7 +27,7 @@ finishclean() {
 }
 trap 'if [[ -e "$crystalWorkdir/$CrystalID" ]]; then cat "$crystalWorkdir/$CrystalID" || true; fi; finishclean; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
-if [[ ! -e "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/ ]]; then
+if [[ ! -e "${EmberLibrary:?}"/CrystalIndex/ ]]; then
     echo "ERROR: Could not find a usable Ember Library directory tree. Nothing done."
     exit 1
 fi
@@ -324,8 +324,8 @@ if [[ $crystallizeLeavePointer == true ]]; then
     #echo "Pointer name: $crystallizePointerName"
 fi
 
-chmod -R 644 "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
-chmod 755 "${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
+chmod -R 644 "${EmberLibrary:?}"/CrystalIndex/
+chmod 755 "${EmberLibrary:?}"/CrystalIndex/
 
 if rm -v "$crystalWorkdir/$CrystalID.coal5-timestamp"; then
     #Clear the screen

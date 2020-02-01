@@ -10,7 +10,7 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 
 CrystalID="$(iaident "$1")"
 
-pathPrefix="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/"$CrystalID"
+pathPrefix="${EmberLibrary:?}"/CrystalIndex/"$CrystalID"
 
 if ! [[ -e "$pathPrefix".csum-not-found ]]; then
     if [[ -e "$pathPrefix".csum ]]; then

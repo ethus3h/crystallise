@@ -17,7 +17,7 @@ fi
 
 pattern="$1"
 
-CrystalIndexDir="${EmberLibrary:?}"/Futuramerlin\ Projects/Data/Crystal\ Index/
+CrystalIndexDir="${EmberLibrary:?}"/CrystalIndex/
 
 if ! cd "$CrystalIndexDir" &> /dev/null; then
     sudo chown -R root:root "$CrystalIndexDir"

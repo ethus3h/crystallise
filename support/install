@@ -79,7 +79,7 @@ if [[ -e "support/$packageName.conf" ]]; then
 fi
 
 if [[ ! -e /Ember ]]; then
-	mkdir -p /Ember/CrystalIndex/
+    mkdir -p /Ember/CrystalIndex/
 fi
 
 #### End of Makefile install script template ####

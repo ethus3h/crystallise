@@ -14,8 +14,9 @@ if [[ -z "$requestUrl" ]] || [[ "--lock-override" == "$requestUrl" ]]; then
     dbDir="$(crystallize-getconf WorkDirectory)/.CrystalCache"
 else
     shift
+    shift
 fi
-if [[ ""]]
+if [[ "$1" == "--lock-override" ]]; then
 if ! hasWebProtocol "$requestUrl"; then
     requestUrl="$(iaurl "$requestUrl")"
 fi

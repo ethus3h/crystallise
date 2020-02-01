@@ -362,65 +362,65 @@ rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.csum" "$crystalWorkd
 echo "rsynced..."
 
 if [[ "false" == "$offline" ]]; then
-trap - ERR
-#If GNU/Linux, set opt to 1 and unset optb; otherwise opposite
-[[ "$OSTYPE" = *inux* ]] && (( opt++ ))
-[[ "$OSTYPE" != *inux* ]] && (( optb++ ))
-trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
-
-script ${optb+/dev/null} ${opt+-e} ${opt+-q} ${opt+-c} crystallize-internal-ia ${opt+/dev/null} 2>&1 | tee -a "$logfile" 1>&2
-
-{
-    #sendRetries=0
-    #until [[ $sendRetries -ge 100 ]]; do
-        #curl --location --raw -X PUT --data-binary @"$CrystalTmpUploadFile" --header "x-amz-auto-make-bucket:1" --header "x-archive-queue-derive:0" --header "x-archive-size-hint:$crystalFilesSize" --header "authorization: LOW $crystallizeAccessKey:$crystallizeSecretKey" --header "x-archive-meta-collection:$crystalCollection" --header "x-archive-meta-title:$CrystalID" --header "x-archive-meta-description:Crystal $CrystalID" --header "x-archive-meta-subject:Uploaded using Crystallize $crystallizeVersion; 1EA21BD8-DB7E-11E5-9733-728C37852114; $crystalTitle; $CrystalID" "http://s3.us.archive.org/$CrystalID/$CrystalID.coal5" && break
-    #    sendRetries=$((sendRetries+1))
-    #    sleep 30
-    #done
-
-    echo "Retrieving remote index..."
-
-    # allow when otherwise running offline
-    retryUntilSuccess 100 30 5 5 command wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" | tee "$crystalWorkdir/$CrystalID.json"
-
-    #If the opt(b) variable is unset, insert the text after "opt(b)+"
-    #opt is for GNU/Linux; optb is for others
-    script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-xz-b ${opt+/dev/null}
-
-    echo "Copying indices..."
-
-    cp "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.passphrase"
-
-    #Clear the screen
-    printf "\\033c"
-
-    echo "Time (log stage 3) locally:"
-
-    date +%Y-%m-%d-%H-%M-%S-%N
-    xxd -pu <<< "$(date +%z)"
-
-    date -u +%Y-%m-%d-%H-%M-%S-%N
-    xxd -pu <<< "$(date -u +%z)"
-
-    echo "Time (log stage 3) from http://timeapi.org/: "
-
     trap - ERR
-    wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-done" -e robots=off "http://www.timeapi.org/utc/now?\\Y-\\m-\\d-\\H-\\M-\\S-\\6N-\\z"
+    #If GNU/Linux, set opt to 1 and unset optb; otherwise opposite
+    [[ "$OSTYPE" = *inux* ]] && (( opt++ ))
+    [[ "$OSTYPE" != *inux* ]] && (( optb++ ))
     trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
-    echo "Time (log stage 3b) locally:"
+    script ${optb+/dev/null} ${opt+-e} ${opt+-q} ${opt+-c} crystallize-internal-ia ${opt+/dev/null} 2>&1 | tee -a "$logfile" 1>&2
 
-    date +%Y-%m-%d-%H-%M-%S-%N
-    xxd -pu <<< "$(date +%z)"
+    {
+        #sendRetries=0
+        #until [[ $sendRetries -ge 100 ]]; do
+            #curl --location --raw -X PUT --data-binary @"$CrystalTmpUploadFile" --header "x-amz-auto-make-bucket:1" --header "x-archive-queue-derive:0" --header "x-archive-size-hint:$crystalFilesSize" --header "authorization: LOW $crystallizeAccessKey:$crystallizeSecretKey" --header "x-archive-meta-collection:$crystalCollection" --header "x-archive-meta-title:$CrystalID" --header "x-archive-meta-description:Crystal $CrystalID" --header "x-archive-meta-subject:Uploaded using Crystallize $crystallizeVersion; 1EA21BD8-DB7E-11E5-9733-728C37852114; $crystalTitle; $CrystalID" "http://s3.us.archive.org/$CrystalID/$CrystalID.coal5" && break
+        #    sendRetries=$((sendRetries+1))
+        #    sleep 30
+        #done
 
-    date -u +%Y-%m-%d-%H-%M-%S-%N
-    xxd -pu <<< "$(date -u +%z)"
+        echo "Retrieving remote index..."
 
-    #Clear the screen
-    printf "\\033c"
+        # allow when otherwise running offline
+        retryUntilSuccess 100 30 5 5 command wget --delete-after --save-headers --output-document - "https://archive.org/metadata/$CrystalID/" | tee "$crystalWorkdir/$CrystalID.json"
 
-    echo "Finishing $CrystalID..."
+        #If the opt(b) variable is unset, insert the text after "opt(b)+"
+        #opt is for GNU/Linux; optb is for others
+        script ${optb+/dev/null} ${opt+-e} ${opt+-c} crystallize-internal-xz-b ${opt+/dev/null}
 
-    echo "Please wait..."
-} &>> "$logfile"
+        echo "Copying indices..."
+
+        cp "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.passphrase"
+
+        #Clear the screen
+        printf "\\033c"
+
+        echo "Time (log stage 3) locally:"
+
+        date +%Y-%m-%d-%H-%M-%S-%N
+        xxd -pu <<< "$(date +%z)"
+
+        date -u +%Y-%m-%d-%H-%M-%S-%N
+        xxd -pu <<< "$(date -u +%z)"
+
+        echo "Time (log stage 3) from http://timeapi.org/: "
+
+        trap - ERR
+        wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-done" -e robots=off "http://www.timeapi.org/utc/now?\\Y-\\m-\\d-\\H-\\M-\\S-\\6N-\\z"
+        trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+
+        echo "Time (log stage 3b) locally:"
+
+        date +%Y-%m-%d-%H-%M-%S-%N
+        xxd -pu <<< "$(date +%z)"
+
+        date -u +%Y-%m-%d-%H-%M-%S-%N
+        xxd -pu <<< "$(date -u +%z)"
+
+        #Clear the screen
+        printf "\\033c"
+
+        echo "Finishing $CrystalID..."
+
+        echo "Please wait..."
+    } &>> "$logfile"
 fi

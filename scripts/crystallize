@@ -363,5 +363,5 @@ if [[ "false" == "$offline" ]]; then
         exit 1
     fi
 else
-    echo "The NON-FINALIZED crystal is now available in $crystalWorkdir/NonfinalizedCrystals/$CrystalID."
+    echo "The NON-FINALIZED crystal is now available at $crystalWorkdir/NonfinalizedCrystals/$CrystalID."
 fi

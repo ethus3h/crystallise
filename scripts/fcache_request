@@ -20,6 +20,7 @@ lockOverride="false"
 if [[ "$1" == "--lock-override" ]]; then
     lockOverride="true"
 fi
+
 if ! hasWebProtocol "$requestUrl"; then
     requestUrl="$(iaurl "$requestUrl")"
 fi

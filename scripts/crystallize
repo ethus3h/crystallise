@@ -339,7 +339,7 @@ done
 #echo "Cleaning up..."
 set +o pipefail
 trap - ERR
-if [[ "$keepFiles" != "true" ]]; then
+if [[ "false" == "$keepFiles" ]]; then
     rm -rf "${CrystallizePaths[@]}"
 fi
 trap 'cat "$crystalWorkdir/NonfinalizedCrystals/$CrystalID" || true; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR

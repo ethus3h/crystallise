@@ -32,7 +32,7 @@ if [[ ! -d "${EmberLibrary:?}"/CrystalIndex/ ]]; then
     exit 1
 fi
 
-if [[ ! -d "${EmberLibrary:?}"/CrystalIndex/ ]]; then
+if [[ ! -d "${EmberLibrary:?}"/ember-web-site/ ]]; then
     echo "ERROR: Could not find a usable Ember Library directory tree. Nothing done."
     exit 1
 fi

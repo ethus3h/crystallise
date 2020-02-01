@@ -210,8 +210,8 @@ if [[ "false" == "$offline" ]]; then
     ia upload "$CrystalID" --retries=100 --verify "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.coal5-timestamp" 2>&1
 
     if [[ "true" == "$complete" ]]; then
-    gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cmd"
-    gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cwd"
+        gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cmd"
+        gpg --yes -c --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID".tmp "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cwd"
         ia upload "$CrystalID" --retries=100 --verify --delete "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cmd-completion" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID.cwd-completion" 2>&1
     fi
 

@@ -55,7 +55,7 @@ fi
 completeOnly="false"
 if [[ "--complete" == "$1"  ]]; then
     # Upload a crystal that's already been packaged. Provide the CrystalID as the next parameter.
-    if [[ "true" == "--offline" ]]; then
+    if [[ "true" == "$offline" ]]; then
         die "--complete can not be used with --offline."
     fi
     completeOnly="true"
@@ -66,9 +66,9 @@ if [[ "--complete" == "$1"  ]]; then
 fi
 
 backup="false"
-if [[ "$1" == "--backup" ]]; then
+if [[ "--backup" == "$1" ]]; then
     # Back up the crystal locally after publishing.
-    if [[ "true" == "--offline" ]]; then
+    if [[ "true" == "$offline" ]]; then
         die "--backup can not be used with --offline."
     fi
     backup="true"
@@ -76,7 +76,7 @@ if [[ "$1" == "--backup" ]]; then
 fi
 
 leaveLocked=""
-if [[ "$1" == "--leave-locked" ]]; then
+if [[ "--leave-locked" == "$1" ]]; then
     leaveLocked="true"
     shift
 fi

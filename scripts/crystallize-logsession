@@ -34,330 +34,330 @@ logfile="$1"
 shift
 
 if [[ "false" == "$complete" ]]; then
-crystallize --version 2>&1 | tee -a "$logfile"
+    crystallize --version 2>&1 | tee -a "$logfile"
 
-echo "The crystal will have the following address when it is ready: $CrystalID" >> "$logfile" # not using tee because it's already been printed to the user by the crystallize script
+    echo "The crystal will have the following address when it is ready: $CrystalID" >> "$logfile" # not using tee because it's already been printed to the user by the crystallize script
 
-{
-    echo "Time (log stage 1) locally:"
+    {
+        echo "Time (log stage 1) locally:"
 
-    date +%Y-%m-%d-%H-%M-%S-%N
-    xxd -pu <<< "$(date +%z)"
+        date +%Y-%m-%d-%H-%M-%S-%N
+        xxd -pu <<< "$(date +%z)"
 
-    date -u +%Y-%m-%d-%H-%M-%S-%N
-    xxd -pu <<< "$(date -u +%z)"
+        date -u +%Y-%m-%d-%H-%M-%S-%N
+        xxd -pu <<< "$(date -u +%z)"
 
-    crystalWorkdir="$(crystallize-getconf WorkDirectory)"
-    export crystalWorkdir
+        crystalWorkdir="$(crystallize-getconf WorkDirectory)"
+        export crystalWorkdir
 
-    echo "Time (log stage 1) from http://timeapi.org/: "
+        echo "Time (log stage 1) from http://timeapi.org/: "
 
-    trap - ERR
-    # allow when otherwise running offline
-    command wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-start" -e robots=off "http://www.timeapi.org/utc/now?\\Y-\\m-\\d-\\H-\\M-\\S-\\6N-\\z"
-    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+        trap - ERR
+        # allow when otherwise running offline
+        command wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-start" -e robots=off "http://www.timeapi.org/utc/now?\\Y-\\m-\\d-\\H-\\M-\\S-\\6N-\\z"
+        trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
-    echo "Time (log stage 1b) locally:"
+        echo "Time (log stage 1b) locally:"
 
-    date +%Y-%m-%d-%H-%M-%S-%N
-    xxd -pu <<< "$(date +%z)"
+        date +%Y-%m-%d-%H-%M-%S-%N
+        xxd -pu <<< "$(date +%z)"
 
-    date -u +%Y-%m-%d-%H-%M-%S-%N
-    xxd -pu <<< "$(date -u +%z)"
+        date -u +%Y-%m-%d-%H-%M-%S-%N
+        xxd -pu <<< "$(date -u +%z)"
 
-    echo "Working in $crystalWorkdir".
+        echo "Working in $crystalWorkdir".
 
-    echo "Arguments: " "$@"
+        echo "Arguments: " "$@"
 
-    echo "Configuration: "
+        echo "Configuration: "
 
-    cat /usr/local/etc/crystallize.conf
+        cat /usr/local/etc/crystallize.conf
 
-    crystalTitle="$(crystallize-getconf InstallationIdentifier)"
-    assert true [[ -n "$crystalTitle" ]]
-    export crystalTitle
-    crystalCollection="$(crystallize-getconf Collection)"
-    export crystalCollection
-    [[ "$useCustomPassphrase" != "true" ]] && crystallizePassphrase="$(crystallize-getconf Passphrase)"
-    export crystallizePassphrase
+        crystalTitle="$(crystallize-getconf InstallationIdentifier)"
+        assert true [[ -n "$crystalTitle" ]]
+        export crystalTitle
+        crystalCollection="$(crystallize-getconf Collection)"
+        export crystalCollection
+        [[ "$useCustomPassphrase" != "true" ]] && crystallizePassphrase="$(crystallize-getconf Passphrase)"
+        export crystallizePassphrase
 
-    export CrystalID="$1"
+        export CrystalID="$1"
 
-    echo "Environment: "
+        echo "Environment: "
 
-    uname -ap
+        uname -ap
 
-    echo "Environment variables: "
+        echo "Environment variables: "
 
-    printenv
+        printenv
 
-    echo "Network environment: "
+        echo "Network environment: "
 
-    echo "IP address from DNS: "
+        echo "IP address from DNS: "
 
-    retryUntilSuccess 100 30 5 5 dig +short myip.opendns.com @resolver1.opendns.com
+        retryUntilSuccess 100 30 5 5 dig +short myip.opendns.com @resolver1.opendns.com
 
-    echo "IP address from http://icanhazip.com/: "
+        echo "IP address from http://icanhazip.com/: "
 
-    trap - ERR
-    # allow when otherwise running offline
-    command wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.ip" -e robots=off http://icanhazip.com/ &
-    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+        trap - ERR
+        # allow when otherwise running offline
+        command wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.ip" -e robots=off http://icanhazip.com/ &
+        trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
-    echo "Time (log stage 2) locally:"
+        echo "Time (log stage 2) locally:"
 
-    date +%Y-%m-%d-%H-%M-%S-%N
-    xxd -pu <<< "$(date +%z)"
+        date +%Y-%m-%d-%H-%M-%S-%N
+        xxd -pu <<< "$(date +%z)"
 
-    date -u +%Y-%m-%d-%H-%M-%S-%N
-    xxd -pu <<< "$(date -u +%z)"
+        date -u +%Y-%m-%d-%H-%M-%S-%N
+        xxd -pu <<< "$(date -u +%z)"
 
-    echo "Time (log stage 2) from http://timeapi.org/: "
+        echo "Time (log stage 2) from http://timeapi.org/: "
 
-    trap - ERR
-    # allow when otherwise running offline
-    command wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-env" -e robots=off "http://www.timeapi.org/utc/now?\\Y-\\m-\\d-\\H-\\M-\\S-\\6N-\\z" &
-    trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+        trap - ERR
+        # allow when otherwise running offline
+        command wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-env" -e robots=off "http://www.timeapi.org/utc/now?\\Y-\\m-\\d-\\H-\\M-\\S-\\6N-\\z" &
+        trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
-    echo "Time (log stage 2b) locally:"
+        echo "Time (log stage 2b) locally:"
 
-    date +%Y-%m-%d-%H-%M-%S-%N
-    xxd -pu <<< "$(date +%z)"
+        date +%Y-%m-%d-%H-%M-%S-%N
+        xxd -pu <<< "$(date +%z)"
 
-    date -u +%Y-%m-%d-%H-%M-%S-%N
-    xxd -pu <<< "$(date -u +%z)"
+        date -u +%Y-%m-%d-%H-%M-%S-%N
+        xxd -pu <<< "$(date -u +%z)"
 
-    echo "20170928201310973799400_2d303430300a70ed51ebe5a8492cb3f6b5e043becae2"
-    cat "$(which ember_bash_setup)"
-    echo "20170928201310973799400_2d303430300a70ed51ebe5a8492cb3f6b5e043becae2"
+        echo "20170928201310973799400_2d303430300a70ed51ebe5a8492cb3f6b5e043becae2"
+        cat "$(which ember_bash_setup)"
+        echo "20170928201310973799400_2d303430300a70ed51ebe5a8492cb3f6b5e043becae2"
 
-    printf "%s" "$crystallizePassphrase" > "$crystalWorkdir/$CrystalID".tmp
+        printf "%s" "$crystallizePassphrase" > "$crystalWorkdir/$CrystalID".tmp
 
-    CrystallizeFirstArg="$1"
-    shift
+        CrystallizeFirstArg="$1"
+        shift
 
-    # Resolve relative paths in the arguments, since GNU tar's -P doesn't
-    CrystallizePaths=( "$@" )
-    echo "First entry in array: ${CrystallizePaths[0]}"
-    splitForksTarLocation="$crystalWorkdir/$CrystalID".forkdir
-    echo "$OSTYPE" > "$crystalWorkdir/$CrystalID".ostype
-    # We make the folder for split forks on all platforms so it won't be missing when decrystallizing.
-    mkdir -p "$splitForksTarLocation"
-    touch "$splitForksTarLocation/06968986-7c96-406f-b7b2-a90fe40293bd" # need at least one file in the folder so hashdeep will work on it
-    for i in "${!CrystallizePaths[@]}"; do
-        # resolve path
-        echo "Trying to resolve ${CrystallizePaths[$i]}..."
-        setVariableToCommandOutput "abspath" "emreadlink" "${CrystallizePaths[$i]}"
-        [[ -h "${abspath:?}" ]] || [[ -e "${abspath:?}" ]] || die "The file ${abspath:?} requested to be crystallized does not exist."
-        CrystallizePaths[$i]="${abspath:?}"
-        # Tar on macOS will merge resource forks into their corresponding files even if they were separate (split into AppleDouble files in __MACOSX folders) at creation time. To work around this, we need to find any pre-split resource forks and tar them separately. (Otherwise, the files won't be the same after being decrystallized.)
-        # We need to do this on all platforms since the later main tar command unconditionally excludes all items named __MACOSX.
-        # TODO: The non-split resource forks of files should be checksummed as well.
-        pathToFindResourceForks="${CrystallizePaths[$i]}"
-        echo "Looking for pre-split resource forks in $pathToFindResourceForks"
-        splitForksTarWanted="tar"
-        if [[ "$OSTYPE" == darwin* ]]; then
-            splitForksTarWanted="gtar"
+        # Resolve relative paths in the arguments, since GNU tar's -P doesn't
+        CrystallizePaths=( "$@" )
+        echo "First entry in array: ${CrystallizePaths[0]}"
+        splitForksTarLocation="$crystalWorkdir/$CrystalID".forkdir
+        echo "$OSTYPE" > "$crystalWorkdir/$CrystalID".ostype
+        # We make the folder for split forks on all platforms so it won't be missing when decrystallizing.
+        mkdir -p "$splitForksTarLocation"
+        touch "$splitForksTarLocation/06968986-7c96-406f-b7b2-a90fe40293bd" # need at least one file in the folder so hashdeep will work on it
+        for i in "${!CrystallizePaths[@]}"; do
+            # resolve path
+            echo "Trying to resolve ${CrystallizePaths[$i]}..."
+            setVariableToCommandOutput "abspath" "emreadlink" "${CrystallizePaths[$i]}"
+            [[ -h "${abspath:?}" ]] || [[ -e "${abspath:?}" ]] || die "The file ${abspath:?} requested to be crystallized does not exist."
+            CrystallizePaths[$i]="${abspath:?}"
+            # Tar on macOS will merge resource forks into their corresponding files even if they were separate (split into AppleDouble files in __MACOSX folders) at creation time. To work around this, we need to find any pre-split resource forks and tar them separately. (Otherwise, the files won't be the same after being decrystallized.)
+            # We need to do this on all platforms since the later main tar command unconditionally excludes all items named __MACOSX.
+            # TODO: The non-split resource forks of files should be checksummed as well.
+            pathToFindResourceForks="${CrystallizePaths[$i]}"
+            echo "Looking for pre-split resource forks in $pathToFindResourceForks"
+            splitForksTarWanted="tar"
+            if [[ "$OSTYPE" == darwin* ]]; then
+                splitForksTarWanted="gtar"
+            fi
+            find "$pathToFindResourceForks" \( \( -name "__MACOSX" -or -name ".AppleDouble" \) -or -name "._*" \) -exec bash -c 'source ember_bash_setup &> /dev/null; '"$splitForksTarWanted"' -cv -P -S --format pax "$0" > "$1/$(date-uuid)".pax' {} "$splitForksTarLocation" \;
+        done
+    } &>> "$logfile"
+
+    CrystallizePaths+=("$crystalWorkdir/$CrystalID.forks-csum")
+    CrystallizePaths+=("$crystalWorkdir/$CrystalID.forks")
+    CrystallizePaths+=("$crystalWorkdir/$CrystalID.ostype")
+
+    {
+        echo "Creating checksum file for split resource forks, if any..."
+        csum "$splitForksTarLocation" - > "$crystalWorkdir/$CrystalID.forks-csum"
+
+        echo "Packing split resource forks, if any..."
+        tar -cv -P -S --format pax "$splitForksTarLocation" > "$crystalWorkdir/$CrystalID.forks"
+        rm -r "${splitForksTarLocation:?}"
+
+        echo "Creating checksum file..."
+        csum "${CrystallizePaths[@]}" - > "$crystalWorkdir/$CrystalID.csum"
+    } 2>&1 | tee -a "$logfile"
+
+    # TODO: Check right before deleting that no changes have been made to the files being crystallized, to avoid losing those changes.
+    # laterCheckCrystallizePaths=("${CrystallizePaths[@]}")
+
+    CrystallizePaths+=("$crystalWorkdir/$CrystalID.csum")
+
+    echo "Building local index..." | tee -a "$logfile"
+
+    hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -e -o fbsd "$crystalWorkdir/""${CrystallizeFirstArg:?}" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.local.idx" 2>&1 | tee -a "$logfile" &
+    localIndexPid="$!"
+
+    echo "Building deep index..." | tee -a "$logfile"
+
+    hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -e -o fbsd -r "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.deep.idx" 2>&1 | tee -a "$logfile"
+
+    {
+        echo "Waiting for local index..."
+        wait "$localIndexPid"
+
+        echo "Counting size..."
+
+        crystalFilesSize="$(disk-size-in-bytes "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID")"
+    } &>> "$logfile"
+
+    #get available memory
+    memlimit=-1
+    if hash free 2>/dev/null; then
+        if free | grep -q buff/cache; then
+            #free has one column for buffers and cache
+            memlimit="$(free | grep Mem: | awk 'FNR == 1 {print ($4+$6)}')"
+        else
+            #free has separate columns for buffers and cache
+            memlimit="$(free | grep Mem: | awk 'FNR == 1 {print ($4+$6+$7)}')"
         fi
-        find "$pathToFindResourceForks" \( \( -name "__MACOSX" -or -name ".AppleDouble" \) -or -name "._*" \) -exec bash -c 'source ember_bash_setup &> /dev/null; '"$splitForksTarWanted"' -cv -P -S --format pax "$0" > "$1/$(date-uuid)".pax' {} "$splitForksTarLocation" \;
-    done
-} &>> "$logfile"
-
-CrystallizePaths+=("$crystalWorkdir/$CrystalID.forks-csum")
-CrystallizePaths+=("$crystalWorkdir/$CrystalID.forks")
-CrystallizePaths+=("$crystalWorkdir/$CrystalID.ostype")
-
-{
-    echo "Creating checksum file for split resource forks, if any..."
-    csum "$splitForksTarLocation" - > "$crystalWorkdir/$CrystalID.forks-csum"
-
-    echo "Packing split resource forks, if any..."
-    tar -cv -P -S --format pax "$splitForksTarLocation" > "$crystalWorkdir/$CrystalID.forks"
-    rm -r "${splitForksTarLocation:?}"
-
-    echo "Creating checksum file..."
-    csum "${CrystallizePaths[@]}" - > "$crystalWorkdir/$CrystalID.csum"
-} 2>&1 | tee -a "$logfile"
-
-# TODO: Check right before deleting that no changes have been made to the files being crystallized, to avoid losing those changes.
-# laterCheckCrystallizePaths=("${CrystallizePaths[@]}")
-
-CrystallizePaths+=("$crystalWorkdir/$CrystalID.csum")
-
-echo "Building local index..." | tee -a "$logfile"
-
-hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -e -o fbsd "$crystalWorkdir/""${CrystallizeFirstArg:?}" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.local.idx" 2>&1 | tee -a "$logfile" &
-localIndexPid="$!"
-
-echo "Building deep index..." | tee -a "$logfile"
-
-hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -e -o fbsd -r "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" | tee "$crystalWorkdir/$CrystalID.deep.idx" 2>&1 | tee -a "$logfile"
-
-{
-    echo "Waiting for local index..."
-    wait "$localIndexPid"
-
-    echo "Counting size..."
-
-    crystalFilesSize="$(disk-size-in-bytes "$crystalWorkdir/""$CrystallizeFirstArg" "${CrystallizePaths[@]}" "$crystalWorkdir/$CrystalID")"
-} &>> "$logfile"
-
-#get available memory
-memlimit=-1
-if hash free 2>/dev/null; then
-    if free | grep -q buff/cache; then
-        #free has one column for buffers and cache
-        memlimit="$(free | grep Mem: | awk 'FNR == 1 {print ($4+$6)}')"
+        #Output is in kilobytes
+        memlimit="$((memlimit * 1000))"
+    elif hash vm_stat 2>/dev/null; then
+        #The system doesn't have the free command; try vm_stat
+        #use sum of free+inactive from vm_stat
+        freel="$(vm_stat | grep "Pages free:" | awk 'FNR == 1 {print ($3)}')"
+        free="${freel::${#freel}-1}"
+        inactivel="$(vm_stat | grep "Pages inactive:" | awk 'FNR == 1 {print ($3)}')"
+        inactive="${inactivel::${#inactivel}-1}"
+        memlimit="$((free + inactive))"
+        #Output is in 4096-byte pages
+        memlimit="$((memlimit * 4096))"
     else
-        #free has separate columns for buffers and cache
-        memlimit="$(free | grep Mem: | awk 'FNR == 1 {print ($4+$6+$7)}')"
+        warn "Could not determine how much memory is available." 2>&1 | tee -a "$logfile"
     fi
-    #Output is in kilobytes
-    memlimit="$((memlimit * 1000))"
-elif hash vm_stat 2>/dev/null; then
-    #The system doesn't have the free command; try vm_stat
-    #use sum of free+inactive from vm_stat
-    freel="$(vm_stat | grep "Pages free:" | awk 'FNR == 1 {print ($3)}')"
-    free="${freel::${#freel}-1}"
-    inactivel="$(vm_stat | grep "Pages inactive:" | awk 'FNR == 1 {print ($3)}')"
-    inactive="${inactivel::${#inactivel}-1}"
-    memlimit="$((free + inactive))"
-    #Output is in 4096-byte pages
-    memlimit="$((memlimit * 4096))"
-else
-    warn "Could not determine how much memory is available." 2>&1 | tee -a "$logfile"
-fi
 
-memlimit="$((memlimit - 1073741824))"
+    memlimit="$((memlimit - 1073741824))"
 
-if [[ "$memlimit" -lt 1073741824 ]]; then
-    warn "Could only get $memlimit available bytes of memory. Trying with a 1GB limit anyway."
-    memlimit="1073741824"
-fi
+    if [[ "$memlimit" -lt 1073741824 ]]; then
+        warn "Could only get $memlimit available bytes of memory. Trying with a 1GB limit anyway."
+        memlimit="1073741824"
+    fi
 
-{
-    echo "cd \"$(pwd)\""
-    echo "CrystalID=\"$CrystalID\""
-    echo "crystalWorkdir=\"$crystalWorkdir\""
-    echo "crystalTitle=\"$crystalTitle\""
-    echo "crystallizeVersion=\"${crystallizeVersion:?}\""
-    echo "crystalCollection=\"$crystalCollection\""
+    {
+        echo "cd \"$(pwd)\""
+        echo "CrystalID=\"$CrystalID\""
+        echo "crystalWorkdir=\"$crystalWorkdir\""
+        echo "crystalTitle=\"$crystalTitle\""
+        echo "crystallizeVersion=\"${crystallizeVersion:?}\""
+        echo "crystalCollection=\"$crystalCollection\""
 
-    echo "Filesize: $crystalFilesSize"
-    # For the progress bar, the estimate should be scaled up a bit to account
-    # for the overhead of tarring the files (the amount varies depending
-    # on the size of the files — many small files have more overhead than
-    # a few big files). So, multiply the filesize estimate by 1.2, since that
-    # seems to be a fairly typical increase, although this isn't scientific.
-    # Because bash doesn't support arethmetic with decimals, instead of
-    # multiplying by 1.2 directly, I multiply by 12 and then divide by 10,
-    # which I'm pretty sure is the same thing.
-    crystalFilesSize=$(( crystalFilesSize * 12 ))
-    crystalFilesSize=$(( crystalFilesSize / 10 ))
-    echo "Filesize estimate: $crystalFilesSize"
+        echo "Filesize: $crystalFilesSize"
+        # For the progress bar, the estimate should be scaled up a bit to account
+        # for the overhead of tarring the files (the amount varies depending
+        # on the size of the files — many small files have more overhead than
+        # a few big files). So, multiply the filesize estimate by 1.2, since that
+        # seems to be a fairly typical increase, although this isn't scientific.
+        # Because bash doesn't support arethmetic with decimals, instead of
+        # multiplying by 1.2 directly, I multiply by 12 and then divide by 10,
+        # which I'm pretty sure is the same thing.
+        crystalFilesSize=$(( crystalFilesSize * 12 ))
+        crystalFilesSize=$(( crystalFilesSize / 10 ))
+        echo "Filesize estimate: $crystalFilesSize"
 
-    echo "Sending..."
-} &>> "$logfile"
+        echo "Sending..."
+    } &>> "$logfile"
 
-# Get API keys for the non-streaming upload method
-# crystallizeAccessKey="$(grep access ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
-# crystallizeSecretKey="$(grep secret ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
-# FIXME: May continue even when hashdeep is missing, if it were not for the next line
-hashdeep <<< '' || die
-# pack files into stream | measure rate of stream's flow | compress the stream | encrypt the stream | send the input to a checksummer and to the output | send the stream to ia
-# For debugging the curl command, can add tee >(cat > "$crystalWorkdir/$CrystalID.local-coal5") to the pipeline to get a local copy of the coal5
-# For the streaming upload (broken atm), (also remove the TmpUploadFile and pipe directly) do: s3-streaming-upload s3.us.archive.org "$crystalCollection" "$CrystalID" "$CrystalID.coal5" "$crystalFilesSize" "$crystalTitle" "Crystal $CrystalID" "Uploaded using Crystallize $crystallizeVersion; 1EA21BD8-DB7E-11E5-9733-728C37852114; $crystalTitle; $CrystalID"
-CrystalTmpUploadFile="$crystalWorkdir/$CrystalID.coal5"
-export CrystalTmpUploadFile
+    # Get API keys for the non-streaming upload method
+    # crystallizeAccessKey="$(grep access ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
+    # crystallizeSecretKey="$(grep secret ~/.config/ia.ini | head -n 1 | awk '{ print $3 }')"
+    # FIXME: May continue even when hashdeep is missing, if it were not for the next line
+    hashdeep <<< '' || die
+    # pack files into stream | measure rate of stream's flow | compress the stream | encrypt the stream | send the input to a checksummer and to the output | send the stream to ia
+    # For debugging the curl command, can add tee >(cat > "$crystalWorkdir/$CrystalID.local-coal5") to the pipeline to get a local copy of the coal5
+    # For the streaming upload (broken atm), (also remove the TmpUploadFile and pipe directly) do: s3-streaming-upload s3.us.archive.org "$crystalCollection" "$CrystalID" "$CrystalID.coal5" "$crystalFilesSize" "$crystalTitle" "Crystal $CrystalID" "Uploaded using Crystallize $crystallizeVersion; 1EA21BD8-DB7E-11E5-9733-728C37852114; $crystalTitle; $CrystalID"
+    CrystalTmpUploadFile="$crystalWorkdir/$CrystalID.coal5"
+    export CrystalTmpUploadFile
 
-# macOS tar doesn't want backslashes to be escaped in file names
-if [[ "$OSTYPE" == darwin* ]]; then
-    tarCrystallizePaths=("${CrystallizePaths[@]}")
-else
-    tarCrystallizePaths=("${CrystallizePaths[@]//\\/\\\\}")
-fi
-
-set +o pipefail
-{
-    # We need to exclude any __MACOSX files so they don't clobber the existing (non-split) resource forks of the files they correspond to.
-    tar -cv -P -S --format pax --exclude '__MACOSX' --exclude '.AppleDouble' --exclude "._*" "$crystalWorkdir/""$CrystallizeFirstArg" "${tarCrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.time-env.warc.gz" | pv -tparbIfei 0.1 -s "$crystalFilesSize" | checkedxz --request-wait-after - -k -C sha256 -T 0 -0 --memlimit-compress="$memlimit" | gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - | tee >(hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -o fbcpsde > "$crystalWorkdir/$CrystalID.checksums") > "$CrystalTmpUploadFile" 2>&1 | tee -a "$logfile"
-} 2>&1
-
-# Detect case in which tee got corrupt data, or it was corrupted during tee/hashdeep.
-# If this happened, get a new checksum and use that one: corruption in the file between tarring and now should be caught by the faux-decrystallize pre-check.
-knownHashdeepChecksum="$(<"$crystalWorkdir/$CrystalID.checksums")"
-echo "Initial logsession checksums: $knownHashdeepChecksum" >> "$logfile"
-newFileChecksum="$(hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -o fbcpsde < "$crystalWorkdir/$CrystalID.coal5")"
-echo "New logsession checksums: $newFileChecksum" >> "$logfile"
-if [[ "$newFileChecksum" != "$knownHashdeepChecksum" ]]; then
-    # Checksumming the file twice gave two different results, so try to get something reproducible.
-    newFileChecksumB="$(hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -o fbcpsde < "$crystalWorkdir/$CrystalID.coal5")"
-    echo "Recovery logsession checksums: $newFileChecksum" >> "$logfile"
-    if [[ "$newFileChecksumB" == "$knownHashdeepChecksum" ]] || [[ "$newFileChecksumB" == "$newFileChecksum" ]]; then
-        # The recovery checksum matches one of the previously stored checksums, so it's probably right. Save it to the file instead.
-        print "$newFileChecksumB" > "$crystalWorkdir/$CrystalID.checksums"
+    # macOS tar doesn't want backslashes to be escaped in file names
+    if [[ "$OSTYPE" == darwin* ]]; then
+        tarCrystallizePaths=("${CrystallizePaths[@]}")
     else
-        die "Could not get a stable checksum for the packed file. Is your computer's memory bad? (Or this could be a bug in Crystallize, but I haven't seen it be.)"
+        tarCrystallizePaths=("${CrystallizePaths[@]//\\/\\\\}")
     fi
-fi
-echo "Selected logsession checksums: $(<"$crystalWorkdir/$CrystalID.checksums")" >> "$logfile"
 
-exitCodes=("${PIPESTATUS[@]}") # this pattern for copying an array doesn't "work for associative arrays, or for arrays with non-contiguous indices". (quotation from https://stackoverflow.com/questions/19417015/how-to-copy-an-array-in-bash)
-exitcode="${exitCodes[0]}"
-#Ignore exit code 1 from tar on Linux, which indicates files changed while reading; see http://stackoverflow.com/questions/20318852/tar-file-changed-as-we-read-it
-if [[ "$exitcode" != "0" ]] && [[ $OSTYPE != *inux* ]]; then
-    exit "$exitcode"
-fi
-if [[ "$exitcode" != "1" ]] && [[ "$exitcode" != "0" ]]; then
-    exit "$exitcode"
-fi
-pipecheck "${exitCodes[@]:1}"
-set -o pipefail
+    set +o pipefail
+    {
+        # We need to exclude any __MACOSX files so they don't clobber the existing (non-split) resource forks of the files they correspond to.
+        tar -cv -P -S --format pax --exclude '__MACOSX' --exclude '.AppleDouble' --exclude "._*" "$crystalWorkdir/""$CrystallizeFirstArg" "${tarCrystallizePaths[@]}" "$crystalWorkdir/$CrystalID" "$crystalWorkdir/$CrystalID.local.idx" "$crystalWorkdir/$CrystalID.deep.idx" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.tmp" "$crystalWorkdir/$CrystalID.time-start.warc.gz" "$crystalWorkdir/$CrystalID.ip.warc.gz" "$crystalWorkdir/$CrystalID.time-env.warc.gz" | pv -tparbIfei 0.1 -s "$crystalFilesSize" | checkedxz --request-wait-after - -k -C sha256 -T 0 -0 --memlimit-compress="$memlimit" | gpg --yes -c -v --cipher-algo AES256 --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - | tee >(hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -o fbcpsde > "$crystalWorkdir/$CrystalID.checksums") > "$CrystalTmpUploadFile" 2>&1 | tee -a "$logfile"
+    } 2>&1
 
-{
-    echo "Please wait, pre-testing item before upload..."
-    testDecrystDir="$(bigTempDir)"
-    tempTestDecrystId="$crystalWorkdir/.unpack-test-$(date-uuid)"
-    trap 'rm -r "${tempTestDecrystId:?}"; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
-    (
-        cd "$testDecrystDir" || die "cd failed"
+    # Detect case in which tee got corrupt data, or it was corrupted during tee/hashdeep.
+    # If this happened, get a new checksum and use that one: corruption in the file between tarring and now should be caught by the faux-decrystallize pre-check.
+    knownHashdeepChecksum="$(<"$crystalWorkdir/$CrystalID.checksums")"
+    echo "Initial logsession checksums: $knownHashdeepChecksum" >> "$logfile"
+    newFileChecksum="$(hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -o fbcpsde < "$crystalWorkdir/$CrystalID.coal5")"
+    echo "New logsession checksums: $newFileChecksum" >> "$logfile"
+    if [[ "$newFileChecksum" != "$knownHashdeepChecksum" ]]; then
+        # Checksumming the file twice gave two different results, so try to get something reproducible.
+        newFileChecksumB="$(hashdeep -c md5,sha1,sha256,tiger,whirlpool -j0 -o fbcpsde < "$crystalWorkdir/$CrystalID.coal5")"
+        echo "Recovery logsession checksums: $newFileChecksum" >> "$logfile"
+        if [[ "$newFileChecksumB" == "$knownHashdeepChecksum" ]] || [[ "$newFileChecksumB" == "$newFileChecksum" ]]; then
+            # The recovery checksum matches one of the previously stored checksums, so it's probably right. Save it to the file instead.
+            print "$newFileChecksumB" > "$crystalWorkdir/$CrystalID.checksums"
+        else
+            die "Could not get a stable checksum for the packed file. Is your computer's memory bad? (Or this could be a bug in Crystallize, but I haven't seen it be.)"
+        fi
+    fi
+    echo "Selected logsession checksums: $(<"$crystalWorkdir/$CrystalID.checksums")" >> "$logfile"
 
-        mkdir "$tempTestDecrystId"
+    exitCodes=("${PIPESTATUS[@]}") # this pattern for copying an array doesn't "work for associative arrays, or for arrays with non-contiguous indices". (quotation from https://stackoverflow.com/questions/19417015/how-to-copy-an-array-in-bash)
+    exitcode="${exitCodes[0]}"
+    #Ignore exit code 1 from tar on Linux, which indicates files changed while reading; see http://stackoverflow.com/questions/20318852/tar-file-changed-as-we-read-it
+    if [[ "$exitcode" != "0" ]] && [[ $OSTYPE != *inux* ]]; then
+        exit "$exitcode"
+    fi
+    if [[ "$exitcode" != "1" ]] && [[ "$exitcode" != "0" ]]; then
+        exit "$exitcode"
+    fi
+    pipecheck "${exitCodes[@]:1}"
+    set -o pipefail
+
+    {
+        echo "Please wait, pre-testing item before upload..."
+        testDecrystDir="$(bigTempDir)"
+        tempTestDecrystId="$crystalWorkdir/.unpack-test-$(date-uuid)"
         trap 'rm -r "${tempTestDecrystId:?}"; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
-        trap 'rm -r "${tempTestDecrystId:?}"' EXIT
-        crystalXzFileSize="$(disk-size-in-bytes "$CrystalTmpUploadFile")"
-        pv -tparbIfei 0.1 -s "$crystalXzFileSize" < "$CrystalTmpUploadFile" | gpg --yes --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - | unxz --stdout - | tar -xvf - -C "$tempTestDecrystId/" || die "Could not extract the local packed crystal!"
-
-        # Extract split forks
-        mkdir "$tempTestDecrystId.forks"
-        tar -xvf - -C "$tempTestDecrystId.forks/" < "$crystalWorkdir/$CrystalID.forks" || die "Could not extract the local packed split forks!"
-        cp "$crystalWorkdir/$CrystalID.forks-csum" "$tempTestDecrystId.forks-csum"
         (
-            cd "$tempTestDecrystId.forks" || die "cd failed"
-            csum --check ./* "$tempTestDecrystId.forks-csum" || die
+            cd "$testDecrystDir" || die "cd failed"
+
+            mkdir "$tempTestDecrystId"
+            trap 'rm -r "${tempTestDecrystId:?}"; die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+            trap 'rm -r "${tempTestDecrystId:?}"' EXIT
+            crystalXzFileSize="$(disk-size-in-bytes "$CrystalTmpUploadFile")"
+            pv -tparbIfei 0.1 -s "$crystalXzFileSize" < "$CrystalTmpUploadFile" | gpg --yes --batch --passphrase-file "$crystalWorkdir/$CrystalID".tmp - | unxz --stdout - | tar -xvf - -C "$tempTestDecrystId/" || die "Could not extract the local packed crystal!"
+
+            # Extract split forks
+            mkdir "$tempTestDecrystId.forks"
+            tar -xvf - -C "$tempTestDecrystId.forks/" < "$crystalWorkdir/$CrystalID.forks" || die "Could not extract the local packed split forks!"
+            cp "$crystalWorkdir/$CrystalID.forks-csum" "$tempTestDecrystId.forks-csum"
+            (
+                cd "$tempTestDecrystId.forks" || die "cd failed"
+                csum --check ./* "$tempTestDecrystId.forks-csum" || die
+            ) || die
+            splitForksTarWanted="tar"
+            if [[ "$OSTYPE" == darwin* ]]; then
+                splitForksTarWanted="gtar"
+            fi
+            find "$tempTestDecrystId.forks" -type f -not -name '06968986-7c96-406f-b7b2-a90fe40293bd' -exec bash -c "$splitForksTarWanted"' -xvf - -C "$1/" < "$0"' {} "$tempTestDecrystId" \;
+
+            cp "$crystalWorkdir/$CrystalID.csum" "$tempTestDecrystId.csum"
+            cd "$tempTestDecrystId" || die "cd failed"
+            find . -name "$CrystalID"'*' -not -name "$CrystalID.ostype" -not -name "$CrystalID.forks" -not -name "$CrystalID.forks-csum" -delete || die
+            csum --check ./* "$tempTestDecrystId.csum" || die
         ) || die
-        splitForksTarWanted="tar"
-        if [[ "$OSTYPE" == darwin* ]]; then
-            splitForksTarWanted="gtar"
-        fi
-        find "$tempTestDecrystId.forks" -type f -not -name '06968986-7c96-406f-b7b2-a90fe40293bd' -exec bash -c "$splitForksTarWanted"' -xvf - -C "$1/" < "$0"' {} "$tempTestDecrystId" \;
+        rm -r "${testDecrystDir:?}"
+        rm -rf "${tempTestDecrystId:?}"
+        rm -rf "${tempTestDecrystId:?}.forks"
+        rm "${tempTestDecrystId:?}.csum"
+        rm "${tempTestDecrystId:?}.forks-csum"
+        echo "Please wait..."
+    } 2>&1 | tee -a "$logfile"
 
-        cp "$crystalWorkdir/$CrystalID.csum" "$tempTestDecrystId.csum"
-        cd "$tempTestDecrystId" || die "cd failed"
-        find . -name "$CrystalID"'*' -not -name "$CrystalID.ostype" -not -name "$CrystalID.forks" -not -name "$CrystalID.forks-csum" -delete || die
-        csum --check ./* "$tempTestDecrystId.csum" || die
-    ) || die
-    rm -r "${testDecrystDir:?}"
-    rm -rf "${tempTestDecrystId:?}"
-    rm -rf "${tempTestDecrystId:?}.forks"
-    rm "${tempTestDecrystId:?}.csum"
-    rm "${tempTestDecrystId:?}.forks-csum"
-    echo "Please wait..."
-} 2>&1 | tee -a "$logfile"
+    rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.csum" "$crystalWorkdir/$CrystalID.json.xz" "$crystalWorkdir/$CrystalID.passphrase" "${EmberLibrary:?}"/CrystalIndex/
 
-rsync -av --progress --checksum "$crystalWorkdir/$CrystalID.csum" "$crystalWorkdir/$CrystalID.json.xz" "$crystalWorkdir/$CrystalID.passphrase" "${EmberLibrary:?}"/CrystalIndex/
-
-echo "rsynced..."
+    echo "rsynced..."
 fi
 
 if [[ "false" == "$offline" ]]; then

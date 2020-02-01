@@ -348,16 +348,18 @@ fi
 chmod -R 644 "${EmberLibrary:?}"/CrystalIndex/
 chmod 755 "${EmberLibrary:?}"/CrystalIndex/
 
-if rm -v "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-timestamp"; then
-    #Clear the screen
-    printf "\\033c"
+if [[ "false" == "$offline" ]]; then
+    if rm -v "$crystalWorkdir/NonfinalizedCrystals/$CrystalID.coal5-timestamp"; then
+        #Clear the screen
+        printf "\\033c"
 
-    echo "Done! The new crystal's address is:"
-    echo "$CrystalID"
-else
-    #Clear the screen
-    printf "\\033c"
+        echo "Done! The new crystal's address is:"
+        echo "$CrystalID"
+    else
+        #Clear the screen
+        printf "\\033c"
 
-    echo "Crystallisation failed! This is bad!"
-    exit 1
+        echo "Crystallisation failed! This is bad!"
+        exit 1
+    fi
 fi

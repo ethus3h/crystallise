@@ -32,7 +32,7 @@ if [[ ! -d "${EmberLibrary:?}"/CrystalIndex/ ]]; then
     exit 1
 fi
 
-if [[ ! -d "${EmberLibrary:?}"/ember-web-site/ ]]; then
+if [[ ! -e "${EmberLibrary:?}"/ember-web-site/.git ]]; then
     echo "ERROR: Could not find a usable ember-web-site repository. Nothing done."
     exit 1
 fi

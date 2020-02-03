@@ -16,12 +16,6 @@ dbDir="$1"
 
 [[ -z "$dbDir" ]] && dbDir="$(crystallize-getconf WorkDirectory)/.StreamCache/"
 
-diskUsageLimit="$(<"$dbDir/.$cacheType""cache.limit")"
-if [[ "0" == "$diskUsageLimit" ]]; then
-    # Unlimited
-    exit 0
-fi
-
 if [[ -e "$dbDir/.locked" ]]; then
     warn "This database is already in use. If the scache_gc or sreg_read_stream instance using it has crashed, remove $dbDir/.locked manually."
     exit 0
@@ -44,6 +38,10 @@ find "$dbDir" -type d -not -name "ByCount" -empty -delete
 diskUsageLimit="$(<"$dbDir/.$cacheType""cache.limit")"
 [[ -n "$diskUsageLimit" ]] || fcache_init "--$cacheType" "$dbDir" # The configured limit is blank, so update it
 diskUsageLimit="$(<"$dbDir/.$cacheType""cache.limit")"
+if [[ "0" == "$diskUsageLimit" ]]; then
+    # Unlimited
+    exit 0
+fi
 isNonnegativeInteger "$diskUsageLimit" || die "The configured disk usage limit, $diskUsageLimit, is not a nonnegative integer!"
 diskUsageLimitSub=$(( diskUsageLimit - 1000000000 ))
 if [[ "$diskUsageLimitSub" -lt 0 ]]; then

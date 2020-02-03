@@ -29,11 +29,6 @@ hashB="${hashFull:1:1}"
 hashC="${hashFull:2:1}"
 hashSubdir="$hashA/$hashB/$hashC"
 
-if [[ "0" == "$diskUsageLimit" ]]; then
-    # Unlimited
-    exit 0
-fi
-
 if [[ "$RANDOM" -lt 500 ]]; then
    scache_gc "$dbDir" "localstore"
 fi

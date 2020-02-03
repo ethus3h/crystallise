@@ -29,9 +29,9 @@ hashB="${hashFull:1:1}"
 hashC="${hashFull:2:1}"
 hashSubdir="$hashA/$hashB/$hashC"
 
-if [[ "$RANDOM" -lt 500 ]]; then
-    scache_gc "$dbDir" "localstore"
-fi
+#if [[ "$RANDOM" -lt 500 ]]; then
+#    scache_gc "$dbDir" "localstore"
+#fi
 
 hashDir="$dbDir/$hashSubdir"
 mkdir -p "$hashDir"

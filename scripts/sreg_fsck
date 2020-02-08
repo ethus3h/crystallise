@@ -64,11 +64,11 @@ else
     fi
 fi
 
-useNotes="--skip-verified"
+skipVerified="--skip-verified"
 if [[ "--skip-verified" == "$1" ]]; then
     shift
 elif [[ "--no-skip-verified" == "$1" ]]; then
-    useNotes=""
+    skipVerified=""
     shift
 fi
 

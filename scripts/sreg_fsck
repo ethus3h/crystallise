@@ -73,6 +73,15 @@ elif [[ "--no-use-notes" == "$1" ]]; then
     shift
 fi
 
+useNotes="--notes"
+
+if [[ "--use-notes" == "$1" ]]; then
+    shift
+elif [[ "--no-use-notes" == "$1" ]]; then
+    useNotes=""
+    shift
+fi
+
 sregDir="$(sregi_find_dir --sreg-dir "$1" --full-check)"
 
 crystalWorkdir="$(crystallize-getconf WorkDirectory)"

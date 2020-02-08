@@ -151,7 +151,7 @@ if [[ "$useNotes" == "true" ]]; then
     fi
     if [[ -f "$entryPath.verified" ]]; then
         if [[ "--skip-verified" == "$skipVerified" ]]; then
-            echo "Skipping $entryPath as it has already been verified and $Skip"
+            echo "Skipping: already verified."
             exit 0
         fi
         quick="true"

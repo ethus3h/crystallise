@@ -73,7 +73,6 @@ elif [[ "--no-skip-verified" == "$1" ]]; then
 fi
 
 useNotes="--notes"
-
 if [[ "--use-notes" == "$1" ]]; then
     shift
 elif [[ "--no-use-notes" == "$1" ]]; then

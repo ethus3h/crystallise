@@ -64,11 +64,10 @@ else
     fi
 fi
 
-useNotes="--notes"
-
-if [[ "--use-notes" == "$1" ]]; then
+useNotes="--skip-verified"
+if [[ "--skip-verified" == "$1" ]]; then
     shift
-elif [[ "--no-use-notes" == "$1" ]]; then
+elif [[ "--no-skip-verified" == "$1" ]]; then
     useNotes=""
     shift
 fi

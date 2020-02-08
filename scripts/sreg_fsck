@@ -104,6 +104,8 @@ findArgs=( "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir
 
 [[ -n "$useNotes" ]] && findArgs+=( "$useNotes" )
 
+[[ -n "$skipVerified" ]] && findArgs+=( "$useNotes" )
+
 findArgs+=( --sreg-dir "$sregDir" --report-to "$reportFile" {} "$fsckStatusFile" "$skipCache" \; )
 
 find "${findArgs[@]}"

@@ -72,6 +72,14 @@ else
     fi
 fi
 
+skipVerified="--skip-verified"
+if [[ "--skip-verified" == "$1" ]]; then
+    shift
+elif [[ "--no-skip-verified" == "$1" ]]; then
+    skipVerified=""
+    shift
+fi
+
 useNotes="false"
 if [[ "$1" == "--notes" ]]; then
     shift

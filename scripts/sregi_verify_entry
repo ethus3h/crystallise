@@ -150,6 +150,9 @@ if [[ "$useNotes" == "true" ]]; then
         warn "Either --skip-cache (or --skip-drop-failed) was not given, or --quick was specified. Consequently, new success notes will not be written."
     fi
     if [[ -f "$entryPath.verified" ]]; then
+        if [[ "--skip-verified" == "$skipVerified" ]]; then
+            exit 0
+        fi
         quick="true"
     fi
 fi

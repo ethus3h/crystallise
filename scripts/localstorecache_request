@@ -120,6 +120,7 @@ fi
 dbFilePath="$(readlink -e "$dbLinkPath")"
 # First, make sure the link is good and fix it up if it's not.
 if ! [[ -d "$dbFilePath" ]]; then
+    # FIXME: change to find just with depth 1 with checking the hash parts instead of checking every hash part
     find "$dbDir/ByCount" -mindepth 5 -maxdepth 5 -type d -name "$hashFull" -exec ln -sf {} "$dbLinkPath" \;
     dbFilePath="$(readlink -e "$dbLinkPath")"
 fi

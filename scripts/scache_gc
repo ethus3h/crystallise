@@ -31,8 +31,6 @@ cacheType="s"
 if [[ -n "$2" ]]; then
     cacheType="$2"
 fi
-# Clean up empty directories
-find "$dbDir" -type d -not -name "ByCount" -empty -delete
 # Remove the least-used items from the cache until it fits within the alloted disk space
 [[ -e "$dbDir/.$cacheType""cache.limit" ]] || fcache_init "--$cacheType" "$dbDir"
 diskUsageLimit="$(<"$dbDir/.$cacheType""cache.limit")"
@@ -47,6 +45,8 @@ diskUsageLimitSub=$(( diskUsageLimit - 1000000000 ))
 if [[ "$diskUsageLimitSub" -lt 0 ]]; then
     diskUsageLimitSub=0
 fi
+# Clean up empty directories
+find "$dbDir" -type d -not -name "ByCount" -empty -delete
 if [[ "$(du -sb "$dbDir/ByCount" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
     find "$dbDir/ByCount" -type d -not -name "ByCount" -empty -delete
     while [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimitSub" ]]; do

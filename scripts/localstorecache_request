@@ -152,9 +152,9 @@ ln -s "$dbFilePath" "$dbLinkPath"
 echo "$dbLinkPath"
 
 # Clean up empty directories
-if [[ "$RANDOM" -lt 500 ]]; then
-    find "$dbDir" -type d -not -name "ByCount" -empty -delete
-fi
+#if [[ "$RANDOM" -lt 500 ]]; then
+#    find "$dbDir" -type d -not -name "ByCount" -empty -delete
+#fi
 if [[ -d "$tempDirectoryName" ]]; then
     rm -r "${tempDirectoryName:?}"
 fi

@@ -27,7 +27,7 @@ skipAndExit() {
     numberProcessed="$(<"$numberProcessedFile")"
     numberProcessed=$(( numberProcessed + 1 ))
     echo "$numberProcessed" > "$numberProcessedFile"
-    echo "(Skipped $1: examined $skippedSoFar out of total $numberExpected)"
+    echo "(Skipped $1: examined $numberProcessed out of total $numberExpected)"
     exit 0
 }
 

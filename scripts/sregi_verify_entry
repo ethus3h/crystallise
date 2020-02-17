@@ -25,7 +25,7 @@ skipAndExit() {
         numberProcessedFile="$fsckStatusFile.done"
         numberProcessed="$(<"$numberProcessedFile")"
         numberProcessed=$(( numberProcessed + 1 ))
-        echo "$skipCount" > "$numberProcessedFile"
+        echo "$numberProcessed" > "$numberProcessedFile"
     fi
     echo "$skippedSoFar" > "$skipFile"
     (( skippedSoFar % 50 )) || printf '\e[2K\r%s' "(skipped $skippedSoFar out of $skipCount...)"

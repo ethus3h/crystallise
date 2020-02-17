@@ -19,28 +19,24 @@ success() {
 }
 
 skipAndExit() {
-    skipFile="$failCheckFile.skip"
-    skippedSoFar="$(<"$skipFile")"
-    skippedSoFar=$(( skippedSoFar + 1 ))
-    if [[ "$skippedSoFar" -le "$skipCount" ]]; then
-        if [[ "$skippedSoFar" -eq "$skipCount" ]]; then
-            # Mirror the argument parsing code here so we can find the fsckStatusFile
-            if [[ "$1" == "--sreg-dir" ]]; then
-                shift
-                shift
+            if [[ "$skippedSoFar" -eq "$skipCount" ]]; then
+                # Mirror the argument parsing code here so we can find the fsckStatusFile
+                if [[ "$1" == "--sreg-dir" ]]; then
+                    shift
+                    shift
+                fi
+                if [[ "$1" == "--report-to" ]]; then
+                    shift
+                    shift
+                fi
+                fsckStatusFile="$2"
+                numberProcessedFile="$fsckStatusFile.done"
+                echo "$skipCount" > "$numberProcessedFile"
             fi
-            if [[ "$1" == "--report-to" ]]; then
-                shift
-                shift
-            fi
-            fsckStatusFile="$2"
-            numberProcessedFile="$fsckStatusFile.done"
-            echo "$skipCount" > "$numberProcessedFile"
-        fi
-        echo "$skippedSoFar" > "$skipFile"
-        (( skippedSoFar % 50 )) || printf '\e[2K\r%s' "(skipped $skippedSoFar out of $skipCount...)"
-        [[ "$skippedSoFar" -eq "$skipCount" ]] && printf '\e[2K\n'
-        exit 0
+            echo "$skippedSoFar" > "$skipFile"
+            (( skippedSoFar % 50 )) || printf '\e[2K\r%s' "(skipped $skippedSoFar out of $skipCount...)"
+            [[ "$skippedSoFar" -eq "$skipCount" ]] && printf '\e[2K\n'
+            exit 0
 }
 
 fsckStatusFile=""

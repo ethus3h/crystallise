@@ -43,6 +43,13 @@ skipAndExit() {
         exit 0
 }
 
+fsckStatusFile=""
+if [[ "$1" == "--fsck-status-file" ]]; then
+    shift
+    fsckStatusFile="$1"
+    shift
+fi
+
 failCheckFile=""
 if [[ "$1" == "--fail-check" ]]; then
     shift

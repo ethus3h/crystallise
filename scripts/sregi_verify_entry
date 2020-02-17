@@ -19,16 +19,8 @@ success() {
 }
 
 skipAndExit() {
-    if [[ "$skippedSoFar" -eq "$skipCount" ]]; then
-        # Mirror the argument parsing code here so we can find the fsckStatusFile
-        if [[ "$1" == "--sreg-dir" ]]; then
-            shift
-            shift
-        fi
-        if [[ "$1" == "--report-to" ]]; then
-            shift
-            shift
-        fi
+    if [[ -z "$fsckStatusFile" ]]; then
+        die "A --fsck-status-file must be given when skipping entries."
         fsckStatusFile="$2"
         numberProcessedFile="$fsckStatusFile.done"
         echo "$skipCount" > "$numberProcessedFile"

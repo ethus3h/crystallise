@@ -22,6 +22,7 @@ skipAndExit() {
     if [[ -z "$fsckStatusFile" ]]; then
         die "A --fsck-status-file must be given when skipping entries."
     fi
+    numberExpected="$(<"$fsckStatusFile")"
     numberProcessedFile="$fsckStatusFile.done"
     numberProcessed="$(<"$numberProcessedFile")"
     numberProcessed=$(( numberProcessed + 1 ))

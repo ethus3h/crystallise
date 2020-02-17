@@ -23,6 +23,8 @@ skipAndExit() {
         die "A --fsck-status-file must be given when skipping entries."
         fsckStatusFile="$2"
         numberProcessedFile="$fsckStatusFile.done"
+        numberProcessed="$(<"$numberProcessedFile")"
+        numberProcessed=$(( numberProcessed + 1 ))
         echo "$skipCount" > "$numberProcessedFile"
     fi
     echo "$skippedSoFar" > "$skipFile"

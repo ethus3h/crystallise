@@ -99,7 +99,7 @@ rm -f "$fsckStatusFile.failed"
 
 echo '0' > "$failCheckFile.skip"
 
-findArgs=( "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/.BundlePointerTemp/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -not -name '*.verified' -exec sregi_verify_entry --fail-check "$failCheckFile" --skip "$skipCount" )
+findArgs=( "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/.BundlePointerTemp/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -not -name '*.verified' -exec sregi_verify_entry --fsck-status-file "$fsckStatusFile" --fail-check "$failCheckFile" --skip "$skipCount" )
 
 [[ -n "$skipVerified" ]] && findArgs+=( "$skipVerified" )
 

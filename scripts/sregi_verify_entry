@@ -73,7 +73,7 @@ if [[ -n "$failCheckFile" ]]; then
             echo "$skippedSoFar" > "$skipFile"
             (( skippedSoFar % 50 )) || printf '\e[2K\r%s' "(skipped $skippedSoFar out of $skipCount...)"
             [[ "$skippedSoFar" -eq "$skipCount" ]] && printf '\e[2K\n'
-            exit 0
+            skipAndExit > /dev/null
         fi
     fi
     if [[ -e "$failCheckFile" ]]; then

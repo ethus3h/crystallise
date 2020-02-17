@@ -57,16 +57,9 @@ if [[ -n "$failCheckFile" ]]; then
         skippedSoFar=$(( skippedSoFar + 1 ))
         if [[ "$skippedSoFar" -le "$skipCount" ]]; then
             if [[ "$skippedSoFar" -eq "$skipCount" ]]; then
-                # Mirror the argument parsing code here so we can find the fsckStatusFile
-                if [[ "$1" == "--sreg-dir" ]]; then
-                    shift
-                    shift
+                if [[ -z "$fsckStatusFile" ]]; then
+                    die "A --fsck-status-file must be given when skipping entries."
                 fi
-                if [[ "$1" == "--report-to" ]]; then
-                    shift
-                    shift
-                fi
-                fsckStatusFile="$2"
                 numberProcessedFile="$fsckStatusFile.done"
                 echo "$skipCount" > "$numberProcessedFile"
             fi
@@ -172,8 +165,7 @@ if [[ "$useNotes" == "true" ]]; then
     fi
     if [[ -f "$entryPath.verified" ]]; then
         if [[ "--skip-verified" == "$skipVerified" ]]; then
-            echo "Skipping: already verified."
-            exit 0
+            skipAndExit "$entryPath: already verified."
         fi
         quick="true"
     fi

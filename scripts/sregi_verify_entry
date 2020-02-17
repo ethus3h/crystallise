@@ -24,17 +24,12 @@ skipAndExit() {
     fi
     numberExpected="$(<"$fsckStatusFile")"
     numberProcessedFile="$fsckStatusFile.done"
-        if ! [[ -f "$numberProcessedFile" ]]; then
-            numberProcessed="1"
-        else
-            if [[ "$OSTYPE" == darwin* ]]; then
-                xxd "$numberProcessedFile" >&2
-            fi
-            numberProcessed="$(<"$numberProcessedFile")"
-            numberProcessed=$(( numberProcessed + 1 ))
-        fi
-    numberProcessed="$(<"$numberProcessedFile")"
-    numberProcessed=$(( numberProcessed + 1 ))
+    if ! [[ -f "$numberProcessedFile" ]]; then
+        numberProcessed="1"
+    else
+        numberProcessed="$(<"$numberProcessedFile")"
+        numberProcessed=$(( numberProcessed + 1 ))
+    fi
     echo "$numberProcessed" > "$numberProcessedFile"
     echo "(Skipped $1: examined $numberProcessed out of total $numberExpected)"
     exit 0

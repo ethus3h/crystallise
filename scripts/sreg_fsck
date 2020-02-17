@@ -101,9 +101,9 @@ echo '0' > "$failCheckFile.skip"
 
 findArgs=( "$dbDir" -type f -not -path "$dbDir/Failed Fsck/*" -not -path "$dbDir/.BundlePointerTemp/*" -not -path "$dbDir/LocalStore/*" -not -path "$dbDir/Packs/*" -not -name '*.verified' -exec sregi_verify_entry --fail-check "$failCheckFile" --skip "$skipCount" )
 
-[[ -n "$useNotes" ]] && findArgs+=( "$useNotes" )
-
 [[ -n "$skipVerified" ]] && findArgs+=( "$skipVerified" )
+
+[[ -n "$useNotes" ]] && findArgs+=( "$useNotes" )
 
 findArgs+=( --sreg-dir "$sregDir" --report-to "$reportFile" {} "$fsckStatusFile" "$skipCache" \; )
 

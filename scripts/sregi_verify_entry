@@ -28,7 +28,7 @@ skipAndExit() {
     numberProcessed=$(( numberProcessed + 1 ))
     echo "$numberProcessed" > "$numberProcessedFile"
     echo "$skippedSoFar" > "$skipFile"
-    (( skippedSoFar % 50 )) || printf '\e[2K\r%s' "(Skipped $1 $skippedSoFar out of total $numberExpected)"
+    (( skippedSoFar % 50 )) || printf '\e[2K\r%s' "(Skipped $1: checked $skippedSoFar out of total $numberExpected)"
     [[ "$skippedSoFar" -eq "$skipCount" ]] && printf '\e[2K\n'
     exit 0
 }

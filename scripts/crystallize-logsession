@@ -61,6 +61,7 @@ if [[ "false" == "$completeOnly" ]]; then
         xxd -pu <<< "$(date -u +%z)"
 
         echo "Time (log stage 1) from https://andthetimeis.com/: "
+        # See https://github.com/progrium/timeapi
 
         trap - ERR
         # allow when otherwise running offline

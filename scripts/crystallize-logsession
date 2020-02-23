@@ -60,7 +60,7 @@ if [[ "false" == "$completeOnly" ]]; then
         date -u +%Y-%m-%d-%H-%M-%S-%N
         xxd -pu <<< "$(date -u +%z)"
 
-        echo "Time (log stage 1) from http://timeapi.org/: "
+        echo "Time (log stage 1) from https://andthetimeis.com/: "
 
         trap - ERR
         # allow when otherwise running offline
@@ -112,7 +112,7 @@ if [[ "false" == "$completeOnly" ]]; then
         date -u +%Y-%m-%d-%H-%M-%S-%N
         xxd -pu <<< "$(date -u +%z)"
 
-        echo "Time (log stage 2) from http://timeapi.org/: "
+        echo "Time (log stage 2) from https://andthetimeis.com/: "
 
         trap - ERR
         # allow when otherwise running offline
@@ -403,13 +403,13 @@ if [[ "false" == "$offline" ]]; then
         xxd -pu <<< "$(date -u +%z)"
 
         if [[ "true" == "$completeOnly" ]]; then
-            echo "Time (log stage 3, complete-only) from http://timeapi.org/: "
+            echo "Time (log stage 3, complete-only) from https://andthetimeis.com/: "
 
             trap - ERR
             wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.coal5-time-done-completion" -e robots=off "http://www.timeapi.org/utc/now?\\Y-\\m-\\d-\\H-\\M-\\S-\\6N-\\z"
             trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
         else
-            echo "Time (log stage 3) from http://timeapi.org/: "
+            echo "Time (log stage 3) from https://andthetimeis.com/: "
 
             trap - ERR
             wget --delete-after --warc-file="$crystalWorkdir/$CrystalID.time-done" -e robots=off "http://www.timeapi.org/utc/now?\\Y-\\m-\\d-\\H-\\M-\\S-\\6N-\\z"
@@ -435,7 +435,7 @@ fi
 
 if [[ "true" == "$offline" ]]; then
     {
-        echo "Time (log stage 3, offline) from http://timeapi.org/: "
+        echo "Time (log stage 3, offline) from https://andthetimeis.com/: "
 
         trap - ERR
         # allow when otherwise running offline

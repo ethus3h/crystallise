@@ -188,7 +188,10 @@ decrystInner() (
         mkdir "$tempId.tempDir"
         (
             cd "$tempId"
-            find . -name "$CrystalID"'*' -not -name "$CrystalID.ostype" -not -name "$CrystalID.forks" -not -name "$CrystalID.forks-csum" -exec bash -c 'dir="$(dirname "$0")"; mkdir -p "../'"$tempId"'.tempDir/$dir/"; mv "$0" "../'"$tempId"'.tempDir/$dir/"' {} \; || die
+            findfail="$(tempFile)"
+            rm "$findfail"
+            find . -name "$CrystalID"'*' -not -name "$CrystalID.ostype" -not -name "$CrystalID.forks" -not -name "$CrystalID.forks-csum" -exec bash -c 'trap '\''touch "$0" ERR'\''; dir="$(dirname "$1")"; mkdir -p "../'"$tempId"'.tempDir/$dir/"; mv "$1" "../'"$tempId"'.tempDir/$dir/"' "$findfail" {} \; || die
+            [[ -e "$findfail" ]] && die
         ) || die
 
         (

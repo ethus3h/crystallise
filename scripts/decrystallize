@@ -64,7 +64,7 @@ mkdir "$tempId"
 
 if [[ "true" == "$offline" ]]; then
     if [[ ! -f "$offlineLocation/$CrystalAddress.coal5" ]]; then
-        die "Could not find directory with offline location: $offlineLocation"
+        die "Could not find directory with offline location: $offlineLocation (no file at $offlineLocation/$CrystalAddress.coal5)"
     fi
     echo "Using offline location: $offlineLocation"
 

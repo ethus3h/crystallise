@@ -165,7 +165,7 @@ decrystInner() (
         fi
         findfail="$(tempFile)"
         rm "$findfail"
-        find ".forks" -type f -not -name '06968986-7c96-406f-b7b2-a90fe40293bd' -exec bash -c 'trap '\''touch "$0" ERR'\''; '"$splitForksTarWanted"' -xvf - -C "$2/" < "$1"' "$findfail" {} "$tempIdAbspath" \;
+        find ".forks" -type f -not -name '06968986-7c96-406f-b7b2-a90fe40293bd' -exec bash -c 'set -x; trap '\''touch "$0" ERR'\''; '"$splitForksTarWanted"' -xvf - -C "$2/" < "$1"' "$findfail" {} "$tempIdAbspath" \;
         [[ -e "$findfail" ]] && die
     ) || die
     rm -r "$tempDecrystForksDir"
@@ -193,7 +193,7 @@ decrystInner() (
             cd "$tempId"
             findfail="$(tempFile)"
             rm "$findfail"
-            find . -name "$CrystalID"'*' -not -name "$CrystalID.ostype" -not -name "$CrystalID.forks" -not -name "$CrystalID.forks-csum" -exec bash -c 'trap '\''touch "$0" ERR'\''; dir="$(dirname "$1")"; mkdir -p "../'"$tempId"'.tempDir/$dir/"; mv "$1" "../'"$tempId"'.tempDir/$dir/"' "$findfail" {} \; || die
+            find . -name "$CrystalID"'*' -not -name "$CrystalID.ostype" -not -name "$CrystalID.forks" -not -name "$CrystalID.forks-csum" -exec bash -c 'set -x; trap '\''touch "$0" ERR'\''; dir="$(dirname "$1")"; mkdir -p "../'"$tempId"'.tempDir/$dir/"; mv "$1" "../'"$tempId"'.tempDir/$dir/"' "$findfail" {} \; || die
             [[ -e "$findfail" ]] && die
         ) || die
 
@@ -207,7 +207,7 @@ decrystInner() (
             cd "$tempId.tempDir"
             findfail="$(tempFile)"
             rm "$findfail"
-            find . -name "$CrystalID"'*' -exec bash -c 'trap '\''touch "$0" ERR'\''; dir="$(dirname "$1")"; mv "$1" "../'"$tempId"'/$dir/"' "$findfail" {} \; || die
+            find . -name "$CrystalID"'*' -exec bash -c 'set -x; trap '\''touch "$0" ERR'\''; dir="$(dirname "$1")"; mv "$1" "../'"$tempId"'/$dir/"' "$findfail" {} \; || die
             [[ -e "$findfail" ]] && die
         ) || die
         rm -r "${tempId:?}.tempDir"

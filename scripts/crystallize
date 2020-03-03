@@ -174,7 +174,7 @@ if [[ "true" == "$completeOnly" ]]; then
 fi
 
 if [[ "false" == "$offline" ]] && [[ "false" == "$completeOnly" ]]; then
-    crystallize-logsession --offline "$useCustomPassphrase" "$customPassphrase" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID" "$CrystalID" "$@"
+    crystallize-logsession "$useCustomPassphrase" "$customPassphrase" "$crystalWorkdir/NonfinalizedCrystals/$CrystalID/$CrystalID" "$CrystalID" "$@"
 fi
 
 if [[ "false" == "$completeOnly" ]]; then

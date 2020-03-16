@@ -46,7 +46,7 @@ if [[ "$diskUsageLimitSub" -lt 0 ]]; then
     diskUsageLimitSub=0
 fi
 # Clean up empty directories
-find "$dbDir" -type d -not -name "ByCount" -empty -type d -not -name "ByCount" -empty -delete
+find "$dbDir" -type d -not -name "ByCount" -empty -delete
 if [[ "$(du -sb "$dbDir/ByCount" | awk '{print $1;}')" -gt "$diskUsageLimit" ]]; then
     find "$dbDir/ByCount" -type d -not -name "ByCount" -empty -delete
     while [[ "$(du -sb "$dbDir" | awk '{print $1;}')" -gt "$diskUsageLimitSub" ]]; do

@@ -3,15 +3,15 @@
 
 # Should work without ember-shared or crystallize, just in case, so don't source ember_bash_setup or set traps that need
 
-packageName="$(cat package-name)"
+packageName="$(<package-name)"
 
-if ! ebs_loc="$(type -P "ember_bash_setup")" || [[ -z $ebs_loc ]]; then
+if ! ebs_loc="$(type -P "ember_bash_setup_core")" || [[ -z "$ebs_loc" ]]; then
     # Try automatically building an ember-shared locally to use
     mkdir .buildsystem-temp
     (
-        cd .buildsystem-temp
+        cd .buildsystem-temp || exit 1
         git clone --depth 1 https://github.com/ethus3h/ember-shared.git
-        cd ember-shared
+        cd ember-shared || exit 1
         ./configure
         make
     )
@@ -19,70 +19,28 @@ if ! ebs_loc="$(type -P "ember_bash_setup")" || [[ -z $ebs_loc ]]; then
     export PATH
     if [[ -e ".buildsystem-temp/ember-shared" ]]; then
         (
-            cd .buildsystem-temp/ember-shared
+            cd .buildsystem-temp/ember-shared || exit 1
             make
             make install || true
         )
     fi
 fi
 
-eiteDie() {
-    #NOTE: MAINTENANCE: Manual error printing
-    if [[ -z "$(ember-getconf emberSharedVersion)" ]]; then
-        printf '%b' '\033[1;31m' >&2
-        echo "ERROR: ember-shared is not properly installed! It must be installed before installing $packageName." >&2
-        printf '%b' '\033[0m' >&2
-        exit 1
-    fi
-}
-
-if ! ebs_loc="$(type -P "ember_bash_setup")" || [[ -z $ebs_loc ]]; then
-    eiteDie || exit 1
-fi
-
-if [[ -z "$(ember-getconf emberSharedVersion)" ]]; then
-    eiteDie || exit 1
+#NOTE: MAINTENANCE: Manual error printing
+if ! ebs_loc="$(type -P "ember_bash_setup_core")" || [[ -z "$ebs_loc" ]]; then
+    printf '%b' '\033[1;31m' >&2
+    echo "ERROR: ember-shared core module is not properly installed! It must be installed before installing $packageName." >&2
+    printf '%b' '\033[0m' >&2
+    exit 1
 fi
 
 #NOTE: MAINTENANCE: Manual error printing
 trap 'printf '\''%b'\'' '\''\033[1;31m'\'' >&2; echo "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd)." >&2; printf '\''%b'\'' '\''\033[0m'\'' >&2; exit 1' ERR
 
-rm -f support/.{prefix,mandir,infodir,datadir,sysconfdir,localstatedir}
-
-currentArgPrefix=""
-while [[ -n "$1" ]]; do
-    currentArgPrefix="${1%%=*}"
-    case $currentArgPrefix in
-    --prefix)
-        printf '%s' "${1#*=}" > support/.prefix
-        ;;
-    --mandir)
-        printf '%s' "${1#*=}" > support/.mandir
-        ;;
-    --infodir)
-        printf '%s' "${1#*=}" > support/.infodir
-        ;;
-    --datadir)
-        printf '%s' "${1#*=}" > support/.datadir
-        ;;
-    --sysconfdir)
-        printf '%s' "${1#*=}" > support/.sysconfdir
-        ;;
-    --localstatedir)
-        printf '%s' "${1#*=}" > support/.localstatedir
-        ;;
-    *)
-        true
-        ;;
-    esac
-    shift
-done
-
-if ! fmwtk_loc="$(type -P "futuramerlin-web-toolkit-build")" || [[ -z $fmwtk_loc ]]; then
-    echo $'\n'"futuramerlin-web-toolkit not found: documentation will not be built."$'\n'
+sharedDataDir="$(getEmberSharedDataDir)"
+if [[ -z "$sharedDataDir" ]]; then
+    echo "Could not get ember-shared data directory. Perhaps the installed version is too old?"
+    exit 1
 fi
-echo "Configuring complete."
-
-#### End of configure script template ####
-
-# Any extra configure script logic goes here.
+buildsystemDir="$(getEmberSharedDataDir)/app-buildsystem"
+source "$buildsystemDir/configure"

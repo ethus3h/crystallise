@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-#Ember Git UPdater (and Web site updater)
-#Need to do egup before build to ensure updates to futuramerlin-web-toolkit are committed before running it
-egup
-sudo smart-live-rebuild

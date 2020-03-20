@@ -1,1 +1,2 @@
-# Example script: can put Bash code here to run automated tests.
+
+# Create a local S3 host and run tests.

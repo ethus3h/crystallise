@@ -1,1 +1,10 @@
-# Example script: can put Bash code here to run at the end of the installation.
+ereplace "/usr/local/etc" "$emberSysconfdir" scripts/crystallize-logsession
+
+mkdir -p "$emberEmberdir"
+mkdir -p "$emberSysconfdir"
+mkdir -p "$emberSharedstatedir"
+
+if [[ ! -h "$emberSharedstatedir/crystallize" ]] && [[ -d "$emberSharedstatedir/crystallize" ]]; then
+    mv "$emberSharedstatedir/crystallize" "$emberSharedstatedir/ember"
+fi
+[[ -h "$emberSharedstatedir/crystallize" ]] || ln -s "$emberSharedstatedir/ember" "$emberSharedstatedir/crystallize"

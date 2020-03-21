@@ -1,0 +1,7 @@
+#NOTE: MAINTENANCE: Manual error printing
+if [[ -z "$(ember-getconf emberSharedVersion)" ]]; then
+    printf '%b' '\033[1;31m' >&2
+    echo "ERROR: ember-shared is not properly installed! It must be installed before installing $packageName." >&2
+    printf '%b' '\033[0m' >&2
+    exit 1
+fi

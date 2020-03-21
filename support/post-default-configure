@@ -1,5 +1,5 @@
 #NOTE: MAINTENANCE: Manual error printing
-if ! ebs_loc="$(type -P "ember_bash_setup_core")" || [[ -z "$ebs_loc" ]]; then
+if ! ebs_loc="$(type -P "ember_bash_setup_extra")" || [[ -z "$ebs_loc" ]]; then
     printf '%b' '\033[1;31m' >&2
     echo "ERROR: ember-shared extra is not properly installed! It must be installed before installing $packageName." >&2
     printf '%b' '\033[0m' >&2

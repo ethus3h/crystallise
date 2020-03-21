@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #set -x
 
-# Should work without ember-shared or crystallize, just in case, so don't source ember_bash_setup or set traps that need
+# Should work without ember-shared, so don't source ember_bash_setup or set traps that need. Only require ember_bash_setup_core.
 
 packageName="$(<package-name)"
 
@@ -33,6 +33,10 @@ if ! ebs_loc="$(type -P "ember_bash_setup_core")" || [[ -z "$ebs_loc" ]]; then
     printf '%b' '\033[0m' >&2
     exit 1
 fi
+
+# OK, ember_bash_setup_core seems to be available
+
+source ember_bash_setup_core &> /dev/null || { printf '%b' '\033[1;31m' >&2; echo "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd): The required dependency ember-shared could not be found (or ember_bash_setup_core could not be sourced for some other reason)." >&2; printf '%b' '\033[0m' >&2; exit 1; }
 
 #NOTE: MAINTENANCE: Manual error printing
 trap 'printf '\''%b'\'' '\''\033[1;31m'\'' >&2; echo "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd)." >&2; printf '\''%b'\'' '\''\033[0m'\'' >&2; exit 1' ERR

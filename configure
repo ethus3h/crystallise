@@ -47,4 +47,6 @@ if [[ -z "$sharedDataDir" ]]; then
     exit 1
 fi
 buildsystemDir="$(getEmberSharedDataDir)/app-buildsystem"
+if ! [[ -d "$buildsystemDir" ]]; then
+
 source "$buildsystemDir/configure"

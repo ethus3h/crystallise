@@ -48,5 +48,7 @@ if [[ -z "$sharedDataDir" ]]; then
 fi
 buildsystemDir="$(getEmberSharedDataDir)/app-buildsystem"
 if ! [[ -d "$buildsystemDir" ]]; then
-
+    echo "Could not get ember-shared data directory. Perhaps the installed version is too old?"
+    exit 1
+fi
 source "$buildsystemDir/configure"

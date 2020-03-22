@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -x
+#set -x
 
 # Should work without ember-shared, so don't source ember_bash_setup or set traps that need. Only require ember_bash_setup_core.
 

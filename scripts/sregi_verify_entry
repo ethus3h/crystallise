@@ -181,6 +181,7 @@ if [[ -n "$knownHashTemp" ]]; then
     knownHash="$knownHashTemp"
 fi
 
+if [[ "true" == "$useNotes" ]]; then
 pointerTypeSignature="$(head -c 36 "$entryPath" | tr -d '\0')"
 if [[ "c39f8657-384b-438b-a5a2-eece17147589" == "$pointerTypeSignature" ]]; then
     # Don't write verified notes for LocalStore pointers

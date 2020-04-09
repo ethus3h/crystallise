@@ -181,6 +181,8 @@ if [[ -n "$knownHashTemp" ]]; then
     knownHash="$knownHashTemp"
 fi
 
+pointerTypeSignature="$(head -c 36 "$file" | tr -d '\0')"
+
 exitCode=""
 if [[ "$quick" == "true" ]]; then
     echo "Started quick-checking stream registry database entry $knownHash."

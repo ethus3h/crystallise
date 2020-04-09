@@ -184,7 +184,7 @@ fi
 pointerTypeSignature="$(head -c 36 "$file" | tr -d '\0')"
 if [[ "c39f8657-384b-438b-a5a2-eece17147589" == "$pointerTypeSignature" ]]; then
     # Don't write verified notes for LocalStore pointers
-    warn "LocalStore pointer encountered while checking. For best results, recommend running sreg_flush_localstore first."
+    warn "LocalStore pointer encountered while checking. For best results, recommend running sreg_flush_localstore before checking."
     useNotes="false"
 fi
 

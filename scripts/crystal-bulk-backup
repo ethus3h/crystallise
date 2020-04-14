@@ -38,7 +38,7 @@ echo 'Preparing...'
 
 cd "$backupLocation" || die "Could not cd to newly created directory! This should never happen."
 touch ".cbb.isBackupDir"
-
+if false; then
 rsync -av --checksum "$backupLocation/crystal-backup-meta/.cbb.logs.open/" "$backupLocation/crystal-backup-meta/.cbb.logs"
 find "$backupLocation/crystal-backup-meta/.cbb.logs" -name '.cbb.*.log' -exec split -l 100000 --additional-suffix=.cbbLogSplit {} {}. \;
 find "$backupLocation/crystal-backup-meta/.cbb.logs" -name '.cbb.*.log' -delete
@@ -63,7 +63,7 @@ CBBMetaGitRepoQuickUpdate() (
 )
 
 CBBMetaGitRepoQuickUpdate
-
+fi
 [[ -e '.git' ]] || git init
 touch ./.egup.allowRootEgup
 print $'/items\n' >> .gitignore

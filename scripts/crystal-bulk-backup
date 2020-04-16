@@ -239,6 +239,7 @@ if [[ "$updateList" == "true" ]]; then
                     rm -r "$packTempDir"
                 fi
             done
+            fi
 
             spopd || die "Could not popd!"
 

@@ -201,7 +201,7 @@ if [[ "$updateList" == "true" ]]; then
 
             mkdir -p "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName"
 
-            shopt -s failglob
+            shopt -u failglob
             if compgen -G ./*.identifier; then
                 shopt -s failglob
                 for identFile in *.identifier; do
@@ -211,6 +211,7 @@ if [[ "$updateList" == "true" ]]; then
                     fi
                 done
             fi
+            shopt -s failglob
 
             if compgen -G ./*.bundle.pointer; then
                 for pointerFile in *.bundle.pointer; do

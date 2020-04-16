@@ -203,6 +203,7 @@ if [[ "$updateList" == "true" ]]; then
 
             shopt -s failglob
             if compgen -G ./*.identifier; then
+                shopt -s failglob
                 for identFile in *.identifier; do
                     if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName/${identFile%.identifier}" ]]; then
                         echo "$(<"$identFile")" >> "$backupLocation/crystal-backup-meta/cbb-index/items"

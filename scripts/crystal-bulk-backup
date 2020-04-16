@@ -338,6 +338,7 @@ if [[ "$updateList" == "true" ]]; then
                     fi
                 fi
             done
+            shopt -s failglob
             unset GLOBIGNORE
             shopt -u globstar
             spopd || die "Could not popd!"

@@ -45,9 +45,9 @@ find "$backupLocation/crystal-backup-meta/.cbb.logs" -name '.cbb.*.log' -delete
 
 CBBMetaGitRepoQuickUpdate() (
     backupLocation="$(crystallize-getconf BackupLocation)"
-    cd "$backupLocation"
+    cd "$backupLocation" || die
     mkdir -p "./crystal-backup-meta-quick/"
-    cd "./crystal-backup-meta-quick/"
+    cd "./crystal-backup-meta-quick/" || die
     mkdir -p ./synced
     sudo chmod -R a+rw ./synced
     if [[ ! -e '.git' ]]; then

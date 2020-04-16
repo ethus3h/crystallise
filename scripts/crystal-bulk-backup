@@ -201,7 +201,7 @@ if [[ "$updateList" == "true" ]]; then
 
             mkdir -p "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName"
 
-            if compgen -G *.identifier; then
+            if compgen -G ./*.identifier; then
                 for identFile in *.identifier; do
                     if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName/${identFile%.identifier}" ]]; then
                         echo "$(<"$identFile")" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
@@ -210,7 +210,7 @@ if [[ "$updateList" == "true" ]]; then
                 done
             fi
 
-            if compgen -G *.bundle.pointer; then
+            if compgen -G ./*.bundle.pointer; then
                 for pointerFile in *.bundle.pointer; do
                     if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName/${pointerFile%.bundle.pointer}" ]]; then
                         # This pack doesn't have a .identifier file, so it needs to be extracted separately

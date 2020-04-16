@@ -213,6 +213,7 @@ if [[ "$updateList" == "true" ]]; then
             fi
             shopt -s failglob
 
+            shopt -u failglob
             if compgen -G ./*.bundle.pointer; then
                 for pointerFile in *.bundle.pointer; do
                     if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName/${pointerFile%.bundle.pointer}" ]]; then

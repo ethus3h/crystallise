@@ -254,6 +254,7 @@ if [[ "$updateList" == "true" ]]; then
             spushd "$streamRegistryFullPath" || die "Could not pushd to stream registry directory!"
             shopt -s globstar
             mkdir -p "$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$streamRegistryRepoName"
+            shopt -u failglob
             for potentialPointer in {0..9}/** {a..f}/**; do
                 if [[ -f "$potentialPointer" ]] && [[ "$potentialPointer" != *.verified ]]; then
                     if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.pointers-done/$streamRegistryRepoName/$potentialPointer" ]]; then

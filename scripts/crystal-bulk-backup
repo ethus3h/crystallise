@@ -201,12 +201,14 @@ if [[ "$updateList" == "true" ]]; then
 
             mkdir -p "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName"
 
+            if compgen -G *.identifier; then
             for identFile in *.identifier; do
                 if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName/${identFile%.identifier}" ]]; then
                     echo "$(<"$identFile")" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
                     touch "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName/${identFile%.identifier}"
                 fi
             done
+            fi
 
             for pointerFile in *.bundle.pointer; do
                 if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName/${pointerFile%.bundle.pointer}" ]]; then

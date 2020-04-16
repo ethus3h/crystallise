@@ -215,6 +215,7 @@ if [[ "$updateList" == "true" ]]; then
 
             shopt -u failglob
             if compgen -G ./*.bundle.pointer; then
+                shopt -s failglob
                 for pointerFile in *.bundle.pointer; do
                     if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName/${pointerFile%.bundle.pointer}" ]]; then
                         # This pack doesn't have a .identifier file, so it needs to be extracted separately

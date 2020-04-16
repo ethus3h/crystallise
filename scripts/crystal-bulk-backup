@@ -211,34 +211,34 @@ if [[ "$updateList" == "true" ]]; then
             fi
 
             if compgen -G *.bundle.pointer; then
-            for pointerFile in *.bundle.pointer; do
-                if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName/${pointerFile%.bundle.pointer}" ]]; then
-                    # This pack doesn't have a .identifier file, so it needs to be extracted separately
-                    packTempDir="$(bigTempDir)"
-                    packDir="$PWD"
-                    spushd "$packTempDir" || die "Could not pushd to $packTempDir!"
-                    unxz --stdout - < "$packDir/$pointerFile" | tar -xf -
-                    # MAINTENANCE: Code copied and tweaked from sreg_read_stream
-                    crystalFilePattern=".*.crystal-data"
-                    shopt -u failglob
-                    shopt -s nullglob
-                    crystalFilePatternMatches=( $crystalFilePattern )
-                    shopt -s failglob
-                    shopt -u nullglob
-                    localStoreCrystalName="${crystalFilePatternMatches[0]}"
-                    if ! [[ -e "$localStoreCrystalName" ]]; then
-                        warn "Crystal info could not be found in the pointer for $pointerFile, so giving up immediately and skipping this one (retrying probably wouldn't help this)."
+                for pointerFile in *.bundle.pointer; do
+                    if ! [[ -e "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName/${pointerFile%.bundle.pointer}" ]]; then
+                        # This pack doesn't have a .identifier file, so it needs to be extracted separately
+                        packTempDir="$(bigTempDir)"
+                        packDir="$PWD"
+                        spushd "$packTempDir" || die "Could not pushd to $packTempDir!"
+                        unxz --stdout - < "$packDir/$pointerFile" | tar -xf -
+                        # MAINTENANCE: Code copied and tweaked from sreg_read_stream
+                        crystalFilePattern=".*.crystal-data"
+                        shopt -u failglob
+                        shopt -s nullglob
+                        crystalFilePatternMatches=( $crystalFilePattern )
+                        shopt -s failglob
+                        shopt -u nullglob
+                        localStoreCrystalName="${crystalFilePatternMatches[0]}"
+                        if ! [[ -e "$localStoreCrystalName" ]]; then
+                            warn "Crystal info could not be found in the pointer for $pointerFile, so giving up immediately and skipping this one (retrying probably wouldn't help this)."
+                            touch "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName/${pointerFile%.bundle.pointer}"
+                            spopd || die "Could not popd!"
+                            continue
+                        fi
+                        [[ -e "$localStoreCrystalName/identifier" ]] || die "Crystal info was found, but no crystal identifier was found in the pointer for $pointerFile."
+                        echo "$(<"$localStoreCrystalName"/identifier)" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
                         touch "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName/${pointerFile%.bundle.pointer}"
                         spopd || die "Could not popd!"
-                        continue
+                        rm -r "$packTempDir"
                     fi
-                    [[ -e "$localStoreCrystalName/identifier" ]] || die "Crystal info was found, but no crystal identifier was found in the pointer for $pointerFile."
-                    echo "$(<"$localStoreCrystalName"/identifier)" >> "$backupLocation/crystal-backup-meta/cbb-index/items"
-                    touch "$backupLocation/crystal-backup-meta/cbb-index/items.packs-done/$streamRegistryRepoName/${pointerFile%.bundle.pointer}"
-                    spopd || die "Could not popd!"
-                    rm -r "$packTempDir"
-                fi
-            done
+                done
             fi
 
             spopd || die "Could not popd!"

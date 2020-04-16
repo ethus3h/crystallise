@@ -245,6 +245,7 @@ if [[ "$updateList" == "true" ]]; then
                     fi
                 done
             fi
+            shopt -s failglob
 
             spopd || die "Could not popd!"
 

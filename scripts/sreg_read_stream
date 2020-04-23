@@ -97,7 +97,7 @@ mkdir "$streamId"
     hashFull="$(sregi_hash_from_file "$streamId.xz")"
     if [[ -n "$knownChecksum" ]]; then
         [[ "$knownChecksum" == "$hashFull" ]] || die "The checksum provided by the pointer does not match the provided checksum."
-    else 
+    else
         knownChecksum="$hashFull"
     fi
     if [[ "$(wc -c < "$streamId.xz")" -lt 166 ]]; then
@@ -145,7 +145,7 @@ mkdir "$streamId"
     while [[ "$numRetries" -gt 0 ]] && [[ "$successfulRetrieval" -eq 0 ]]; do
         trap 'warn "A nonfatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate) while reading $hashFull."; continue' ERR
         if [[ "$numRetries" -lt "$numTotalRetries" ]]; then
-            sleep 30
+            sleep 5
             warn "Beginning retry of reading stream $hashFull. $numRetries retries remaining."
         fi
         numRetries=$(( numRetries - 1 ))

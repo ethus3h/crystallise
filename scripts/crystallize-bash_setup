@@ -124,7 +124,7 @@ sregi_hash_from_file() (
             fi
         )
     }
-    if [[ 36 -ge "$(wc -c < "$file")" ]]; then
+    if [[ 36 -gt "$(wc -c < "$file")" ]]; then
         set +o pipefail
         sha512sum < "$file" | awk '{print $1;}'
         set -o pipefail

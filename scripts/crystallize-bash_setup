@@ -128,7 +128,7 @@ sregi_hash_from_file() (
         set +o pipefail
         sha512sum < "$file" | awk '{print $1;}'
         set -o pipefail
-        return
+        return 0
     fi
     local pointerTypeSignature
     pointerTypeSignature="$(head -c 36 "$file" | tr -d '\0')"

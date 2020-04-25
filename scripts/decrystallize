@@ -123,7 +123,7 @@ decrystInner() (
     }
 
     # FIXME: Why does execution continue past the next line when tar exits with a nonzero exit status?! The ERR trap gets printed out correctly when running "trap" with no arguments right after it, but for some reason doesn't get called here. Weird.
-    fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5" "$lockOverride" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - | tar -xvf - -C "$tempId/" || decrystallizeNoDieOnMac
+    fcache_request "$crystalWorkdir/.CrystalCache/" "https://archive.org/download/$CrystalID/$CrystalID.coal5" "$lockOverride" | pv -tparbIfei 0.1 -s "$crystalXzFileSize" | gpg --yes --batch --passphrase-file "$tempId.tmp" - | unxz --stdout - | tar -xvf - -C "$tempId/" || {} || decrystallizeNoDieOnMac
     #trap
 
     [[ -n $knownCrystalCrystallizeVersion ]] || getCrystalVersion

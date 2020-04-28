@@ -165,7 +165,7 @@ decrystInner() (
         fi
         findfail="$(tempFile)"
         rm "$findfail"
-        find ".forks" -type f -not -name '06968986-7c96-406f-b7b2-a90fe40293bd' -exec bash -c 'trap '\''touch "$0" ERR'\''; '"$splitForksTarWanted"' -xvf - -C "$2/" < "$1"' "$findfail" {} "$tempIdAbspath" \;
+        find ".forks" -type f -not -name '06968986-7c96-406f-b7b2-a90fe40293bd' -exec bash -c 'trap '\''touch "$0"'\'' ERR; '"$splitForksTarWanted"' -xvf - -C "$2/" < "$1"' "$findfail" {} "$tempIdAbspath" \;
         [[ -e "$findfail" ]] && die
         true
     ) || die

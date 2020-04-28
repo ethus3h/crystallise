@@ -209,7 +209,7 @@ decrystInner() (
             cd "$tempId.tempDir"
             findfail="$(tempFile)"
             rm "$findfail"
-            find . -name "$CrystalID"'*' -exec bash -c 'trap '\''touch "$0"'\'' ERR; dir="$(dirname "$1")"; mv "$1" "../'"$tempId"'/$dir/"' "$findfail" {} \; || die
+            find . -name "$CrystalID"'*' -exec bash -c 'trap '\''touch "$0" ERR'\''; dir="$(dirname "$1")"; mv "$1" "../'"$tempId"'/$dir/"' "$findfail" {} \; || die
             [[ -e "$findfail" ]] && die
             true
         ) || die

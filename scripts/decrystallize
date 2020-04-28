@@ -190,7 +190,7 @@ decrystInner() (
 
     if [[ "$exitStatus" == "0" ]]; then
         mkdir "$tempId.tempDir"
-        # This code talking about "findfail" is broken, but I can't figure out what it's supposed to do to fix it.
+        # This code talking about "findfail" is broken, but I can't tell out what it's supposed to do to fix it.
         (
             cd "$tempId"
             findfail="$(tempFile)"

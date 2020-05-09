@@ -143,7 +143,7 @@ mkdir -p "$destinationDirname"
 # ...but make sure it's still readable
 chmod a+rx "$destinationDirname"
 
-sreg_read_stream --sreg-dir "$sregDir" --checksum "$sourceChecksum" < "$1" > "$destinationName" || { echo "Failed to read pointer at $1!" >> "$sregDir"/../srpull-fails-"$(emdate)".log; die "Failed to read pointer at $1!"; }
+sreg_read_stream --sreg-dir "$sregDir" --checksum "$sourceChecksum" < "$1" > "$destinationName" || { echo "Failed to read pointer at $1!" >> "$(crystallize-getconf WorkDirectory)"/srpull-fails-"$(emdate)".log; die "Failed to read pointer at $1!"; }
 
 # Copy metadata
 # shellcheck disable=SC2015

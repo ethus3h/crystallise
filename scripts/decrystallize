@@ -190,7 +190,7 @@ decrystInner() (
 
     if [[ "$exitStatus" == "0" ]]; then
         mkdir "$tempId.tempDir"
-        # This code talking about "findfail" is broken, but I can't tell out what it's supposed to do to fix it. Formerly the outer subshells had || die after them instead of || true.
+        # This code talking about "findfail" before and after the csum is broken, but I can't tell out what it's supposed to do to fix it. Formerly the outer subshells had || die after them instead of || true.
         (
             cd "$tempId"
             findfail="$(tempFile)"

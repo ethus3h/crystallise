@@ -201,9 +201,9 @@ fi
         #    true
         #) || true
 
-        mv
         (
             cd "$tempId"
+            find . -name "$CrystalID.ostype" -or -name "$CrystalID.forks" -or -name "$CrystalID.forks-csum"
             shopt -s dotglob
             csum --check ./* "../$tempId.csum" || die
         ) || die

@@ -94,7 +94,7 @@ if ! [[ -e "$crystalWorkdir/.CrystalCache/" ]]; then
     fcache_init "$crystalWorkdir/.CrystalCache/"
 fi
 
-decrystInner() (
+#decrystInner() (
     knownCrystalCrystallizeVersion=""
     getCrystalVersion() {
         if [[ "true" == "$offline" ]]; then
@@ -224,9 +224,9 @@ decrystInner() (
         warn "(Couldn't retrieve csum file for this crystal as the version of crystallize it was created using is too old; contents will not be checked for checksum errors.)"
     fi
     rm -f "${tempId:?}.csum"
-)
+#)
 
-decrystInner "$@" || die
+#decrystInner "$@" || die
 
 destination="$tempId in "
 if [[ "$decrystallizeHere" == "true" ]]; then

@@ -200,6 +200,7 @@ fi
         #    true
         #) || true
 
+        mv
         (
             cd "$tempId"
             shopt -s dotglob

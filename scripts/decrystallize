@@ -202,7 +202,7 @@ fi
         #) || true
 
         (
-            cd "$tempId"
+            cd "$tempId" || die
             find . \( -name "$CrystalID.ostype" -or -name "$CrystalID.forks" -or -name "$CrystalID.forks-csum" \) -print -delete
             shopt -s dotglob
             csum --check ./* "../$tempId.csum" || die

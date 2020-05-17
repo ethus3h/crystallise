@@ -198,7 +198,7 @@ fi
         #    find . -name "$CrystalID"'*' -not -name "$CrystalID.ostype" -not -name "$CrystalID.forks" -not -name "$CrystalID.forks-csum" -exec bash -c 'trap '\''touch "$0"'\'' ERR; dir="$(dirname "$1")"; mkdir -p "../'"$tempId"'.tempDir/$dir/"; mv "$1" "../'"$tempId"'.tempDir/$dir/"' "$findfail" {} \; || die
         #    [[ -e "$findfail" ]] && die
         #    true
-        #) || true
+        #) || die
 
         (
             cd "$tempId" || die
@@ -214,7 +214,7 @@ fi
         #    find . -name "$CrystalID"'*' -exec bash -c 'trap '\''touch "$0"'\'' ERR; dir="$(dirname "$1")"; mv "$1" "../'"$tempId"'/$dir/"' "$findfail" {} \; || die
         #    [[ -e "$findfail" ]] && die
         #    true
-        #) || true
+        #) || die
         rm -r "${tempId:?}.tempDir"
     else
         [[ -n $knownCrystalCrystallizeVersion ]] || getCrystalVersion

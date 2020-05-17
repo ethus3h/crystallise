@@ -190,7 +190,6 @@ fi
 
     if [[ "$exitStatus" == "0" ]]; then
         mkdir "$tempId.tempDir"
-        # This code talking about "findfail" before and after the csum is broken, but I can't tell out what it's supposed to do to fix it. Formerly the outer subshells had || die after them instead of || true.
         # Move the forks files and log out of the way, so they don't get spotted by csum and make the checksum fail ("Known file not used")
         #(
         #    cd "$tempId"

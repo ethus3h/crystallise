@@ -122,10 +122,10 @@ if [[ "$itemChecksum" != "$knownChecksum" ]]; then
     die "File did not match what its checksum should be!"
 fi
 # First, make sure the link is good and fix it up if it's not.
-if ! [[ -f "$dbFilePath" ]]; then
+#if ! [[ -f "$dbFilePath" ]]; then
     #find "$dbDir/ByCount" -mindepth 4 -maxdepth 4 -type d -name "$hashFull" -exec ln -sf {} "$dbLinkPath" \;
     #dbFilePath="$(readlink -e "$dbLinkPath")"
-fi
+#fi
 if ! [[ -f "$dbFilePath" ]]; then
     rm "$dbLinkPath"
     die "Could not find the cache file, despite there being a link to it!"

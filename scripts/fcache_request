@@ -128,6 +128,7 @@ if ! [[ -f "$dbFilePath" ]]; then
     rm "$dbLinkPath"
 fi
 if ! [[ -f "$dbFilePath" ]]; then
+    rm "$dbLinkPath"
     die "Could not find the cache file, despite there being a link to it!"
 fi
 dbFileOldPath="$dbFilePath"

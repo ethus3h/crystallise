@@ -88,7 +88,7 @@ if [[ ! -h "$dbLinkPath" ]] || [[ ! -d "$oldFilePath" ]] || [[ ! -d "$cacheEntry
 
     # Make sure there isn't a dangling LocalStore content folder with no associated link
     # Can this ever work? I don't think maxdepth 2 will ever get beyond the first hash letter.
-    find "$dbDir/ByCount" -maxdepth 2 -type d -name "$hashFull" -exec rm -rf {} \;
+    #find "$dbDir/ByCount" -maxdepth 2 -type d -name "$hashFull" -exec rm -rf {} \;
     if ! [[ -f "$dbLinkPath" ]]; then
         # Never seen this item before, so set the requestCount
         requestCount=1

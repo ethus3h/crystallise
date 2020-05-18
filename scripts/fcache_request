@@ -138,7 +138,7 @@ if ! [[ "$oldCount" =~ ^-?[0-9]+$ ]]; then
     oldCount="1"
 fi
 # Increment the item's requestCount.
-requestCount=$(( oldCount + 1 ))
+#requestCount=$(( oldCount + 1 ))
 if [[ -z "$requestCount" ]]; then
     requestCount=1
 fi
@@ -146,9 +146,11 @@ fi
 dbFileDir="$dbDir/ByCount/${requestCount:?}/$hashSubdir"
 dbFilePath="$dbFileDir/$hashFull"
 mkdir -p "$dbFileDir"
-mv "$dbFileOldPath" "$dbFilePath"
-rm "$dbLinkPath"
-ln -s "$dbFilePath" "$dbLinkPath"
+#mv "$dbFileOldPath" "$dbFilePath"
+#rm "$dbLinkPath"
+if [[ ! -e "$dbLinkPath" ]]; then
+    ln -s "$dbFilePath" "$dbLinkPath"
+fi
 
 # Return the data to the caller
 cat "$dbLinkPath"

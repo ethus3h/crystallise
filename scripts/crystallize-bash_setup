@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 #set -x
 
-export emberCrystallizeVersion='3.1.2.5.14.377'
+export emberCrystallizeVersion='3.1.2.5.14.378'
 
 # The update script shown here requires there to be only one ebuild of crystallize in the wreathe-overlay overlay.
-# ( sudo true; newVersion="3.1.2.5.14.377"; cd "/Ember/crystallize"; echo "$newVersion" > version; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo emerge --sync wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf; cd "$emberPath/ember-shared"; generateGuixPackaging crystallize; eogup-single; git push; )
+# ( sudo true; newVersion="3.1.2.5.14.378"; cd "/Ember/crystallize"; echo "$newVersion" > version; eogup-single; git tag -a "v$newVersion" -m "version"; egup-single .; cd "/Ember/wreathe-overlay"; eogup-single; mv app-misc/crystallize/crystallize-*.ebuild "app-misc/crystallize/crystallize-$newVersion.ebuild"; repoman manifest; egup-single; sudo emerge --sync wreathe-overlay; sudo emerge crystallize; sudo dispatch-conf; cd "$emberPath/ember-shared"; generateGuixPackaging crystallize; eogup-single; git push; )
 
 # Note: To debug crystal retrieval when srpulling etc, change is needed to the following line in sreg_read_stream: decrystallize-pointer --passphrase "$(sregi_get_passphrase "$sregDir")" "$lockOverride" ./*.crystal --here &> /dev/null
 # and in localstorecache_request: decrystallize --passphrase "$(sregi_get_passphrase "$sregDir")" "$crystalIdentifier" --here # &> /dev/null

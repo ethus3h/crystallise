@@ -105,11 +105,11 @@ for path in "${pathsToCopy[@]}"; do
     else
         find "$path" -type f -exec sregi_copy_read "$failCheckFile" --skip "$skipCount" --sreg-dir "$sregDir" {} "$destinationReplaced" "$statusFile" "$destinationRootLength" \;
     fi
-    rsync -a --ignore-existing --no-i-r "${pathsToCopy[@]}" "$destinationParameter/"
 
-    find "$destinationFindTarget" -type d -exec bash -c '[[ -f "$0/.keep" ]] && [[ "$(<"$0/.keep")" == "d61b6a4f-525b-458a-b8d2-4a9592e22caa" ]] && rm "$(<"${0:?}/.keep")"' {} \;
-    find "$destinationFindTarget" -type d -exec bash -c '[[ -f "$0/.keep" ]] && [[ "$(<"$0/.d61b6a4f-525b-458a-b8d2-4a9592e22caa.keep")" == "d61b6a4f-525b-458a-b8d2-4a9592e22caa" ]] && rm "$(<"${0:?}/.d61b6a4f-525b-458a-b8d2-4a9592e22caa.keep")"' {} \;
+    #find "$destinationFindTarget" -type d -exec bash -c '[[ -f "$0/.keep" ]] && [[ "$(<"$0/.keep")" == "d61b6a4f-525b-458a-b8d2-4a9592e22caa" ]] && rm "$(<"${0:?}/.keep")"' {} \;
+    #find "$destinationFindTarget" -type d -exec bash -c '[[ -f "$0/.keep" ]] && [[ "$(<"$0/.d61b6a4f-525b-458a-b8d2-4a9592e22caa.keep")" == "d61b6a4f-525b-458a-b8d2-4a9592e22caa" ]] && rm "$(<"${0:?}/.d61b6a4f-525b-458a-b8d2-4a9592e22caa.keep")"' {} \;
 done
+rsync -a --ignore-existing --no-i-r "${pathsToCopy[@]}" "$destinationParameter/"
 
 if [[ -e "$failCheckFile" ]]; then
     die "An invocation of sregi_copy_read (called from $0) failed with the message \"$(<"$failCheckFile")\"!"

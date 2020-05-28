@@ -12,7 +12,7 @@ reportResult() {
 }
 
 reportDefault() {
-    reportResult "/library/ember-library-2/Futuramerlin Projects/Data/Stream Registry/"
+    reportResult "/library/Futuramerlin Projects/Data/Stream Registry/"
 }
 
 if [[ "$1" == "--sreg-dir" ]]; then

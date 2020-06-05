@@ -149,7 +149,7 @@ dbFilePath="$dbFileDir/$hashFull"
 mkdir -p "$dbFileDir"
 #mv "$dbFileOldPath" "$dbFilePath"
 #rm "$dbLinkPath"
-if [[ ! -e "$dbLinkPath" ]]; then
+if [[ ! -h "$dbLinkPath" ]]; then
     ln -s "$dbFilePath" "$dbLinkPath"
 fi
 

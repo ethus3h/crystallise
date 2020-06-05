@@ -137,6 +137,7 @@ if ! [[ "$oldCount" =~ ^-?[0-9]+$ ]]; then
     oldCount="1"
 fi
 # Increment the item's requestCount.
+requestCount="$oldCount"
 requestCount=$(( oldCount + 1 ))
 if [[ -z "$requestCount" ]]; then
     requestCount=1

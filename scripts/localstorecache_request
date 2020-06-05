@@ -149,7 +149,7 @@ mkdir -p "$dbFileDir"
 rm -rf "${dbFilePath:?}"
 #mv "$dbFileOldPath" "$dbFilePath"
 #rm "$dbLinkPath"
-if ! [[ -h "$dbLinkPath" ]]; then
+if [[ ! -h "$dbLinkPath" ]]; then
     ln -s "$dbFilePath" "$dbLinkPath"
 fi
 

@@ -257,7 +257,7 @@ mkdir "$streamId"
                 trap 'releaseLocks; warn "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate) while attempting to read a remote pack pointer $hashFull (stream was not in the pack given). Giving up now: retrying would likely not help in this situation."; numRetries=0; break' ERR
                 shopt -u failglob
                 localStoreMatchArray=("$localstoreLocation"/sreg_flush_localstore-*.LocalStore)
-                shopt -s
+                shopt -s failglob
                 if ( ! [[ -e "${localStoreMatchArray[0]}" ]] ) || [[ -z "${localStoreMatchArray[0]}" ]]; then
                     localStoreMatchArray=("$localstoreLocation"/scache-*.LocalStore)
                     localStoreMatchedFolder="${localStoreMatchArray[0]}"

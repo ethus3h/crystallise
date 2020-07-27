@@ -51,4 +51,4 @@ enrollFile() {
     fi
 }
 
-find "$enro"
+find "$enrollDirectory"

@@ -15,6 +15,7 @@ dbDir="$(crystallize-getconf WorkDirectory)/.StreamIndex/"
 mkdir -p "$dbDir"
 
 enrollFile() {
+    file="$1"
     hash="$(sha512sum < "$file" | awk '{print $1;}')"
     path=""
 }

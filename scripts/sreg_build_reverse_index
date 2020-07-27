@@ -32,6 +32,7 @@ enrollFile() {
         print "$file" > "$link"
     fi
 }
-if [[ -n "$2" ]]; then
+if [[ -n "$hashToFind" ]]; then
     # Looking up a hash that was provided
-    hash="$2"
+    link="$dbDir/${hash:0:1}/${hash:1:1}/${hash:2:1}/$hash"
+    if [[ -f  ]]

@@ -32,6 +32,8 @@ if [[ -n "$hashToFind" ]]; then
     fi
 fi
 
+# Enrolling file
+
 mkdir -p "$dbDir"
 
 enrollFile() {

@@ -21,5 +21,6 @@ enrollFile() {
     file="$1"
     local hash
     hash="$(sha512sum < "$file" | awk '{print $1;}')"
+    local link
     link=""
 }

@@ -7,6 +7,7 @@ source ember_bash_setup &> /dev/null || { printf '%b' '\033[1;31m' >&2; echo "A 
 trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
 
 # This program builds an index of where files with a given hash can be found. It takes one parameter: the directory to add to the index. This index can then be used to speed up stream reads by instead of fetching the specific stream, reading the copy that is listed in the index — but without taking the disk space that the usual scache does.
+# Alternatively, a second parameter that is a hash can be given, which will be returned with the path to a file with the contents given in the hash.
 
 enrollDirectory="$1"
 

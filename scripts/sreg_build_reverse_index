@@ -50,3 +50,5 @@ enrollFile() {
         print "$file" > "$link"
     fi
 }
+
+find "$enro"

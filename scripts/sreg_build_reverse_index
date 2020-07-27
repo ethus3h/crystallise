@@ -51,4 +51,4 @@ enrollFile() {
     fi
 }
 
-find "$enrollDirectory"
+IFS= while read find "$enrollDirectory" -type f -print0

@@ -16,6 +16,11 @@ shift
 
 dbDir="$(crystallize-getconf WorkDirectory)/.StreamIndex/"
 
+if [[ -n "$hashToFind" ]]; then
+    # Looking up a hash that was provided
+    link="$dbDir/${hash:0:1}/${hash:1:1}/${hash:2:1}/$hash"
+    if [[ -f  ]]
+
 mkdir -p "$dbDir"
 
 enrollFile() {
@@ -32,7 +37,3 @@ enrollFile() {
         print "$file" > "$link"
     fi
 }
-if [[ -n "$hashToFind" ]]; then
-    # Looking up a hash that was provided
-    link="$dbDir/${hash:0:1}/${hash:1:1}/${hash:2:1}/$hash"
-    if [[ -f  ]]

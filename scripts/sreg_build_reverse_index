@@ -22,7 +22,8 @@ if [[ -n "$hashToFind" ]]; then
     if [[ ! -f "$link" ]]; then
         die "Could not find the requested hash."
     else
-        hash="$(sha512sum < "$link" | awk '{print $1;}')"
+        hash="$(sha512sum < "$link" | awk '{print $1;}')" || die
+        if [[ ! ""]]
 fi
 
 mkdir -p "$dbDir"

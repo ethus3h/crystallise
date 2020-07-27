@@ -24,7 +24,7 @@ enrollFile() {
     hash="$(sha512sum < "$file" | awk '{print $1;}')"
     local link
     link="$dbDir/${hash:0:1}/${hash:1:1}/${hash:2:1}/$hash"
-    if [[ ! -h "$link" ]] || [[ ! -e "$link" ]]; then
+    if [[ ! -f "$link" ]]; then
         [[ -h "$link" ]] && rm "$link"
         print "$file" > "$link"
     fi

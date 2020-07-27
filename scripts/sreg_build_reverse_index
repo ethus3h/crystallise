@@ -19,7 +19,9 @@ dbDir="$(crystallize-getconf WorkDirectory)/.StreamIndex/"
 if [[ -n "$hashToFind" ]]; then
     # Looking up a hash that was provided
     link="$dbDir/${hash:0:1}/${hash:1:1}/${hash:2:1}/$hash"
-    if [[ -f  ]]
+    if [[ ! -f "$link" ]]; then
+        die "Could not find the requested hash."
+    fi
 
 mkdir -p "$dbDir"
 

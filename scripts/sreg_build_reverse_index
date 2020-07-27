@@ -51,4 +51,6 @@ enrollFile() {
     fi
 }
 
-find "$enrollDirectory" -type f -print0
+find "$enrollDirectory" -type f -print0 | while IFS= read -r -d '' file; do
+    enrollFile "$file" "$dbDir" || die
+done || die

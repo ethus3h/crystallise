@@ -53,4 +53,4 @@ enrollFile() {
 
 find "$enrollDirectory" -type f -print0 | while IFS= read -r -d '' file; do
     enrollFile "$file" "$dbDir" || die
-done || die
+done || warn "Something went wrong while indexing files."

@@ -27,6 +27,8 @@ if [[ -n "$hashToFind" ]]; then
         if [[ "$hash" != "$hashToFind" ]]; then
             die "Found the requested hash, but the index entry pointed to a file that no longer matches: $path"
         fi
+        print "$path"
+        exit 0
 fi
 
 mkdir -p "$dbDir"

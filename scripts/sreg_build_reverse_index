@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
+source ember_bash_setup &> /dev/null || { printf '%b' '\033[1;31m' >&2; echo "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd): The required dependency ember-shared could not be found (or ember_bash_setup could not be sourced for some other reason)." >&2; printf '%b' '\033[0m' >&2; exit 1; }
+#set -x
+
+((EUID)) && exec sudo -- "$0" "$@"
+trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(pwd) at $(emdate)."' ERR
+
+sregDir=""
+if [[ "$1" == "--sreg-dir" ]]; then
+    shift
+    sregDir="$1"
+    shift
+fi
+sregDir="$(sregi_find_dir --sreg-dir "$sregDir" --full-check)"
+
+sreg_folder_check --sreg-dir "$sregDir" --verify "$1"

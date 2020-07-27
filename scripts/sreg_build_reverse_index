@@ -10,6 +10,8 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 # Alternatively, a second parameter that is a hash can be given, which will be returned with the path to a file with the contents with the given hash.
 
 enrollDirectory="$1"
+shift
+
 
 dbDir="$(crystallize-getconf WorkDirectory)/.StreamIndex/"
 

@@ -29,6 +29,7 @@ if [[ -n "$hashToFind" ]]; then
         fi
         print "$path"
         exit 0
+    fi
 fi
 
 mkdir -p "$dbDir"

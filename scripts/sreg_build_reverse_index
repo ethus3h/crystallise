@@ -29,3 +29,4 @@ enrollFile() {
         print "$file" > "$link"
     fi
 }
+if [[ -n "$2"]]

@@ -22,6 +22,7 @@ if [[ -n "$hashToFind" ]]; then
     if [[ ! -f "$link" ]]; then
         die "Could not find the requested hash."
     fi
+fi
 
 mkdir -p "$dbDir"
 

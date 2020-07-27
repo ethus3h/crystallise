@@ -8,6 +8,6 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 
 # This program builds an index of where files with a given hash can be found.
 
-
+enrollDirectory="$1"
 
 dbDir="$(crystallize-getconf WorkDirectory)/.StreamCache/"

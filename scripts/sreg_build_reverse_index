@@ -22,9 +22,7 @@ enrollFile() {
     local hash
     hash="$(sha512sum < "$file" | awk '{print $1;}')"
     local link
-    link="${hashFull:0:1}"
-hashB="${hashFull:1:1}"
-hashC="${hashFull:2:1}"
+    link="$dbDir/${hashFull:0:1}/${hashFull:1:1}/${hashFull:2:1}"
 hashSubpath="$hashA/$hashB/$hashC/$hashFull"
 "
 }

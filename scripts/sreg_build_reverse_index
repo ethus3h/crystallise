@@ -32,7 +32,7 @@ if [[ -n "$hashToFind" ]]; then
     fi
 fi
 
-# Enrolling file
+# Enrolling path
 
 mkdir -p "$dbDir"
 

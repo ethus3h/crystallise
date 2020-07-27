@@ -25,7 +25,7 @@ enrollFile() {
     local link
     link="$dbDir/${hash:0:1}/${hash:1:1}/${hash:2:1}/$hash"
     if [[ ! -f "$link" ]]; then
-        [[ -h "$link" ]] && rm "$link"
+        [[ -e "$link" ]] && rm "$link"
         print "$file" > "$link"
     fi
 }

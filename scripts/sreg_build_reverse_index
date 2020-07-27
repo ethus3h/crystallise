@@ -21,7 +21,8 @@ if [[ -n "$hashToFind" ]]; then
     link="$dbDir/${hash:0:1}/${hash:1:1}/${hash:2:1}/$hash"
     if [[ ! -f "$link" ]]; then
         die "Could not find the requested hash."
-    fi
+    else
+        hash="$(sha512sum < "$file" | awk '{print $1;}')"
 fi
 
 mkdir -p "$dbDir"

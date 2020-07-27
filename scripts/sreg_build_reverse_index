@@ -23,7 +23,7 @@ if [[ -n "$hashToFind" ]]; then
         die "Could not find the requested hash."
     else
         path="$(<"$link")"
-        hash="$(sha512sum < "$(<"$link")" | awk '{print $1;}')" || die
+        hash="$(sha512sum < "$path" | awk '{print $1;}')" || die
         if [[ "$hash" != "$hashToFind" ]]; then
             die "Found the requested hash, but the index entry pointed to a file that no longer matches: $()"
 fi

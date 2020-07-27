@@ -11,7 +11,7 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 
 enrollDirectory="$1"
 shift
-
+hash="$2"
 
 dbDir="$(crystallize-getconf WorkDirectory)/.StreamIndex/"
 

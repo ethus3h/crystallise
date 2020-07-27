@@ -29,4 +29,6 @@ enrollFile() {
         print "$file" > "$link"
     fi
 }
-if [[ -n "$2"]]
+if [[ -n "$2" ]]; then
+    # Looking up a hash that was provided
+    hash="$2"

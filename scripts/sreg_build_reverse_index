@@ -94,3 +94,4 @@ done || warn "Something went wrong while indexing files."
 if [[ "true" == "$error" ]]; then
     warn "Could not remove at least one index record."
 fi
+print "Found $count new out of $countAll total."

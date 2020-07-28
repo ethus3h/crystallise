@@ -9,6 +9,10 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 # This program builds an index of where files with a given hash can be found. It takes one parameter: the directory to add to the index. This index can then be used to speed up stream reads by instead of fetching the specific stream, reading the copy that is listed in the index — but without taking the disk space that the usual scache does.
 # Alternatively, the first parameter can be "--find" and a second parameter that is a hash given, which will be returned with the path to a file with the contents with the given hash.
 
+check="false"
+if [[ "--check" == "$1" ]]; then
+    check="true"
+fi
 enrollDirectory="$1"
 shift
 if [[ -n "$1" ]]; then

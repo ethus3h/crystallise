@@ -47,7 +47,6 @@ mkdir -p "$dbDir"
 
 count="0"
 countAll="0"
-count
 error="false"
 enrollFile() {
     local dbDir

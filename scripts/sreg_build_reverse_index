@@ -63,6 +63,7 @@ enrollFile() {
                 warn "Could not remove index record $link"
                 error="true"
             fi
+    fi
     if [[ -h "$link" ]] && [[ "$check" == "true" ]]; then
         oldHash="$(sha512sum < "$link" | awk '{print $1;}')" || die
         if [[ "$hash" != "$oldHash" ]]; then

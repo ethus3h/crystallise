@@ -69,7 +69,7 @@ enrollFile() {
         if [[ "$hash" != "$oldHash" ]]; then
             echo "Updating outdated entry; was $oldHash"
             if ! rm "$link"; then
-                warn "Could not remove index record $link"
+                warn "Could not remove outdated index record $link"
                 error="true"
             fi
         fi

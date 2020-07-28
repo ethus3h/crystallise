@@ -69,7 +69,7 @@ enrollFile() {
             fi
         fi
     fi
-    countAll=$(( count + 1 ))
+    countAll=$(( countAll + 1 ))
     if [[ ! -f "$link" ]]; then
         if [[ -e "$link" ]]; then
             if ! rm "$link"; then

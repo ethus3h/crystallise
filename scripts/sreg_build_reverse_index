@@ -60,7 +60,7 @@ enrollFile() {
     countAll=$(( countAll + 1 ))
     if [[ -h "$link" ]] && [[ "$check" == "true" ]]; then
         path="$(<"$link")"
-        oldHash="$(sha512sum < "$path" | awk '{print $1;}')" || die
+        oldHash="$(sha512sum < "$link" | awk '{print $1;}')" || die
         if [[ "$hash" != "$oldHash" ]]; then
             echo "Updating outdated entry; was $oldHash"
             if ! rm "$link"; then

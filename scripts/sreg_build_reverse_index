@@ -57,6 +57,7 @@ enrollFile() {
     hash="$(sha512sum < "$file" | awk '{print $1;}')"
     local link
     link="$dbDir/${hash:0:1}/${hash:1:1}/${hash:2:1}/$hash"
+    countAll=$(( countAll + 1 ))
     if [[ -f "$link" ]] && [[ "$check" == "true" ]]; then
         path="$(<"$link")"
         oldHash="$(sha512sum < "$path" | awk '{print $1;}')" || die
@@ -68,7 +69,6 @@ enrollFile() {
             fi
         fi
     fi
-    countAll=$(( countAll + 1 ))
     if [[ ! -f "$link" ]]; then
         if [[ -e "$link" ]]; then
             if ! rm "$link"; then

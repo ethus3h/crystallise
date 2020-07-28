@@ -85,7 +85,7 @@ enrollFile() {
     fi
 }
 
- | while IFS= read -r -d '' file; do
+while IFS= read -r -d '' file; do
     if [[ -f "$file" ]] && [[ ! -h "$file" ]]; then
         enrollFile "$file" "$dbDir" || warn "Something went wrong while indexing $file."
     fi

@@ -53,7 +53,7 @@ enrollFile() {
         if [[ -e "$link" ]]; then
             rm "$link" || die "Could not remove index record $link"
         else
-            mkdir -p "$link"
+            mkdir -p "$link" # Should not be necessary if there was already a file there
         fi
         print "$file" > "$link"
     fi

@@ -91,6 +91,6 @@ while IFS= read -r -d '' file; do
 done < <(find "$enrollDirectory" -type f -print0) || warn "Something went wrong while indexing files."
 
 if [[ "true" == "$error" ]]; then
-    warn "Could not remove at least one index record."
+    warn "Could not remove at least one problematic index record."
 fi
 echo "Found $count new out of $countAll total."

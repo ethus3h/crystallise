@@ -59,10 +59,10 @@ enrollFile() {
     link="$dbDir/${hash:0:1}/${hash:1:1}/${hash:2:1}/$hash"
     countAll=$(( countAll + 1 ))
     if [[ -h "$link" ]] && [[ ! -e "$link" ]]; then
-            if ! rm "$link"; then
-                warn "Could not remove index record $link"
-                error="true"
-            fi
+        if ! rm "$link"; then
+            warn "Could not remove index record $link"
+            error="true"
+        fi
     fi
     if [[ -h "$link" ]] && [[ "$check" == "true" ]]; then
         oldHash="$(sha512sum < "$link" | awk '{print $1;}')" || die

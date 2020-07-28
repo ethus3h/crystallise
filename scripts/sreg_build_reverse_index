@@ -77,7 +77,7 @@ enrollFile() {
     if [[ ! -h "$link" ]]; then
         if [[ -e "$link" ]]; then
             if ! rm "$link"; then
-                warn "Could not remove index record $link"
+                warn "Could not remove index record of incorrect type $link"
                 error="true"
             fi
         else

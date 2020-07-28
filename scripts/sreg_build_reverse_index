@@ -35,7 +35,7 @@ if [[ "$enrollDirectory" == "--find" ]] && [[ -n "$hashToFind" ]]; then
         if [[ "$hash" != "$hashToFind" ]]; then
             die "Found the requested hash, but the index entry pointed to a file that no longer matches: $(readlink "$link")"
         fi
-        print "$path"
+        readlink "$link"
         exit 0
     fi
 fi

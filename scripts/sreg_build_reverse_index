@@ -50,9 +50,9 @@ enrollFile() {
     local link
     link="$dbDir/${hash:0:1}/${hash:1:1}/${hash:2:1}/$hash"
     if [[ -f "$link" ]]; then
-            path="$(<"$link")"
+        path="$(<"$link")"
         oldHash="$(sha512sum < "$path" | awk '{print $1;}')" || die
-
+    fi
     if [[ ! -f "$link" ]]; then
         if [[ -e "$link" ]]; then
             rm "$link" || die "Could not remove index record $link"

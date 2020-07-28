@@ -97,6 +97,7 @@ mkdir "$streamId"
     hashFull="$(sregi_hash_from_file "$streamId.xz")"
     if indexedPath="$(sreg_build_reverse_index --find "$hashFull")"; then
         cat "$indexedPath"
+        finish "ok"
     fi
     if [[ -n "$knownChecksum" ]]; then
         [[ "$knownChecksum" == "$hashFull" ]] || die "The checksum provided by the pointer does not match the provided checksum."

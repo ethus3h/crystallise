@@ -68,7 +68,7 @@ enrollFile() {
             fi
         fi
     fi
-    if [[ ! -f "$link" ]]; then
+    if [[ ! -h "$link" ]]; then
         if [[ -e "$link" ]]; then
             if ! rm "$link"; then
                 warn "Could not remove index record $link"

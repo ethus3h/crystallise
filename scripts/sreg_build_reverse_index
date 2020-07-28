@@ -62,7 +62,7 @@ enrollFile() {
         path="$(<"$link")"
         oldHash="$(sha512sum < "$path" | awk '{print $1;}')" || die
         if [[ "$hash" != "$oldHash" ]]; then
-            print "Updating outdated entry; was $oldHash"
+            echo "Updating outdated entry; was $oldHash"
             if ! rm "$link"; then
                 warn "Could not remove index record $link"
                 error="true"
@@ -81,7 +81,7 @@ enrollFile() {
         fi
         print "$file" > "$link"
         count=$(( count + 1 ))
-        print "($count new of $countAll) Indexed $file"
+        echo "($count new of $countAll) Indexed $file"
     fi
 }
 
@@ -94,4 +94,4 @@ done < <(find "$enrollDirectory" -type f -print0) || warn "Something went wrong 
 if [[ "true" == "$error" ]]; then
     warn "Could not remove at least one index record."
 fi
-print "Found $count new out of $countAll total."
+echo "Found $count new out of $countAll total."

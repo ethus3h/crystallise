@@ -262,7 +262,7 @@ mkdir "$streamId"
                 shopt -u failglob
                 localStoreMatchArray=("$localstoreLocation"/sreg_flush_localstore-*.LocalStore)
                 shopt -s failglob
-                if ( ! [[ -e "${localStoreMatchArray[0]}" ]] ) || [[ -z "${localStoreMatchArray[0]}" ]]; then
+                if { ! [[ -e "${localStoreMatchArray[0]}" ]]; } || [[ -z "${localStoreMatchArray[0]}" ]]; then
                     localStoreMatchArray=("$localstoreLocation"/scache-*.LocalStore)
                     localStoreMatchedFolder="${localStoreMatchArray[0]}"
                 else

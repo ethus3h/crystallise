@@ -60,7 +60,7 @@ enrollFile() {
     countAll=$(( countAll + 1 ))
     if [[ -h "$link" ]] && [[ ! -e "$link" ]]; then
         if ! rm "$link"; then
-            warn "Could not remove index record $link"
+            warn "Could not remove broken index record $link"
             error="true"
         fi
     fi

@@ -310,7 +310,7 @@ mkdir "$streamId"
                 die "The provided data is not a pointer, and this was not handled when it should be. This indicates a bug in sreg_read_stream." # This should have been handled earlier
             fi
             if [[ -e "$dbLinkPath" ]]; then
-                if ! ( [[ -f "$dbLinkPath" ]] || [[ -h "$dbLinkPath" ]] ); then
+                if ! { [[ -f "$dbLinkPath" ]] || [[ -h "$dbLinkPath" ]]; }; then
                     # It can be a regular file when the stream has been dropped from the cache.
                     die "Stream cache link file $dbLinkPath exists but is neither a link nor a regular file!"
                 fi

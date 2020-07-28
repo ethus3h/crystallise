@@ -80,7 +80,6 @@ enrollFile() {
             mkdir -p "$(dirname "$link")"
         fi
         ln -s "$file" "$link"
-        print "$file" > "$link"
         count=$(( count + 1 ))
         echo "($count new of $countAll) Indexed $file"
     fi

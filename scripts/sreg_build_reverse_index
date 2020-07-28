@@ -57,7 +57,7 @@ enrollFile() {
         path="$(<"$link")"
         oldHash="$(sha512sum < "$path" | awk '{print $1;}')" || die
         if [[ "$hash" != "$oldHash" ]]; then
-            print
+            print "Updating outdated link; was $oldHash"
     fi
     if [[ ! -f "$link" ]]; then
         if [[ -e "$link" ]]; then

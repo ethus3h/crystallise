@@ -80,7 +80,7 @@ enrollFile() {
         fi
         print "$file" > "$link"
         count=$(( count + 1 ))
-        print "($count) Indexed $file"
+        print "($count:$countAll) Indexed $file"
     fi
 }
 

@@ -44,6 +44,7 @@ fi
 
 mkdir -p "$dbDir"
 
+count="0"
 enrollFile() {
     local dbDir
     dbDir="$2"

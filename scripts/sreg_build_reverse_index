@@ -60,7 +60,10 @@ enrollFile() {
         oldHash="$(sha512sum < "$path" | awk '{print $1;}')" || die
         if [[ "$hash" != "$oldHash" ]]; then
             print "Updating outdated entry; was $oldHash"
-            rm "$link"
+            if ! rm "$link"; then
+                warn "Could not remove index record $link"
+                error="true"
+            fi
         fi
     fi
     if [[ ! -f "$link" ]]; then

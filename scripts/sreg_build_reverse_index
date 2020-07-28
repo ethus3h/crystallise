@@ -64,7 +64,7 @@ enrollFile() {
     fi
     if [[ ! -f "$link" ]]; then
         if [[ -e "$link" ]]; then
-            rm "$link" || die "Could not remove index record $link"
+            rm "$link" || warn "Could not remove index record $link"
         else
             # Should not be necessary if there was already a file there
             mkdir -p "$(dirname "$link")"

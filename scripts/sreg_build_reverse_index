@@ -12,6 +12,7 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 check="false"
 if [[ "--check" == "$1" ]]; then
     check="true"
+    shift
 fi
 enrollDirectory="$1"
 shift

@@ -22,7 +22,7 @@ dbDir="$(crystallize-getconf WorkDirectory)/.StreamIndex/"
 
 if [[ "$enrollDirectory" == "--find" ]] && [[ -n "$hashToFind" ]]; then
     # Looking up a hash that was provided
-    link="$dbDir/${hash:0:1}/${hash:1:1}/${hash:2:1}/$hash"
+    link="$dbDir/${hashToFind:0:1}/${hashToFind:1:1}/${hashToFind:2:1}/$hashToFind"
     if [[ ! -f "$link" ]]; then
         die "Could not find the requested hash."
     else

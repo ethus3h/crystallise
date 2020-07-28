@@ -11,8 +11,8 @@ trap 'die "A fatal error was reported on ${BASH_SOURCE[0]} line ${LINENO} in $(p
 
 enrollDirectory="$1"
 shift
-if [[ -n "$2" ]]; then
-    hashToFind="$2"
+if [[ -n "$1" ]]; then
+    hashToFind="$1"
     shift
 else
     hashToFind=""

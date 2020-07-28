@@ -81,3 +81,6 @@ find "$enrollDirectory" -type f -print0 | while IFS= read -r -d '' file; do
         enrollFile "$file" "$dbDir" || warn "Something went wrong while indexing $file."
     fi
 done || warn "Something went wrong while indexing files."
+if [[ "true" == "$error" ]]; then
+    warn "Could not remove at least one index record."
+fi

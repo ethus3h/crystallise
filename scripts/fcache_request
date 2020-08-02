@@ -157,4 +157,4 @@ fi
 cat "$dbLinkPath"
 
 finish
-scache_gc "$dbDir" "f"
+#scache_gc "$dbDir" "f"

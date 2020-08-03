@@ -95,7 +95,7 @@ mkdir "$streamId"
     cat > "$streamId.xz"
     # Get the hash of the stream
     hashFull="$(sregi_hash_from_file "$streamId.xz")"
-    if indexedPath="$(sreg_build_reverse_index --find "$hashFull" 2>/dev/null)"; then
+    if indexedPath="$(sreg_build_reverse_index --find "$hashFull" 2> /dev/null)"; then
         cat "$indexedPath"
         finish "ok"
         exit 0

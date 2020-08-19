@@ -12,6 +12,9 @@ if [[ "$1" == "--ignore-lock" ]]; then
 fi
 
 action="$1"
+if [[ "usage" == "$action" ]]; then
+    shift
+    ncdu -x -r
 name="$2"
 
 lockedAction=""

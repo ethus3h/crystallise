@@ -15,6 +15,7 @@ action="$1"
 if [[ "usage" == "$action" ]]; then
     shift
     ncdu -x -r "$@"
+    exit 0
 fi
 
 name="$2"

@@ -14,7 +14,7 @@ fi
 action="$1"
 if [[ "usage" == "$action" ]]; then
     shift
-    ncdu -x -r "$@"
+    ncdu -x -r --confirm-quit "$@"
     exit 0
 fi
 

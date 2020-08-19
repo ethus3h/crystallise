@@ -16,6 +16,7 @@ if [[ "usage" == "$action" ]]; then
     shift
     ncdu -x -r "$@"
 fi
+
 name="$2"
 
 lockedAction=""

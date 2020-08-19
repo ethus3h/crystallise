@@ -28,6 +28,7 @@ if [[ "$ignoreLock" == "true" ]]; then
 else
     ((EUID)) && exec sudo -- "$0" "$@"
 fi
+
 if [[ "usage" == "$action" ]]; then
     shift
     ncdu -x -r --confirm-quit "$@"

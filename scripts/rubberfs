@@ -385,9 +385,6 @@ list)
     zfs list -t snapshot | grep "$name"
     rubberfs status "$name"
     ;;
-usage)
-    ncdu -x -r
-    ;;
 usage-write)
     rubberfs save "$name"
     thisRubber="$(rubberfs whereami)"

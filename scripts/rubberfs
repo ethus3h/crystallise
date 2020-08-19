@@ -12,12 +12,6 @@ if [[ "$1" == "--ignore-lock" ]]; then
 fi
 
 action="$1"
-if [[ "usage" == "$action" ]]; then
-    shift
-    ncdu -x -r --confirm-quit "$@"
-    exit 0
-fi
-
 name="$2"
 
 lockedAction=""
@@ -34,6 +28,12 @@ if [[ "$ignoreLock" == "true" ]]; then
 else
     ((EUID)) && exec sudo -- "$0" "$@"
 fi
+if [[ "usage" == "$action" ]]; then
+    shift
+    ncdu -x -r --confirm-quit "$@"
+    exit 0
+fi
+
 rubberfsUser="$(</tmp/rubberfsUser)"
 
 if [[ "$lockedAction" == "true" ]]; then

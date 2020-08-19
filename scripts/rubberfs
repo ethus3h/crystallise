@@ -380,7 +380,7 @@ list)
     rubberfs status "$name"
     ;;
 usage)
-    ncdu -x -r
+    ncdu -x -r "$@"
     ;;
 usage-write)
     rubberfs save "$name"
